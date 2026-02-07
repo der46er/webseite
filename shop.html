@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | thataustrianone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="assets/fave%20icon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f1115; margin: 0; padding: 0; }
+        .animate-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .group:hover .animate-rotate-slow {
+            animation: rotate 3s linear infinite;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        /* Theming für das Logo: Färbt das Logo orange ein passend zum Shop-Theme */
+        .logo-themed {
+            filter: sepia(100%) saturate(300%) hue-rotate(330deg) brightness(100%) drop-shadow(0 0 5px rgba(249, 115, 22, 0.5));
+            transition: all 0.3s ease;
+        }
+        .group:hover .logo-themed {
+            filter: sepia(100%) saturate(500%) hue-rotate(330deg) brightness(110%) drop-shadow(0 0 8px rgba(249, 115, 22, 0.8));
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons ---
+        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+        const ChevronDown = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+        const ExternalLink = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>;
+        const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+
+        const translations = {
+            de: {
+                name: "Deutsch", flag: "🇦🇹", back: "Zurück", offer: "Angebot", title: "Hardware Marketplace 📦",
+                description: "Hier findest du Hardware und Ersatzteile aus meinem Bestand. Die Abwicklung erfolgt sicher über die verlinkten Plattformen.",
+                viewOn: "Auf {platform} ansehen", comingSoon: "Bald neue Artikel...", legal: "Impressum & Rechtliches",
+                legalTitle: "Rechtliche Informationen", imprintLabel: "Impressum / Offenlegung", addressLabel: "Anschrift",
+                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
+                contactLabel: "Kontakt", trademarkLabel: "Hinweis zu Marken & Logos",
+                trademarkText: "Alle verwendeten Logos (Willhaben, Vinted, eBay, HP, Intel, Corsair) sind Eigentum der jeweiligen Inhaber und dienen ausschließlich der Identifikation der Profile und Hardware.",
+                liabilityLabel: "Haftung für Links", liabilityText: "Ich übernehme keine Haftung für externe Links. Für den Inhalt sind ausschließlich deren Betreiber verantwortlich.",
+                viewProfile: "Profil besuchen", willhabenProfile: "Willhaben Profil", vintedProfile: "Vinted Profil", ebayProfile: "eBay Profil",
+                sold: "Verkauft", unavailable: "Nicht mehr verfügbar"
+            },
+            en: {
+                name: "English", flag: "🇬🇧", back: "Back", offer: "Offer", title: "Hardware Marketplace 📦",
+                description: "Explore hardware and spare parts from my personal inventory. Secure checkout via the linked platforms.",
+                viewOn: "View on {platform}", comingSoon: "More items coming soon...", legal: "Legal Notice",
+                legalTitle: "Legal Information", imprintLabel: "Imprint / Disclosure", addressLabel: "Address",
+                addressRequest: "Full address available upon justified request via email for privacy reasons.",
+                contactLabel: "Contact", trademarkLabel: "Trademark & Logo Notice",
+                trademarkText: "All logos used (Willhaben, Vinted, eBay, HP, Intel, Corsair) are property of their respective owners and are used for identification purposes only.",
+                liabilityLabel: "Liability for Links", liabilityText: "I assume no liability for external links. Operators of linked pages are solely responsible.",
+                viewProfile: "Visit profile", willhabenProfile: "Willhaben Profile", vintedProfile: "Vinted Profile", ebayProfile: "eBay Profile",
+                sold: "Sold", unavailable: "No longer available"
+            }
+        };
+
+        const ProfileCard = ({ platform, url, userImage, logoImage, lang, labelKey, logoClass }) => (
+            <a href={url} target="_blank" className="relative group block p-0.5 rounded-[1.8rem] overflow-hidden transition-all duration-300 transform active:scale-[0.98] w-full text-zinc-100">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-orange-500/20 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-orange-500 transition-all duration-500"></div>
+                <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.7rem] p-5 z-10 m-[1px] flex items-center gap-5">
+                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/10 shrink-0 shadow-lg">
+                        <img src={userImage} alt="User" className="w-full h-full object-cover" />
+                    </div>
+                    <div className="flex flex-col gap-1.5 text-left overflow-hidden">
+                        <div className={`h-7 flex items-center ${logoClass}`}>
+                            <img src={logoImage} alt={platform} className="h-full w-auto object-contain" />
+                        </div>
+                        <h4 className="text-white font-extrabold text-sm sm:text-base tracking-tight truncate">
+                            {translations[lang][labelKey]}
+                        </h4>
+                        <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-white transition-colors">
+                            {translations[lang].viewProfile} <ExternalLink size={10} />
+                        </div>
+                    </div>
+                </div>
+            </a>
+        );
+
+        const ProductCard = ({ title, price, description, image, links, isSold, lang }) => (
+            <div className={`relative group block p-0.5 rounded-[2rem] overflow-hidden transition-all duration-300 transform ${isSold ? 'opacity-60 grayscale-[0.5]' : 'active:scale-[0.98]'} text-zinc-100`}>
+                <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 opacity-20 group-hover:opacity-100 transition-opacity duration-500"></div>
+                {!isSold && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(transparent,transparent,transparent,#f97316,#fb7185,#fbbf24)] animate-rotate-slow opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>}
+                
+                <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.9rem] p-4 z-10 m-[1px] flex flex-col h-full text-left">
+                    <div className="aspect-square rounded-[1.5rem] overflow-hidden bg-[#0f1115] mb-5 border border-white/5 relative shadow-inner">
+                        <img src={image} alt={title[lang]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => e.target.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'} />
+                        {isSold && (
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center">
+                                <span className="px-6 py-2 bg-orange-600 text-white font-black uppercase tracking-[0.2em] rounded-full text-sm shadow-2xl rotate-[-5deg]">
+                                    {translations[lang].sold}
+                                </span>
+                            </div>
+                        )}
+                    </div>
+                    <div className="flex-grow px-2 pb-4">
+                        <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-xl font-bold text-white tracking-tight leading-tight">{title[lang]}</h3>
+                            <span className={`text-orange-500 font-extrabold text-lg shrink-0 ml-2 ${isSold ? 'line-through opacity-50' : ''}`}>{price}€</span>
+                        </div>
+                        <p className="text-zinc-500 text-sm leading-relaxed mb-6">{description[lang]}</p>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 mt-auto">
+                        {isSold ? (
+                            <div className="w-full py-3 bg-white/5 border border-white/5 text-zinc-600 rounded-[1rem] text-sm font-bold text-center italic cursor-not-allowed uppercase tracking-widest">
+                                {translations[lang].unavailable}
+                            </div>
+                        ) : (
+                            links.map((link, idx) => (
+                                <a 
+                                    key={idx}
+                                    href={link.url} 
+                                    target="_blank" 
+                                    className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-orange-600 border border-white/5 hover:border-orange-500 text-white rounded-[1rem] text-sm font-bold transition-all duration-300 shadow-xl"
+                                >
+                                    {translations[lang].viewOn.replace('{platform}', link.platform)}
+                                    <ExternalLink size={14} />
+                                </a>
+                            ))
+                        )}
+                    </div>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [lang, setLang] = useState('de');
+            const [showLegal, setShowLegal] = useState(false);
+            const [showLangMenu, setShowLangMenu] = useState(false);
+            const menuRef = useRef(null);
+            const t = translations[lang];
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (menuRef.current && !menuRef.current.contains(event.target)) {
+                        setShowLangMenu(false);
+                    }
+                };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            const mainLogo = "https://github.com/der46er/webseite/blob/main/assets/favicon.png?raw=true";
+            const willhabenPortrait = "https://cache.willhaben.at/mmo/userProfile/31926735_8ba50daac3161ab9f45061e2408c4c70.jpg";
+            const vintedCat = "https://images1.vinted.net/t/04_0104b_ughXXR9SsCv9pvoU69kXnLKB/f800/1757955583.webp?s=e9d9f4a64580b0d1ce07706d85d955ccb3380b2a";
+            const ebayPortrait = "https://i.ebayimg.com/00/s/MzAwWDMwMA==/z/QmkAAeSwfxlph5~G/$_57.JPG?set_id=8800004005";
+
+            const profiles = {
+                willhaben: {
+                    url: "https://www.willhaben.at/iad/kaufen-und-verkaufen/verkaeuferprofil/31926735",
+                    userImage: willhabenPortrait,
+                    logo: "https://www.willhaben.at/bbx-search/_next/static/assets/logo.f8cb483ef68cd335.svg",
+                    labelKey: "willhabenProfile", logoClass: ""
+                },
+                vinted: {
+                    url: "https://www.vinted.at/member/207532481",
+                    userImage: vintedCat,
+                    logo: "https://marketplace-web-assets.vinted.com/_next/static/media/logo.5398230b.svg",
+                    labelKey: "vintedProfile", logoClass: ""
+                },
+                ebay: {
+                    url: "https://www.ebay.at/usr/niklaus_7342", 
+                    userImage: ebayPortrait,
+                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EBay_logo.svg/1280px-EBay_logo.svg.png",
+                    labelKey: "ebayProfile", logoClass: ""
+                }
+            };
+
+            const products = [
+                {
+                    title: { de: "Corsair iCue Lüfter", en: "Corsair iCue Fan" },
+                    price: "15",
+                    description: { de: "Funktioniert einwandfrei. Kompatibel mit Corsair iCue. 6 Stück verfügbar.", en: "Works perfectly. Compatible with Corsair iCue. 6 items available." },
+                    image: "https://images1.vinted.net/t/03_025af_7maZPWfUSJWjDGwzbmZZFxqS/f800/1753473025.webp?s=67e8e480fe4cc458b45ec7ee91131efc498f7276",
+                    isSold: false,
+                    links: [
+                        { platform: "eBay", url: "https://www.ebay.at/itm/147142307233" },
+                        { platform: "Willhaben", url: "https://www.willhaben.at/iad/kaufen-und-verkaufen/d/corsair-icue-luefter-1623977017" },
+                        { platform: "Vinted", url: "https://www.vinted.at/items/6750436046-corsair-icue-lufter" }
+                    ]
+                },
+                {
+                    title: { de: "HP ProDesk CPU-Lüfter", en: "HP ProDesk CPU Fan" },
+                    price: "5",
+                    description: { de: "Originaler CPU-Lüfter für HP ProDesk 600 G4 Desktop Mini PCs.", en: "Original CPU fan for HP ProDesk 600 G4 Desktop Mini PCs." },
+                    image: "https://images1.vinted.net/t/04_002e4_f2kLtTJaMnyYW8LJcdREg5k7/f800/1757955911.webp?s=29fcd3180554ad230a594e392e808728d4c2cf75",
+                    isSold: false,
+                    links: [
+                        { platform: "Vinted", url: "https://www.vinted.at/items/7096113982-lufter-fur-hp-prodesk-600-g4" }
+                    ]
+                },
+                {
+                    title: { de: "DisplayPort Flex IO Card", en: "DisplayPort Flex IO Card" },
+                    price: "15",
+                    description: { de: "DisplayPort Port Flex IO Erweiterungskarte für HP ProDesk 600 G4.", en: "DisplayPort Port Flex IO expansion card for HP ProDesk 600 G4." },
+                    image: "https://images1.vinted.net/t/04_024f0_3BRUMFn8vNhVf9Ev2qTcPy3a/f800/1757955451.webp?s=1e1852b48253e7bfaea4f1b446db5700c9364ba6",
+                    isSold: false,
+                    links: [
+                        { platform: "Vinted", url: "https://www.vinted.at/items/7096039316-displayport-port-flex-io-card-fur-hp-prodesk-600-g4" }
+                    ]
+                },
+                {
+                    title: { de: "HP ProDesk Lautsprecher", en: "HP ProDesk Speakers" },
+                    price: "5",
+                    description: { de: "Original Lautsprecher (L30761-001) für HP ProDesk 600 G4.", en: "Original internal speaker (L30761-001) for HP ProDesk 600 G4." },
+                    image: "https://images1.vinted.net/t/01_00b44_g6WYMQto9YdkgjYLwwvkiuSo/f800/1757954991.webp?s=978c2b69b9952c0b76875eaddbe8bcc8e9bdfccc",
+                    links: [
+                        { platform: "Vinted", url: "https://www.vinted.at/items/7095963117-lautsprecher-l30761-001-fur-hp-prodesk-600-g4" }
+                    ]
+                },
+                {
+                    title: { de: "SATA Anschlusskabel (HP ProDesk)", en: "SATA Adapter Cable (HP ProDesk)" },
+                    price: "5",
+                    description: { de: "Original SATA Festplatten-Adapterkabel für HP ProDesk 600 G4.", en: "Original SATA hard drive adapter cable for HP ProDesk 600 G4." },
+                    image: "https://images1.vinted.net/t/01_025f1_f2YJDU1CjCkHLdFcz965PRbS/f800/1757953904.webp?s=7cbde4e8dbc6c5c64992e98bfc258c6c474b6664",
+                    isSold: false,
+                    links: [
+                        { platform: "Vinted", url: "https://www.vinted.at/items/7095779187-sata-ansschlusskabel-fur-hp-prodesk-600-g4" }
+                    ]
+                },
+                {
+                    title: { de: "Intel Wireless-AC 9560", en: "Intel Wireless-AC 9560" },
+                    price: "8",
+                    description: { de: "M.2 2230 Karte für WLAN und Bluetooth 5.0.", en: "M.2 2230 card for WLAN and Bluetooth 5.0." },
+                    image: "https://images1.vinted.net/t/04_018d1_m99uVj3vAZfuEag2jJJgAyW5/f800/1757954648.webp?s=ece2a9a153e08b37c054a58d1eb329db4e59d532",
+                    isSold: false,
+                    links: [
+                        { platform: "Vinted", url: "https://www.vinted.at/items/7095905343-intel-wireless-ac-9560-m2-2230-wlan-und-bluetooth-50-karte" }
+                    ]
+                }
+            ];
+
+            return (
+                <div className="min-h-screen bg-[#0f1115] text-white font-sans selection:bg-orange-500/30 overflow-x-hidden relative pb-12 animate-in">
+                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
+                        <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
+                        <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-orange-600/10 blur-[100px] rounded-full" />
+                    </div>
+
+                    <nav className="fixed w-full z-50 bg-[#0f1115]/70 backdrop-blur-xl border-b border-white/5">
+                        <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center relative">
+                            <a href="index.html" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
+                                <ChevronLeft size={20} /> <span className="text-sm font-bold uppercase tracking-widest">{t.back}</span>
+                            </a>
+                            <div className="hidden sm:flex items-center gap-3">
+                                {/* Logo in der Leiste mit Shop-Thema (Orange) */}
+                                <img src={mainLogo} alt="Logo" className="w-8 h-8 object-contain logo-themed" onError={(e) => e.target.style.display='none'} />
+                                <span className="font-extrabold tracking-tighter text-lg text-white">that<span className="text-orange-500">austrianone.</span></span>
+                            </div>
+                            <div className="relative" ref={menuRef}>
+                                <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-3 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-xs font-bold uppercase tracking-widest text-white shadow-lg">
+                                    <span>{t.flag}</span> <span>{t.name}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
+                                </button>
+                                {showLangMenu && (
+                                    <div className="absolute right-0 mt-2 w-40 bg-[#161920] border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                        {Object.keys(translations).map((key) => (
+                                            <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-5 py-4 text-left text-sm transition-colors hover:bg-white/5 ${lang === key ? 'text-orange-500 bg-orange-500/5' : 'text-zinc-400'}`}>
+                                                <span>{translations[key].flag}</span> <span className="font-semibold">{translations[key].name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="relative z-10 max-w-5xl mx-auto px-6 pt-40 pb-20">
+                        <header className="mb-12 text-center md:text-left">
+                            <div className="inline-block px-4 py-1 bg-orange-500/10 text-orange-500 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border border-orange-500/20">{t.offer}</div>
+                            <div className="mb-6">
+                                {/* Titel mit Emoji wie gewünscht */}
+                                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">{t.title}</h1>
+                            </div>
+                            <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12">{t.description}</p>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                                <ProfileCard platform="Willhaben" url={profiles.willhaben.url} userImage={profiles.willhaben.userImage} logoImage={profiles.willhaben.logo} lang={lang} labelKey="willhabenProfile" logoClass="" />
+                                <ProfileCard platform="Vinted" url={profiles.vinted.url} userImage={profiles.vinted.userImage} logoImage={profiles.vinted.logo} lang={lang} labelKey="vintedProfile" logoClass="" />
+                                <ProfileCard platform="eBay" url={profiles.ebay.url} userImage={profiles.ebay.userImage} logoImage={profiles.ebay.logo} lang={lang} labelKey="ebayProfile" logoClass="" />
+                            </div>
+                        </header>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
+                            {products.map((item, index) => (
+                                <ProductCard key={index} {...item} lang={lang} />
+                            ))}
+                            <div className="border-2 border-dashed border-white/5 rounded-[2.5rem] flex flex-col items-center justify-center p-12 text-center opacity-40 group">
+                                <div className="w-12 h-12 mb-4 text-zinc-700 transition-transform group-hover:scale-110">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                </div>
+                                <p className="text-zinc-600 font-bold text-xs uppercase tracking-widest leading-relaxed">{t.comingSoon}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <footer className="mt-20 text-center flex flex-col items-center gap-6">
+                        <div className="flex justify-center">
+                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-xs sm:text-sm font-semibold transition-all text-zinc-500 hover:text-white">
+                                <Info size={14} /> {t.legal}
+                            </button>
+                        </div>
+                        <div className="text-zinc-700 text-[10px] font-bold tracking-[0.2em] uppercase">© {new Date().getFullYear()} • THAT AUSTRIAN ONE</div>
+                    </footer>
+
+                    {showLegal && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in">
+                            <div className="bg-[#14161b] border border-white/10 rounded-[2rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+                                <div className="p-6 border-b border-white/5 flex justify-between items-center text-zinc-100">
+                                    <h2 className="text-xl font-bold text-white tracking-tight">{t.legalTitle}</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <div className="p-6 overflow-y-auto custom-scroll space-y-8 text-left text-zinc-400 text-sm leading-relaxed">
+                                    <section>
+                                        <h3 className="text-orange-500 font-bold uppercase text-[10px] tracking-[0.2em] mb-3">{t.imprintLabel}</h3>
+                                        <div className="text-zinc-100 space-y-2">
+                                            <p className="font-semibold text-white">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-400 text-xs italic">{t.addressRequest}</p>
+                                            <p className="font-medium text-white">4040 Linz, Österreich</p>
+                                            <div className="pt-2">
+                                                <p className="text-zinc-500 text-[10px] uppercase tracking-widest">{t.contactLabel}</p>
+                                                <p className="text-blue-400 font-medium">niklas.ausserwoeger@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section>
+                                        <h3 className="text-orange-500 font-bold uppercase text-[10px] tracking-[0.2em] mb-3">{t.trademarkLabel}</h3>
+                                        <p className="text-zinc-400 text-xs leading-relaxed">{t.trademarkText}</p>
+                                    </section>
+                                    <section>
+                                        <h3 className="text-orange-500 font-bold uppercase text-[10px] tracking-[0.2em] mb-3">{t.liabilityLabel}</h3>
+                                        <p className="text-zinc-400 text-xs leading-relaxed">{t.liabilityText}</p>
+                                    </section>
+                                    <div className="pt-4 border-t border-white/5 text-[10px] uppercase tracking-widest text-zinc-600 font-medium text-center">
+                                        Legal Compliance • ECG Austria
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
