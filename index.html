@@ -31,7 +31,7 @@
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        /* Grüner Glow für das Logo passend zum Seitenthema */
+        /* Grüner Glow für das Logo passend zum Seitenthema (Home) */
         .logo-themed {
             filter: sepia(100%) saturate(300%) hue-rotate(80deg) brightness(100%) drop-shadow(0 0 5px rgba(34, 197, 94, 0.5));
             transition: all 0.3s ease;
@@ -127,13 +127,13 @@
 
             return (
                 <div className="min-h-screen bg-[#0f1115] text-white font-sans selection:bg-green-500/30 overflow-x-hidden relative pb-12 animate-in">
-                    {/* Background Glows in Green Shades */}
+                    {/* Hintergrundleuchten in Grüntönen */}
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
                         <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-green-600/10 blur-[120px] rounded-full" />
                         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/10 blur-[120px] rounded-full" />
                     </div>
 
-                    {/* Nav */}
+                    {/* Navigationsleiste */}
                     <nav className="fixed w-full z-50 bg-[#0f1115]/70 backdrop-blur-xl border-b border-white/5">
                         <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center text-zinc-100">
                             <div className="flex items-center gap-3 group cursor-default">
@@ -169,7 +169,7 @@
                     </nav>
 
                     <div className="relative z-10 max-w-2xl mx-auto px-6 pt-48 pb-20">
-                        {/* Hero Header without Profile Image */}
+                        {/* Willkommens-Sektion */}
                         <header className="flex flex-col items-center text-center mb-16 sm:mb-24 text-zinc-100">
                             <div className="inline-block px-4 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-6 border border-green-500/20">
                                 {t.welcome}
@@ -182,13 +182,14 @@
                             </p>
                         </header>
 
-                        {/* Navigation Cards */}
+                        {/* Haupt-Karten */}
                         <div className="grid gap-6 sm:gap-8 text-zinc-100">
+                            {/* Geändert auf Shop/ (Großbuchstabe) */}
                             <MainCard 
                                 title={t.shopTitle} 
                                 desc={t.shopDesc} 
                                 icon={ShoppingCart} 
-                                href="shop.html" 
+                                href="Shop/" 
                                 color="from-orange-500 via-amber-500 to-rose-500"
                                 isExternal={false}
                             />
@@ -213,7 +214,7 @@
                         </footer>
                     </div>
 
-                    {/* Legal Modal */}
+                    {/* Impressum Modal */}
                     {showLegal && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in text-zinc-100">
                             <div className="bg-[#14161b] border border-white/10 rounded-[2.5rem] w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
