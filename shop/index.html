@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop | thataustrianone</title>
     
-    <!-- Favicon -->
-    <link rel="icon" type="image/png" href="assets/fave%20icon.png">
+    <!-- Favicon Pfad: Geht einen Ordner hoch zu assets -->
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -30,7 +30,7 @@
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        /* Theming für das Logo: Färbt das Logo orange ein passend zum Shop-Theme */
+        /* Logo-Theming: Orange für den Shop */
         .logo-themed {
             filter: sepia(100%) saturate(300%) hue-rotate(330deg) brightness(100%) drop-shadow(0 0 5px rgba(249, 115, 22, 0.5));
             transition: all 0.3s ease;
@@ -49,7 +49,7 @@
         // --- Icons ---
         const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
         const ChevronDown = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
-        const ExternalLink = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>;
+        const ExternalLink = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>;
         const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
         const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 
@@ -158,15 +158,14 @@
 
             useEffect(() => {
                 const handleClickOutside = (event) => {
-                    if (menuRef.current && !menuRef.current.contains(event.target)) {
-                        setShowLangMenu(false);
-                    }
+                    if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
                 };
                 document.addEventListener("mousedown", handleClickOutside);
                 return () => document.removeEventListener("mousedown", handleClickOutside);
             }, []);
 
-            const mainLogo = "https://github.com/der46er/webseite/blob/main/assets/favicon.png?raw=true";
+            // Pfad zum Hauptlogo im Assets Ordner (einen Ordner hoch)
+            const mainLogo = "../assets/favicon.png";
             const willhabenPortrait = "https://cache.willhaben.at/mmo/userProfile/31926735_8ba50daac3161ab9f45061e2408c4c70.jpg";
             const vintedCat = "https://images1.vinted.net/t/04_0104b_ughXXR9SsCv9pvoU69kXnLKB/f800/1757955583.webp?s=e9d9f4a64580b0d1ce07706d85d955ccb3380b2a";
             const ebayPortrait = "https://i.ebayimg.com/00/s/MzAwWDMwMA==/z/QmkAAeSwfxlph5~G/$_57.JPG?set_id=8800004005";
@@ -185,7 +184,7 @@
                     labelKey: "vintedProfile", logoClass: ""
                 },
                 ebay: {
-                    url: "https://www.ebay.at/usr/niklaus_7342", 
+                    url: "https://www.ebay.at/usr/der_46er", 
                     userImage: ebayPortrait,
                     logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EBay_logo.svg/1280px-EBay_logo.svg.png",
                     labelKey: "ebayProfile", logoClass: ""
@@ -230,6 +229,7 @@
                     price: "5",
                     description: { de: "Original Lautsprecher (L30761-001) für HP ProDesk 600 G4.", en: "Original internal speaker (L30761-001) for HP ProDesk 600 G4." },
                     image: "https://images1.vinted.net/t/01_00b44_g6WYMQto9YdkgjYLwwvkiuSo/f800/1757954991.webp?s=978c2b69b9952c0b76875eaddbe8bcc8e9bdfccc",
+                    isSold: false,
                     links: [
                         { platform: "Vinted", url: "https://www.vinted.at/items/7095963117-lautsprecher-l30761-001-fur-hp-prodesk-600-g4" }
                     ]
@@ -241,7 +241,7 @@
                     image: "https://images1.vinted.net/t/01_025f1_f2YJDU1CjCkHLdFcz965PRbS/f800/1757953904.webp?s=7cbde4e8dbc6c5c64992e98bfc258c6c474b6664",
                     isSold: false,
                     links: [
-                        { platform: "Vinted", url: "https://www.vinted.at/items/7095779187-sata-ansschlusskabel-fur-hp-prodesk-600-g4" }
+                        { platform: "Vinted", url: "https://www.vinted.at/items/7095779187-sata-anschlusskabel-fur-hp-prodesk-600-g4" }
                     ]
                 },
                 {
@@ -265,11 +265,10 @@
 
                     <nav className="fixed w-full z-50 bg-[#0f1115]/70 backdrop-blur-xl border-b border-white/5">
                         <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center relative">
-                            <a href="index.html" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
+                            <a href="../" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
                                 <ChevronLeft size={20} /> <span className="text-sm font-bold uppercase tracking-widest">{t.back}</span>
                             </a>
                             <div className="hidden sm:flex items-center gap-3">
-                                {/* Logo in der Leiste mit Shop-Thema (Orange) */}
                                 <img src={mainLogo} alt="Logo" className="w-8 h-8 object-contain logo-themed" onError={(e) => e.target.style.display='none'} />
                                 <span className="font-extrabold tracking-tighter text-lg text-white">that<span className="text-orange-500">austrianone.</span></span>
                             </div>
@@ -294,7 +293,6 @@
                         <header className="mb-12 text-center md:text-left">
                             <div className="inline-block px-4 py-1 bg-orange-500/10 text-orange-500 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border border-orange-500/20">{t.offer}</div>
                             <div className="mb-6">
-                                {/* Titel mit Emoji wie gewünscht */}
                                 <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">{t.title}</h1>
                             </div>
                             <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12">{t.description}</p>
