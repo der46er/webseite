@@ -1,9 +1,264 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <title>Meine Webseite</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>thataustrianone | Home</title>
+    
+    <!-- Favicon Pfad zeigt auf den Assets Ordner -->
+    <link rel="icon" type="image/png" href="assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0f1115; margin: 0; padding: 0; }
+        
+        .animate-in { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .group:hover .animate-rotate-slow {
+            animation: rotate 4s linear infinite;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        /* Grüner Glow für das Logo passend zum Seitenthema */
+        .logo-themed {
+            filter: sepia(100%) saturate(300%) hue-rotate(80deg) brightness(100%) drop-shadow(0 0 5px rgba(34, 197, 94, 0.5));
+            transition: all 0.3s ease;
+        }
+        .group:hover .logo-themed {
+            filter: sepia(100%) saturate(500%) hue-rotate(80deg) brightness(110%) drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
+        }
+    </style>
 </head>
 <body>
-    <h1>Hallo! Diese Seite läuft über GitHub Pages.</h1>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        // --- Icons ---
+        const ChevronRight = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
+        const ChevronDown = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+        const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        const ShoppingCart = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>;
+        const Share = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>;
+
+        const translations = {
+            de: {
+                flag: "🇦🇹", name: "Deutsch",
+                welcome: "Willkommen",
+                description: "Technik Enthusiast & Content Creator",
+                shopTitle: "Hardware Marketplace",
+                shopDesc: "Check meine aktuellen Inserate",
+                socialTitle: "Social Links",
+                socialDesc: "Folge mir auf meinen Kanälen",
+                legal: "Impressum & Rechtliches",
+                legalTitle: "Rechtliche Informationen",
+                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
+                trademarkText: "Alle verwendeten Logos und Marken sind Eigentum der jeweiligen Inhaber und dienen nur der Identifikation.",
+                liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links."
+            },
+            en: {
+                flag: "🇬🇧", name: "English",
+                welcome: "Welcome",
+                description: "Tech Enthusiast & Content Creator",
+                shopTitle: "Hardware Marketplace",
+                shopDesc: "Browse my latest listings",
+                socialTitle: "Social Links",
+                socialDesc: "Follow me on my channels",
+                legal: "Legal Notice",
+                legalTitle: "Legal Information",
+                addressRequest: "Full address available upon justified request via email for privacy reasons.",
+                trademarkText: "All logos and trademarks used are property of their respective owners and are for identification only.",
+                liabilityText: "I assume no liability for the content of external links."
+            }
+        };
+
+        const MainCard = ({ title, desc, icon: Icon, href, color, isExternal }) => (
+            <a 
+                href={href} 
+                target={isExternal ? "_blank" : "_self"}
+                className="relative group block p-0.5 rounded-[2rem] overflow-hidden transition-all duration-300 transform active:scale-[0.98]"
+            >
+                <div className={`absolute inset-0 bg-gradient-to-r ${color} opacity-20 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                <div className={`absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(transparent,transparent,transparent,var(--tw-gradient-from),var(--tw-gradient-to))] animate-rotate-slow opacity-0 group-hover:opacity-100 transition-opacity duration-500`}></div>
+                
+                <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.9rem] p-6 sm:p-10 flex items-center gap-6 z-10 m-[1px]">
+                    <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-500 shadow-inner bg-white/5`}>
+                        <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white group-hover:text-inherit transition-colors" />
+                    </div>
+                    <div className="text-left flex-grow">
+                        <h2 className="text-xl sm:text-2xl font-extrabold text-white tracking-tight group-hover:translate-x-1 transition-transform duration-300">{title}</h2>
+                        <p className="text-zinc-500 text-sm sm:text-base font-medium">{desc}</p>
+                    </div>
+                    <div className="text-zinc-700 group-hover:text-white transition-colors group-hover:translate-x-1 transition-transform">
+                        <ChevronRight size={28} />
+                    </div>
+                </div>
+            </a>
+        );
+
+        const App = () => {
+            const [lang, setLang] = useState('de');
+            const [showLegal, setShowLegal] = useState(false);
+            const [showLangMenu, setShowLangMenu] = useState(false);
+            const menuRef = useRef(null);
+            const t = translations[lang];
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
+                };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            return (
+                <div className="min-h-screen bg-[#0f1115] text-white font-sans selection:bg-green-500/30 overflow-x-hidden relative pb-12 animate-in">
+                    {/* Background Glows in Green Shades */}
+                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
+                        <div className="absolute top-[-10%] left-[-10%] w-[50%] h-[50%] bg-green-600/10 blur-[120px] rounded-full" />
+                        <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/10 blur-[120px] rounded-full" />
+                    </div>
+
+                    {/* Nav */}
+                    <nav className="fixed w-full z-50 bg-[#0f1115]/70 backdrop-blur-xl border-b border-white/5">
+                        <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center text-zinc-100">
+                            <div className="flex items-center gap-3 group cursor-default">
+                                <img src="https://github.com/der46er/webseite/blob/main/assets/favicon.png?raw=true" alt="Logo" className="w-8 h-8 object-contain logo-themed" onError={(e) => e.target.style.display='none'} />
+                                <span className="font-extrabold tracking-tighter text-lg">that<span className="text-green-500">austrianone.</span></span>
+                            </div>
+
+                            <div className="relative" ref={menuRef}>
+                                <button 
+                                    onClick={() => setShowLangMenu(!showLangMenu)}
+                                    className="flex items-center gap-3 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-xs font-bold uppercase tracking-widest text-white shadow-lg"
+                                >
+                                    <span>{t.flag}</span>
+                                    <span>{t.name}</span>
+                                    <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
+                                </button>
+                                {showLangMenu && (
+                                    <div className="absolute right-0 mt-2 w-40 bg-[#161920] border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                        {Object.keys(translations).map((key) => (
+                                            <button
+                                                key={key}
+                                                onClick={() => { setLang(key); setShowLangMenu(false); }}
+                                                className={`flex items-center gap-3 w-full px-5 py-4 text-left text-sm transition-colors hover:bg-white/5 ${lang === key ? 'text-green-500 bg-green-500/5' : 'text-zinc-400'}`}
+                                            >
+                                                <span>{translations[key].flag}</span>
+                                                <span className="font-semibold">{translations[key].name}</span>
+                                            </button>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </div>
+                    </nav>
+
+                    <div className="relative z-10 max-w-2xl mx-auto px-6 pt-48 pb-20">
+                        {/* Hero Header without Profile Image */}
+                        <header className="flex flex-col items-center text-center mb-16 sm:mb-24 text-zinc-100">
+                            <div className="inline-block px-4 py-1 bg-green-500/10 text-green-500 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-6 border border-green-500/20">
+                                {t.welcome}
+                            </div>
+                            <h1 className="text-5xl sm:text-7xl font-black tracking-tighter mb-4 text-white">
+                                that<span className="text-green-500">austrianone.</span>
+                            </h1>
+                            <p className="text-zinc-400 text-lg sm:text-xl font-medium max-w-md italic leading-relaxed">
+                                "{t.description}"
+                            </p>
+                        </header>
+
+                        {/* Navigation Cards */}
+                        <div className="grid gap-6 sm:gap-8 text-zinc-100">
+                            <MainCard 
+                                title={t.shopTitle} 
+                                desc={t.shopDesc} 
+                                icon={ShoppingCart} 
+                                href="shop.html" 
+                                color="from-orange-500 via-amber-500 to-rose-500"
+                                isExternal={false}
+                            />
+                            <MainCard 
+                                title={t.socialTitle} 
+                                desc={t.socialDesc} 
+                                icon={Share} 
+                                href="https://socials.thataustrianone.eu" 
+                                color="from-blue-600 via-indigo-600 to-purple-600"
+                                isExternal={true}
+                            />
+                        </div>
+
+                        {/* Footer */}
+                        <footer className="mt-24 sm:mt-32 text-center flex flex-col items-center gap-8">
+                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-xs sm:text-sm font-bold transition-all text-zinc-500 hover:text-white uppercase tracking-widest">
+                                <Info size={16} /> {t.legal}
+                            </button>
+                            <div className="text-zinc-700 text-[10px] sm:text-xs font-black tracking-[0.3em] uppercase">
+                                © {new Date().getFullYear()} • THAT AUSTRIAN ONE
+                            </div>
+                        </footer>
+                    </div>
+
+                    {/* Legal Modal */}
+                    {showLegal && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in text-zinc-100">
+                            <div className="bg-[#14161b] border border-white/10 rounded-[2.5rem] w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+                                <div className="p-8 border-b border-white/5 flex justify-between items-center text-zinc-100">
+                                    <h2 className="text-2xl font-black text-white tracking-tight">{t.legalTitle}</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all text-zinc-100">
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="p-8 overflow-y-auto custom-scroll space-y-10 text-left text-zinc-100">
+                                    <section>
+                                        <h3 className="text-green-500 font-black uppercase text-xs tracking-[0.2em] mb-4">Impressum</h3>
+                                        <div className="space-y-2">
+                                            <p className="text-xl font-bold text-white">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-400 text-sm italic mb-4">{t.addressRequest}</p>
+                                            <p className="font-semibold">4040 Linz, Österreich</p>
+                                            <div className="pt-4 text-zinc-100">
+                                                <p className="text-zinc-500 text-[10px] uppercase tracking-widest font-bold mb-1">E-Mail Kontakt</p>
+                                                <p className="text-blue-400 font-medium">niklas.ausserwoeger@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section className="space-y-4">
+                                        <div>
+                                            <h4 className="text-white font-bold text-sm mb-1">{lang === 'de' ? 'Marken & Logos' : 'Trademarks'}</h4>
+                                            <p className="text-zinc-500 text-xs leading-relaxed">{t.trademarkText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-sm mb-1">{lang === 'de' ? 'Haftungsausschluss' : 'Disclaimer'}</h4>
+                                            <p className="text-zinc-500 text-xs leading-relaxed">{t.liabilityText}</p>
+                                        </div>
+                                    </section>
+                                    <div className="pt-6 border-t border-white/5 text-[10px] uppercase tracking-[0.2em] text-zinc-600 font-bold text-center">
+                                        Legal Compliance • ECG Austria
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
 </body>
 </html>
