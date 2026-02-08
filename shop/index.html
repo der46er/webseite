@@ -5,25 +5,40 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop | thataustrianone</title>
     
-    <!-- Favicon Pfad: Geht einen Ordner hoch zu assets -->
-    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #0f1115; margin: 0; padding: 0; }
-        .animate-in { animation: fadeIn 0.5s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0b0d11; 
+            margin: 0; 
+            padding: 0; 
+        }
+
+        /* Globaler Logo/Titel Style (900, normal, lowercase, enges spacing) */
+        .header-logo-text {
+            font-weight: 900;
+            font-style: normal;
+            text-transform: lowercase;
+            letter-spacing: -0.06em;
+        }
+
+        .animate-in { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         
         @keyframes rotate {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
         }
         .group:hover .animate-rotate-slow {
-            animation: rotate 3s linear infinite;
+            animation: rotate 4s linear infinite;
         }
 
         .custom-scroll::-webkit-scrollbar { width: 5px; }
@@ -38,6 +53,12 @@
         .group:hover .logo-themed {
             filter: sepia(100%) saturate(500%) hue-rotate(330deg) brightness(110%) drop-shadow(0 0 8px rgba(249, 115, 22, 0.8));
         }
+
+        .glass-modal {
+            background: rgba(11, 13, 17, 0.98);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
     </style>
 </head>
 <body>
@@ -47,11 +68,11 @@
         const { useState, useEffect, useRef } = React;
 
         // --- Icons ---
-        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
         const ChevronDown = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
         const ExternalLink = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 1 2-2h6M15 3h6v6M10 14L21 3"/></svg>;
         const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
-        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
 
         const translations = {
             de: {
@@ -164,8 +185,7 @@
                 return () => document.removeEventListener("mousedown", handleClickOutside);
             }, []);
 
-            // Pfad zum Hauptlogo im Assets Ordner (einen Ordner hoch)
-            const mainLogo = "../assets/favicon.png";
+            const mainLogo = "https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png";
             const willhabenPortrait = "https://cache.willhaben.at/mmo/userProfile/31926735_8ba50daac3161ab9f45061e2408c4c70.jpg";
             const vintedCat = "https://images1.vinted.net/t/04_0104b_ughXXR9SsCv9pvoU69kXnLKB/f800/1757955583.webp?s=e9d9f4a64580b0d1ce07706d85d955ccb3380b2a";
             const ebayPortrait = "https://i.ebayimg.com/00/s/MzAwWDMwMA==/z/QmkAAeSwfxlph5~G/$_57.JPG?set_id=8800004005";
@@ -257,45 +277,53 @@
             ];
 
             return (
-                <div className="min-h-screen bg-[#0f1115] text-white font-sans selection:bg-orange-500/30 overflow-x-hidden relative pb-12 animate-in">
+                <div className="min-h-screen bg-[#0b0d11] text-white font-sans selection:bg-orange-500/30 overflow-x-hidden relative pb-12">
+                    {/* Hintergrundleuchten (Glow) */}
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
                         <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
                         <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-orange-600/10 blur-[100px] rounded-full" />
                     </div>
 
-                    <nav className="fixed w-full z-50 bg-[#0f1115]/70 backdrop-blur-xl border-b border-white/5">
-                        <div className="max-w-5xl mx-auto px-6 h-20 flex justify-between items-center relative">
-                            <a href="../" className="flex items-center gap-2 text-zinc-400 hover:text-white transition-colors group">
-                                <ChevronLeft size={20} /> <span className="text-sm font-bold uppercase tracking-widest">{t.back}</span>
+                    {/* Fixierter Header */}
+                    <nav className="fixed top-0 w-full z-50 h-24 flex items-center px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
+                        <div className="flex-1">
+                            <a href="../" className="text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-2 uppercase italic">
+                                <ChevronLeft size={14} /> {t.back}
                             </a>
-                            <div className="hidden sm:flex items-center gap-3">
-                                <img src={mainLogo} alt="Logo" className="w-8 h-8 object-contain logo-themed" onError={(e) => e.target.style.display='none'} />
-                                <span className="font-extrabold tracking-tighter text-lg text-white">that<span className="text-orange-500">austrianone.</span></span>
-                            </div>
-                            <div className="relative" ref={menuRef}>
-                                <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-3 px-4 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-xs font-bold uppercase tracking-widest text-white shadow-lg">
-                                    <span>{t.flag}</span> <span>{t.name}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
-                                </button>
-                                {showLangMenu && (
-                                    <div className="absolute right-0 mt-2 w-40 bg-[#161920] border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
-                                        {Object.keys(translations).map((key) => (
-                                            <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-5 py-4 text-left text-sm transition-colors hover:bg-white/5 ${lang === key ? 'text-orange-500 bg-orange-500/5' : 'text-zinc-400'}`}>
-                                                <span>{translations[key].flag}</span> <span className="font-semibold">{translations[key].name}</span>
-                                            </button>
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                             <img src={mainLogo} alt="Logo" className="w-10 h-10 object-contain logo-themed" />
+                             <span className="header-logo-text text-2xl text-white">that<span className="text-orange-500">austrianone.</span></span>
+                        </div>
+                        
+                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
+                            <button 
+                                onClick={() => setShowLangMenu(!showLangMenu)} 
+                                className="flex items-center gap-3 px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg"
+                            >
+                                <span>{t.flag}</span> <span>{t.name}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showLangMenu && (
+                                <div className="absolute right-0 top-16 w-48 glass-modal rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                    {Object.keys(translations).map((key) => (
+                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-6 py-5 text-left text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-orange-500 bg-orange-500/5' : 'text-zinc-400'}`}>
+                                            <span>{translations[key].flag}</span> <span className="font-semibold">{translations[key].name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </nav>
 
-                    <div className="relative z-10 max-w-5xl mx-auto px-6 pt-40 pb-20">
-                        <header className="mb-12 text-center md:text-left">
-                            <div className="inline-block px-4 py-1 bg-orange-500/10 text-orange-500 rounded-full text-[10px] font-bold uppercase tracking-[0.2em] mb-4 border border-orange-500/20">{t.offer}</div>
+                    {/* Content Wrapper mit Animation */}
+                    <div className="relative z-10 max-w-5xl mx-auto px-6 pt-48 pb-20 animate-in">
+                        <header className="mb-12 text-center md:text-left text-zinc-100">
+                            <div className="inline-block px-4 py-1.5 bg-orange-500/10 text-orange-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-8 border border-orange-500/20">{t.offer}</div>
                             <div className="mb-6">
-                                <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-white">{t.title}</h1>
+                                <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-tight">{t.title}</h1>
                             </div>
-                            <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12">{t.description}</p>
+                            <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12 italic">"{t.description}"</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                                 <ProfileCard platform="Willhaben" url={profiles.willhaben.url} userImage={profiles.willhaben.userImage} logoImage={profiles.willhaben.logo} lang={lang} labelKey="willhabenProfile" logoClass="" />
                                 <ProfileCard platform="Vinted" url={profiles.vinted.url} userImage={profiles.vinted.userImage} logoImage={profiles.vinted.logo} lang={lang} labelKey="vintedProfile" logoClass="" />
@@ -316,46 +344,45 @@
                         </div>
                     </div>
 
-                    <footer className="mt-20 text-center flex flex-col items-center gap-6">
-                        <div className="flex justify-center">
-                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-6 py-2.5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-xs sm:text-sm font-semibold transition-all text-zinc-500 hover:text-white">
-                                <Info size={14} /> {t.legal}
-                            </button>
-                        </div>
-                        <div className="text-zinc-700 text-[10px] font-bold tracking-[0.2em] uppercase">© {new Date().getFullYear()} • THAT AUSTRIAN ONE</div>
+                    <footer className="mt-20 text-center flex flex-col items-center gap-8">
+                        <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-12 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[12px] font-black tracking-[0.5em] transition-all text-zinc-500 hover:text-white uppercase">
+                            <Info size={16} /> {t.legal}
+                        </button>
+                        <div className="text-zinc-800 text-[10px] font-black tracking-[0.7em] uppercase opacity-50">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
                     </footer>
 
+                    {/* Legal Modal */}
                     {showLegal && (
-                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/85 backdrop-blur-md animate-in">
-                            <div className="bg-[#14161b] border border-white/10 rounded-[2rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-                                <div className="p-6 border-b border-white/5 flex justify-between items-center text-zinc-100">
-                                    <h2 className="text-xl font-bold text-white tracking-tight">{t.legalTitle}</h2>
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
+                            <div className="glass-modal rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+                                <div className="p-8 border-b border-white/5 flex justify-between items-center text-zinc-100">
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
                                     <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
-                                        <X size={20} />
+                                        <X size={24} />
                                     </button>
                                 </div>
-                                <div className="p-6 overflow-y-auto custom-scroll space-y-8 text-left text-zinc-400 text-sm leading-relaxed">
+                                <div className="p-8 overflow-y-auto custom-scroll space-y-10 text-left text-zinc-400 text-sm leading-relaxed">
                                     <section>
-                                        <h3 className="text-orange-500 font-bold uppercase text-[10px] tracking-[0.2em] mb-3">{t.imprintLabel}</h3>
-                                        <div className="text-zinc-100 space-y-2">
-                                            <p className="font-semibold text-white">Niklas Ausserwoeger</p>
-                                            <p className="text-zinc-400 text-xs italic">{t.addressRequest}</p>
-                                            <p className="font-medium text-white">4040 Linz, Österreich</p>
-                                            <div className="pt-2">
-                                                <p className="text-zinc-500 text-[10px] uppercase tracking-widest">{t.contactLabel}</p>
-                                                <p className="text-blue-400 font-medium">niklas.ausserwoeger@gmail.com</p>
+                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.imprintLabel}</h3>
+                                        <div className="space-y-4 font-bold text-zinc-100 uppercase">
+                                            <p className="text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
+                                            <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
+                                            <div className="pt-4">
+                                                <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase">{t.contactLabel}</p>
+                                                <p className="text-orange-400 text-sm font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
                                             </div>
                                         </div>
                                     </section>
                                     <section>
-                                        <h3 className="text-orange-500 font-bold uppercase text-[10px] tracking-[0.2em] mb-3">{t.trademarkLabel}</h3>
-                                        <p className="text-zinc-400 text-xs leading-relaxed">{t.trademarkText}</p>
+                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.trademarkLabel}</h3>
+                                        <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
                                     </section>
                                     <section>
-                                        <h3 className="text-orange-500 font-bold uppercase text-[10px] tracking-[0.2em] mb-3">{t.liabilityLabel}</h3>
-                                        <p className="text-zinc-400 text-xs leading-relaxed">{t.liabilityText}</p>
+                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.liabilityLabel}</h3>
+                                        <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
                                     </section>
-                                    <div className="pt-4 border-t border-white/5 text-[10px] uppercase tracking-widest text-zinc-600 font-medium text-center">
+                                    <div className="pt-10 border-t border-white/5 text-[10px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic uppercase">
                                         Legal Compliance • ECG Austria
                                     </div>
                                 </div>
