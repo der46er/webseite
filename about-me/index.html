@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Me | thataustrianone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <!-- Externe Scripts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+    <style>
+        /* Lokale Schriftarten (Stelle sicher, dass alle .woff2 in /assets/fonts/ liegen) */
+        @font-face {
+            font-family: 'Inter';
+            src: url('./assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('./assets/fonts/inter-v12-latin-900.woff2') format('woff2');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0b0d11; 
+            margin: 0; 
+            padding: 0; 
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header-logo-text {
+            font-weight: 900;
+            font-style: normal;
+            text-transform: lowercase;
+            letter-spacing: -0.06em;
+        }
+
+        .animate-in { animation: fadeIn 0.8s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .group:hover .animate-rotate-slow {
+            animation: rotate 4s linear infinite;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .logo-themed {
+            filter: sepia(100%) saturate(300%) hue-rotate(180deg) brightness(100%) drop-shadow(0 0 5px rgba(6, 182, 212, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .glass-card {
+            background: rgba(22, 25, 32, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
+        .glass-card:hover {
+            border-color: rgba(6, 182, 212, 0.3);
+            background: rgba(22, 25, 32, 0.8);
+        }
+
+        .glass-modal {
+            background: rgba(11, 13, 17, 0.98);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .cyan-glow {
+            box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.2);
+        }
+
+        .setup-tab-active {
+            background: rgba(6, 182, 212, 0.1);
+            color: #06b6d4;
+            border-color: rgba(6, 182, 212, 0.3);
+        }
+
+        .responsive-title {
+            font-size: clamp(2.5rem, 8vw, 8rem);
+            line-height: 1;
+        }
+
+        .text-balance { text-wrap: balance; }
+        
+        .break-word-custom {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            hyphens: auto;
+        }
+
+        .visualizer-bar {
+            width: 3px;
+            background: #1DB954;
+            border-radius: 2px;
+            animation: bounce 1.2s ease-in-out infinite;
+        }
+        @keyframes bounce {
+            0%, 100% { height: 4px; }
+            50% { height: 16px; }
+        }
+        .bar-2 { animation-delay: 0.2s; }
+        .bar-3 { animation-delay: 0.4s; }
+        .bar-4 { animation-delay: 0.1s; }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const DISCORD_ID = "964500222870945873"; 
+
+        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+        const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+        const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        const Cpu = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg>;
+        const Monitor = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>;
+        const Zap = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
+        const MusicIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
+        const SpotifyIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.308c-.216.354-.675.467-1.03.25-2.868-1.753-6.478-2.15-10.732-1.176-.404.093-.81-.157-.903-.562-.093-.404.157-.81.562-.903 4.654-1.066 8.653-.615 11.85 1.338.356.216.468.675.253 1.03zm1.463-3.26c-.272.44-.847.58-1.287.31-3.28-2.015-8.28-2.6-12.16-1.42-.494.15-1.018-.13-1.168-.624-.15-.494.13-1.018.624-1.168 4.417-1.34 9.93-.678 13.682 1.624.44.272.58.847.31 1.287zm.126-3.41c-3.933-2.336-10.433-2.55-14.214-1.402-.603.183-1.242-.163-1.425-.766-.183-.603.163-1.242.766-1.425 4.34-1.318 11.516-1.064 16.035 1.62.543.322.72.1.398 1.572-.322.544-1.023.72-1.56.398z"/></svg>;
+
+        const translations = {
+            de: {
+                flag: "🇦🇹", name: "Deutsch", back: "ZURÜCK",
+                badge: "STORY & SPECS",
+                title: "Behind thataustrianone.",
+                intro: "Servus! Ich bin Niklas. Schüler, Content Creator und Hardware-Experte.",
+                factsTitle: "CORE STATS",
+                facts: [
+                    { label: "Alter", value: "16" },
+                    { label: "Location", value: "Linz, Österreich" },
+                    { label: "Interessen", value: "Hardware & Smartphones" },
+                    { label: "Vibe", value: "Random & Fürsorglich" }
+                ],
+                journeyTitle: "MEINE MILESTONES",
+                journey: [
+                    { year: "2026", title: "Webseite & Community", desc: "Erstellung dieser offiziellen Webseite, Eröffnung des Hardware Marketplace & Meilenstein von 2000 Followern auf TikTok." },
+                    { year: "2025", title: "OLED Upgrade", desc: "Kauf von zwei ROG Swift OLED PG27UCDM Monitoren ganz am Ende des Jahres für das ultimative Setup." },
+                    { year: "2023", title: "Gaming PC Build", desc: "Zusammenbau meines ersten dedizierten High-End Gaming PCs." },
+                    { year: "2022", title: "Erster Eigenbau", desc: "Den ersten PC komplett selbst geplant und zusammengebaut." },
+                    { year: "2021", title: "YouTube Review", desc: "Das erste Mal ein ausführliches Review von einem Smartphone auf YouTube veröffentlicht." },
+                    { year: "2021", title: "Social Media Start", desc: "Einstieg in die Social Media Welt und Beginn der Content Creation Reise." },
+                    { year: "2020", title: "Expansion", desc: "Erweiterung auf zwei Monitore und die ersten richtigen Speaker." },
+                    { year: "2018", title: "Erstes Setup", desc: "Mein erstes eigenes Setup mit einem HP ProBook (2010) und einem Lenovo Monitor (2014)." },
+                    { year: "2016", title: "Deep Dive", desc: "Das erste Mal einen PC komplett zerlegt und die Neugier für Hardware entdeckt." },
+                    { year: "2010", title: "Geboren", desc: "Der Start von allem in Linz." }
+                ],
+                setupTitle: "Mein aktuelles Setup",
+                setupCats: ["Gaming PC", "Equipment", "Software"],
+                setupData: {
+                    "Gaming PC": [
+                        { item: "CPU", value: "AMD Ryzen 9 5900X (12C/24T)" },
+                        { item: "GPU", value: "ROG Strix RTX 3070 Ti OC" },
+                        { item: "RAM", value: "64GB Corsair DDR4-3200" },
+                        { item: "Board", value: "ROG Strix B550-F Gaming" },
+                        { item: "Case", value: "be quiet! Light Base 600LX" },
+                        { item: "Cooling", value: "iCUE H150i ELITE LCD XT" },
+                        { item: "Fans", value: "10x AsiaHorse COSMIQ" },
+                        { item: "Storage", value: "2TB Samsung 990 PRO" },
+                        { item: "PSU", value: "Corsair HX1000i (1000W)" }
+                    ],
+                    "Equipment": [
+                        { item: "Main Displays", value: "2x ROG Swift OLED PG27UCDM" },
+                        { item: "3rd Display", value: "Lenovo ThinkVision T2424p" },
+                        { item: "Mic", value: "FIFINE AmpliGame AM8" },
+                        { item: "Keyboard", value: "RAZER BlackWidow V3 TKL" },
+                        { item: "Mouse", value: "RAZER Basilisk V3 X" },
+                        { item: "Audio", value: "JBL Quantum Duo" }
+                    ],
+                    "Software": [
+                        { item: "OS", value: "Windows 11 Pro" },
+                        { item: "IDE", value: "Visual Studio 2026" },
+                        { item: "Video", value: "MAGIX Video deluxe 2026 Premium" },
+                        { item: "CAD", value: "Siemens Solid Edge 2022" },
+                        { item: "Browser", value: "Opera GX" },
+                        { item: "Streaming", value: "OBS Studio" },
+                        { item: "Gaming", value: "Minecraft (Modrinth)" },
+                        { item: "Social", value: "Discord" },
+                        { item: "Music", value: "Spotify" }
+                    ]
+                },
+                vibingTitle: "CURRENTLY VIBING",
+                nowPlaying: "Höre gerade live:",
+                notPlaying: "Hört gerade nichts.",
+                playlistDesc: "Meine aktuelle Main-Playlist auf Spotify.",
+                skillsTitle: "TECH SKILLS",
+                legal: "RECHTLICHES & INFO",
+                legalTitle: "Rechtliche Informationen",
+                legalPrivacy: "Datenschutz & Dienste",
+                legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an die Lanyard API (Discord Status) und den Spotify-Player übertragen, jedoch nicht durch den Betreiber gespeichert.",
+                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
+                trademarkLabel: "Urheberrecht & Marken",
+                trademarkText: "Alle verwendeten Markennamen (ROG, Razer, JBL, Corsair, be quiet!, AsiaHorse, Samsung, AMD, NVIDIA, HP, Lenovo) sind Eigentum der jeweiligen Inhaber und dienen lediglich der Produktbeschreibung. Alle Hardware- und Setup-Fotos auf dieser Seite sind Privataufnahmen von Niklas Ausserwoeger.",
+                liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links oder Hardwareschäden bei privater Hilfestellung. Backups sind immer Pflicht!",
+            },
+            en: {
+                flag: "🇬🇧", name: "English", back: "BACK",
+                badge: "STORY & SPECS",
+                title: "Behind thataustrianone.",
+                intro: "Hi! I'm Niklas. Student, content creator and hardware expert.",
+                factsTitle: "CORE STATS",
+                facts: [
+                    { label: "Age", value: "16" },
+                    { label: "Location", value: "Linz, Austria" },
+                    { label: "Interests", value: "Hardware & Smartphones" },
+                    { label: "Vibe", value: "Random & Caring" }
+                ],
+                journeyTitle: "MY MILESTONES",
+                journey: [
+                    { year: "2026", title: "Website & Community", desc: "Created this official website, launched the Hardware Marketplace & reached the milestone of 2000 followers on TikTok." },
+                    { year: "2025", title: "OLED Upgrade", desc: "Purchased two ROG Swift OLED PG27UCDM monitors at the very end of the year for the ultimate setup." },
+                    { year: "2023", title: "Gaming PC Build", desc: "Built my first dedicated high-end gaming PC." },
+                    { year: "2022", title: "First Build", desc: "Planned and built my very first PC from scratch." },
+                    { year: "2021", title: "YouTube Review", desc: "Published my first detailed review of a smartphone on YouTube." },
+                    { year: "2021", title: "Social Media Entry", desc: "Entered the social media world and began my content creation journey." },
+                    { year: "2020", title: "Expansion", desc: "Expanding to a dual monitor setup and getting my first real speakers." },
+                    { year: "2018", title: "First Setup", desc: "My first own setup using an HP ProBook (2010) and a Lenovo monitor (2014)." },
+                    { year: "2016", title: "Deep Dive", desc: "Took a PC completely apart for the first time and discovered my passion for hardware." },
+                    { year: "2010", title: "Born", desc: "Where it all started in Linz." }
+                ],
+                setupTitle: "My current setup",
+                setupCats: ["Gaming PC", "Equipment", "Software"],
+                setupData: {
+                    "Gaming PC": [
+                        { item: "CPU", value: "AMD Ryzen 9 5900X (12C/24T)" },
+                        { item: "GPU", value: "ROG Strix RTX 3070 Ti OC" },
+                        { item: "RAM", value: "64GB Corsair DDR4-3200" },
+                        { item: "Board", value: "ROG Strix B550-F Gaming" },
+                        { item: "Case", value: "be quiet! Light Base 600LX" },
+                        { item: "Cooling", value: "iCUE H150i ELITE LCD XT" },
+                        { item: "Fans", value: "10x AsiaHorse COSMIQ" },
+                        { item: "Storage", value: "2TB Samsung 990 PRO" },
+                        { item: "PSU", value: "Corsair HX1000i (1000W)" }
+                    ],
+                    "Equipment": [
+                        { item: "Main Displays", value: "2x ROG Swift OLED PG27UCDM" },
+                        { item: "3rd Display", value: "Lenovo ThinkVision T2424p" },
+                        { item: "Mic", value: "FIFINE AmpliGame AM8" },
+                        { item: "Keyboard", value: "RAZER BlackWidow V3 TKL" },
+                        { item: "Mouse", value: "RAZER Basilisk V3 X" },
+                        { item: "Audio", value: "JBL Quantum Duo" }
+                    ],
+                    "Software": [
+                        { item: "OS", value: "Windows 11 Pro" },
+                        { item: "IDE", value: "Visual Studio 2026" },
+                        { item: "Video", value: "MAGIX Video deluxe 2026 Premium" },
+                        { item: "CAD", value: "Siemens Solid Edge 2022" },
+                        { item: "Browser", value: "Opera GX" },
+                        { item: "Streaming", value: "OBS Studio" },
+                        { item: "Gaming", value: "Minecraft (Modrinth)" },
+                        { item: "Social", value: "Discord" },
+                        { item: "Music", value: "Spotify" }
+                    ]
+                },
+                vibingTitle: "CURRENTLY VIBING",
+                nowPlaying: "Currently listening live:",
+                notPlaying: "Isn't listening to anything right now.",
+                playlistDesc: "My current main playlist on Spotify.",
+                skillsTitle: "TECH SKILLS",
+                legal: "LEGAL & INFO",
+                legalTitle: "Legal Information",
+                legalPrivacy: "Privacy & Services",
+                legalPrivacyText: "This website is a private presence. Fonts are hosted locally for privacy. IP addresses are transmitted to external services (Lanyard API, Spotify) for technical display purposes only.",
+                addressRequest: "Full address is available only upon justified request via email for privacy reasons.",
+                trademarkLabel: "Copyright & Trademarks",
+                trademarkText: "All brand names used (ROG, Razer, JBL, Corsair, etc.) are property of their respective owners. All hardware and setup photos on this site are private photography by Niklas Ausserwoeger.",
+                liabilityText: "I assume no liability for the content of external links or hardware damage during private assistance. Backups are always mandatory!",
+            }
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState('de');
+            const [showLegal, setShowLegal] = useState(false);
+            const [showLangMenu, setShowLangMenu] = useState(false);
+            const [activeSetup, setActiveSetup] = useState("Gaming PC");
+            const [spotify, setSpotify] = useState(null);
+            const menuRef = useRef(null);
+            const t = translations[lang];
+
+            useEffect(() => {
+                let socket;
+                let heartbeatInterval;
+                const connect = () => {
+                    if (!DISCORD_ID || DISCORD_ID === "DEINE_DISCORD_ID_HIER") return;
+                    socket = new WebSocket('wss://api.lanyard.rest/socket');
+                    socket.onmessage = (event) => {
+                        const data = JSON.parse(event.data);
+                        switch (data.op) {
+                            case 1:
+                                socket.send(JSON.stringify({ op: 2, d: { subscribe_to_id: DISCORD_ID } }));
+                                if (heartbeatInterval) clearInterval(heartbeatInterval);
+                                heartbeatInterval = setInterval(() => { socket.send(JSON.stringify({ op: 3 })); }, data.d.heartbeat_interval);
+                                break;
+                            case 0:
+                                if (data.t === 'INIT_STATE' || data.t === 'PRESENCE_UPDATE') { setSpotify(data.d.spotify || null); }
+                                break;
+                            default: break;
+                        }
+                    };
+                    socket.onclose = () => { if (heartbeatInterval) clearInterval(heartbeatInterval); setTimeout(connect, 5000); };
+                    socket.onerror = () => { socket.close(); };
+                };
+                connect();
+                return () => { if (socket) socket.close(); if (heartbeatInterval) clearInterval(heartbeatInterval); };
+            }, []);
+
+            useEffect(() => {
+                const handleClickOutside = (event) => { if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false); };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            const avatarUrl = "https://drive.google.com/thumbnail?id=1oVP0DjtKXgHs_I6pwuXDyxCQ1R5sTZXN&sz=w1000";
+
+            return (
+                <div className="min-h-screen bg-[#0b0d11] text-white selection:bg-cyan-500/30 overflow-x-hidden relative pb-12 text-center md:text-left">
+                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
+                        <div className="absolute top-[-15%] left-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[150px] rounded-full" />
+                        <div className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[150px] rounded-full" />
+                    </div>
+
+                    <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20 text-left">
+                        <div className="flex-1">
+                            <a href="../" className="text-[9px] md:text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-1.5 md:gap-2 uppercase italic">
+                                <ChevronLeft size={14} /> {t.back}
+                            </a>
+                        </div>
+                        <div className="flex items-center gap-2 md:gap-3">
+                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-7 h-7 md:w-10 md:h-10 object-contain logo-themed" />
+                             <span className="header-logo-text text-lg md:text-2xl text-white">that<span className="text-cyan-500">austrianone.</span></span>
+                        </div>
+                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
+                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-2 px-3 md:px-8 py-2 md:py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[9px] md:text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
+                                <span>{t.flag}</span> <span className="hidden sm:inline">{t.name}</span> <ChevronDown size={14} className={showLangMenu ? 'rotate-180 transition-transform' : ''} />
+                            </button>
+                            {showLangMenu && (
+                                <div className="absolute right-0 top-14 md:top-16 w-36 md:w-48 glass-modal rounded-xl md:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                    {Object.keys(translations).map((key) => (
+                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-4 py-3 md:px-6 md:py-5 text-left text-[10px] md:text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-cyan-500 bg-cyan-500/5' : 'text-zinc-400'}`}>
+                                            <span>{translations[key].flag}</span> <span>{translations[key].name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </nav>
+
+                    <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 pt-32 md:pt-48 animate-in text-center md:text-left">
+                        <header className="flex flex-col items-center text-center mb-16 md:mb-32">
+                            <div className="relative mb-8 md:mb-12 group">
+                                <div className="absolute -inset-4 md:-inset-6 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 opacity-20 blur-3xl group-hover:opacity-40 transition-opacity duration-1000"></div>
+                                <div className="absolute inset-0 bg-[conic-gradient(transparent,transparent,transparent,#06b6d4,#3b82f6)] animate-rotate-slow rounded-full opacity-40"></div>
+                                <div className="relative w-24 h-24 md:w-48 md:h-48 rounded-full border-4 border-[#0b0d11] overflow-hidden bg-[#161920] z-10 shadow-2xl">
+                                    <img src={avatarUrl} alt="Niklas" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700" />
+                                </div>
+                            </div>
+                            <div className="inline-block px-4 md:px-5 py-2 bg-cyan-500/10 text-cyan-500 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] mb-6 md:mb-10 border border-cyan-500/20">{t.badge}</div>
+                            
+                            <h1 className="responsive-title font-black italic uppercase tracking-tighter text-white mb-6 md:mb-10 text-balance break-word-custom leading-none">
+                                {t.title}
+                            </h1>
+                            
+                            <p className="text-zinc-400 text-base md:text-2xl font-medium italic max-w-3xl leading-relaxed mx-auto text-balance px-4 md:px-0">"{t.intro}"</p>
+                        </header>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6 mb-16 md:mb-24 text-left">
+                            <div className="lg:col-span-1 glass-card rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col justify-between">
+                                <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-8 md:mb-10 italic text-left">{t.factsTitle}</h3>
+                                <div className="grid grid-cols-2 lg:grid-cols-1 gap-6 md:gap-8">
+                                    {t.facts.map((f, i) => (
+                                        <div key={i} className="flex flex-col group/item text-left">
+                                            <span className="text-zinc-600 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 group-hover/item:text-cyan-500 transition-colors">{f.label}</span>
+                                            <span className="text-white font-black italic uppercase text-sm md:text-lg leading-tight break-words">{f.value}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                            
+                            <div className="lg:col-span-3 glass-card rounded-[1.5rem] md:rounded-[3rem] p-6 md:p-14 cyan-glow flex flex-col justify-between relative overflow-hidden text-left">
+                                <div className="absolute top-0 right-0 p-8 opacity-5 text-cyan-500 rotate-12 pointer-events-none hidden md:block"><Zap size={200} /></div>
+                                <div>
+                                    <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-8 md:mb-12 italic">{t.skillsTitle}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 md:gap-x-12 gap-y-6 md:gap-y-10">
+                                        {[
+                                            { name: "Hardware Specialist", level: "100%" },
+                                            { name: "Smartphone Tech & Repair", level: "95%" },
+                                            { name: "System Setup & Optimizing", level: "92%" },
+                                            { name: "C++ Programming (Basics)", level: "40%" }
+                                        ].map((skill, i) => (
+                                            <div key={i} className="space-y-2 md:space-y-3">
+                                                <div className="flex justify-between items-end">
+                                                    <span className="text-[9px] md:text-xs font-black uppercase tracking-widest text-zinc-100">{skill.name}</span>
+                                                    <span className="text-[8px] md:text-[10px] font-black text-cyan-500">{skill.level}</span>
+                                                </div>
+                                                <div className="h-1 md:h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-cyan-600 rounded-full transition-all duration-1000 delay-300" style={{ width: skill.level }}></div>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                                <div className="mt-10 md:mt-16 flex flex-wrap gap-2 md:gap-3 justify-start">
+                                    {["PC Hardware", "Smartphones", "Windows 11", "Software Deployment", "C++ Basics"].map((tag, i) => (
+                                        <span key={i} className="px-3 py-1.5 md:px-4 md:py-2 bg-white/5 border border-white/5 rounded-lg md:rounded-xl text-[8px] md:text-[9px] font-black uppercase tracking-widest text-zinc-500">#{tag}</span>
+                                    ))}
+                                </div>
+                            </div>
+                        </div>
+
+                        <section className="mb-16 md:mb-24 px-4 md:px-0 text-left">
+                            <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-8 md:mb-12 gap-6 md:gap-8">
+                                <div className="text-left">
+                                    <h2 className="text-3xl md:text-6xl font-black italic uppercase tracking-tighter mb-2 md:mb-4">{t.setupTitle}</h2>
+                                    <div className="h-1 md:h-1.5 w-12 md:w-24 bg-cyan-600 rounded-full"></div>
+                                </div>
+                                <div className="flex gap-1 md:gap-2 p-1 bg-white/5 rounded-lg md:rounded-2xl border border-white/5 overflow-x-auto whitespace-nowrap custom-scroll">
+                                    {t.setupCats.map(cat => (
+                                        <button key={cat} onClick={() => setActiveSetup(cat)} className={`px-4 md:px-6 py-2.5 md:py-3 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all ${activeSetup === cat ? 'setup-tab-active shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}>{cat}</button>
+                                    ))}
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 animate-in">
+                                {t.setupData[activeSetup].map((item, i) => (
+                                    <div key={i} className="glass-card rounded-[1.2rem] md:rounded-[2.5rem] p-5 md:p-8 group/card flex items-center gap-4 md:gap-6 text-left">
+                                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 group-hover/card:scale-110 transition-transform shrink-0">
+                                            {activeSetup === "Gaming PC" ? <Cpu size={20} /> : activeSetup === "Equipment" ? <Monitor size={20} /> : <Zap size={20} />}
+                                        </div>
+                                        <div className="text-left overflow-hidden">
+                                            <p className="text-[7px] md:text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-0.5 md:mb-1">{item.item}</p>
+                                            <p className="text-xs md:text-sm font-bold text-zinc-100 uppercase italic tracking-tight truncate">{item.value}</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </section>
+
+                        <section className="mb-24 px-4 md:px-0">
+                            <div className="flex items-center gap-4 mb-10 justify-center md:justify-start text-left">
+                                <h2 className="text-2xl md:text-5xl font-black italic uppercase tracking-tighter">{t.vibingTitle}</h2>
+                                <SpotifyIcon size={32} className="hidden md:block" />
+                            </div>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 text-left">
+                                <div className="glass-card rounded-[2.5rem] p-8 flex flex-col justify-center relative overflow-hidden group min-h-[160px]">
+                                    <div className="absolute top-0 right-0 p-6 opacity-10 text-cyan-500 group-hover:scale-110 transition-transform duration-500"><MusicIcon size={80} /></div>
+                                    <div className="flex items-center gap-6">
+                                        <div className="w-24 h-24 rounded-2xl bg-black/40 flex items-center justify-center border border-white/5 relative overflow-hidden shrink-0 shadow-inner">
+                                            {spotify ? (
+                                                <img src={spotify.album_art_url} className="w-full h-full object-cover animate-in" alt="Cover" />
+                                            ) : (
+                                                <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" className="w-12 h-12 object-contain opacity-20 grayscale" alt="Logo" />
+                                            )}
+                                            {spotify && (
+                                                <div className="absolute bottom-3 w-full flex gap-1 items-end justify-center">
+                                                    <div className="visualizer-bar"></div>
+                                                    <div className="visualizer-bar bar-2"></div>
+                                                    <div className="visualizer-bar bar-3"></div>
+                                                    <div className="visualizer-bar bar-4"></div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="text-left overflow-hidden">
+                                            <p className="text-[9px] font-black text-cyan-500 uppercase tracking-[0.3em] mb-1">{spotify ? t.nowPlaying : t.notPlaying}</p>
+                                            <p className="text-xl md:text-2xl font-black italic uppercase text-white truncate">{spotify ? spotify.song : "Quiet Mode"}</p>
+                                            <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1 truncate">{spotify ? spotify.artist : "thataustrianone"}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="rounded-[1.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black">
+                                    <iframe style={{borderRadius:'12px'}} src="https://open.spotify.com/embed/playlist/0XZQFKzgRWqT3Rm9E0YgwX?utm_source=generator&theme=0" width="100%" height="160" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section className="mb-20 md:mb-32">
+                            <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-10 md:mb-16 italic text-center">{t.journeyTitle}</h3>
+                            <div className="relative px-4 md:px-0 text-left">
+                                <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-white/10 hidden md:block" />
+                                <div className="space-y-8 md:space-y-12 relative">
+                                    {t.journey.map((m, i) => (
+                                        <div key={i} className={`flex flex-col md:flex-row items-center gap-6 md:gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                                            <div className="flex-1 w-full text-center md:text-left">
+                                                <div className={`glass-card rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10 hover:translate-y-[-5px] transition-transform ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+                                                    <span className="text-cyan-500 font-black italic text-xl md:text-3xl mb-1 md:mb-4 block">{m.year}</span>
+                                                    <h4 className="text-base md:text-xl font-black uppercase italic mb-2 md:mb-3 text-white leading-tight">{m.title}</h4>
+                                                    <p className="text-zinc-500 font-medium text-[11px] md:text-sm leading-relaxed">{m.desc}</p>
+                                                </div>
+                                            </div>
+                                            <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#0b0d11] border-4 border-cyan-600 z-10 hidden md:flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)]">
+                                                <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-cyan-400 animate-pulse" />
+                                            </div>
+                                            <div className="flex-1 hidden md:block" />
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </section>
+
+                        <footer className="mt-20 md:mt-32 text-center flex flex-col items-center gap-8 md:gap-12">
+                            <div className="w-full h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent"></div>
+                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-3 px-8 py-4 md:px-14 md:py-5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[10px] md:text-[13px] font-black tracking-[0.3em] md:tracking-[0.4em] transition-all text-zinc-500 hover:text-white uppercase italic">
+                                <Info size={18} /> {t.legal}
+                            </button>
+                            <div className="text-zinc-800 text-[9px] md:text-[11px] font-black tracking-[0.5em] md:tracking-[0.8em] uppercase opacity-40 italic">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
+                        </footer>
+                    </div>
+
+                    {showLegal && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in text-zinc-100">
+                            <div className="glass-modal rounded-[2rem] md:rounded-[3rem] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl cyan-glow">
+                                <div className="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-zinc-100 text-left">
+                                    <h2 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 md:p-3 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
+                                        <X size={26} />
+                                    </button>
+                                </div>
+                                <div className="p-8 md:p-10 overflow-y-auto custom-scroll space-y-10 md:space-y-12 text-left text-zinc-100">
+                                    <section>
+                                        <h3 className="text-cyan-500 font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] mb-4 md:mb-6 italic">Impressum</h3>
+                                        <div className="space-y-4 font-bold text-zinc-100 uppercase">
+                                            <p className="text-xl md:text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-500 text-[10px] md:text-[11px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
+                                            <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
+                                            <div className="pt-4 md:pt-6 text-left">
+                                                <p className="text-zinc-600 text-[9px] md:text-[10px] mb-1 tracking-[0.3em] uppercase font-bold">E-Mail Kontakt</p>
+                                                <p className="text-cyan-400 text-sm md:text-base font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section className="space-y-6 text-left">
+                                        <div>
+                                            <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.legalPrivacy}</h3>
+                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.legalPrivacyText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 md:mb-2 italic text-left">{t.trademarkLabel}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 md:mb-2 italic text-left">Haftungsausschluss</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
+                                        </div>
+                                    </section>
+                                    <div className="pt-8 md:pt-10 border-t border-white/5 text-[9px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] text-zinc-700 font-black text-center italic">
+                                        Privatprojekt • Linz (OÖ) • {new Date().getFullYear()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
