@@ -76,7 +76,7 @@
 
         const translations = {
             de: {
-                name: "Deutsch", flag: "🇦🇹", back: "Zurück", offer: "Angebot", title: "Hardware Marketplace 📦",
+                name: "Deutsch", flag: "🇦🇹", back: "Zurück", offer: "Angebot", title: "Hardware Marketplace",
                 description: "Hier findest du Hardware und Ersatzteile aus meinem Bestand. Die Abwicklung erfolgt sicher über die verlinkten Plattformen.",
                 viewOn: "Auf {platform} ansehen", comingSoon: "Bald neue Artikel...", legal: "Impressum & Rechtliches",
                 legalTitle: "Rechtliche Informationen", imprintLabel: "Impressum / Offenlegung", addressLabel: "Anschrift",
@@ -88,7 +88,7 @@
                 sold: "Verkauft", unavailable: "Nicht mehr verfügbar"
             },
             en: {
-                name: "English", flag: "🇬🇧", back: "Back", offer: "Offer", title: "Hardware Marketplace 📦",
+                name: "English", flag: "🇬🇧", back: "Back", offer: "Offer", title: "Hardware Marketplace",
                 description: "Explore hardware and spare parts from my personal inventory. Secure checkout via the linked platforms.",
                 viewOn: "View on {platform}", comingSoon: "More items coming soon...", legal: "Legal Notice",
                 legalTitle: "Legal Information", imprintLabel: "Imprint / Disclosure", addressLabel: "Address",
@@ -321,7 +321,9 @@
                         <header className="mb-12 text-center md:text-left text-zinc-100">
                             <div className="inline-block px-4 py-1.5 bg-orange-500/10 text-orange-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-8 border border-orange-500/20">{t.offer}</div>
                             <div className="mb-6">
-                                <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-tight">{t.title}</h1>
+                                <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-tight">
+                                    {t.title} <span className="not-italic inline-block ml-2">📦</span>
+                                </h1>
                             </div>
                             <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12 italic">"{t.description}"</p>
                             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
