@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Services | thataustrianone</title>
+    <title>Support | thataustrianone</title>
     
     <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
@@ -13,6 +13,23 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
+        /* LOKALE SCHRIFTARTEN - Pfade exakt an GitHub Struktur angepasst */
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Fallback */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         body { 
@@ -24,19 +41,11 @@
             overflow-x: hidden;
         }
 
-        .font-heavy-italic {
-            font-weight: 900;
-            font-style: italic;
-            text-transform: uppercase;
-            letter-spacing: -0.05em;
-        }
-        
-        /* Neuer Style für das Logo im Header (wie das orange Bild) */
         .header-logo-text {
-            font-weight: 900; /* Black */
-            font-style: normal; /* Nicht kursiv */
-            text-transform: lowercase; /* Kleingeschrieben */
-            letter-spacing: -0.04em; /* Enger Buchstabenabstand */
+            font-weight: 900;
+            font-style: normal;
+            text-transform: lowercase;
+            letter-spacing: -0.04em;
         }
 
         .animate-in { animation: fadeIn 0.4s ease-out forwards; }
@@ -81,7 +90,6 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // --- PDF Helper ---
         const loadScript = (src) => new Promise((resolve) => {
             const script = document.createElement('script');
             script.src = src;
@@ -101,89 +109,93 @@
         const Mail = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>;
         const DiscordIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028c.462-.63.874-1.295 1.226-1.994.021-.041.001-.09-.041-.106a13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993.023.03.07.04.084.028a19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/></svg>;
         const MapPin = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="12" r="3"/></svg>;
-        const WhatsApp = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.894-5.335 11.897-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>;
+        const WhatsApp = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 0 1-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 0 1-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 0 1 2.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.634 1.437h.005c6.558 0 11.894-5.335 11.897-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>;
         const TelegramIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm4.64 6.8c-.15 1.58-.8 5.42-1.13 7.19-.14.75-.42 1-.68 1.03-.58.05-1.02-.38-1.58-.75-.88-.58-1.38-.94-2.23-1.5-.99-.65-.35-1.01.22-1.59.15-.15 2.71-2.48 2.76-2.69a.2.2 0 0 0-.05-.18c-.06-.05-.14-.03-.21-.02-.09.02-1.49.95-4.22 2.79-.4.27-.76.41-1.08.4-.36-.01-1.04-.2-1.55-.37-.63-.2-1.12-.31-1.08-.66.02-.18.27-.36.74-.55 2.92-1.27 4.86-2.11 5.83-2.51 2.78-1.16 3.35-1.36 3.73-1.36.08 0 .27.02.39.12.1.08.13.19.14.27-.01.06.01.24 0 .33z"/></svg>;
         const MonitorDown = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 17V3"/><path d="m8 13 4 4 4-4"/><path d="M20 21H4a2 2 0 0 1-2-2v-2a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v2a2 2 0 0 1-2 2Z"/></svg>;
 
         const translations = {
             de: {
-                flag: "🇦🇹", langName: "Deutsch", back: "ZURÜCK", offer: "MEIN ANGEBOT",
-                title: "Tech-Hilfe & Support",
+                flag: "🇦🇹", langName: "Deutsch", back: "ZURÜCK", offer: "MEIN HOBBY-SUPPORT",
+                title: "Tech-Support & Hobby-Hilfe",
                 dynamicDescriptions: [
-                    "Private Unterstützung bei Hardware-Problemen.",
-                    "Symmetrisch, sauber und unkompliziert.",
-                    "Hilfe bei Software-Fehlern oder Wunsch-Builds.",
-                    "Technik-Support aus Leidenschaft."
+                    "Ich helfe dir privat bei Hardware-Problemen.",
+                    "Nachbarschaftshilfe für deine Tech-Sorgen.",
+                    "Unterstützung als Schüler aus Leidenschaft.",
+                    "Kein Gewerbe, reine private Unterstützung."
                 ],
-                consultationPrice: "Einmalig 5€", consultationTitle: "ERSTBERATUNG", consultationDesc: "Aufwandsentschädigung für die investierte Zeit. Meine Zeit ist mir wichtig!",
-                locationTitle: "VOR-ORT SERVICE", locationDesc: "OBERÖSTERREICH • Linz & UU kostenlos • Sonst 10€ • Andere Bundesländer auf Absprache!",
-                pricingTitle: "Wähle ein Paket", hourlyRateTitle: "ANDERE AUFGABEN", hourlyRateDesc: "Alles, was nicht in den Paketen ist, mache ich fair pro Stunde.",
-                configTitle: "SMARTER KONFIGURATOR", configDesc: "Schreibe mir stichwortartig (mit Beistrichen), was du brauchst.",
-                configModalTitle: "ALGORITHMUS-RECHNER", configModalDesc: "Bitte trenne verschiedene Wünsche unbedingt mit Beistrichen ab (z.B. BIOS Update, RGB Setup).",
+                consultationPrice: "5€ Spende", consultationTitle: "AUFWANDSBEITRAG", consultationDesc: "Orientierungshilfe für die investierte Zeit. Meine Freizeit ist wertvoll!",
+                locationTitle: "VOR-ORT UNTERSTÜTZUNG", locationDesc: "OBERÖSTERREICH • Linz & UU • Nur nach privater Absprache!",
+                pricingTitle: "Wähle einen Bereich", hourlyRateTitle: "SONSTIGES", hourlyRateDesc: "Alles andere können wir privat fair absprechen.",
+                configTitle: "ZEIT- & AUFWANDSSCHÄTZER", configDesc: "Schreibe mir, was du brauchst (mit Beistrichen).",
+                configModalTitle: "AUFWANDS-BERECHNER", configModalDesc: "Bitte trenne verschiedene Wünsche mit Beistrichen ab (z.B. BIOS Update, RGB Setup).",
                 configPlaceholder: "z.B. BIOS Update, RGB Sync einstellen, SSD Klonen, Backup...",
-                configExport: "PDF SPEICHERN", durationLabel: "GESCHÄTZTE DAUER", priceLabel: "BERECHNETER PREIS",
+                configExport: "ANFRAGE-PDF SPEICHERN", durationLabel: "DAUER (SCHÄTZUNG)", priceLabel: "EMPFOHLENER BEITRAG",
                 configHint: "Bitte gib mindestens 3 Zeichen ein.",
-                pdfNotice: "BITTE DIESES PDF DER NACHRICHT ANHÄNGEN!",
-                legal: "RECHTLICHES & INFO", privateNotice: "ICH BIN EINE PRIVATPERSON (SCHÜLER, 16J). DIES IST KEIN GEWERBLICHES ANGEBOT, SONDERN PRIVATE HILFE.",
-                requestBtn: "JETZT ANFRAGEN", contactBtn: "ANFRAGE SENDEN", fixpreisLabel: "Fixpreis", infoTitle: "Informationen",
+                pdfNotice: "DIESE SCHÄTZUNG DIENT DER ORIENTIERUNG FÜR MEINE NACHBARSCHAFTSHILFE!",
+                legal: "RECHTLICHES & INFO", privateNotice: "ICH BIN EINE PRIVATPERSON (SCHÜLER, 16J). DIES IST KEIN GEWERBLICHES ANGEBOT, SONDERN PRIVATE HILFE / NACHBARSCHAFTSHILFE.",
+                requestBtn: "PRIVAT ANFRAGEN", contactBtn: "ANFRAGE SENDEN", fixpreisLabel: "Vorschlag", infoTitle: "RECHTLICHE INFORMATIONEN",
                 rustDeskReq: "FÜR DIE FERNWARTUNG IST RUSTDESK ERFORDERLICH.",
                 rustDeskLink: "RUSTDESK DOWNLOADEN",
                 legalModal: {
-                    title: "RECHTLICHE INFORMATIONEN",
-                    imprint: "IMPRESSUM / OFFENLEGUNG",
-                    contact: "KONTAKT",
+                    title: "Rechtliche Informationen",
+                    imprint: "Impressum",
+                    contact: "E-Mail Kontakt",
                     addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
                     address: "4040 Linz, Österreich",
-                    liability: "HAFTUNGSAUSSCHLUSS",
-                    liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind ausschließlich deren Betreiber verantwortlich. Zudem übernehme ich keine Haftung für Datenverlust oder Hardware-Schäden bei privaten Hilfestellungen. Bitte erstelle immer ein Backup!",
-                    compliance: "Legal Compliance • ECG Austria"
+                    privacy: "Datenschutz & Dienste",
+                    privacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an die Lanyard API (Discord Status) und den Spotify-Player übertragen, jedoch nicht durch den Betreiber gespeichert.",
+                    trademarkLabel: "Urheberrecht & Marken",
+                    trademarkText: "Alle verwendeten Markennamen (ROG, Razer, JBL, Corsair, be quiet!, AsiaHorse, Samsung, AMD, NVIDIA, HP, Lenovo, Spotify) sind Eigentum der jeweiligen Inhaber und dienen lediglich der Produktbeschreibung. Alle Hardware- und Setup-Fotos auf dieser Seite sind Privataufnahmen von Niklas Ausserwoeger.",
+                    liability: "Haftungsausschluss",
+                    liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links oder Hardwareschäden bei privater Hilfestellung. Backups sind immer Pflicht!",
+                    compliance: "Privatprojekt • Linz (OÖ)"
                 },
                 packages: [
-                    { id: "pc-bau", title: "PC ZUSAMMENBAU & TEST", short: "Dein Wunsch-PC fachmännisch gebaut.", price: "70€", details: "Ich baue deinen PC aus Einzelteilen zusammen, achte auf perfektes Cable-Management und führe einen Stresstest durch.", features: ["Kompletter Zusammenbau", "Kabelmanagement", "BIOS Setup", "Stresstests"], image: "https://github.com/der46er/webseite/blob/main/assets/pc.jpeg?raw=true", video: "https://github.com/der46er/webseite/blob/main/assets/setup_showcase.mp4?raw=true", attribution: "Privataufnahme" },
-                    { id: "windows", title: "WINDOWS & TREIBER SETUP", short: "Saubere Installation & Wunschprogramme.", price: "45€", details: "Neuinstallation von Windows 10/11 inklusive aller Treiber und deiner gewünschten Programme (bitte Liste per Mail schicken).", features: ["Windows Neuinstallation", "Wunsch-Programme", "Treiber-Check", "System-Updates"], image: "https://msftstories.thesourcemediaassets.com/sites/40/2021/06/Hero-Bloom-Logo.png", attribution: "© Microsoft Corporation" },
-                    { id: "cleaning", title: "REINIGUNG & SERVICE", short: "FPS-Boost durch weniger Hitze.", price: "35€", details: "Fachmännische Innenreinigung und Auftragung neuer Hochleistungs-Wärmeleitpaste auf CPU & GPU.", features: ["Innenreinigung", "Neue Wärmeleitpaste", "Lüfter-Service", "Temperatur-Check"], image: "https://github.com/der46er/webseite/blob/main/assets/old_gpu.jpg?raw=true", attribution: "Privataufnahme" },
-                    { id: "diagnosis", title: "FEHLERDIAGNOSE", short: "Wir finden das Problem.", price: "20€", details: "Analyse von Hardware-Defekten oder Software-Fehlern inklusive Dokumentation.", features: ["Hardware-Test", "Bluescreen Analyse", "Kostencheck Teile", "Reparatur-Plan"], images: ["https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(1).jpg?raw=true", "https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(2).jpg?raw=true", "https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(3).jpg?raw=true"], attribution: "Privataufnahme" },
-                    { id: "online", title: "ONLINE-FERNHILFE", short: "Support via Teams / RustDesk.", price: "15€", details: "Hilfe bei Software-Problemen direkt über Microsoft Teams oder RustDesk. RustDesk muss vorab installiert werden.", features: ["Support via Microsoft Teams", "Support via RustDesk", "Software-Hilfe", "30 Min Sitzung"], video: "https://github.com/der46er/webseite/blob/main/assets/support_cover.mp4?raw=true", attribution: "Privataufnahme", partners: [{ name: "Teams", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg/512px-Microsoft_Office_Teams_%282018%E2%80%93present%29.svg.png" }, { name: "RustDesk", logo: "https://rustdesk.com/img/logo.svg" }] }
+                    { id: "pc-bau", title: "PC UNTERSTÜTZUNG (Zusammenbau)", short: "Ich helfe dir beim Zusammenbau deines PCs.", price: "70€*", details: "Ich helfe dir privat beim Aufbau deines PCs, achte auf das Kabelmanagement und wir testen alles gemeinsam.", features: ["Gefälligkeit beim Bau", "Kabel-Hilfe", "Gemeinsames BIOS Setup", "Technik-Test"], image: "https://github.com/der46er/webseite/blob/main/assets/pc.jpeg?raw=true", video: "https://github.com/der46er/webseite/blob/main/assets/setup_showcase.mp4?raw=true", attribution: "Privataufnahme" },
+                    { id: "windows", title: "SOFTWARE-HILFE (Windows)", short: "Hilfe bei der Installation & Einrichtung.", price: "45€*", details: "Ich helfe dir bei der Neuinstallation von Windows und deiner gewünschten Programme.", features: ["Windows Hilfe", "Einrichtungshilfe", "Treiber-Check", "Updates"], image: "https://msftstories.thesourcemediaassets.com/sites/40/2021/06/Hero-Bloom-Logo.png", attribution: "© Microsoft Corporation" },
+                    { id: "cleaning", title: "PC REINIGUNG (Pflege)", short: "Hilfe beim Säubern und Erneuern.", price: "35€*", details: "Wir säubern deinen PC gemeinsam und tragen bei Bedarf neue Paste auf.", features: ["Hobby-Reinigung", "Paste erneuern", "Lüfterpflege", "Checkup"], image: "https://github.com/der46er/webseite/blob/main/assets/old_gpu.jpg?raw=true", attribution: "Privataufnahme" },
+                    { id: "diagnosis", title: "CHECKUP & DIAGNOSE", short: "Wir schauen uns das Problem an.", price: "20€*", details: "Analyse von Fehlern im Rahmen einer privaten Hilfestellung.", features: ["Checkup", "Analyse", "Beratung", "Planung"], images: ["https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(1).jpg?raw=true", "https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(2).jpg?raw=true", "https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(3).jpg?raw=true"], attribution: "Privataufnahme" },
+                    { id: "online", title: "ONLINE FERN-HILFE", short: "Hobby-Support via Discord/Teams.", price: "15€*", details: "Ich schalte mich privat bei dir auf, um Software-Fragen zu klären.", features: ["Discord Support", "Teams Hilfe", "Privat-Sitzung", "Gefälligkeit"], video: "https://github.com/der46er/webseite/blob/main/assets/support_cover.mp4?raw=true", attribution: "Privataufnahme", partners: [{ name: "Teams", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg/512px-Microsoft_Office_Teams_%282018%E2%80%93present%29.svg.png" }, { name: "RustDesk", logo: "https://rustdesk.com/img/logo.svg" }] }
                 ]
             },
             en: {
-                flag: "🇬🇧", langName: "English", back: "BACK", offer: "MY OFFER",
-                title: "Tech Help & Support",
+                flag: "🇬🇧", langName: "English", back: "BACK", offer: "MY HOBBY SUPPORT",
+                title: "Tech-Support & Hobby Help",
                 dynamicDescriptions: [
                     "Private support for hardware issues.",
-                    "Symmetrical, clean and straightforward.",
-                    "Help with software errors or custom builds.",
-                    "Tech support with passion."
+                    "Neighborhood help for your tech worries.",
+                    "Support as a student driven by passion.",
+                    "Non-commercial, purely private support."
                 ],
-                consultationPrice: "One-time 5€", consultationTitle: "CONSULTATION", consultationDesc: "Fee for the time invested. My time is valuable to me!",
-                locationTitle: "ON-SITE SERVICE", locationDesc: "UPPER AUSTRIA • Linz & UU free • Others 10€ • Other regions upon request!",
-                pricingTitle: "Pick a Package", hourlyRateTitle: "OTHER TASKS", hourlyRateDesc: "Everything not in a package is charged fairly per hour.",
-                configTitle: "SMART CONFIGURATOR", configDesc: "Write keywords (separated by commas) of what you need.",
-                configModalTitle: "ALGORITHMUS CALCULATOR", configModalDesc: "Please separate different requests with commas (e.g., BIOS Update, RGB Setup).",
-                configPlaceholder: "e.g., BIOS Update, RGB Setup, SSD Cloning, Backup...",
-                configExport: "SAVE PDF", durationLabel: "ESTIMATED DURATION", priceLabel: "CALCULATED PRICE",
-                configHint: "Please enter at least 3 characters.",
-                pdfNotice: "PLEASE ATTACH THIS PDF TO YOUR MESSAGE!",
+                consultationPrice: "5€ donation", consultationTitle: "TIME CONTRIBUTION", consultationDesc: "Orientation for the time spent. My free time is valuable!",
+                locationTitle: "ON-SITE SUPPORT", locationDesc: "UPPER AUSTRIA • Linz & UU • Only after private consultation!",
+                pricingTitle: "Choose a Category", hourlyRateTitle: "OTHER TASKS", hourlyRateDesc: "Anything else can be discussed privately.",
+                configTitle: "TIME ESTIMATOR", configDesc: "Write what you need (separated by commas).",
+                configModalTitle: "EFFORT CALCULATOR", configModalDesc: "Separate requests with commas.",
+                configPlaceholder: "e.g., BIOS Update, RGB Setup...",
+                configExport: "SAVE INQUIRY PDF", durationLabel: "ESTIMATED DURATION", priceLabel: "SUGGESTED CONTRIBUTION",
+                configHint: "Enter at least 3 characters.",
+                pdfNotice: "THIS ESTIMATE IS FOR ORIENTATION FOR MY PRIVATE SUPPORT!",
                 legal: "LEGAL & INFO", privateNotice: "I AM A PRIVATE INDIVIDUAL (STUDENT, 16Y). THIS IS NOT A COMMERCIAL OFFER, BUT PRIVATE HELP.",
-                requestBtn: "INQUIRE NOW", contactBtn: "SEND INQUIRY", fixpreisLabel: "Fixed Price", infoTitle: "Information",
+                requestBtn: "REQUEST PRIVATELY", contactBtn: "SEND INQUIRY", fixpreisLabel: "Suggestion", infoTitle: "Legal Information",
                 rustDeskReq: "RUSTDESK IS REQUIRED FOR REMOTE SUPPORT.",
                 rustDeskLink: "DOWNLOAD RUSTDESK",
                 legalModal: {
-                    title: "LEGAL INFORMATION",
-                    imprint: "IMPRINT / DISCLOSURE",
-                    contact: "CONTACT",
-                    addressRequest: "Full address is available only upon justified request via email for privacy reasons.",
+                    title: "Legal Information",
+                    imprint: "Imprint",
+                    contact: "E-Mail Contact",
+                    addressRequest: "Full address available upon request via email for privacy reasons.",
                     address: "4040 Linz, Austria",
-                    liability: "DISCLAIMER",
-                    liabilityText: "I assume no liability for the content of external links. The operators of the linked pages are solely responsible for their content. Furthermore, I accept no liability for data loss or hardware damage during private assistance. Always make a backup!",
-                    compliance: "Legal Compliance • ECG Austria"
+                    privacy: "Privacy & Services",
+                    privacyText: "This website is a private presence. To protect privacy, fonts are hosted locally. IP addresses are transmitted to external services for technical purposes only.",
+                    trademarkLabel: "Copyright & Trademarks",
+                    trademarkText: "All brand names used are property of their respective owners. All hardware and setup photos are private photography by Niklas Ausserwoeger.",
+                    liability: "Disclaimer",
+                    liabilityText: "I assume no liability for the content of external links or hardware damage during private assistance. Backups are mandatory!",
+                    compliance: "Private Project • Linz (OÖ)"
                 },
                 packages: [
-                    { id: "pc-bau", title: "PC ASSEMBLY & TEST", short: "Your dream PC professionally built.", price: "70€", details: "I assemble your PC from individual parts, ensure perfect cable management, and perform a stress test.", features: ["Full Assembly", "Cable Management", "BIOS Setup", "Stress Tests"], image: "https://github.com/der46er/webseite/blob/main/assets/pc.jpeg?raw=true", video: "https://github.com/der46er/webseite/blob/main/assets/setup_showcase.mp4?raw=true", attribution: "Privataufnahme" },
-                    { id: "windows", title: "WINDOWS & DRIVER SETUP", short: "Clean installation & desired apps.", price: "45€", details: "Reinstallation of Windows 10/11 including all drivers and your desired programs.", features: ["Windows Reinstall", "Custom Software", "Driver Check", "System Updates"], image: "https://msftstories.thesourcemediaassets.com/sites/40/2021/06/Hero-Bloom-Logo.png", attribution: "© Microsoft Corporation" },
-                    { id: "cleaning", title: "CLEANING & SERVICE", short: "FPS boost through less heat.", price: "35€", details: "Professional internal cleaning and application of new high-performance thermal paste to CPU & GPU.", features: ["Internal Cleaning", "New Thermal Paste", "Fan Service", "Temperature Check"], image: "https://github.com/der46er/webseite/blob/main/assets/old_gpu.jpg?raw=true", attribution: "Privataufnahme" },
-                    { id: "diagnosis", title: "FAULT DIAGNOSIS", short: "We find the issue.", price: "20€", details: "Analysis of hardware defects or software errors including documentation.", features: ["Hardware Test", "Bluescreen Analysis", "Parts Cost Check", "Repair Plan"], images: ["https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(1).jpg?raw=true", "https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(2).jpg?raw=true", "https://github.com/der46er/webseite/blob/main/assets/diagnose_image%20(3).jpg?raw=true"], attribution: "Privataufnahme" },
-                    { id: "online", title: "REMOTE HELP", short: "Support via Teams / RustDesk.", price: "15€", details: "Help with software problems directly via Microsoft Teams or RustDesk. RustDesk must be installed beforehand.", features: ["Support via Microsoft Teams", "Support via RustDesk", "Software Help", "30 Min Session"], video: "https://github.com/der46er/webseite/blob/main/assets/support_cover.mp4?raw=true", attribution: "Privataufnahme", partners: [{ name: "Teams", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg/512px-Microsoft_Office_Teams_%282018%E2%80%93present%29.svg.png" }, { name: "RustDesk", logo: "https://rustdesk.com/img/logo.svg" }] }
+                    { id: "pc-bau", title: "PC BUILD ASSISTANCE", short: "I'll help you assemble your PC.", price: "70€*", details: "Private build assistance and gemeinsam test.", features: ["Build help", "Cable help", "BIOS setup", "Test"], image: "https://github.com/der46er/webseite/blob/main/assets/pc.jpeg?raw=true", attribution: "Private" }
                 ]
             }
         };
@@ -206,32 +218,21 @@
                 setIsGenerating(true);
                 await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js');
                 const doc = new window.jspdf.jsPDF();
-                const addLogo = () => new Promise((resolve) => {
-                    const img = new Image(); img.crossOrigin = "Anonymous";
-                    img.src = "https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png";
-                    img.onload = () => {
-                        const canvas = document.createElement("canvas"); canvas.width = img.width; canvas.height = img.height;
-                        canvas.getContext("2d").drawImage(img, 0, 0);
-                        doc.addImage(canvas.toDataURL("image/png"), 'PNG', 170, 15, 20, 20); resolve();
-                    };
-                    img.onerror = () => resolve();
-                });
-                await addLogo();
-                doc.setFont("helvetica", "bold").setFontSize(26).setTextColor("#d946ef").text("Tech-Angebot", 20, 30);
+                
+                doc.setFont("helvetica", "bold").setFontSize(26).setTextColor("#d946ef").text("Hobby-Support Schätzung", 20, 30);
                 doc.setFontSize(10).setTextColor("#9ca3af").text(`Erstellt am ${new Date().toLocaleDateString('de-DE')}`, 20, 38);
                 doc.setDrawColor("#d946ef").line(20, 45, 190, 45);
-                doc.setFontSize(12).setTextColor("#1f2937").text("Deine Anfrage:", 20, 60);
+                doc.setFontSize(12).setTextColor("#1f2937").text("Was du privat brauchst:", 20, 60);
                 doc.setFont("helvetica", "normal");
                 const splitText = doc.splitTextToSize(input, 160); doc.text(splitText, 25, 70);
                 const yPos = 75 + (splitText.length * 7);
                 doc.setFillColor("#f3f4f6").roundedRect(20, yPos, 170, 40, 3, 3, 'F');
-                doc.setFont("helvetica", "bold").setFontSize(10).setTextColor("#6b7280").text("ZUSAMMENFASSUNG", 30, yPos + 10);
-                doc.setFontSize(14).setTextColor("#1f2937").text(`Dauer: ~ ${result.minutes} Minuten`, 30, yPos + 22);
-                doc.setFontSize(18).setTextColor("#d946ef").text(`Preis: ${result.price} €`, 140, yPos + 22);
-                // Added distinct red warning notice
-                doc.setFontSize(12).setTextColor("#ef4444").text(t.pdfNotice, 20, yPos + 55); 
+                doc.setFont("helvetica", "bold").setFontSize(10).setTextColor("#6b7280").text("DAUER & AUFWAND", 30, yPos + 10);
+                doc.setFontSize(14).setTextColor("#1f2937").text(`Geschätzte Zeit: ~ ${result.minutes} Min.`, 30, yPos + 22);
+                doc.setFontSize(18).setTextColor("#d946ef").text(`Richtwert: ${result.price} €`, 140, yPos + 22);
+                doc.setFontSize(10).setTextColor("#ef4444").text("HINWEIS: Rein private Nachbarschaftshilfe unter Freunden/Bekannten.", 20, yPos + 55); 
                 
-                doc.save(`Tech-Angebot-${Date.now()}.pdf`);
+                doc.save(`Support-Schätzung-${Date.now()}.pdf`);
                 setIsGenerating(false);
             };
 
@@ -245,7 +246,6 @@
                         </div>
                         <div className="p-8 space-y-6">
                             <textarea value={input} onChange={(e) => setInput(e.target.value)} placeholder={t.configPlaceholder} className="w-full h-32 bg-black/30 border border-white/10 rounded-2xl p-5 text-white placeholder-zinc-600 focus:outline-none focus:border-fuchsia-500/50 transition-all resize-none font-medium" />
-                            {!isInputValid && input.length > 0 && <p className="text-fuchsia-500 text-[10px] font-black uppercase tracking-widest">{t.configHint}</p>}
                             <div className="flex gap-4">
                                 <div className="flex-1 bg-white/5 p-5 rounded-2xl border border-white/5">
                                     <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-1">{t.durationLabel}</p>
@@ -253,9 +253,10 @@
                                 </div>
                                 <div className="flex-1 bg-white/5 p-5 rounded-2xl border border-white/5 text-right">
                                     <p className="text-[10px] text-zinc-500 font-black uppercase tracking-widest mb-1">{t.priceLabel}</p>
-                                    <p className="text-3xl font-black italic text-fuchsia-500">{result.price}€</p>
+                                    <p className="text-3xl font-black italic text-fuchsia-500">{result.price}€*</p>
                                 </div>
                             </div>
+                            <p className="text-[9px] text-zinc-600 italic uppercase">*Alle Beträge sind nur Richtwerte für eine private Zeitentschädigung (Nachbarschaftshilfe).</p>
                             <button onClick={generatePDF} disabled={!isInputValid} className="w-full py-4 btn-magenta disabled:opacity-20 rounded-xl font-black uppercase tracking-[0.2em] text-xs transition-all shadow-lg flex items-center justify-center gap-2 text-white">
                                 <Download size={16} /> {isGenerating ? "Generiere..." : t.configExport}
                             </button>
@@ -304,8 +305,7 @@
             return (
                 <div className="min-h-screen pb-20 text-zinc-100 selection:bg-fuchsia-500/30">
                     <div className="fixed inset-0 pointer-events-none z-0">
-                        <div className="absolute top-[-10%] left-[20%] w-[60%] h-[40%] bg-fuchsia-600/5 blur-[120px] rounded-full" />
-                        <div className="absolute bottom-[-10%] right-[10%] w-[50%] h-[50%] bg-purple-600/5 blur-[120px] rounded-full" />
+                        <div className="absolute top-[-10%] left-20 w-[60%] h-[40%] bg-fuchsia-600/5 blur-[120px] rounded-full" />
                     </div>
 
                     <nav className="fixed top-0 w-full z-50 h-24 flex items-center px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
@@ -338,12 +338,8 @@
                             
                             <div className="flex flex-wrap items-stretch gap-4">
                                 <div className="glass-card rounded-[2.5rem] p-5 pr-10 inline-flex items-center gap-6 magenta-glow">
-                                    <div className="bg-fuchsia-600 text-white font-black px-6 py-3 rounded-full text-[12px] uppercase tracking-wider italic shadow-lg shadow-fuchsia-500/30">{t.consultationPrice}</div>
+                                    <div className="bg-fuchsia-600 text-white font-black px-6 py-3 rounded-full text-[12px] uppercase tracking-wider italic shadow-lg">{t.consultationPrice}</div>
                                     <div className="flex flex-col text-left"><span className="text-white font-black text-[11px] tracking-widest uppercase">{t.consultationTitle}</span><span className="text-zinc-500 text-xs font-bold leading-tight mt-1 max-w-[200px]">{t.consultationDesc}</span></div>
-                                </div>
-                                <div className="glass-card rounded-[2.5rem] p-5 pr-10 inline-flex items-center gap-6">
-                                    <div className="w-14 h-14 bg-white/5 border border-white/10 rounded-full flex items-center justify-center text-fuchsia-500"><MapPin size={28} /></div>
-                                    <div className="flex flex-col text-left"><span className="text-white font-black text-[11px] tracking-widest uppercase">{t.locationTitle}</span><span className="text-zinc-500 text-[11px] font-bold leading-snug mt-1 max-w-[280px]">{t.locationDesc}</span></div>
                                 </div>
                                 <div className="flex flex-wrap items-center gap-3">
                                     <a href="mailto:niklas.ausserwoeger@gmail.com" className="w-16 h-16 glass-card rounded-full flex items-center justify-center text-zinc-400 hover:text-fuchsia-500 hover:scale-110 transition-all shadow-lg" title="E-Mail"><Mail size={28} /></a>
@@ -363,7 +359,6 @@
                                 </button>
                             ))}
                             <button onClick={() => setShowConfig(true)} className="relative group glass-card rounded-[2.5rem] p-10 text-left border-fuchsia-500/20 flex flex-col min-h-[360px] overflow-hidden text-zinc-100">
-                                <div className="absolute inset-0 bg-gradient-to-tr from-fuchsia-600/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                                 <div className="w-14 h-14 rounded-xl bg-fuchsia-600/20 flex items-center justify-center text-fuchsia-500 mb-8 border border-fuchsia-500/20"><Settings size={28} /></div>
                                 <h3 className="text-2xl font-black italic uppercase tracking-tight mb-4 group-hover:text-fuchsia-500 transition-colors italic">{t.configTitle}</h3>
                                 <p className="text-zinc-500 text-sm font-bold leading-relaxed flex-grow uppercase">{t.configDesc}</p>
@@ -374,9 +369,9 @@
                         <div className="mt-8 glass-card rounded-[3.5rem] p-12 flex flex-col md:flex-row items-center justify-between gap-8 border-dashed border-zinc-800">
                             <div className="text-left text-zinc-100">
                                 <h3 className="text-3xl font-black italic uppercase tracking-tight mb-2 uppercase">{t.hourlyRateTitle}</h3>
-                                <p className="text-zinc-500 text-lg font-bold italic uppercase">{t.hourlyRateDesc}</p>
+                                <p className="text-zinc-500 text-lg font-bold italic uppercase">Zeit-Richtwert für private Unterstützung:</p>
                             </div>
-                            <div className="text-7xl font-black text-fuchsia-500 italic tracking-tighter">45€ / Std.</div>
+                            <div className="text-7xl font-black text-fuchsia-500 italic tracking-tighter">~45€ / Std.*</div>
                         </div>
 
                         <footer className="mt-32 flex flex-col items-center w-full">
@@ -386,13 +381,17 @@
                                 <div className="w-20 h-1 bg-fuchsia-500/20 mx-auto mt-8 rounded-full" />
                             </div>
                             <button onClick={() => setShowLegal(true)} className="px-12 py-4 bg-white/5 border border-white/5 rounded-full text-[12px] font-black tracking-[0.5em] text-zinc-500 hover:text-white transition-all uppercase mb-8 uppercase italic tracking-widest">{t.legal}</button>
-                            <div className="text-zinc-800 text-[10px] font-black tracking-[0.7em] uppercase opacity-50">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
+                            <div className="text-zinc-800 text-[10px] font-black tracking-[0.7em] uppercase opacity-50 italic mb-4">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
+                            
+                            <div className="text-[10px] font-bold text-white/30 uppercase tracking-widest select-none">
+                                LIVE BUILD v1.2.9 | {new Date().toLocaleDateString('de-DE')}
+                            </div>
                         </footer>
                     </div>
 
                     {/* DETAIL VIEW / OVERLAY */}
                     {selectedPkg && (
-                        <div className="fixed inset-0 z-[150] bg-[#0f1115] text-white overflow-y-auto animate-in custom-scroll">
+                        <div className="fixed inset-0 z-[150] bg-[#0f1115] text-white overflow-y-auto animate-in custom-scroll text-left">
                             <nav className="fixed w-full z-50 bg-[#0f1115]/80 backdrop-blur-xl border-b border-white/5 h-20 flex items-center px-6">
                                 <button onClick={() => setSelectedPkg(null)} className="flex items-center gap-2 text-zinc-400 hover:text-white transition-all font-black uppercase tracking-widest text-[10px]">
                                     <ChevronLeft size={16} /> {t.back}
@@ -401,31 +400,13 @@
                             <div className="pt-32 pb-20 px-6 max-w-5xl mx-auto">
                                 <div className="relative rounded-[3rem] overflow-hidden bg-[#161920] border border-white/5 shadow-2xl">
                                     <div className="aspect-video w-full relative bg-black/40 flex items-center justify-center overflow-hidden">
-                                        {selectedPkg.video ? (
-                                            <video src={selectedPkg.video} autoPlay loop muted playsInline className="w-full h-full object-cover opacity-90" />
-                                        ) : selectedPkg.images ? (
-                                            <ImageGallery images={selectedPkg.images} />
-                                        ) : (
-                                            <img src={selectedPkg.image} className={`w-full h-full ${selectedPkg.id === 'windows' ? 'object-contain scale-90' : 'object-cover'} opacity-90`} alt="" />
-                                        )}
                                         <div className="absolute inset-0 bg-gradient-to-t from-[#161920] via-transparent to-transparent" />
                                         <div className="absolute bottom-10 left-10"><h1 className="text-4xl md:text-6xl font-black tracking-tight text-white uppercase italic">{selectedPkg.title}</h1></div>
-                                        {selectedPkg.attribution && <div className="absolute top-6 right-8 text-[9px] text-zinc-500 font-bold uppercase tracking-widest opacity-60 italic">{selectedPkg.attribution}</div>}
                                     </div>
                                     <div className="p-10 md:p-14">
                                         <div className="flex flex-col md:flex-row gap-16 items-start">
                                             <div className="flex-grow text-left">
                                                 <p className="text-zinc-400 text-xl leading-relaxed mb-12 font-medium italic">{selectedPkg.details}</p>
-                                                {selectedPkg.partners && (
-                                                    <div className="flex gap-6 mb-12 flex-wrap">
-                                                        {selectedPkg.partners.map(p => (
-                                                            <div key={p.name} className="flex items-center gap-3 bg-white/5 p-4 rounded-[1.5rem] border border-white/5">
-                                                                <img src={p.logo} className="h-7 w-auto object-contain" alt="" />
-                                                                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-300">{p.name}</span>
-                                                            </div>
-                                                        ))}
-                                                    </div>
-                                                )}
                                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                                                     {selectedPkg.features.map((f, i) => (
                                                         <div key={i} className="flex items-center gap-4 text-zinc-100 font-bold text-sm uppercase italic">
@@ -437,19 +418,9 @@
                                             </div>
                                             <div className="w-full md:w-80 shrink-0">
                                                 <div className="p-10 rounded-[2.5rem] bg-white/[0.02] border border-white/5 text-center shadow-2xl">
-                                                    
-                                                    {/* RustDesk Logic for Online Support */}
-                                                    {selectedPkg.id === 'online' && (
-                                                        <div className="mb-8 p-6 bg-fuchsia-900/20 border border-fuchsia-500/20 rounded-2xl">
-                                                            <div className="text-fuchsia-500 mb-2 flex justify-center"><MonitorDown size={28} /></div>
-                                                            <p className="text-[10px] font-black uppercase tracking-wider text-fuchsia-100 mb-4 leading-relaxed">{t.rustDeskReq}</p>
-                                                            <a href="https://rustdesk.com/" target="_blank" className="block w-full py-3 bg-fuchsia-500/10 hover:bg-fuchsia-500/20 text-fuchsia-400 border border-fuchsia-500/20 rounded-xl font-bold transition-all text-[9px] uppercase tracking-widest">{t.rustDeskLink}</a>
-                                                        </div>
-                                                    )}
-
-                                                    <div className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-3 italic">{t.fixpreisLabel}</div>
+                                                    <div className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.3em] mb-3 italic">Aufwands-Beitrag</div>
                                                     <div className="text-6xl font-black text-white mb-10 tracking-tighter italic">{selectedPkg.price}</div>
-                                                    <a href={`mailto:niklas.ausserwoeger@gmail.com?subject=Anfrage: ${selectedPkg.title}`} className="block w-full py-5 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-2xl font-black transition-all shadow-xl shadow-fuchsia-500/20 uppercase tracking-widest text-[10px]">{t.contactBtn}</a>
+                                                    <a href={`mailto:niklas.ausserwoeger@gmail.com?subject=Privat-Support: ${selectedPkg.title}`} className="block w-full py-5 bg-fuchsia-600 hover:bg-fuchsia-500 text-white rounded-2xl font-black transition-all shadow-xl uppercase tracking-widest text-[10px]">{t.contactBtn}</a>
                                                 </div>
                                             </div>
                                         </div>
@@ -466,27 +437,39 @@
                         <div className="fixed inset-0 z-[200] flex items-center justify-center p-4 bg-black/95 backdrop-blur-3xl animate-in">
                             <div className="glass-modal rounded-[3rem] w-full max-w-3xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl magenta-glow">
                                 <div className="p-10 border-b border-white/5 flex justify-between items-center text-zinc-100">
-                                    <h2 className="text-2xl font-black uppercase italic tracking-tighter">{t.infoTitle}</h2>
+                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalModal.title}</h2>
                                     <button onClick={() => setShowLegal(false)} className="p-3 text-zinc-500 hover:text-white transition-all"><X size={24} /></button>
                                 </div>
-                                <div className="p-10 overflow-y-auto custom-scroll space-y-12 text-left">
+                                <div className="p-10 overflow-y-auto custom-scroll space-y-12 text-left text-zinc-100">
                                     <section>
-                                        <h3 className="text-fuchsia-500 font-black uppercase text-[10px] tracking-[0.4em] mb-6 italic">{t.legalModal.imprint}</h3>
+                                        <h3 className="text-fuchsia-500 font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] mb-6 italic">{t.legalModal.imprint}</h3>
                                         <div className="space-y-4 font-bold text-zinc-100 uppercase">
-                                            <p className="text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
-                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed lowercase tracking-normal">"{t.legalModal.addressRequest}"</p>
+                                            <p className="text-xl md:text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-500 text-[10px] md:text-[11px] italic leading-relaxed lowercase tracking-normal">"{t.legalModal.addressRequest}"</p>
                                             <p className="text-xs tracking-widest italic">{t.legalModal.address}</p>
-                                            <div className="pt-4">
-                                                <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase">{t.legalModal.contact}</p>
-                                                <p className="text-fuchsia-400 text-sm font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
+                                            <div className="pt-4 md:pt-6">
+                                                <p className="text-zinc-600 text-[9px] md:text-[10px] mb-1 tracking-[0.3em] uppercase font-bold">{t.legalModal.contact}</p>
+                                                <p className="text-fuchsia-400 text-sm md:text-base font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
                                             </div>
                                         </div>
                                     </section>
-                                    <section>
-                                        <h3 className="text-fuchsia-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.legalModal.liability}</h3>
-                                        <p className="text-zinc-500 text-[11px] font-bold leading-relaxed italic uppercase tracking-wider">{t.legalModal.liabilityText}</p>
+                                    <section className="space-y-6 text-left">
+                                        <div>
+                                            <h3 className="text-fuchsia-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.legalModal.privacy}</h3>
+                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.legalModal.privacyText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 md:mb-2 italic text-left">{t.legalModal.trademarkLabel}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.legalModal.trademarkText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 md:mb-2 italic text-left">{t.legalModal.liability}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.legalModal.liabilityText}</p>
+                                        </div>
                                     </section>
-                                    <div className="pt-10 border-t border-white/5 text-[10px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic uppercase">Österreichische Privatseite • Nachbarschaftshilfe</div>
+                                    <div className="pt-8 md:pt-10 border-t border-white/5 text-[9px] md:text-[10px] uppercase tracking-[0.4em] md:tracking-[0.5em] text-zinc-700 font-black text-center italic">
+                                        {t.legalModal.compliance} • {new Date().getFullYear()}
+                                    </div>
                                 </div>
                             </div>
                         </div>
