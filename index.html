@@ -13,6 +13,22 @@
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     <style>
+        /* Lokale Schriftart-Einbindung (vorbereitet) */
+        @font-face {
+            font-family: 'Inter';
+            src: url('./assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('./assets/fonts/inter-v12-latin-900.woff2') format('woff2');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+        /* Fallback */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         body { 
@@ -22,7 +38,6 @@
             padding: 0; 
         }
         
-        /* Globaler Logo/Titel Style (900, normal, lowercase, enges spacing) */
         .header-logo-text {
             font-weight: 900;
             font-style: normal;
@@ -45,13 +60,9 @@
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        /* Grüner Glow für das Logo */
         .logo-themed {
             filter: sepia(100%) saturate(300%) hue-rotate(80deg) brightness(100%) drop-shadow(0 0 5px rgba(34, 197, 94, 0.5));
             transition: all 0.3s ease;
-        }
-        .group:hover .logo-themed {
-            filter: sepia(100%) saturate(500%) hue-rotate(80deg) brightness(110%) drop-shadow(0 0 8px rgba(34, 197, 94, 0.8));
         }
 
         .glass-modal {
@@ -71,43 +82,56 @@
         const ChevronRight = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
         const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
         const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
-        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
         const ShoppingCart = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>;
         const Share = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>;
-        const Settings = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
+        const Settings = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1-2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>;
+        const User = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7 7z"/></svg>;
 
         const translations = {
             de: {
                 flag: "🇦🇹", name: "Deutsch",
                 welcome: "Willkommen",
                 description: "Technik Enthusiast & Content Creator",
+                aboutTitle: "Meine Story",
+                aboutDesc: "Wer steckt hinter thataustrianone?",
                 shopTitle: "Hardware Marketplace",
                 shopDesc: "Check meine aktuellen Inserate",
                 servicesTitle: "Tech-Hilfe & Support",
                 servicesDesc: "Zusammenbau, Reinigung & mehr",
                 socialTitle: "Social Links",
                 socialDesc: "Folge mir auf meinen Kanälen",
-                legal: "Impressum & Rechtliches",
+                legal: "RECHTLICHES & INFO",
                 legalTitle: "Rechtliche Informationen",
+                legalPrivacy: "Datenschutz & Dienste",
+                legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. Es findet kein Tracking durch den Betreiber statt.",
                 addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
-                trademarkText: "Alle verwendeten Logos und Marken sind Eigentum der jeweiligen Inhaber und dienen nur der Identifikation.",
-                liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links."
+                trademarkLabel: "Urheberrecht & Marken",
+                trademarkText: "Alle verwendeten Markennamen (ROG, Razer, JBL, Corsair, be quiet!, AsiaHorse, Samsung, AMD, NVIDIA, HP, Lenovo, Spotify) sind Eigentum der jeweiligen Inhaber. Alle Hardware- und Setup-Fotos sind Privataufnahmen von Niklas Ausserwoeger.",
+                liabilityLabel: "Haftungsausschluss",
+                liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links oder Hardwareschäden bei privater Hilfestellung. Backups sind immer Pflicht!"
             },
             en: {
                 flag: "🇬🇧", name: "English",
                 welcome: "Welcome",
                 description: "Tech Enthusiast & Content Creator",
+                aboutTitle: "My Story",
+                aboutDesc: "Who is thataustrianone?",
                 shopTitle: "Hardware Marketplace",
                 shopDesc: "Browse my latest listings",
                 servicesTitle: "Tech Help & Support",
                 servicesDesc: "Assembly, cleaning & more",
                 socialTitle: "Social Links",
                 socialDesc: "Follow me on my channels",
-                legal: "Legal Notice",
+                legal: "LEGAL & INFO",
                 legalTitle: "Legal Information",
+                legalPrivacy: "Privacy & Services",
+                legalPrivacyText: "This website is a private project. To protect privacy, fonts are hosted locally. No tracking by the operator takes place.",
                 addressRequest: "Full address available upon justified request via email for privacy reasons.",
-                trademarkText: "All logos and trademarks used are property of their respective owners and are for identification only.",
-                liabilityText: "I assume no liability for the content of external links."
+                trademarkLabel: "Copyright & Trademarks",
+                trademarkText: "All brand names used are property of their respective owners. All hardware and setup photos are private photography by Niklas Ausserwoeger.",
+                liabilityLabel: "Disclaimer",
+                liabilityText: "I assume no liability for the content of external links or hardware damage during private assistance. Backups are mandatory!"
             }
         };
 
@@ -125,7 +149,7 @@
                         <Icon className="w-7 h-7 sm:w-8 sm:h-8 text-white group-hover:text-inherit transition-colors" />
                     </div>
                     <div className="text-left flex-grow">
-                        <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight group-hover:translate-x-1 transition-transform duration-300 italic uppercase">{title}</h2>
+                        <h2 className="text-xl sm:text-2xl font-black text-white tracking-tight group-hover:translate-x-1 transition-transform duration-300 italic uppercase leading-none mb-1">{title}</h2>
                         <p className="text-zinc-500 text-sm sm:text-base font-medium">{desc}</p>
                     </div>
                     <div className="text-zinc-700 group-hover:text-white transition-colors group-hover:translate-x-1 transition-transform">
@@ -158,34 +182,22 @@
                         <div className="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] bg-emerald-600/10 blur-[120px] rounded-full" />
                     </div>
 
-                    {/* Fixierte Navigation (Bleibt beim Scrollen oben) */}
+                    {/* Navigation */}
                     <nav className="fixed top-0 w-full z-50 h-24 flex items-center px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
                         <div className="flex-1"></div>
-                        
                         <div className="flex items-center gap-3">
                              <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-10 h-10 object-contain logo-themed" />
                              <span className="header-logo-text text-2xl">that<span className="text-green-500">austrianone.</span></span>
                         </div>
-                        
                         <div className="flex-1 flex justify-end relative" ref={menuRef}>
-                            <button 
-                                onClick={() => setShowLangMenu(!showLangMenu)}
-                                className="flex items-center gap-3 px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg"
-                            >
-                                <span>{t.flag}</span>
-                                <span>{t.name}</span>
-                                <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
+                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-3 px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
+                                <span>{t.flag}</span> <span>{t.name}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
                             </button>
                             {showLangMenu && (
                                 <div className="absolute right-0 top-16 w-48 glass-modal rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
                                     {Object.keys(translations).map((key) => (
-                                        <button
-                                            key={key}
-                                            onClick={() => { setLang(key); setShowLangMenu(false); }}
-                                            className={`flex items-center gap-3 w-full px-6 py-5 text-left text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-green-500 bg-green-500/5' : 'text-zinc-400'}`}
-                                        >
-                                            <span>{translations[key].flag}</span>
-                                            <span>{translations[key].name}</span>
+                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-6 py-5 text-left text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-green-500 bg-green-500/5' : 'text-zinc-400'}`}>
+                                            <span>{translations[key].flag}</span> <span>{translations[key].name}</span>
                                         </button>
                                     ))}
                                 </div>
@@ -193,26 +205,22 @@
                         </div>
                     </nav>
 
-                    {/* Content Wrapper mit Animation */}
                     <div className="relative z-10 max-w-4xl mx-auto px-6 pt-48 pb-20 animate-in">
-                        {/* Hero Header */}
                         <header className="flex flex-col items-center text-center mb-16 sm:mb-24 text-zinc-100">
-                            <div className="inline-block px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[9px] font-black tracking-[0.2em] mb-8 border border-green-500/20">
-                                {t.welcome}
-                            </div>
-                            
-                            {/* Großer Text im exakten Stil des Logos (900, normal, lowercase) */}
-                            <h1 className="header-logo-text text-6xl sm:text-8xl md:text-9xl mb-6 text-white leading-tight">
-                                that<span className="text-green-500">austrianone.</span>
-                            </h1>
-                            
-                            <p className="text-zinc-400 text-lg sm:text-xl font-medium max-w-md italic leading-relaxed">
-                                "{t.description}"
-                            </p>
+                            <div className="inline-block px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[9px] font-black tracking-[0.2em] mb-8 border border-green-500/20">{t.welcome}</div>
+                            <h1 className="header-logo-text text-6xl sm:text-8xl md:text-9xl mb-6 text-white leading-tight">that<span className="text-green-500">austrianone.</span></h1>
+                            <p className="text-zinc-400 text-lg sm:text-xl font-medium max-w-md italic leading-relaxed">"{t.description}"</p>
                         </header>
 
-                        {/* Navigation Cards */}
                         <div className="max-w-2xl mx-auto grid gap-6 sm:gap-8 text-zinc-100">
+                            <MainCard 
+                                title={t.aboutTitle} 
+                                desc={t.aboutDesc} 
+                                icon={User} 
+                                href="https://thataustrianone.eu/about-me/" 
+                                color="from-blue-600 via-cyan-500 to-indigo-600"
+                                isExternal={false}
+                            />
                             <MainCard 
                                 title={t.servicesTitle} 
                                 desc={t.servicesDesc} 
@@ -234,57 +242,57 @@
                                 desc={t.socialDesc} 
                                 icon={Share} 
                                 href="https://socials.thataustrianone.eu" 
-                                color="from-blue-600 via-indigo-600 to-purple-600"
+                                color="from-red-900 via-red-700 to-red-950"
                                 isExternal={true}
                             />
                         </div>
 
-                        {/* Footer */}
                         <footer className="mt-24 sm:mt-32 text-center flex flex-col items-center gap-8">
                             <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-12 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[12px] font-black tracking-[0.5em] transition-all text-zinc-500 hover:text-white uppercase">
                                 <Info size={16} /> {t.legal}
                             </button>
-                            <div className="text-zinc-800 text-[10px] font-black tracking-[0.7em] uppercase opacity-50">
-                                © {new Date().getFullYear()} — THAT AUSTRIAN ONE
-                            </div>
+                            <div className="text-zinc-800 text-[10px] font-black tracking-[0.7em] uppercase opacity-50 italic">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
                         </footer>
                     </div>
 
-                    {/* Legal Modal */}
                     {showLegal && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in text-zinc-100">
                             <div className="glass-modal rounded-[2.5rem] w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-                                <div className="p-8 border-b border-white/5 flex justify-between items-center text-zinc-100">
+                                <div className="p-8 border-b border-white/5 flex justify-between items-center">
                                     <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
-                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all text-zinc-100">
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
                                         <X size={24} />
                                     </button>
                                 </div>
-                                <div className="p-8 overflow-y-auto custom-scroll space-y-10 text-left text-zinc-100">
+                                <div className="p-8 overflow-y-auto custom-scroll space-y-10 text-left">
                                     <section>
                                         <h3 className="text-green-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">Impressum</h3>
-                                        <div className="space-y-4 font-bold text-zinc-100 uppercase">
+                                        <div className="space-y-4 font-bold uppercase">
                                             <p className="text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
                                             <p className="text-zinc-500 text-[10px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
                                             <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
-                                            <div className="pt-4 text-zinc-100">
+                                            <div className="pt-4">
                                                 <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase font-bold">E-Mail Kontakt</p>
                                                 <p className="text-blue-400 text-sm font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
                                             </div>
                                         </div>
                                     </section>
-                                    <section className="space-y-4 text-zinc-100">
+                                    <section className="space-y-6">
                                         <div>
-                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1">{lang === 'de' ? 'Marken & Logos' : 'Trademarks'}</h4>
-                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
+                                            <h3 className="text-green-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.legalPrivacy}</h3>
+                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.legalPrivacyText}</p>
                                         </div>
                                         <div>
-                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1">{lang === 'de' ? 'Haftungsausschluss' : 'Disclaimer'}</h4>
-                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">{t.trademarkLabel}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">{t.liabilityLabel}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
                                         </div>
                                     </section>
                                     <div className="pt-10 border-t border-white/5 text-[10px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic">
-                                        Legal Compliance • ECG Austria
+                                        Legal Compliance • ECG Austria • {new Date().getFullYear()}
                                     </div>
                                 </div>
                             </div>
