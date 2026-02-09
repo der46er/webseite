@@ -15,23 +15,23 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* Lokale Schriftarten */
+        /* Lokale Schriftarten - Pfade korrigiert auf ../assets für Unterordner-Struktur */
         @font-face {
             font-family: 'Inter';
-            src: url('./assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+            src: url('../assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Inter';
-            src: url('./assets/fonts/inter-v12-latin-900.woff2') format('woff2');
+            src: url('../assets/fonts/inter-v12-latin-900.woff2') format('woff2');
             font-weight: 900;
             font-style: normal;
             font-display: swap;
         }
 
-        /* Fallback */
+        /* Fallback zu Google Fonts falls lokale Dateien (noch) nicht erreichbar sind */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         body { 
@@ -133,7 +133,7 @@
         const { useState, useEffect, useRef } = React;
 
         const DISCORD_ID = "964500222870945873";
-        // Direktlink wie angefordert
+        // Direktlink zur stabilen REST-Schnittstelle
         const LANYARD_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
 
         const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
@@ -308,44 +308,30 @@
             const menuRef = useRef(null);
             const t = translations[lang];
 
-            // Robuste Spotify-Abfrage über den direkten REST-Link
+            // Stark verbesserte Spotify-Abfrage
             useEffect(() => {
                 let isMounted = true;
-
                 const fetchSpotify = async () => {
                     try {
-                        const response = await fetch(LANYARD_URL, {
-                            cache: 'no-cache'
-                        });
-                        
-                        if (!response.ok) throw new Error('Network response was not ok');
-                        
+                        const response = await fetch(LANYARD_URL, { cache: 'no-cache' });
+                        if (!response.ok) return;
                         const result = await response.json();
                         
                         if (isMounted && result.success && result.data) {
-                            // Status-Check
                             if (result.data.listening_to_spotify && result.data.spotify) {
                                 setSpotify(result.data.spotify);
                             } else {
                                 setSpotify(null);
                             }
                         }
-                    } catch (error) {
-                        if (isMounted) {
-                            console.debug("Lanyard connection temporarily interrupted.");
-                            setSpotify(null);
-                        }
+                    } catch (e) {
+                        if (isMounted) setSpotify(null);
                     }
                 };
 
                 fetchSpotify();
-                // Polling-Intervall (8 Sekunden für maximale Stabilität)
-                const intervalId = setInterval(fetchSpotify, 8000);
-                
-                return () => {
-                    isMounted = false;
-                    clearInterval(intervalId);
-                };
+                const interval = setInterval(fetchSpotify, 10000); // Alle 10 Sek für Stabilität
+                return () => { isMounted = false; clearInterval(interval); };
             }, []);
 
             useEffect(() => {
