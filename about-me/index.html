@@ -15,40 +15,11 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* LOKALE SCHRIFTARTEN - Pfade exakt an GitHub Struktur angepasst */
-        
+        /* LOKALE SCHRIFTARTEN */
         @font-face {
             font-family: 'Inter';
             src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
             font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Inter';
-            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-500.woff2') format('woff2');
-            font-weight: 500;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Inter';
-            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-600.woff2') format('woff2');
-            font-weight: 600;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Inter';
-            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-700.woff2') format('woff2');
-            font-weight: 700;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Inter';
-            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-800.woff2') format('woff2');
-            font-weight: 800;
             font-style: normal;
             font-display: swap;
         }
@@ -73,7 +44,7 @@
             font-weight: 900;
             font-style: normal;
             text-transform: lowercase;
-            letter-spacing: -0.06em;
+            letter-spacing: -0.04em;
         }
 
         .animate-in { animation: fadeIn 0.8s ease-out forwards; }
@@ -124,8 +95,17 @@
         }
 
         .responsive-title {
-            font-size: clamp(2.5rem, 8vw, 8rem);
-            line-height: 1;
+            font-size: clamp(2.2rem, 7vw, 6rem);
+            line-height: 1.1;
+        }
+        
+        /* Animierte Rotation für Profilbild */
+        @keyframes rotate-slow {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-rotate-slow {
+            animation: rotate-slow 12s linear infinite;
         }
     </style>
 </head>
@@ -138,6 +118,7 @@
         const DISCORD_ID = "964500222870945873";
         const LANYARD_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
 
+        // --- Icons ---
         const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
         const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
         const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
@@ -159,54 +140,41 @@
                 bioText: "Schon als Kind war ich fasziniert von Technik. Was mit dem Auseinandernehmen von Spielzeug begann, entwickelte sich schnell zur Leidenschaft für High-End Hardware. Heute verbinde ich technisches Expertenwissen mit Content Creation, um meine Community bei ihren Setups zu unterstützen.",
                 facts: [
                     { label: "Alter", value: "16" },
-                    { label: "Location", value: "Linz, Österreich" },
-                    { label: "Interessen", value: "Hardware & Smartphones" },
-                    { label: "Vibe", value: "Random & Fürsorglich" }
+                    { label: "Location", value: "Linz, AT" },
+                    { label: "Interessen", value: "Hardware" },
+                    { label: "Vibe", value: "Caring" }
                 ],
                 journeyTitle: "MEINE MILESTONES",
                 journey: [
-                    { year: "2026", title: "Webseite & Community", desc: "Erstellung dieser offiziellen Webseite, Eröffnung des Hardware Marketplace & Meilenstein von 2000 Followern auf TikTok." },
-                    { year: "2025", title: "OLED Upgrade", desc: "Kauf von zwei ROG Swift OLED PG27UCDM Monitoren ganz am Ende des Jahres für das ultimative Setup." },
+                    { year: "2026", title: "Webseite & Community", desc: "Erstellung dieser offiziellen Webseite & Meilenstein von 2000 Followern auf TikTok." },
+                    { year: "2025", title: "OLED Upgrade", desc: "Kauf von zwei ROG Swift OLED Monitoren für das ultimative Setup." },
                     { year: "2023", title: "Gaming PC Build", desc: "Zusammenbau meines ersten dedizierten High-End Gaming PCs." },
                     { year: "2022", title: "Erster Eigenbau", desc: "Den ersten PC komplett selbst geplant und zusammengebaut." },
-                    { year: "2021", title: "YouTube Review", desc: "YouTube Review von einem Smartphone." },
                     { year: "2021", title: "Social Media Start", desc: "Einstieg in die Social Media Welt." },
-                    { year: "2020", title: "Expansion", desc: "Erweiterung auf zwei Monitore und die ersten richtigen Speaker." },
-                    { year: "2018", title: "Erstes Setup", desc: "Mein erstes eigenes Setup mit einem HP ProBook (2010) und einem Lenovo Monitor (2014)." },
-                    { year: "2016", title: "Deep Dive", desc: "Das erste Mal einen PC komplett zerlegt und die Neugier für Hardware entdeckt." },
+                    { year: "2018", title: "Erstes Setup", desc: "Mein erstes eigenes Setup mit einem HP ProBook und Lenovo Monitor." },
                     { year: "2010", title: "Geboren", desc: "Der Start von allem in Linz." }
                 ],
-                setupTitle: "Mein aktuelles Setup",
+                setupTitle: "Mein Setup",
                 setupCats: ["Gaming PC", "Equipment", "Software"],
                 setupData: {
                     "Gaming PC": [
-                        { item: "CPU", value: "AMD Ryzen 9 5900X (12C/24T)" },
-                        { item: "GPU", value: "ROG Strix RTX 3070 Ti OC" },
-                        { item: "RAM", value: "64GB Corsair DDR4-3200" },
-                        { item: "Board", value: "ROG Strix B550-F Gaming" },
-                        { item: "Case", value: "be quiet! Light Base 600LX" },
-                        { item: "Cooling", value: "iCUE H150i ELITE LCD XT" },
-                        { item: "Fans", value: "10x AsiaHorse COSMIQ" },
-                        { item: "Storage", value: "2TB Samsung 990 PRO" },
-                        { item: "PSU", value: "Corsair HX1000i (1000W)" }
+                        { item: "CPU", value: "AMD Ryzen 9 5900X" },
+                        { item: "GPU", value: "ROG RTX 3070 Ti OC" },
+                        { item: "RAM", value: "64GB Corsair DDR4" },
+                        { item: "Case", value: "be quiet! Light Base" },
+                        { item: "Fans", value: "10x AsiaHorse" },
+                        { item: "Storage", value: "2TB Samsung 990 PRO" }
                     ],
                     "Equipment": [
-                        { item: "Main Displays", value: "2x ROG Swift OLED PG27UCDM" },
-                        { item: "3rd Display", value: "Lenovo ThinkVision T2424p" },
-                        { item: "Mic", value: "FIFINE AmpliGame AM8" },
-                        { item: "Keyboard", value: "RAZER BlackWidow V3 TKL" },
-                        { item: "Mouse", value: "RAZER Basilisk V3 X" },
-                        { item: "Audio", value: "JBL Quantum Duo" }
+                        { item: "Displays", value: "2x ROG OLED PG27UCDM" },
+                        { item: "Mic", value: "FIFINE AM8" },
+                        { item: "Keyboard", value: "RAZER BlackWidow V3" },
+                        { item: "Mouse", value: "RAZER Basilisk V3" }
                     ],
                     "Software": [
                         { item: "OS", value: "Windows 11 Pro" },
-                        { item: "IDE", value: "Visual Studio 2026" },
-                        { item: "Video", value: "MAGIX Video deluxe 2026 Premium" },
-                        { item: "CAD", value: "Siemens Solid Edge 2022" },
-                        { item: "Browser", value: "Opera GX" },
-                        { item: "Streaming", value: "OBS Studio" },
+                        { item: "Video", value: "MAGIX Video deluxe" },
                         { item: "Gaming", value: "Minecraft (Modrinth)" },
-                        { item: "Social", value: "Discord" },
                         { item: "Music", value: "Spotify" }
                     ]
                 },
@@ -217,11 +185,11 @@
                 legal: "RECHTLICHES & INFO",
                 legalTitle: "Rechtliche Informationen",
                 legalPrivacy: "Datenschutz & Dienste",
-                legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an die Lanyard API und den Spotify-Player übertragen.",
-                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
+                legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an APIs übertragen.",
+                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf Anfrage verfügbar.",
                 trademarkLabel: "Urheberrecht & Marken",
-                trademarkText: "Alle verwendeten Markennamen sind Eigentum der jeweiligen Inhaber. Alle Hardware- und Setup-Fotos sind Privataufnahmen von Niklas Ausserwoeger.",
-                liabilityText: "Ich übernehme keine Haftung für Hardwareschäden bei privater Hilfestellung. Backups sind immer Pflicht!",
+                trademarkText: "Alle verwendeten Markennamen sind Eigentum der jeweiligen Inhaber. Fotos sind Privataufnahmen von Niklas Ausserwoeger.",
+                liabilityText: "Ich übernehme keine Haftung für Schäden bei privater Hilfe. Backups sind Pflicht!",
             },
             en: {
                 flag: "🇬🇧", name: "English", back: "BACK",
@@ -233,34 +201,31 @@
                 bioText: "I've been fascinated by technology since I was a child. Today, I combine technical expertise with content creation to support my community.",
                 facts: [
                     { label: "Age", value: "16" },
-                    { label: "Location", value: "Linz, Austria" },
-                    { label: "Interests", value: "Hardware & Smartphones" },
-                    { label: "Vibe", value: "Random & Caring" }
+                    { label: "Location", value: "Linz, AT" },
+                    { label: "Interests", value: "Hardware" },
+                    { label: "Vibe", value: "Caring" }
                 ],
                 journeyTitle: "MY MILESTONES",
                 journey: [
                     { year: "2026", title: "Website & Community", desc: "Created this website & reached 2000 followers on TikTok." },
-                    { year: "2025", title: "OLED Upgrade", desc: "Purchased two ROG Swift OLED PG27UCDM monitors." },
+                    { year: "2025", title: "OLED Upgrade", desc: "Purchased two ROG Swift OLED monitors." },
                     { year: "2023", title: "Gaming PC Build", desc: "Built my first high-end gaming PC." },
                     { year: "2022", title: "First Build", desc: "Planned and built my first PC." },
-                    { year: "2021", title: "YouTube Review", desc: "First smartphone review." },
-                    { year: "2021", title: "Social Media Entry", desc: "Began my content creation journey." },
-                    { year: "2020", title: "Expansion", desc: "Dual monitor setup upgrade." },
+                    { year: "2021", title: "Social Media Start", desc: "Began my content creation journey." },
                     { year: "2018", title: "First Setup", desc: "Started with HP ProBook and Lenovo monitor." },
-                    { year: "2016", title: "Deep Dive", desc: "Discovered my passion for hardware." },
                     { year: "2010", title: "Born", desc: "Where it all started in Linz." }
                 ],
-                setupTitle: "My current setup",
+                setupTitle: "My Setup",
                 setupCats: ["Gaming PC", "Equipment", "Software"],
                 setupData: {
                     "Gaming PC": [
                         { item: "CPU", value: "AMD Ryzen 9 5900X" },
-                        { item: "GPU", value: "ROG Strix RTX 3070 Ti OC" },
-                        { item: "RAM", value: "64GB Corsair" },
+                        { item: "GPU", value: "ROG RTX 3070 Ti OC" },
+                        { item: "RAM", value: "64GB Corsair DDR4" },
                         { item: "Storage", value: "2TB Samsung 990 PRO" }
                     ],
                     "Equipment": [
-                        { item: "Displays", value: "2x ROG Swift OLED" }
+                        { item: "Displays", value: "2x ROG OLED" }
                     ],
                     "Software": [
                         { item: "OS", value: "Windows 11 Pro" }
@@ -273,7 +238,7 @@
                 legal: "LEGAL & INFO",
                 legalTitle: "Legal Information",
                 legalPrivacy: "Privacy & Services",
-                legalPrivacyText: "Private presence. Locally hosted fonts. IP addresses are transmitted for API connection only.",
+                legalPrivacyText: "Private presence. Locally hosted fonts. IP addresses are transmitted for technical purposes.",
                 addressRequest: "Full address available upon request.",
                 trademarkLabel: "Copyright & Trademarks",
                 trademarkText: "All brands belong to their owners. Setup photos are private photography by Niklas Ausserwoeger.",
@@ -322,30 +287,31 @@
             const avatarUrl = "https://drive.google.com/thumbnail?id=1oVP0DjtKXgHs_I6pwuXDyxCQ1R5sTZXN&sz=w1000";
 
             return (
-                <div className="min-h-screen bg-[#0b0d11] text-white selection:bg-cyan-500/30 overflow-x-hidden relative pb-12 text-center md:text-left">
+                <div className="min-h-screen bg-[#0b0d11] text-white selection:bg-cyan-500/30 overflow-x-hidden relative pb-12">
+                    {/* Background Glows */}
                     <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
-                        <div className="absolute top-[-15%] left-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[150px] rounded-full" />
-                        <div className="absolute bottom-[-15%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[150px] rounded-full" />
+                        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[120px] rounded-full" />
+                        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full" />
                     </div>
 
-                    <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20 text-left">
+                    <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
                         <div className="flex-1">
-                            <a href="../" className="text-[9px] md:text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-1.5 md:gap-2 uppercase italic">
+                            <a href="../" className="text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-2 uppercase italic">
                                 <ChevronLeft size={14} /> {t.back}
                             </a>
                         </div>
-                        <div className="flex items-center gap-2 md:gap-3">
-                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-7 h-7 md:w-10 md:h-10 object-contain logo-themed" />
-                             <span className="header-logo-text text-lg md:text-2xl text-white">that<span className="text-cyan-500">austrianone.</span></span>
+                        <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-center md:flex-none">
+                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain logo-themed" />
+                             <span className="header-logo-text text-lg sm:text-2xl">that<span className="text-cyan-500">austrianone.</span></span>
                         </div>
                         <div className="flex-1 flex justify-end relative" ref={menuRef}>
-                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-2 px-3 md:px-8 py-2 md:py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
-                                <span>{t.flag}</span> <span className="hidden sm:inline">{t.name}</span> <ChevronDown size={14} className={showLangMenu ? 'rotate-180 transition-transform' : ''} />
+                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-2 px-3 py-2 sm:px-8 sm:py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
+                                <span>{t.flag}</span> <span className="hidden xs:inline">{t.name}</span> <ChevronDown size={14} className={showLangMenu ? 'rotate-180 transition-transform' : ''} />
                             </button>
                             {showLangMenu && (
-                                <div className="absolute right-0 top-14 md:top-16 w-36 md:w-48 glass-modal rounded-xl md:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                <div className="absolute right-0 top-14 sm:top-16 w-36 sm:w-48 glass-modal rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
                                     {Object.keys(translations).map((key) => (
-                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-4 py-3 md:px-6 md:py-5 text-left text-[10px] md:text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-cyan-500 bg-cyan-500/5' : 'text-zinc-400'}`}>
+                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-cyan-500 bg-cyan-500/5' : 'text-zinc-400'}`}>
                                             <span>{translations[key].flag}</span> <span>{translations[key].name}</span>
                                         </button>
                                     ))}
@@ -354,53 +320,56 @@
                         </div>
                     </nav>
 
-                    <div className="relative z-10 max-w-6xl mx-auto px-4 md:px-6 pt-32 md:pt-48 animate-in text-center md:text-left">
-                        <header className="flex flex-col items-center text-center mb-16 md:mb-32">
-                            <div className="relative mb-8 md:mb-12 group">
-                                <div className="absolute -inset-4 md:-inset-6 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 opacity-20 blur-3xl group-hover:opacity-40 transition-opacity duration-1000"></div>
+                    <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-32 sm:pt-48 animate-in">
+                        <header className="flex flex-col items-center text-center mb-16 sm:mb-24">
+                            <div className="relative mb-8 group">
+                                <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 opacity-20 blur-3xl group-hover:opacity-40 transition-opacity duration-1000"></div>
                                 <div className="absolute inset-0 bg-[conic-gradient(transparent,transparent,transparent,#06b6d4,#3b82f6)] animate-rotate-slow rounded-full opacity-40"></div>
-                                <div className="relative w-24 h-24 md:w-48 md:h-48 rounded-full border-4 border-[#0b0d11] overflow-hidden bg-[#161920] z-10 shadow-2xl">
+                                <div className="relative w-28 h-28 sm:w-48 sm:h-48 rounded-full border-4 border-[#0b0d11] overflow-hidden bg-[#161920] z-10 shadow-2xl">
                                     <img src={avatarUrl} alt="Niklas" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700" />
                                 </div>
                             </div>
-                            <div className="inline-block px-4 md:px-5 py-2 bg-cyan-500/10 text-cyan-500 rounded-full text-[8px] md:text-[10px] font-black uppercase tracking-[0.3em] mb-6 md:mb-10 border border-cyan-500/20">{t.badge}</div>
-                            <h1 className="responsive-title font-black italic uppercase tracking-tighter text-white leading-none mb-6 md:mb-10">{t.title}</h1>
-                            <p className="text-zinc-400 text-base md:text-2xl font-medium italic max-w-3xl leading-relaxed mx-auto">"{t.intro}"</p>
+                            <div className="inline-block px-4 py-1.5 bg-cyan-500/10 text-cyan-500 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] mb-6 border border-cyan-500/20">{t.badge}</div>
+                            <h1 className="responsive-title font-black italic uppercase tracking-tighter text-white leading-none mb-6">{t.title}</h1>
+                            <p className="text-zinc-400 text-base sm:text-2xl font-medium italic max-w-2xl leading-relaxed">"{t.intro}"</p>
                         </header>
 
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 md:gap-6 mb-16 md:mb-24 text-left items-stretch">
-                            <div className="lg:col-span-1 glass-card rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10 flex flex-col justify-between">
-                                <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-8 md:mb-10 italic">{t.factsTitle}</h3>
-                                <div className="grid grid-cols-2 lg:grid-cols-1 gap-6 md:gap-8">
+                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mb-16 sm:mb-24">
+                            {/* Facts Column */}
+                            <div className="lg:col-span-1 glass-card rounded-[2rem] p-6 sm:p-10">
+                                <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-6 italic text-center sm:text-left">{t.factsTitle}</h3>
+                                <div className="grid grid-cols-2 lg:grid-cols-1 gap-6 sm:gap-8">
                                     {t.facts.map((f, i) => (
-                                        <div key={i} className="flex flex-col group/item">
-                                            <span className="text-zinc-600 text-[8px] md:text-[10px] font-black uppercase tracking-widest mb-1 group-hover:text-cyan-500 transition-colors">{f.label}</span>
-                                            <span className="text-white font-black italic uppercase text-sm md:text-lg leading-tight">{f.value}</span>
+                                        <div key={i} className="flex flex-col text-center sm:text-left">
+                                            <span className="text-zinc-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest mb-1">{f.label}</span>
+                                            <span className="text-white font-black italic uppercase text-sm sm:text-lg">{f.value}</span>
                                         </div>
                                     ))}
                                 </div>
                             </div>
                             
-                            <div className="lg:col-span-3 glass-card rounded-[1.5rem] md:rounded-[3rem] p-6 md:p-14 cyan-glow flex flex-col justify-between relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-8 opacity-5 text-cyan-500 rotate-12 pointer-events-none hidden md:block"><Zap size={200} /></div>
-                                <div>
-                                    <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-8 md:mb-12 italic">{t.bioTitle}</h3>
-                                    <p className="text-zinc-300 text-base md:text-xl font-medium leading-relaxed italic mb-10 max-w-2xl">"{t.bioText}"</p>
-                                    <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-8 md:mb-12 italic">{t.skillsTitle}</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-x-8 md:gap-x-12 gap-y-6 md:gap-y-10">
+                            {/* Bio Column */}
+                            <div className="lg:col-span-3 glass-card rounded-[2rem] p-6 sm:p-14 cyan-glow relative overflow-hidden">
+                                <div className="absolute top-0 right-0 p-8 opacity-5 text-cyan-500 rotate-12 pointer-events-none hidden sm:block"><Zap size={200} /></div>
+                                <div className="text-center sm:text-left">
+                                    <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-8 italic">{t.bioTitle}</h3>
+                                    <p className="text-zinc-300 text-base sm:text-xl font-medium leading-relaxed italic mb-10">"{t.bioText}"</p>
+                                    
+                                    <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-8 italic">{t.skillsTitle}</h3>
+                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
                                         {[
                                             { name: "Hardware Specialist", level: "100%" },
-                                            { name: "Smartphone Tech & Repair", level: "95%" },
-                                            { name: "System Setup & Optimizing", level: "92%" },
-                                            { name: "C++ Programming (Basics)", level: "40%" }
+                                            { name: "Smartphone Repair", level: "95%" },
+                                            { name: "System Optimizing", level: "92%" },
+                                            { name: "C++ (Basics)", level: "40%" }
                                         ].map((skill, i) => (
-                                            <div key={i} className="space-y-2 md:space-y-3">
+                                            <div key={i} className="space-y-2">
                                                 <div className="flex justify-between items-end">
-                                                    <span className="text-[9px] md:text-xs font-black uppercase tracking-widest text-zinc-100">{skill.name}</span>
-                                                    <span className="text-[8px] md:text-[10px] font-black text-cyan-500">{skill.level}</span>
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-100">{skill.name}</span>
+                                                    <span className="text-[9px] font-black text-cyan-500">{skill.level}</span>
                                                 </div>
-                                                <div className="h-1 md:h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-cyan-600 rounded-full transition-all duration-1000 delay-300" style={{ width: skill.level }}></div>
+                                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+                                                    <div className="h-full bg-cyan-600 rounded-full" style={{ width: skill.level }}></div>
                                                 </div>
                                             </div>
                                         ))}
@@ -409,82 +378,89 @@
                             </div>
                         </div>
 
-                        <section className="mb-16 md:mb-24 px-4 md:px-0 text-left">
-                            <div className="flex flex-col lg:flex-row justify-between lg:items-end mb-8 md:mb-12 gap-6 md:gap-8">
-                                <div>
-                                    <h2 className="text-3xl md:text-6xl font-black italic uppercase tracking-tighter mb-2 md:mb-4">{t.setupTitle}</h2>
-                                    <div className="h-1 md:h-1.5 w-12 md:w-24 bg-cyan-600 rounded-full"></div>
+                        {/* Setup Section */}
+                        <section className="mb-16 sm:mb-24">
+                            <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-8 sm:mb-12 gap-6">
+                                <div className="text-center sm:text-left">
+                                    <h2 className="text-3xl sm:text-6xl font-black italic uppercase tracking-tighter mb-2">{t.setupTitle}</h2>
+                                    <div className="h-1.5 w-16 bg-cyan-600 rounded-full mx-auto sm:mx-0"></div>
                                 </div>
-                                <div className="flex gap-1 md:gap-2 p-1 bg-white/5 rounded-lg md:rounded-2xl border border-white/5">
+                                <div className="flex justify-center sm:justify-start gap-1 p-1 bg-white/5 rounded-xl border border-white/5 overflow-x-auto">
                                     {t.setupCats.map(cat => (
-                                        <button key={cat} onClick={() => setActiveSetup(cat)} className={`px-4 md:px-6 py-2.5 md:py-3 rounded-lg md:rounded-xl text-[8px] md:text-[10px] font-black uppercase tracking-widest transition-all ${activeSetup === cat ? 'setup-tab-active shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}>{cat}</button>
+                                        <button key={cat} onClick={() => setActiveSetup(cat)} className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeSetup === cat ? 'setup-tab-active shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}>{cat}</button>
                                     ))}
                                 </div>
                             </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-6 animate-in">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
                                 {t.setupData[activeSetup].map((item, i) => (
-                                    <div key={i} className="glass-card rounded-[1.2rem] md:rounded-[2.5rem] p-5 md:p-8 flex items-center gap-4 md:gap-6">
-                                        <div className="w-10 h-10 md:w-14 md:h-14 rounded-xl md:rounded-2xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 shrink-0">
+                                    <div key={i} className="glass-card rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-8 flex items-center gap-4">
+                                        <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 shrink-0">
                                             {activeSetup === "Gaming PC" ? <Cpu size={20} /> : activeSetup === "Equipment" ? <Monitor size={20} /> : <Zap size={20} />}
                                         </div>
                                         <div className="overflow-hidden">
-                                            <p className="text-[7px] md:text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-0.5">{item.item}</p>
-                                            <p className="text-xs md:text-sm font-bold text-zinc-100 uppercase italic truncate">{item.value}</p>
+                                            <p className="text-[9px] sm:text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-0.5">{item.item}</p>
+                                            <p className="text-xs sm:text-sm font-bold text-zinc-100 uppercase italic truncate">{item.value}</p>
                                         </div>
                                     </div>
                                 ))}
                             </div>
                         </section>
 
-                        {/* LIVE SPOTIFY SECTION */}
-                        <section className="mb-24 px-4 md:px-0 text-left">
-                            <div className="flex items-center gap-4 mb-10">
-                                <h2 className="text-2xl md:text-5xl font-black italic uppercase tracking-tighter">{t.vibingTitle}</h2>
-                                <SpotifyIcon size={32} />
+                        {/* Spotify Section */}
+                        <section className="mb-20 sm:mb-24">
+                            <div className="flex items-center gap-4 mb-8 sm:mb-10 justify-center sm:justify-start">
+                                <h2 className="text-2xl sm:text-5xl font-black italic uppercase tracking-tighter">{t.vibingTitle}</h2>
+                                <SpotifyIcon size={28} />
                             </div>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                <div className="glass-card rounded-[2.5rem] p-8 flex flex-col justify-center relative overflow-hidden group min-h-[160px]">
-                                    <div className="absolute top-0 right-0 p-6 opacity-10 text-cyan-500 group-hover:scale-110 transition-transform duration-500"><MusicIcon size={80} /></div>
-                                    <div className="flex items-center gap-8">
-                                        <div className={`w-28 h-28 rounded-full bg-[#161920] flex items-center justify-center border-4 border-white/5 relative overflow-hidden shrink-0 shadow-2xl ${spotify ? 'animate-vinyl' : ''}`}>
+                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+                                <div className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden group">
+                                    <div className="absolute top-0 right-0 p-6 opacity-5 text-cyan-500 group-hover:scale-110 transition-transform duration-500"><MusicIcon size={60} /></div>
+                                    <div className="flex items-center gap-6 sm:gap-8">
+                                        <div className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#161920] flex items-center justify-center border-4 border-white/5 relative overflow-hidden shrink-0 shadow-2xl ${spotify ? 'animate-vinyl' : ''}`}>
                                             {spotify && spotify.album_art_url ? (
                                                 <>
                                                     <img src={spotify.album_art_url} className="w-full h-full object-cover rounded-full" alt="Cover" />
-                                                    <div className="absolute w-4 h-4 bg-[#0b0d11] rounded-full border border-white/20 shadow-inner z-10"></div>
+                                                    <div className="absolute w-3 h-3 bg-[#0b0d11] rounded-full border border-white/20 z-10"></div>
                                                 </>
                                             ) : (
-                                                <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" className="w-12 h-12 object-contain opacity-20 grayscale" alt="Logo" />
+                                                <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" className="w-10 h-10 object-contain opacity-20 grayscale" alt="Logo" />
                                             )}
                                         </div>
-                                        <div className="overflow-hidden">
+                                        <div className="overflow-hidden text-left">
                                             <p className="text-[9px] font-black text-cyan-500 uppercase tracking-[0.3em] mb-1">{spotify ? t.nowPlaying : t.notPlaying}</p>
-                                            <p className="text-xl md:text-2xl font-black italic uppercase text-white truncate">{spotify ? spotify.song : "Quiet Mode"}</p>
-                                            <p className="text-zinc-500 text-sm font-bold uppercase tracking-widest mt-1 truncate">{spotify ? spotify.artist : "thataustrianone"}</p>
+                                            <p className="text-lg sm:text-2xl font-black italic uppercase text-white truncate">{spotify ? spotify.song : "Quiet Mode"}</p>
+                                            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1 truncate">{spotify ? spotify.artist : "thataustrianone"}</p>
                                         </div>
                                     </div>
                                 </div>
                                 <div className="rounded-[1.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black">
-                                    <iframe style={{borderRadius:'12px'}} src="https://open.spotify.com/embed/playlist/0XZQFKzgRWqT3Rm9E0YgwX?utm_source=generator&theme=0" width="100%" height="160" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+                                    <iframe style={{borderRadius:'12px'}} src="https://open.spotify.com/embed/playlist/0XZQFKzgRWqT3Rm9E0YgwX?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
                                 </div>
                             </div>
                         </section>
 
-                        <section className="mb-20 md:mb-32 px-4 md:px-0 text-left">
-                            <h3 className="text-cyan-500 font-black uppercase text-[8px] md:text-[10px] tracking-[0.4em] mb-10 md:mb-16 italic text-center">{t.journeyTitle}</h3>
-                            <div className="relative">
+                        {/* Journey/Milestones Section */}
+                        <section className="mb-20 sm:mb-32">
+                            <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-10 italic text-center">{t.journeyTitle}</h3>
+                            <div className="relative max-w-4xl mx-auto">
+                                {/* Desktop Timeline Line */}
                                 <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-white/10 hidden md:block" />
-                                <div className="space-y-8 md:space-y-12 relative">
+                                {/* Mobile Timeline Line */}
+                                <div className="absolute left-4 top-0 bottom-0 w-px bg-white/10 md:hidden" />
+                                
+                                <div className="space-y-10 sm:space-y-12 relative">
                                     {t.journey.map((m, i) => (
-                                        <div key={i} className={`flex flex-col md:flex-row items-center gap-6 md:gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                                            <div className="flex-1 w-full">
-                                                <div className={`glass-card rounded-[1.5rem] md:rounded-[2.5rem] p-6 md:p-10 hover:translate-y-[-5px] transition-transform ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                                                    <span className="text-cyan-500 font-black italic text-xl md:text-3xl mb-1 md:mb-4 block">{m.year}</span>
-                                                    <h4 className="text-base md:text-xl font-black uppercase italic mb-2 md:mb-3 text-white leading-tight">{m.title}</h4>
-                                                    <p className="text-zinc-500 font-medium text-[11px] md:text-sm leading-relaxed">{m.desc}</p>
+                                        <div key={i} className={`flex flex-col md:flex-row items-start md:items-center gap-6 sm:gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
+                                            <div className="flex-1 w-full pl-10 md:pl-0">
+                                                <div className={`glass-card rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 hover:translate-y-[-5px] transition-transform text-left ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
+                                                    <span className="text-cyan-500 font-black italic text-xl sm:text-3xl mb-2 sm:mb-4 block">{m.year}</span>
+                                                    <h4 className="text-base sm:text-xl font-black uppercase italic mb-2 text-white">{m.title}</h4>
+                                                    <p className="text-zinc-500 font-medium text-xs sm:text-sm leading-relaxed">{m.desc}</p>
                                                 </div>
                                             </div>
-                                            <div className="w-8 h-8 md:w-12 md:h-12 rounded-full bg-[#0b0d11] border-4 border-cyan-600 z-10 hidden md:flex items-center justify-center shadow-[0_0_20px_rgba(6,182,212,0.4)]">
-                                                <div className="w-2 md:w-3 h-2 md:h-3 rounded-full bg-cyan-400 animate-pulse" />
+                                            {/* Dot */}
+                                            <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#0b0d11] border-4 border-cyan-600 z-10 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)]">
+                                                <div className="w-2 h-2 rounded-full bg-cyan-400" />
                                             </div>
                                             <div className="flex-1 hidden md:block" />
                                         </div>
@@ -493,57 +469,58 @@
                             </div>
                         </section>
 
-                        <footer className="mt-20 md:mt-32 text-center flex flex-col items-center gap-8">
+                        <footer className="mt-20 sm:mt-32 text-center flex flex-col items-center gap-8">
                             <div className="w-full h-px bg-gradient-to-r from-transparent via-zinc-800 to-transparent"></div>
-                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-3 px-8 py-4 md:px-14 md:py-5 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[10px] md:text-[13px] font-black tracking-[0.3em] transition-all text-zinc-500 hover:text-white uppercase italic">
-                                <Info size={18} /> {t.legal}
+                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-3 px-10 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[11px] font-black tracking-[0.3em] transition-all text-zinc-500 hover:text-white uppercase italic">
+                                <Info size={16} /> {t.legal}
                             </button>
-                            <div className="text-zinc-800 text-[9px] md:text-[11px] font-black tracking-[0.5em] md:tracking-[0.8em] uppercase opacity-40 italic">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
-                            
-                            {/* DEZENTER VERSIONS-INDIKATOR */}
-                            <div className="text-[10px] font-bold text-white/40 uppercase tracking-widest mt-2 select-none">
-                                LIVE BUILD v1.2.9 | {new Date().toLocaleDateString('de-DE')}
+                            <div className="flex flex-col gap-1 opacity-40">
+                                <div className="text-zinc-800 text-[9px] sm:text-[10px] font-black tracking-[0.6em] uppercase italic">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
+                                <div className="text-[9px] font-bold text-white/30 uppercase tracking-widest select-none italic">
+                                    LIVE BUILD v1.3.0 | {new Date().toLocaleDateString('de-DE')}
+                                </div>
                             </div>
                         </footer>
                     </div>
 
+                    {/* Legal Modal */}
                     {showLegal && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
-                            <div className="glass-modal rounded-[2rem] md:rounded-[3rem] w-full max-w-2xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl cyan-glow">
-                                <div className="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
-                                    <h2 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
-                                    <button onClick={() => setShowLegal(false)} className="p-2 md:p-3 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
-                                        <X size={26} />
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/95 backdrop-blur-xl animate-in text-zinc-100">
+                            <div className="glass-modal rounded-[2rem] sm:rounded-[2.5rem] w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
+                                <div className="p-6 sm:p-8 border-b border-white/5 flex justify-between items-center text-left">
+                                    <h2 className="text-xl sm:text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
+                                        <X size={24} />
                                     </button>
                                 </div>
-                                <div className="p-8 md:p-10 overflow-y-auto custom-scroll space-y-10 text-left">
+                                <div className="p-6 sm:p-8 overflow-y-auto custom-scroll space-y-8 sm:space-y-10 text-left">
                                     <section>
-                                        <h3 className="text-cyan-500 font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] mb-4 italic">Impressum</h3>
+                                        <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">Impressum</h3>
                                         <div className="space-y-4 font-bold uppercase">
-                                            <p className="text-xl md:text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
-                                            <p className="text-zinc-500 text-[10px] md:text-[11px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
+                                            <p className="text-xl sm:text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-500 text-[9px] sm:text-[10px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
                                             <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
-                                            <div className="pt-4 md:pt-6">
-                                                <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase">E-Mail Kontakt</p>
-                                                <p className="text-cyan-400 text-sm md:text-base font-black italic lowercase">niklas.ausserwoeger@gmail.com</p>
+                                            <div className="pt-2">
+                                                <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase font-bold">E-Mail Kontakt</p>
+                                                <p className="text-cyan-400 text-sm font-black italic lowercase">niklas.ausserwoeger@gmail.com</p>
                                             </div>
                                         </div>
                                     </section>
                                     <section className="space-y-6">
                                         <div>
-                                            <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.legalPrivacy}</h3>
-                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.legalPrivacyText}</p>
+                                            <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-3 italic">{t.legalPrivacy}</h3>
+                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.legalPrivacyText}</p>
                                         </div>
                                         <div>
                                             <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">{t.trademarkLabel}</h4>
-                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
+                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.trademarkText}</p>
                                         </div>
                                         <div>
                                             <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">Haftungsausschluss</h4>
-                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
+                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.liabilityText}</p>
                                         </div>
                                     </section>
-                                    <div className="pt-8 md:pt-10 border-t border-white/5 text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic">
+                                    <div className="pt-8 border-t border-white/5 text-[9px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic">
                                         Privatprojekt • Linz (OÖ) • {new Date().getFullYear()}
                                     </div>
                                 </div>
