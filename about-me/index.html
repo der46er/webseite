@@ -15,24 +15,53 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* PFAD-KORREKTUR: Da die HTML in /about-me/ liegt, müssen wir eine Ebene hoch zu /assets/ */
+        /* LOKALE SCHRIFTARTEN - Pfade basierend auf deiner GitHub-Struktur angepasst */
+        /* Wir decken hier die wichtigsten Gewichte ab, die im Design genutzt werden */
+        
         @font-face {
             font-family: 'Inter';
-            src: url('../assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-400.woff2') format('woff2');
             font-weight: 400;
             font-style: normal;
             font-display: swap;
         }
         @font-face {
             font-family: 'Inter';
-            src: url('../assets/fonts/inter-v12-latin-900.woff2') format('woff2');
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-500.woff2') format('woff2');
+            font-weight: 500;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-600.woff2') format('woff2');
+            font-weight: 600;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-700.woff2') format('woff2');
+            font-weight: 700;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-800.woff2') format('woff2');
+            font-weight: 800;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2');
             font-weight: 900;
             font-style: normal;
             font-display: swap;
         }
 
-        /* Fallback zu Google Fonts */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        /* 100% DSGVO: Der externe Google Fonts Import wurde entfernt, da die Schriften nun lokal geladen werden. */
 
         body { 
             font-family: 'Inter', sans-serif; 
@@ -213,7 +242,7 @@
                 legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an die Lanyard API (Discord Status) und den Spotify-Player übertragen, jedoch nicht durch den Betreiber gespeichert.",
                 addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
                 trademarkLabel: "Urheberrecht & Marken",
-                trademarkText: "Alle verwendeten Markennamen (ROG, Razer, JBL, Corsair, be quiet!, AsiaHorse, Samsung, AMD, NVIDIA, HP, Lenovo, Spotify) sind Eigentum der jeweiligen Inhaber. Alle Hardware- und Setup-Fotos auf dieser Seite sind Privataufnahmen von Niklas Ausserwoeger.",
+                trademarkText: "Alle verwendeten Markennamen (ROG, Razer, JBL, Corsair, be quiet!, AsiaHorse, Samsung, AMD, NVIDIA, HP, Lenovo, Spotify) sind Eigentum der jeweiligen Inhaber und dienen lediglich der Produktbeschreibung. Alle Hardware- und Setup-Fotos auf dieser Seite sind Privataufnahmen von Niklas Ausserwoeger.",
                 liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links oder Hardwareschäden bei privater Hilfestellung. Backups sind immer Pflicht!",
             },
             en: {
