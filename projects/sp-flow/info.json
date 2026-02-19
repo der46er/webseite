@@ -1,0 +1,26 @@
+{
+  "project": {
+    "id": "sp-flow-ultimate",
+    "title": "SP-FLOW",
+    "subtitle": "Interactive Visualizer",
+    "version": "25.02",
+    "date": "2026-02-19",
+    "description": "Ein immersiver High-End Spotify Visualizer mit echter Acrylglas-Optik (Glassmorphism). Nutzt die Lanyard API für Echtzeit-Daten, bietet adaptive Farbschemata, die sich dem Albumcover anpassen, und diverse Layout-Modi für das perfekte Desktop- oder Mobile-Erlebnis.",
+    "technologies": [
+      "HTML5",
+      "Tailwind CSS",
+      "JavaScript",
+      "Lanyard API",
+      "Spotify API"
+    ],
+    "assets": {
+      "thumbnail": "assets/sp-flow-thumb.png",
+      "icon": "folder-music"
+    },
+    "links": {
+      "demo": "https://der46er.github.io/sp-flow",
+      "repo": "https://github.com/der46er/sp-flow"
+    },
+    "status": "Live"
+  }
+}
