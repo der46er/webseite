@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | thataustrianone</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        /* LOKALE SCHRIFTARTEN */
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Fallback */
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0b0d11; 
+            margin: 0; 
+            padding: 0; 
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header-logo-text {
+            font-weight: 900;
+            font-style: normal;
+            text-transform: lowercase;
+            letter-spacing: -0.04em;
+        }
+
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .animate-rotate-slow {
+            animation: rotate 4s linear infinite;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .glass-card {
+            background: rgba(22, 25, 32, 0.6);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .glass-modal {
+            background: rgba(11, 13, 17, 0.98);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        /* PLATINUM / WHITE THEME */
+        .logo-platinum-themed {
+            filter: grayscale(100%) brightness(200%) drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .white-glow {
+            box-shadow: 0 0 50px -10px rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/projects";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/projects";
+
+        // --- Icons ---
+        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+        const ChevronRight = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
+        const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+        const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        
+        const GlobeIcon = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>;
+
+        const translations = {
+            de: {
+                code: "AT", name: "DEUTSCH", back: "ZURÜCK",
+                badge: "SHOWCASE",
+                title: "Meine Projekte",
+                description: "Eine Sammlung meiner digitalen Arbeiten und Experimente. Automatisch synchronisiert mit GitHub.",
+                loading: "Projekte werden geladen...",
+                noProjects: "Momentan sind keine Projekte verfügbar.",
+                viewProject: "Projekt öffnen",
+                legal: "RECHTLICHES & INFO",
+                legalTitle: "Rechtliche Informationen",
+                legalImprint: "Impressum",
+                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
+                legalContact: "E-Mail Kontakt",
+                legalPrivacy: "Datenschutz & Dienste",
+                legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an die GitHub API übertragen, jedoch nicht durch den Betreiber gespeichert.",
+                trademarkLabel: "Urheberrecht & Marken",
+                trademarkText: "Alle verwendeten Markennamen sind Eigentum der jeweiligen Inhaber. Alle Hardware- und Setup-Fotos auf dieser Seite sind Privataufnahmen von Niklas Ausserwoeger.",
+                liabilityLabel: "Haftungsausschluss",
+                liabilityText: "Ich übernehme keine Haftung für die Inhalte externer Links. Backups sind immer Pflicht!",
+            },
+            en: {
+                code: "GB", name: "ENGLISH", back: "BACK",
+                badge: "SHOWCASE",
+                title: "My Projects",
+                description: "A collection of my digital works and experiments. Automatically synced with GitHub.",
+                loading: "Loading projects...",
+                noProjects: "No projects available at the moment.",
+                viewProject: "Open Project",
+                legal: "LEGAL & INFO",
+                legalTitle: "Legal Information",
+                legalImprint: "Imprint",
+                addressRequest: "Full address available only upon justified request via email for privacy reasons.",
+                legalContact: "E-Mail Contact",
+                legalPrivacy: "Privacy & Services",
+                legalPrivacyText: "This website is a private presence. To protect privacy, fonts are hosted locally. IP addresses are transmitted to external services for technical purposes only.",
+                trademarkLabel: "Copyright & Trademarks",
+                trademarkText: "All brand names used are the property of their respective owners. All hardware and setup photos are private photography by Niklas Ausserwoeger.",
+                liabilityLabel: "Disclaimer",
+                liabilityText: "I assume no liability for the content of external links. Backups are mandatory!",
+            }
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState('de'); 
+            const [showLegal, setShowLegal] = useState(false);
+            const [showLangMenu, setShowLangMenu] = useState(false);
+            const [projects, setProjects] = useState([]);
+            const [loading, setLoading] = useState(true);
+            const menuRef = useRef(null);
+            const t = translations[lang];
+
+            useEffect(() => {
+                const fetchProjects = async () => {
+                    try {
+                        const response = await fetch(GITHUB_API_URL);
+                        if (!response.ok) throw new Error("Failed to fetch");
+                        const data = await response.json();
+                        
+                        const filteredFiles = data.filter(file => 
+                            (file.name.endsWith('.html') && file.name.toLowerCase() !== 'index.html') || 
+                            file.type === 'dir'
+                        );
+
+                        const projectPromises = filteredFiles.map(async (file) => {
+                            let titleDe = file.name.replace('.html', '').replace(/_/g, ' ');
+                            let titleEn = titleDe;
+                            let descriptionDe = ""; 
+                            let descriptionEn = "";
+                            
+                            const url = file.type === 'dir' 
+                                ? `https://thataustrianone.eu/projects/${file.name}/` 
+                                : `https://thataustrianone.eu/projects/${file.name}`;
+
+                            if (file.type === 'dir') {
+                                try {
+                                    const infoUrl = `${GITHUB_RAW_BASE}/${file.name}/info.json`;
+                                    const infoRes = await fetch(infoUrl);
+                                    if (infoRes.ok) {
+                                        const info = await infoRes.json();
+                                        const p = info.project || info;
+                                        if (p.title) {
+                                            titleDe = p.title;
+                                            titleEn = p.title_en || p.title;
+                                        }
+                                        if (p.description) {
+                                            descriptionDe = p.description;
+                                            descriptionEn = p.description_en || p.description;
+                                        }
+                                    }
+                                } catch (err) {
+                                    console.log(`Keine info.json für ${file.name} gefunden.`);
+                                }
+                            }
+
+                            return {
+                                name: { de: titleDe, en: titleEn },
+                                description: { de: descriptionDe, en: descriptionEn },
+                                url: url,
+                                rawName: file.name,
+                                isDir: file.type === 'dir'
+                            };
+                        });
+
+                        const resolvedProjects = await Promise.all(projectPromises);
+                        setProjects(resolvedProjects);
+
+                    } catch (e) {
+                        console.error("Fetch error:", e);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+                fetchProjects();
+            }, []);
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
+                };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            return (
+                <div className="min-h-screen bg-[#0b0d11] text-white selection:bg-white/30 overflow-x-hidden relative pb-12">
+                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
+                        <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-zinc-600/10 blur-[100px] rounded-full" />
+                        <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-white/5 blur-[100px] rounded-full" />
+                    </div>
+
+                    <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
+                        <div className="flex-1 text-left">
+                            <a href="../" className="text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-2 uppercase italic">
+                                <ChevronLeft size={14} /> {t.back}
+                            </a>
+                        </div>
+                        <div className="flex items-center gap-3">
+                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-10 h-10 object-contain logo-platinum-themed" />
+                             <span className="header-logo-text text-2xl">that<span className="text-white">austrianone.</span></span>
+                        </div>
+                        
+                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
+                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-3 px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-lg">
+                                <span>{t.code}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showLangMenu && (
+                                <div className="absolute right-0 top-14 w-44 glass-modal rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                    {Object.keys(translations).map((key) => (
+                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-6 py-5 text-left text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'bg-white/5' : ''}`}>
+                                            <span className={lang === key ? 'text-white' : 'text-zinc-500'}>{translations[key].code}</span> 
+                                            <span className={lang === key ? 'text-white' : 'text-zinc-400'}>{translations[key].name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </nav>
+
+                    <div className="relative z-10 max-w-5xl mx-auto px-6 pt-32 md:pt-48 animate-in text-center md:text-left">
+                        <header className="mb-16">
+                            <div className="inline-block px-4 py-1.5 bg-white/10 text-white rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-8 border border-white/20">{t.badge}</div>
+                            <h1 className="text-5xl md:text-8xl font-black italic uppercase tracking-tighter text-white leading-tight mb-6">
+                                {t.title}
+                            </h1>
+                            <p className="text-zinc-500 text-lg md:text-xl font-medium max-w-2xl leading-relaxed italic">"{t.description}"</p>
+                        </header>
+
+                        {loading ? (
+                            <div className="py-20 text-center text-zinc-600 font-bold uppercase tracking-widest animate-pulse">
+                                {t.loading}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                                {projects.map((project, idx) => (
+                                    <a key={idx} href={project.url} className="relative group block p-0.5 rounded-[2rem] overflow-hidden transition-all duration-300 transform active:scale-[0.98] white-glow h-full">
+                                        <div className="absolute inset-0 bg-gradient-to-r from-zinc-500 via-zinc-400 to-zinc-600 opacity-20 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(transparent,transparent,transparent,#ffffff,#a1a1aa,#52525b)] animate-rotate-slow opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                                        
+                                        <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.9rem] p-8 flex flex-col items-center text-center z-10 m-[1px] h-full">
+                                            <div className="w-16 h-16 rounded-2xl bg-white/5 flex items-center justify-center mb-8 group-hover:scale-110 transition-transform duration-500">
+                                                <GlobeIcon size={32} className="text-white" />
+                                            </div>
+                                            <h3 className="text-xl font-black text-white italic uppercase tracking-tight mb-4 leading-none">
+                                                {lang === 'en' ? project.name.en : project.name.de}
+                                            </h3>
+                                            
+                                            <p className="text-zinc-400 text-sm font-medium leading-relaxed mb-8 flex-grow">
+                                                {lang === 'en' ? project.description.en : project.description.de}
+                                            </p>
+                                            
+                                            <div className="mt-auto flex items-center gap-2 text-white text-[10px] font-black uppercase tracking-[0.2em] group-hover:translate-x-1 transition-transform">
+                                                {t.viewProject} <ChevronRight size={14} />
+                                            </div>
+                                        </div>
+                                    </a>
+                                ))}
+                                
+                                {projects.length === 0 && (
+                                    <div className="col-span-full py-20 border-2 border-dashed border-white/5 rounded-[2.5rem] flex flex-col items-center justify-center opacity-40">
+                                        <p className="text-zinc-600 font-bold text-xs uppercase tracking-widest">{t.noProjects}</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        <footer className="mt-32 text-center flex flex-col items-center gap-8">
+                            <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-8 py-3 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[12px] font-black tracking-[0.5em] transition-all text-zinc-500 hover:text-white uppercase">
+                                <Info size={16} /> {t.legal}
+                            </button>
+                            <div className="flex flex-col gap-1">
+                                <div className="text-zinc-800 text-[10px] font-black tracking-[0.5em] uppercase opacity-40 italic leading-none">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
+                                <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none">
+                                    LIVE BUILD v1.2.9 | {new Date().toLocaleDateString('de-DE')}
+                                </div>
+                            </div>
+                        </footer>
+                    </div>
+
+                    {showLegal && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/95 backdrop-blur-3xl animate-in text-zinc-100">
+                            <div className="glass-modal rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl white-glow">
+                                <div className="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
+                                    <h2 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white transition-all">
+                                        <X size={24} />
+                                    </button>
+                                </div>
+                                <div className="p-8 md:p-10 overflow-y-auto custom-scroll space-y-12 text-left">
+                                    <section>
+                                        <h3 className="text-white font-black uppercase text-[9px] md:text-[10px] tracking-[0.4em] mb-4 italic">{t.legalImprint}</h3>
+                                        <div className="space-y-4 font-bold uppercase">
+                                            <p className="text-xl md:text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-500 text-[10px] md:text-[11px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
+                                            <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
+                                            <div className="pt-4 md:pt-6">
+                                                <p className="text-zinc-600 text-[9px] md:text-[10px] mb-1 tracking-[0.3em] uppercase font-bold">{t.legalContact}</p>
+                                                <p className="text-white text-sm font-black italic lowercase tracking-normal">niklas.ausserwoeger@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section className="space-y-6 text-left">
+                                        <div>
+                                            <h3 className="text-white font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.legalPrivacy}</h3>
+                                            <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.legalPrivacyText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">{t.trademarkLabel}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
+                                        </div>
+                                        <div>
+                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">{t.liabilityLabel}</h4>
+                                            <p className="text-zinc-500 text-[10px] md:text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
+                                        </div>
+                                    </section>
+                                    <div className="pt-8 md:pt-10 border-t border-white/5 text-[9px] md:text-[10px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic">
+                                        Privatprojekt • Linz (OÖ) • {new Date().getFullYear()}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
