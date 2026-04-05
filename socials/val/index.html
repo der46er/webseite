@@ -178,7 +178,7 @@ var App = function App() {
     _useState6 = _slicedToArray(_useState5, 2),
     legalText = _useState6[0],
     setLegalText = _useState6[1];
-  var _useState7 = useState("#ff69b4"), 
+  var _useState7 = useState("#ff00aa"), 
     _useState8 = _slicedToArray(_useState7, 2),
     themeColor = _useState8[0],
     setThemeColor = _useState8[1]; 
@@ -214,10 +214,10 @@ var App = function App() {
       if (/^#?([0-9A-F]{3}|[0-9A-F]{6})$/i.test(trimmed)) {
         setThemeColor(trimmed.startsWith('#') ? trimmed : '#' + trimmed);
       } else {
-        setThemeColor("#ff69b4"); 
+        setThemeColor("#ff00aa"); 
       }
     })["catch"](function () {
-      return setThemeColor("#ff69b4");
+      return setThemeColor("#ff00aa");
     });
   }, []);
 
@@ -278,7 +278,7 @@ var App = function App() {
       transform: 'scale(1.05)'
     }
   }))), /*#__PURE__*/React.createElement("h1", {
-    className: "font-black italic uppercase tracking-tighter text-[#ff69b4] drop-shadow-lg leading-none text-center",
+    className: "font-black italic uppercase tracking-tighter text-[#ff00aa] drop-shadow-lg leading-none text-center",
     style: {
       fontSize: 'clamp(1.5rem, 6vw, 2.5rem)',
     }
@@ -298,7 +298,7 @@ var App = function App() {
     }, /*#__PURE__*/React.createElement("h3", {
       className: "text-base sm:text-lg font-black italic tracking-wide text-zinc-100 group-hover:text-white transition-colors leading-none"
     }, link.title)), /*#__PURE__*/React.createElement("div", {
-      className: "text-zinc-600 group-hover:text-[#ff69b4] transition-all mr-3"
+      className: "text-zinc-600 group-hover:text-[#ff00aa] transition-all mr-3"
     }, /*#__PURE__*/React.createElement(ChevronRight, {
       size: 22
     })));
