@@ -1,0 +1,29 @@
+========================================
+IMPRINT & PRIVACY POLICY
+========================================
+
+--- IMPRINT ---
+
+Media Owner / Website Operator:
+Niklas Ausserwoeger
+"Full address available only upon justified request via email for privacy reasons."
+4040 Linz, Austria
+
+Contact:
+Email: niklas.ausserwoeger@gmail.com
+
+--- COPYRIGHT & TRADEMARKS ---
+
+The logos of third-party platforms and services displayed on this website are used solely for identification purposes. All trademarks and registered trademarks are the property of their respective owners. 
+
+The characters depicted in the profile pictures belong to the original artists who created them. All rights to these character designs remain with their respective creators.
+
+--- PRIVACY POLICY ---
+
+1. General Information
+The use of this website is generally possible without providing personal data. Any personal data collected is done so on a voluntary basis wherever possible.
+
+2. Third-Party Services & APIs ("Listening Right Now" Widget)
+This website utilizes an external API to display live "listening right now" status updates. To display this information, your browser must establish a direct connection to the third-party servers providing this data. 
+
+As a technical necessity of this connection, your IP address and standard browser request data (such as user agent and timestamp) are transmitted to the external API provider. This data transfer is required solely to fetch and display the live status widget.
