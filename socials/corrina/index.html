@@ -7,7 +7,7 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
     
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
     <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
@@ -16,6 +16,22 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
+        /* Lokale Schriftarten */
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v12-latin-900.woff2') format('woff2');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
         body { 
             font-family: 'Inter', sans-serif; 
             margin: 0;
@@ -33,7 +49,6 @@
             background: linear-gradient(-45deg, #f8fafc, #e0f2fe, #ede9fe, #f1f5f9);
             background-size: 400% 400%;
             animation: gradientBG 15s ease infinite;
-            min-height: 100vh;
         }
 
         @keyframes gradientBG {
@@ -170,16 +185,17 @@
             }, []);
 
             return (
-                <div className="animated-bg relative flex flex-col items-center justify-center py-12 px-4 pb-16">
+                <div className="animated-bg relative flex flex-col items-center py-12 px-4 min-h-screen">
                     
                     {/* Floating Abstract Shapes for depth */}
                     <div className="fixed top-[10%] left-[15%] w-72 h-72 bg-blue-400/10 rounded-full mix-blend-multiply filter blur-[80px] pointer-events-none"></div>
                     <div className="fixed bottom-[10%] right-[15%] w-72 h-72 bg-indigo-400/10 rounded-full mix-blend-multiply filter blur-[80px] pointer-events-none"></div>
                     
-                    <div className="w-full max-w-[420px] relative z-10 flex flex-col gap-6">
+                    {/* Main Content Wrapper using flex-grow to push footer down */}
+                    <div className="w-full max-w-[420px] relative z-10 flex flex-col flex-grow">
                         
                         {/* Header Area */}
-                        <header className="flex flex-col items-center text-center gap-5 mb-2 animate-slide-up" style={{ animationDelay: '0s' }}>
+                        <header className="flex flex-col items-center text-center gap-5 mb-8 animate-slide-up" style={{ animationDelay: '0s' }}>
                             <div className="w-32 h-32 sm:w-36 sm:h-36 relative profile-ring rounded-full">
                                 <div className="absolute inset-0 rounded-full border-[4px] border-white shadow-xl overflow-hidden bg-white z-10">
                                     <img 
@@ -200,7 +216,7 @@
                         </header>
 
                         {/* Links Container */}
-                        <main className="flex flex-col gap-3 w-full">
+                        <main className="flex flex-col gap-3 w-full mb-12">
                             {links.map((link, index) => (
                                 <a 
                                     key={link.id}
@@ -230,8 +246,8 @@
                             ))}
                         </main>
 
-                        {/* Footer - Maintained accurately */}
-                        <footer className="mt-8 text-center flex flex-col items-center gap-1.5 animate-slide-up opacity-0" style={{ animationDelay: `${0.2 + links.length * 0.1}s` }}>
+                        {/* Footer - Pushed to absolute bottom using mt-auto */}
+                        <footer className="mt-auto text-center flex flex-col items-center gap-1.5 animate-slide-up opacity-0 pt-4" style={{ animationDelay: `${0.2 + links.length * 0.1}s` }}>
                             <div className="text-slate-500 text-[10px] font-black tracking-[0.5em] uppercase opacity-60 italic leading-none">
                                 © {new Date().getFullYear()} — THAT AUSTRIAN ONE
                             </div>
