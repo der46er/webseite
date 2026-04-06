@@ -211,17 +211,21 @@
                         </main>
                     </div>
 
-                    <footer className="mt-4 text-center flex flex-col items-center gap-1.5 mb-8 w-full mt-auto relative z-10">
-                        <div className="text-zinc-800 text-[10px] font-black tracking-[0.5em] uppercase opacity-40 italic leading-none">
-                            © {new Date().getFullYear()} — Nick (@der_46er)
-                        </div>
-                        <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none">
-                            LIVE BUILD v1.3.2 | {new Date().toLocaleDateString('de-DE')}
-                        </div>
-                        <button onClick={() => setShowLegal(true)} className="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-0.5">
-                            {t.legal}
-                        </button>
-                    </footer>
+                    <footer className="mt-auto text-center flex flex-col items-center gap-1.5 animate-slide-up opacity-0 pt-4" style={{ animationDelay: `${0.2 + links.length * 0.1}s` }}>
+                            <div className="text-slate-500 text-[10px] font-black tracking-[0.5em] uppercase opacity-60 italic leading-none">
+                                © {new Date().getFullYear()} — Nick (@der_46er)
+                            </div>
+                            <div className="text-[10px] font-bold text-slate-400 uppercase tracking-widest select-none leading-none">
+                                LIVE BUILD v1.3.1 | {new Date().toLocaleDateString('de-DE')}
+                            </div>
+                            <button 
+                                onClick={() => setShowLegal(true)} 
+                                className="text-[9px] font-bold tracking-[0.3em] text-slate-500 hover:text-indigo-600 transition-colors uppercase leading-none mt-1"
+                            >
+                                LEGAL & INFO
+                            </button>
+                        </footer>
+                    </div>
 
                     {showLegal && (
                         <div className="fixed inset-0 flex items-center justify-center p-4 animate-in text-zinc-100 bg-[#0b0d11] z-[9999]">
