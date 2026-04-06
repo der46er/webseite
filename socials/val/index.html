@@ -129,7 +129,7 @@
             }, []);
 
             useEffect(() => {
-                fetch("../assets/legal.txt", { cache: 'no-cache' })
+                fetch("https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/assets/legal.txt", { cache: 'no-cache' })
                     .then(res => res.text())
                     .then(setLegalText)
                     .catch(() => setLegalText("Error loading legal information."));
