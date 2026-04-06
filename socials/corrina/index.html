@@ -177,6 +177,7 @@
             const [showLegal, setShowLegal] = useState(false);
             const [legalText, setLegalText] = useState("Loading legal information...");
 
+            // Dynamic fetch for Legal text using the exact path and logic requested
             useEffect(() => {
                 fetch("../assets/legal.txt", { cache: 'no-cache' })
                     .then(res => res.text())
