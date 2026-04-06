@@ -205,16 +205,16 @@
 
                     {/* Legal Modal */}
                     {showLegal && (
-                        <div className="fixed inset-0 flex items-center justify-center p-4 animate-in text-slate-800" style={{ backgroundColor: 'rgba(241, 245, 249, 0.85)', backdropFilter: 'blur(8px)', WebkitBackdropFilter: 'blur(8px)', zIndex: 9999 }}>
-                            <div className="rounded-[2rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/60 glass-card">
-                                <div className="p-8 md:p-10 border-b border-slate-200/50 flex justify-between items-center text-left">
-                                    <h2 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-slate-800">Legal Information</h2>
-                                    <button onClick={() => setShowLegal(false)} className="p-2 text-slate-400 hover:text-slate-800 transition-all rounded-full hover:bg-slate-100/50">
-                                        <X size={24} />
+                        <div className="fixed inset-0 flex items-center justify-center p-4 animate-in text-zinc-100" style={{ backgroundColor: '#0b0d11', opacity: 1, zIndex: 9999 }}>
+                            <div className="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10" style={{ backgroundColor: '#0b0d11', opacity: 1 }}>
+                                <div className="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
+                                    <h2 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">Legal Information</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white transition-all">
+                                        <XIcon size={24} />
                                     </button>
                                 </div>
                                 <div className="p-8 md:p-10 overflow-y-auto custom-scroll text-left">
-                                    <div className="text-slate-600 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-medium italic">
+                                    <div className="text-zinc-400 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-medium italic">
                                         {legalText}
                                     </div>
                                 </div>
