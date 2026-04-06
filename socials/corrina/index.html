@@ -4,6 +4,37 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Links | Corrina Außerwöger</title>
+
+    <script>
+    (function() {
+        const img = new Image();
+        // Required to manipulate images from an external URL safely
+        img.crossOrigin = "anonymous"; 
+        img.src = "https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png";
+        
+        img.onload = function() {
+            const canvas = document.createElement("canvas");
+            canvas.width = img.width;
+            canvas.height = img.height;
+            const ctx = canvas.getContext("2d");
+            
+            // 1. Draw the original image
+            ctx.drawImage(img, 0, 0);
+            
+            // 2. Change all non-transparent pixels to white
+            ctx.globalCompositeOperation = "source-in";
+            ctx.fillStyle = "#FFFFFF";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 3. Create the favicon link tag and inject it
+            const link = document.createElement("link");
+            link.rel = "icon";
+            link.type = "image/png";
+            link.href = canvas.toDataURL("image/png");
+            document.head.appendChild(link);
+        };
+    })();
+</script>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
