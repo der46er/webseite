@@ -157,7 +157,7 @@
         document.getElementById('year').innerText = d.getFullYear();
         document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
 
-        // Fetch Theme Color
+       // Fetch Theme Color
         fetch('../assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
             let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
             if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
@@ -165,6 +165,28 @@
                 if(c.length === 3) c = c.split('').map(x=>x+x).join('');
                 document.documentElement.style.setProperty('--theme-color', hex);
                 document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
+                
+                // Dynamic Favicon Color Logic
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Draw original image
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Paint the hex color over the non-transparent parts
+                    ctx.globalCompositeOperation = 'source-in';
+                    ctx.fillStyle = hex;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Update the favicon link
+                    let link = document.querySelector("link[rel~='icon']");
+                    link.href = canvas.toDataURL('image/png');
+                };
+                img.src = '../assets/favicon.png';
             }
         }).catch(()=>{});
 
