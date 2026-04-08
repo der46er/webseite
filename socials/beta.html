@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Links | thataustrianone</title>
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+        
+        :root { --theme-color: #dc2626; --theme-rgb: 220, 38, 38; }
+        
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: white; overflow-x: hidden; }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .group:hover .animate-rotate-slow { animation: rotate 3s linear infinite; }
+        @keyframes vinyl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        .animate-vinyl { animation: vinyl-spin 8s linear infinite; }
+        
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        
+        /* Dynamic Theme Classes */
+        .theme-text { color: var(--theme-color); }
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen pb-12 selection:bg-emerald-500/30">
+    
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+    </div>
+
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in gap-3 w-full pb-8">
+        
+        <header class="flex w-full gap-4 mb-4">
+            <a href="https://www.tiktok.com/@der_46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
+                <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
+                    <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500"></div>
+                    <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#06b6d4,#3b82f6)]"></div>
+                    <img src="../assets/der_46er.png" alt="Nick" class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl object-cover scale-[1.25] bg-[#161920] z-10">
+                </div>
+                <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@der_46er</h1>
+            </a>
+            <a href="https://www.tiktok.com/@not_der46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
+                <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
+                    <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600"></div>
+                    <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#fde047,#f59e0b)]"></div>
+                    <img src="../assets/not_der46er.png" alt="Nick's alter ego" class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl object-cover scale-[1.25] bg-[#161920] z-10">
+                </div>
+                <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@not_der46er</h1>
+            </a>
+        </header>
+
+        <main class="flex flex-col gap-3">
+            <a href="https://www.thataustrianone.eu" target="_blank" class="group flex items-center justify-center gap-3 p-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] theme-border-hover rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
+                <div class="w-6 h-6 group-hover:scale-110 transition-transform theme-drop-shadow" style="background-color: var(--theme-color); mask: url('../assets/favicon.png') center/contain no-repeat; -webkit-mask: url('../assets/favicon.png') center/contain no-repeat;"></div>
+                <span class="text-lg sm:text-xl font-black lowercase tracking-tighter text-white">that<span class="theme-text transition-colors duration-500">austrianone.</span></span>
+            </a>
+
+            <a href="https://www.craftify-mc.eu" target="_blank" class="group flex flex-col items-center justify-center py-6 px-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-emerald-500/30 rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg relative overflow-hidden">
+                <img src="https://raw.githubusercontent.com/der46er/craftify/main/assets/favicon.png" alt="Craftify Logo" class="w-12 h-12 mb-3 object-contain group-hover:scale-110 transition-transform duration-300">
+                <h2 class="text-xl sm:text-2xl font-black uppercase italic mb-0.5 text-white tracking-wide z-10">Craftify <span class="text-[#4ade80]">Mc</span></h2>
+                <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest z-10">www.craftify-mc.eu</p>
+            </a>
+
+            <script>
+                const socials = [
+                    { t: 'Discord', c: 'bg-[#5865F2]', s: '', u: 'https://discord.gg/jTFfFD823J', i: '<path d="M20.317 4.3698a19.7913 19.7913 0 00-4.8851-1.5152.0741.0741 0 00-.0785.0371c-.211.3753-.4447.8648-.6083 1.2495-1.8447-.2762-3.68-.2762-5.4868 0-.1636-.3933-.4058-.8742-.6177-1.2495a.077.077 0 00-.0785-.037 19.7363 19.7363 0 00-4.8852 1.515.0699.0699 0 00-.0321.0277C.5334 9.0458-.319 13.5799.0992 18.0578a.0824.0824 0 00.0312.0561c2.0528 1.5076 4.0413 2.4228 5.9929 3.0294a.0777.0777 0 00.0842-.0276c.4616-.6304.8731-1.2952 1.226-1.9942a.076.076 0 00-.0416-.1057c-.6528-.2476-1.2743-.5495-1.8722-.8923a.077.077 0 01-.0076-.1277c.1258-.0943.2517-.1923.3718-.2914a.0743.0743 0 01.0776-.0105c3.9278 1.7933 8.18 1.7933 12.0614 0a.0739.0739 0 01.0785.0095c.1202.099.246.1981.3728.2924a.077.077 0 01-.0066.1276 12.2986 12.2986 0 01-1.873.8914.0766.0766 0 00-.0407.1067c.3604.698.7719 1.3628 1.225 1.9932a.076.076 0 00.0842.0286c1.961-.6067 3.9495-1.5219 6.0023-3.0294a.077.077 0 00.0313-.0552c.5004-5.177-.8382-9.6739-3.5485-13.6604a.061.061 0 00-.0312-.0286zM8.02 15.3312c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9555-2.4189 2.157-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.9555 2.4189-2.1569 2.4189zm7.9748 0c-1.1825 0-2.1569-1.0857-2.1569-2.419 0-1.3332.9554-2.4189 2.1569-2.4189 1.2108 0 2.1757 1.0952 2.1568 2.419 0 1.3332-.946 2.4189-2.1568 2.4189Z"/>' },
+                    { t: 'YouTube', c: 'bg-red-600 p-2', s: '', u: 'https://youtube.com/@der_46er', i: '<path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.86-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>' },
+                    { t: 'Instagram', c: '', s: 'background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', u: 'https://instagram.com/not_der46er', i: '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>' },
+                    { t: 'Twitch', c: 'bg-[#9146FF]', s: '', u: 'https://twitch.tv/der_46er', i: '<path d="M2.149 0l-1.612 4.119v16.827h5.376v3.054l3.125-3.054h4.31l8.112-8.111V0H2.149zm15.747 11.411l-3.214 3.214H10.45l-2.5 2.5v-2.5H5.193V2.143h12.703v9.268zM15.02 5.143h-1.607v4.643H15.02V5.143zm-4.643 0H8.77v4.643h1.607V5.143z"/>' },
+                    { t: 'X', c: 'bg-black', s: '', u: 'https://twitter.com/der_46er', i: '<path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>' },
+                    { t: 'Bluesky', c: 'bg-[#0085ff]', s: '', u: 'https://bsky.app/profile/thataustrianone.eu', i: '<path d="M12 10.8c-1.087-2.114-4.046-5.05-6.056-5.05C3.141 5.75 2 7.23 2 9.422c0 1.25.59 4.312 2.825 5.419 2.052 1.018 3.328 1.356 3.328 1.356s-.897.234-2.153.234C3.89 16.431 2 17.5 2 19.462 2 21.238 4.212 22 6 22c3.75 0 6-3 6-3s2.25 3 6 3c1.788 0 4-0.762 4-2.538 0-1.962-1.89-3.031-4-3.031-1.256 0-2.153-0.234-2.153-0.234s1.276-0.338 3.328-1.356c2.235-1.107 2.825-4.169 2.825-5.419 0-2.192-1.141-3.672-3.944-3.672-2.01 0-4.969 2.936-6.056 5.05z"/>' },
+                    { t: 'GitHub', c: 'bg-zinc-800', s: '', u: 'https://github.com/der46er', i: '<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>' }
+                ];
+                document.write(socials.map(l => `
+                    <a href="${l.u}" target="_blank" class="group flex items-center p-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99]">
+                        <div class="shrink-0 w-12 h-12 rounded-xl ${l.c} flex items-center justify-center shadow-lg transition-transform group-hover:scale-105" style="${l.s}">
+                            <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">${l.i}</svg>
+                        </div>
+                        <div class="ml-5 flex-grow text-left">
+                            <h3 class="text-base sm:text-lg font-black italic tracking-wide text-zinc-100 group-hover:text-white transition-colors leading-none">${l.t}</h3>
+                        </div>
+                        <div class="text-zinc-700 group-hover:text-white transition-all mr-2">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </div>
+                    </a>
+                `).join(''));
+            </script>
+
+            <div class="group flex items-center p-3 bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-5 text-zinc-500 group-hover:scale-110 transition-transform duration-500 theme-text">
+                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
+                </div>
+                <div class="flex items-center gap-5 w-full text-left">
+                    <div id="sp-cont" class="w-14 h-14 rounded-full bg-[#161920] flex items-center justify-center border-2 border-white/5 relative overflow-hidden shrink-0 shadow-xl">
+                        <img id="sp-cover" src="" class="hidden w-full h-full object-cover rounded-full" alt="Cover">
+                        <div id="sp-dot" class="hidden absolute w-2 h-2 bg-[#0b0d11] rounded-full border border-white/20 z-10"></div>
+                        <div id="sp-icon" class="w-8 h-8 opacity-20 theme-drop-shadow transition-all duration-500" style="background-color: var(--theme-color); mask: url('../assets/favicon.png') center/contain no-repeat; -webkit-mask: url('../assets/favicon.png') center/contain no-repeat;"></div>
+                    </div>
+                    <div class="text-left overflow-hidden">
+                        <p id="sp-title" class="text-[8px] font-black uppercase tracking-[0.2em] mb-0.5 theme-text transition-colors duration-500">Quiet Mode</p>
+                        <p id="sp-song" class="text-sm sm:text-base font-black italic uppercase text-white truncate leading-tight">Silence</p>
+                        <p id="sp-artist" class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-0.5 truncate leading-none">thataustrianone</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="mt-auto text-center flex flex-col items-center gap-1.5 mb-8 relative z-10 w-full pt-8">
+            <a href="https://thataustrianone.eu/socials" class="text-white/20 text-[10px] font-black tracking-[0.5em] uppercase italic leading-none cursor-pointer">
+                © <span id="year"></span> — Nick (@der_46er)
+            </a>
+            <div class="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none">
+                LIVE BUILD v1.3.2 | <span id="date"></span>
+            </div>
+            <button id="legal-btn" class="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-0.5">
+                LEGAL &amp; INFO
+            </button>
+        </footer>
+    </div>
+
+    <div id="modal" class="hidden fixed inset-0 flex items-center justify-center p-4 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]">
+        <div class="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11]">
+            <div class="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
+                <h2 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">Legal Information</h2>
+                <button id="close-modal" class="p-2 text-zinc-500 hover:text-white transition-all">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="p-8 md:p-10 overflow-y-auto custom-scroll text-left">
+                <div id="legal-text" class="text-zinc-400 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-medium italic">Loading legal information...</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic dates
+        const d = new Date();
+        document.getElementById('year').innerText = d.getFullYear();
+        document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
+
+        // Fetch Theme Color
+        fetch('../assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
+            let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
+            if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
+                let c = hex.replace('#', '');
+                if(c.length === 3) c = c.split('').map(x=>x+x).join('');
+                document.documentElement.style.setProperty('--theme-color', hex);
+                document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
+            }
+        }).catch(()=>{});
+
+        // Legal Modal Logic
+        const modal = document.getElementById('modal');
+        const legalText = document.getElementById('legal-text');
+        document.getElementById('legal-btn').onclick = () => modal.classList.remove('hidden');
+        document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
+        
+        fetch('../assets/legal.txt', { cache: 'no-cache' })
+            .then(r => r.text()).then(t => legalText.innerText = t)
+            .catch(() => legalText.innerText = "Error loading legal information.");
+
+        // Spotify Lanyard Integration
+        const fetchSpotify = async () => {
+            try {
+                const res = await fetch('https://api.lanyard.rest/v1/users/964500222870945873', { cache: 'no-cache' });
+                const { data } = await res.json();
+                const sp = data?.listening_to_spotify ? data.spotify : null;
+                
+                const cont = document.getElementById('sp-cont'), cover = document.getElementById('sp-cover'), icon = document.getElementById('sp-icon'), dot = document.getElementById('sp-dot');
+                document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Quiet Mode';
+                document.getElementById('sp-song').innerText = sp ? sp.song : 'Silence';
+                document.getElementById('sp-artist').innerText = sp ? sp.artist : 'thataustrianone';
+                
+                if (sp) {
+                    cont.classList.add('animate-vinyl');
+                    cover.src = sp.album_art_url;
+                    cover.classList.remove('hidden');
+                    dot.classList.remove('hidden');
+                    icon.classList.add('hidden');
+                } else {
+                    cont.classList.remove('animate-vinyl');
+                    cover.classList.add('hidden');
+                    dot.classList.add('hidden');
+                    icon.classList.remove('hidden');
+                }
+            } catch(e) {}
+        };
+        fetchSpotify();
+        setInterval(fetchSpotify, 10000);
+    </script>
+</body>
+</html>
