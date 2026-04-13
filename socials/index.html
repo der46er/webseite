@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Social Links | thataustrianone</title>
+    <title>Socials | Nick</title>
     <link rel="icon" type="image/png" href="../assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -33,29 +33,36 @@
         .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
     </style>
 </head>
-<body class="min-h-screen pb-12 selection:bg-emerald-500/30">
+<body class="flex flex-col min-h-screen pb-12 selection:bg-emerald-500/30">
     
     <div class="fixed inset-0 pointer-events-none z-0">
         <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
         <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
     </div>
 
-    <div class="relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in flex flex-col gap-3">
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in gap-3 w-full pb-32">
         
-        <header class="flex w-full gap-4 mb-4">
+       <header class="flex w-full gap-4 mb-4">
             <a href="https://www.tiktok.com/@der_46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
                 <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
                     <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500"></div>
                     <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#06b6d4,#3b82f6)]"></div>
-                    <img src="../assets/der_46er.png" alt="Nick" class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl object-cover scale-[1.15] bg-[#161920] z-10">
+                    
+                    <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
+                        <img src="../assets/der_46er.png" alt="Nick" class="w-full h-full object-cover object-center scale-[1.15]">
+                    </div>
                 </div>
                 <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@der_46er</h1>
             </a>
+            
             <a href="https://www.tiktok.com/@not_der46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
                 <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
                     <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600"></div>
                     <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#fde047,#f59e0b)]"></div>
-                    <img src="../assets/not_der46er.png" alt="Nick's alter ego" class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl object-cover scale-[1.15] bg-[#161920] z-10">
+                    
+                    <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
+                        <img src="../assets/not_der46er.png" alt="Nick's alter ego" class="w-full h-full object-cover object-center scale-[1.15]">
+                    </div>
                 </div>
                 <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@not_der46er</h1>
             </a>
@@ -79,10 +86,13 @@
                     { t: 'YouTube', c: 'bg-red-600 p-2', s: '', u: 'https://youtube.com/@der_46er', i: '<path d="M21.582,6.186c-0.23-0.86-0.908-1.538-1.768-1.768C18.254,4,12,4,12,4S5.746,4,4.186,4.418c-0.86,0.23-1.538,0.908-1.768,1.768C2,7.746,2,12,2,12s0,4.254,0.418,5.814c0.23,0.86,0.908,1.538,1.768,1.768C5.746,20,12,20,12,20s6.254,0,7.814-0.418c0.86-0.23,1.538-0.908,1.768-1.768C22,16.254,22,12,22,12S22,7.746,21.582,6.186z M10,15.464V8.536L16,12L10,15.464z"/>' },
                     { t: 'Instagram', c: '', s: 'background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)', u: 'https://instagram.com/not_der46er', i: '<path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/>' },
                     { t: 'Twitch', c: 'bg-[#9146FF]', s: '', u: 'https://twitch.tv/der_46er', i: '<path d="M2.149 0l-1.612 4.119v16.827h5.376v3.054l3.125-3.054h4.31l8.112-8.111V0H2.149zm15.747 11.411l-3.214 3.214H10.45l-2.5 2.5v-2.5H5.193V2.143h12.703v9.268zM15.02 5.143h-1.607v4.643H15.02V5.143zm-4.643 0H8.77v4.643h1.607V5.143z"/>' },
+                    { t: 'Kick', c: 'bg-[#58FC1F]', s: '', u: 'https://kick.com/der-46er', i: '<path d="M3.25 2H8.25V9.5H10.75V7H13.25V2H20.75V7H18.25V9.5H15.75V14.5H18.25V17H20.75V22H13.25V17H10.75V14.5H8.25V22H3.25Z" />' },
                     { t: 'X', c: 'bg-black', s: '', u: 'https://twitter.com/der_46er', i: '<path d="M18.901 1.153h3.68l-8.04 9.19L24 22.846h-7.406l-5.8-7.584-6.638 7.584H.474l8.6-9.83L0 1.154h7.594l5.243 6.932ZM17.61 20.644h2.039L6.486 3.24H4.298Z"/>' },
                     { t: 'Bluesky', c: 'bg-[#0085ff]', s: '', u: 'https://bsky.app/profile/thataustrianone.eu', i: '<path d="M12 10.8c-1.087-2.114-4.046-5.05-6.056-5.05C3.141 5.75 2 7.23 2 9.422c0 1.25.59 4.312 2.825 5.419 2.052 1.018 3.328 1.356 3.328 1.356s-.897.234-2.153.234C3.89 16.431 2 17.5 2 19.462 2 21.238 4.212 22 6 22c3.75 0 6-3 6-3s2.25 3 6 3c1.788 0 4-0.762 4-2.538 0-1.962-1.89-3.031-4-3.031-1.256 0-2.153-0.234-2.153-0.234s1.276-0.338 3.328-1.356c2.235-1.107 2.825-4.169 2.825-5.419 0-2.192-1.141-3.672-3.944-3.672-2.01 0-4.969 2.936-6.056 5.05z"/>' },
+                    { t: 'Telegram', c: 'bg-[#24A1DE]', s: '', u: 'https://t.me/der_46er', i: '<path d="M11.944 0A12 12 0 0 0 0 12a12 12 0 0 0 12 12 12 12 0 0 0 12-12A12 12 0 0 0 12 0a12 12 0 0 0-.056 0zm4.962 7.224c.1-.002.32.023.465.14a.506.506 0 0 1 .171.325c.016.093.036.306.02.472-.18 1.898-.962 6.502-1.36 8.627-.168.9-.499 1.201-.82 1.23-.696.065-1.225-.46-1.9-.902-1.056-.693-1.653-1.124-2.678-1.8-1.185-.78-.417-1.21.258-1.91.177-.184 3.247-2.977 3.307-3.23.007-.032.014-.15-.056-.212s-.174-.041-.249-.024c-.106.024-1.793 1.14-5.061 3.345-.48.33-.913.49-1.302.48-.428-.008-1.252-.241-1.865-.44-.752-.245-1.349-.374-1.297-.789.027-.216.325-.437.893-.663 3.498-1.524 5.83-2.529 6.998-3.014 3.332-1.386 4.025-1.627 4.476-1.635z"/>' },
+                    { t: 'VK', c: 'bg-[#0077FF]', s: '', u: 'https://vk.ru/der_46er', i: '<path d="M20.8,7.74C20.93,7.32 20.8,7 20.18,7H18.16C17.64,7 17.33,7.27 17.16,7.58C17.16,7.58 16.15,10.08 14.71,11.72C14.25,12.18 14,12.33 13.72,12.33C13.58,12.33 13.36,12.18 13.36,11.74V7.74C13.36,7.22 13.21,7 12.75,7H9.36C9,7 8.78,7.26 8.78,7.5C8.78,8 9.53,8.12 9.61,9.26V12.43C9.61,13.1 9.49,13.22 9.2,13.22C8.44,13.22 6.54,10.7 5.56,7.61C5.36,7.12 5.15,7 4.63,7H2.61C2.03,7 1.91,7.27 1.91,7.58C1.91,8.12 2.61,10.87 5.25,14.58C7.03,17.14 9.47,18.5 11.68,18.5C13.03,18.5 13.2,18.2 13.2,17.7V15.89C13.2,15.28 13.33,15.16 13.82,15.16C14.18,15.16 14.79,15.34 16.23,16.74C17.88,18.39 18.15,18.5 18.67,18.5H20.69C21.27,18.5 21.56,18.2 21.38,17.62C21.15,17.06 20.42,16.14 19.46,15.06C18.93,14.45 18.11,13.8 17.86,13.45C17.5,13 17.58,12.82 17.86,12.38C17.86,12.38 20.57,8.55 20.8,7.74Z" />' },
                     { t: 'GitHub', c: 'bg-zinc-800', s: '', u: 'https://github.com/der46er', i: '<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>' }
-                ];
+           ];
                 document.write(socials.map(l => `
                     <a href="${l.u}" target="_blank" class="group flex items-center p-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99]">
                         <div class="shrink-0 w-12 h-12 rounded-xl ${l.c} flex items-center justify-center shadow-lg transition-transform group-hover:scale-105" style="${l.s}">
@@ -117,10 +127,16 @@
             </div>
         </main>
 
-        <footer class="mt-4 text-center flex flex-col items-center gap-1.5">
-            <div class="text-zinc-800 text-[10px] font-black tracking-[0.5em] uppercase opacity-40 italic leading-none">© <span id="year"></span> — THAT AUSTRIAN ONE</div>
-            <div class="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none">LIVE BUILD v1.3.2 | <span id="date"></span></div>
-            <button id="legal-btn" class="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-0.5">LEGAL & INFO</button>
+        <footer class="fixed bottom-0 left-0 w-full z-50 text-center flex flex-col items-center gap-1.5 py-4">
+            <a href="https://thataustrianone.eu/socials" class="text-white/20 text-[10px] font-black tracking-[0.5em] uppercase italic leading-none cursor-pointer">
+            © <span id="year"></span> — Nick (@der_46er)
+            </a>
+        <div class="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none mt-1">
+        LIVE BUILD v1.4.1 | <span id="date"></span>
+        </div>
+                <button id="legal-btn" class="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-1.5">
+                    LEGAL &amp; INFO
+            </button>
         </footer>
     </div>
 
@@ -144,7 +160,7 @@
         document.getElementById('year').innerText = d.getFullYear();
         document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
 
-        // Fetch Theme Color
+       // Fetch Theme Color
         fetch('../assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
             let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
             if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
@@ -152,6 +168,28 @@
                 if(c.length === 3) c = c.split('').map(x=>x+x).join('');
                 document.documentElement.style.setProperty('--theme-color', hex);
                 document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
+                
+                // Dynamic Favicon Color Logic
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    
+                    // Draw original image
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Paint the hex color over the non-transparent parts
+                    ctx.globalCompositeOperation = 'source-in';
+                    ctx.fillStyle = hex;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    
+                    // Update the favicon link
+                    let link = document.querySelector("link[rel~='icon']");
+                    link.href = canvas.toDataURL('image/png');
+                };
+                img.src = '../assets/favicon.png';
             }
         }).catch(()=>{});
 
