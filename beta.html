@@ -122,18 +122,21 @@
             }
         };
 
-        const MainCard = ({ title, desc, icon: Icon, href, isExternal }) => (
+        const MainCard = ({ title, desc, icon: Icon, href, color, isExternal }) => (
             <a 
                 href={href} 
                 target={isExternal ? "_blank" : "_self"}
-                className="group flex items-center gap-4 sm:gap-6 p-4 sm:p-6 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-green-500/30 rounded-[1.2rem] sm:rounded-[1.5rem] transition-all duration-200 active:scale-[0.99] shadow-lg relative overflow-hidden"
+                className="group flex items-center gap-4 sm:gap-6 p-4 sm:p-6 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.1] rounded-[1.2rem] sm:rounded-[1.5rem] transition-all duration-300 active:scale-[0.99] shadow-lg relative overflow-hidden"
             >
-                <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center bg-white/5 border border-white/5 group-hover:scale-105 transition-transform duration-300 shadow-inner shrink-0">
-                    <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white group-hover:text-green-500 transition-colors" />
+                {/* Dynamically Colored Icon Container */}
+                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center bg-gradient-to-br ${color} group-hover:scale-110 transition-transform duration-500 shadow-lg shrink-0 relative overflow-hidden border border-white/20`}>
+                    <div className="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-colors duration-500"></div>
+                    <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white relative z-10 drop-shadow-md" />
                 </div>
+                
                 <div className="text-left flex-grow overflow-hidden">
                     <h2 className="text-lg sm:text-2xl font-black text-white tracking-wide group-hover:translate-x-1 transition-transform duration-300 italic uppercase leading-none mb-1 truncate">{title}</h2>
-                    <p className="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate sm:whitespace-normal">{desc}</p>
+                    <p className="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate sm:whitespace-normal group-hover:text-zinc-400 transition-colors">{desc}</p>
                 </div>
                 <div className="text-zinc-700 group-hover:text-white transition-all group-hover:translate-x-1 shrink-0">
                     <ChevronRight size={24} />
@@ -201,6 +204,7 @@
                                 desc={t.aboutDesc} 
                                 icon={UserIcon} 
                                 href="https://thataustrianone.eu/about-me/" 
+                                color="from-blue-600 via-cyan-500 to-indigo-600"
                                 isExternal={false}
                             />
                             <MainCard 
@@ -208,6 +212,7 @@
                                 desc={t.servicesDesc} 
                                 icon={TechIcon} 
                                 href="https://thataustrianone.eu/services/" 
+                                color="from-fuchsia-600 via-purple-600 to-indigo-600"
                                 isExternal={false}
                             />
                             <MainCard 
@@ -215,6 +220,7 @@
                                 desc={t.shopDesc} 
                                 icon={ShoppingCart} 
                                 href="https://thataustrianone.eu/shop/" 
+                                color="from-orange-500 via-amber-500 to-rose-500"
                                 isExternal={false}
                             />
                             <MainCard 
@@ -222,6 +228,7 @@
                                 desc={t.projectsDesc} 
                                 icon={CodeIcon} 
                                 href="https://thataustrianone.eu/projects/" 
+                                color="from-zinc-500 via-zinc-400 to-zinc-600"
                                 isExternal={false}
                             />
                             <MainCard 
@@ -229,6 +236,7 @@
                                 desc={t.socialDesc} 
                                 icon={Share} 
                                 href="https://thataustrianone.eu/socials" 
+                                color="from-red-900 via-red-700 to-red-950"
                                 isExternal={false}
                             />
                         </div>
