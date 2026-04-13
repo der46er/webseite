@@ -33,14 +33,14 @@
         .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
     </style>
 </head>
-<body class="flex flex-col min-h-screen pb-12 selection:bg-emerald-500/30">
+<body class="flex flex-col min-h-screen selection:bg-emerald-500/30">
     
     <div class="fixed inset-0 pointer-events-none z-0">
         <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
         <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
     </div>
 
-    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in gap-3 w-full pb-32">
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in gap-3 w-full pb-8">
         
        <header class="flex w-full gap-4 mb-4">
             <a href="https://www.tiktok.com/@der_46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
@@ -128,20 +128,20 @@
             </div>
         </main>
 
-        <footer class="fixed bottom-0 left-0 w-full z-50 text-center flex flex-col items-center gap-1.5 py-4">
+        <footer class="mt-auto w-full z-40 text-center flex flex-col items-center gap-1.5 pt-12 pb-8 relative">
             <a href="https://thataustrianone.eu/socials" class="text-white/20 text-[10px] font-black tracking-[0.5em] uppercase italic leading-none cursor-pointer">
-            © <span id="year"></span> — Nick (@der_46er)
+                © <span id="year"></span> — Nick (@der_46er)
             </a>
-        <div class="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none mt-1">
-        LIVE BUILD v1.4.1 | <span id="date"></span>
-        </div>
-                <button id="legal-btn" class="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-1.5">
-                    LEGAL &amp; INFO
+            <div class="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none mt-1">
+                LIVE BUILD v1.4.2 | <span id="date"></span>
+            </div>
+            <button id="legal-btn" class="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-1.5">
+                LEGAL & INFO
             </button>
         </footer>
     </div>
 
-    <div id="modal" class="hidden fixed inset-0 flex items-center justify-center p-4 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]">
+    <div id="modal" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md">
         <div class="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11]">
             <div class="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
                 <h2 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">Legal Information</h2>
@@ -161,7 +161,40 @@
         document.getElementById('year').innerText = d.getFullYear();
         document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
 
-       // Fetch Theme Color
+        // Function to paint the favicon dynamically
+        function updateFaviconColor(hex) {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                
+                // Draw original image
+                ctx.drawImage(img, 0, 0);
+                
+                // Paint the hex color over the non-transparent parts
+                ctx.globalCompositeOperation = 'source-in';
+                ctx.fillStyle = hex;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // Update the favicon link
+                let link = document.querySelector("link[rel~='icon']");
+                if (!link) {
+                    link = document.createElement('link');
+                    link.rel = 'icon';
+                    document.head.appendChild(link);
+                }
+                link.href = canvas.toDataURL('image/png');
+            };
+            img.src = '../assets/favicon.png';
+        }
+
+        // 1. Immediately update favicon to the default theme color (red)
+        updateFaviconColor('#dc2626');
+
+        // 2. Fetch Theme Color and optionally update again
         fetch('../assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
             let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
             if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
@@ -170,27 +203,8 @@
                 document.documentElement.style.setProperty('--theme-color', hex);
                 document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
                 
-                // Dynamic Favicon Color Logic
-                const img = new Image();
-                img.onload = () => {
-                    const canvas = document.createElement('canvas');
-                    canvas.width = img.width;
-                    canvas.height = img.height;
-                    const ctx = canvas.getContext('2d');
-                    
-                    // Draw original image
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Paint the hex color over the non-transparent parts
-                    ctx.globalCompositeOperation = 'source-in';
-                    ctx.fillStyle = hex;
-                    ctx.fillRect(0, 0, canvas.width, canvas.height);
-                    
-                    // Update the favicon link
-                    let link = document.querySelector("link[rel~='icon']");
-                    link.href = canvas.toDataURL('image/png');
-                };
-                img.src = '../assets/favicon.png';
+                // Re-paint favicon if the theme file has a custom color
+                updateFaviconColor(hex);
             }
         }).catch(()=>{});
 
@@ -200,7 +214,7 @@
         document.getElementById('legal-btn').onclick = () => modal.classList.remove('hidden');
         document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
         
-        fetch('../assets/legal.txt', { cache: 'no-cache' })
+        fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
             .then(r => r.text()).then(t => legalText.innerText = t)
             .catch(() => legalText.innerText = "Error loading legal information.");
 
