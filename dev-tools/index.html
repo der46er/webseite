@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dev Tools | thataustrianone</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: #f4f4f5; margin: 0; }
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        .glass-panel { background: rgba(22, 25, 32, 0.95); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .animate-in { animation: fadeIn 0.5s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState } = React;
+
+        const App = () => {
+            // --- Login State ---
+            const [isAuthenticated, setIsAuthenticated] = useState(false);
+            const [passwordInput, setPasswordInput] = useState('');
+            const [loginError, setLoginError] = useState(false);
+
+            // --- Generator State ---
+            const [titleDe, setTitleDe] = useState('');
+            const [titleEn, setTitleEn] = useState('');
+            const [price, setPrice] = useState('');
+            const [descDe, setDescDe] = useState('');
+            const [descEn, setDescEn] = useState('');
+            const [images, setImages] = useState(['']);
+            const [isSold, setIsSold] = useState(false);
+            const [willhaben, setWillhaben] = useState('');
+            const [vinted, setVinted] = useState('');
+            const [ebay, setEbay] = useState('');
+            const [outputJson, setOutputJson] = useState('');
+            const [showTutorial, setShowTutorial] = useState(false);
+            const [copied, setCopied] = useState(false);
+
+            const handleLogin = (e) => {
+                e.preventDefault();
+                // --- SET YOUR PASSWORD HERE ---
+                if (passwordInput === 'deinpasswort') {
+                    setIsAuthenticated(true);
+                    setLoginError(false);
+                } else {
+                    setLoginError(true);
+                    setPasswordInput('');
+                }
+            };
+
+            const handleImageChange = (index, value) => {
+                const newImages = [...images];
+                newImages[index] = value;
+                setImages(newImages);
+            };
+
+            const addImageField = () => setImages([...images, '']);
+            const removeImageField = (index) => setImages(images.filter((_, i) => i !== index));
+
+            const generateJson = () => {
+                const urls = [willhaben, ebay, vinted].filter(url => url.trim() !== '');
+                const filteredImages = images.filter(img => img.trim() !== '');
+
+                const newBlock = {
+                    title: { de: titleDe, en: titleEn },
+                    price: price,
+                    description: { de: descDe, en: descEn },
+                    images: filteredImages,
+                    isSold: isSold,
+                    urls: urls
+                };
+
+                setOutputJson(JSON.stringify(newBlock, null, 2) + ',');
+                setCopied(false);
+            };
+
+            const copyToClipboard = () => {
+                navigator.clipboard.writeText(outputJson);
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+            };
+
+            const clearForm = () => {
+                setTitleDe(''); setTitleEn(''); setPrice('');
+                setDescDe(''); setDescEn(''); setImages(['']);
+                setIsSold(false); setWillhaben(''); setVinted(''); setEbay('');
+                setOutputJson('');
+            };
+
+            // --- Login Screen Render ---
+            if (!isAuthenticated) {
+                return (
+                    <div className="min-h-screen flex items-center justify-center p-4 relative overflow-hidden">
+                        {/* Background Glow */}
+                        <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
+                            <div className="absolute top-[20%] left-[20%] w-[30%] h-[30%] bg-blue-600/10 blur-[120px] rounded-full" />
+                            <div className="absolute bottom-[20%] right-[20%] w-[30%] h-[30%] bg-orange-600/10 blur-[120px] rounded-full" />
+                        </div>
+
+                        <div className="glass-panel rounded-3xl p-10 w-full max-w-sm relative z-10 animate-in text-center shadow-2xl">
+                            <div className="w-16 h-16 mx-auto mb-6">
+                                <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-full h-full object-contain filter drop-shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+                            </div>
+                            <h1 className="text-2xl font-black italic uppercase tracking-tighter text-white mb-2">Dev Access</h1>
+                            <p className="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mb-8">Restricted Area</p>
+                            
+                            <form onSubmit={handleLogin} className="space-y-4">
+                                <div>
+                                    <input 
+                                        type="password" 
+                                        value={passwordInput} 
+                                        onChange={(e) => setPasswordInput(e.target.value)} 
+                                        placeholder="Enter Password" 
+                                        className={`w-full bg-[#0b0d11] border ${loginError ? 'border-red-500/50 focus:border-red-500' : 'border-white/10 focus:border-orange-500'} rounded-xl px-4 py-3.5 text-sm text-center text-white focus:outline-none transition-colors tracking-widest font-mono`}
+                                        autoFocus
+                                    />
+                                    {loginError && <p className="text-red-500 text-[10px] font-bold uppercase tracking-widest mt-2 animate-in">Access Denied</p>}
+                                </div>
+                                <button type="submit" className="w-full bg-white text-black hover:bg-orange-500 hover:text-white font-black py-3.5 rounded-xl uppercase tracking-[0.2em] transition-all text-xs">
+                                    Unlock
+                                </button>
+                            </form>
+                            <div className="mt-8">
+                                <a href="../" className="text-zinc-600 hover:text-zinc-400 text-[10px] font-bold uppercase tracking-widest transition-colors">← Back to Site</a>
+                            </div>
+                        </div>
+                    </div>
+                );
+            }
+
+            // --- Generator UI Render ---
+            return (
+                <div className="min-h-screen p-8 max-w-6xl mx-auto flex gap-8 flex-col lg:flex-row animate-in">
+                    {/* Left Column: Form */}
+                    <div className="flex-1 space-y-6">
+                        <div className="flex justify-between items-end mb-8">
+                            <div>
+                                <h1 className="text-3xl font-black italic uppercase tracking-tighter text-white flex items-center gap-3">
+                                    <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-8 h-8 object-contain" />
+                                    Dev Tools
+                                </h1>
+                                <p className="text-orange-500 text-[10px] font-black tracking-[0.3em] uppercase mt-1">Shop JSON Generator</p>
+                            </div>
+                            <button onClick={() => setShowTutorial(true)} className="px-5 py-2.5 bg-white/5 hover:bg-white/10 border border-white/10 text-white text-[10px] font-black uppercase tracking-[0.2em] rounded-full transition-all">
+                                How to use
+                            </button>
+                        </div>
+
+                        <div className="glass-panel rounded-3xl p-6 space-y-5">
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">Title (DE)</label>
+                                    <input type="text" value={titleDe} onChange={(e) => setTitleDe(e.target.value)} className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">Title (EN)</label>
+                                    <input type="text" value={titleEn} onChange={(e) => setTitleEn(e.target.value)} className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">Price (€)</label>
+                                <input type="number" value={price} onChange={(e) => setPrice(e.target.value)} className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">Description (DE)</label>
+                                    <textarea value={descDe} onChange={(e) => setDescDe(e.target.value)} rows="3" className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors custom-scroll"></textarea>
+                                </div>
+                                <div>
+                                    <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">Description (EN)</label>
+                                    <textarea value={descEn} onChange={(e) => setDescEn(e.target.value)} rows="3" className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors custom-scroll"></textarea>
+                                </div>
+                            </div>
+
+                            <div>
+                                <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-2">Image URLs</label>
+                                {images.map((img, index) => (
+                                    <div key={index} className="flex gap-2 mb-2">
+                                        <input type="text" value={img} onChange={(e) => handleImageChange(index, e.target.value)} placeholder="https://..." className="flex-1 bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                                        {images.length > 1 && (
+                                            <button onClick={() => removeImageField(index)} className="px-4 bg-red-500/10 text-red-500 border border-red-500/20 hover:bg-red-500/20 rounded-xl font-bold transition-colors">X</button>
+                                        )}
+                                    </div>
+                                ))}
+                                <button onClick={addImageField} className="text-[10px] text-orange-500 font-black uppercase tracking-[0.2em] hover:text-orange-400 transition-colors mt-2 bg-orange-500/10 px-4 py-2 rounded-lg border border-orange-500/20">+ Add another image</button>
+                            </div>
+
+                            <div className="border-t border-white/10 pt-5">
+                                <label className="block text-[10px] text-zinc-400 font-bold uppercase tracking-widest mb-3">Listing URLs (Leave empty if none)</label>
+                                <div className="space-y-3">
+                                    <input type="text" value={willhaben} onChange={(e) => setWillhaben(e.target.value)} placeholder="Willhaben Link" className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                                    <input type="text" value={vinted} onChange={(e) => setVinted(e.target.value)} placeholder="Vinted Link" className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                                    <input type="text" value={ebay} onChange={(e) => setEbay(e.target.value)} placeholder="eBay Link" className="w-full bg-[#0b0d11] border border-white/10 rounded-xl px-4 py-3 text-sm text-white focus:outline-none focus:border-orange-500 transition-colors" />
+                                </div>
+                            </div>
+
+                            <div className="flex items-center gap-3 pt-2">
+                                <input type="checkbox" id="sold" checked={isSold} onChange={(e) => setIsSold(e.target.checked)} className="w-5 h-5 accent-orange-500 rounded bg-white/10 border-white/20" />
+                                <label htmlFor="sold" className="text-xs font-black uppercase tracking-[0.2em] text-zinc-300">Mark as Sold</label>
+                            </div>
+                        </div>
+
+                        <div className="flex gap-4">
+                            <button onClick={generateJson} className="flex-1 bg-orange-600 hover:bg-orange-500 text-white font-black py-4 rounded-2xl uppercase tracking-[0.2em] text-xs transition-all shadow-[0_0_20px_rgba(249,115,22,0.3)]">Generate JSON</button>
+                            <button onClick={clearForm} className="px-8 bg-white/5 hover:bg-white/10 border border-white/10 text-white font-black py-4 rounded-2xl uppercase tracking-[0.2em] text-xs transition-all">Clear</button>
+                        </div>
+                    </div>
+
+                    {/* Right Column: Output */}
+                    <div className="flex-1 flex flex-col mt-12 lg:mt-0">
+                        <div className="glass-panel rounded-3xl p-6 flex-1 flex flex-col relative h-[600px] lg:h-auto border border-orange-500/20">
+                            <div className="flex justify-between items-center mb-4">
+                                <h2 className="text-[10px] text-orange-500 font-black uppercase tracking-[0.3em]">Output Code</h2>
+                                {outputJson && (
+                                    <button 
+                                        onClick={copyToClipboard}
+                                        className={`px-4 py-2 rounded-full font-black uppercase tracking-widest text-[10px] transition-all ${copied ? 'bg-green-500 text-white shadow-[0_0_15px_rgba(34,197,94,0.4)]' : 'bg-white text-black hover:bg-zinc-200'}`}
+                                    >
+                                        {copied ? 'Copied!' : 'Copy to Clipboard'}
+                                    </button>
+                                )}
+                            </div>
+                            <textarea 
+                                readOnly 
+                                value={outputJson} 
+                                className="flex-1 w-full bg-[#0b0d11]/80 border border-white/5 rounded-xl p-5 text-[13px] font-mono text-zinc-300 custom-scroll focus:outline-none resize-none leading-relaxed"
+                                placeholder="Your generated JSON block will appear here.&#10;&#10;Fill out the form on the left and click 'Generate JSON'."
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    {/* Tutorial Modal */}
+                    {showTutorial && (
+                        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/90 backdrop-blur-md animate-in">
+                            <div className="glass-panel rounded-[2.5rem] p-10 max-w-2xl w-full relative shadow-2xl border border-white/10">
+                                <button onClick={() => setShowTutorial(false)} className="absolute top-8 right-8 text-zinc-500 hover:text-white transition-colors">
+                                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
+                                <h3 className="text-3xl font-black italic uppercase tracking-tighter text-white mb-8">How to update the shop</h3>
+                                <div className="space-y-6 text-sm text-zinc-400 font-medium leading-relaxed">
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-black shrink-0 border border-orange-500/30">1</div>
+                                        <p className="pt-1.5">Fill out all the details for your new item in the form.</p>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-black shrink-0 border border-orange-500/30">2</div>
+                                        <p className="pt-1.5">Click <strong className="text-white">Generate JSON</strong> and then <strong className="text-white">Copy to Clipboard</strong>.</p>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-black shrink-0 border border-orange-500/30">3</div>
+                                        <p className="pt-1.5">Open your GitHub repository in your browser and navigate to <code className="bg-white/10 px-2 py-1 rounded text-orange-400 font-mono text-xs">shop/products.json</code>.</p>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-black shrink-0 border border-orange-500/30">4</div>
+                                        <p className="pt-1.5">Click the pencil icon to edit the file. Paste your copied code exactly <strong className="text-white">after the opening bracket <code className="bg-white/10 px-1.5 py-0.5 rounded text-orange-400 font-mono">[</code></strong> at the top of the file.</p>
+                                    </div>
+                                    <div className="flex gap-4 items-start">
+                                        <div className="w-8 h-8 rounded-full bg-orange-500/20 text-orange-500 flex items-center justify-center font-black shrink-0 border border-orange-500/30">5</div>
+                                        <p className="pt-1.5">Commit your changes. The website will update automatically!</p>
+                                    </div>
+                                </div>
+                                <div className="mt-10 pt-6 border-t border-white/5">
+                                    <p className="text-[11px] text-zinc-500 font-bold uppercase tracking-widest">Note: Make sure not to delete the square brackets [ ] at the beginning and end of the products.json file.</p>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
