@@ -225,7 +225,7 @@
                 const sp = data?.listening_to_spotify ? data.spotify : null;
                 
                 const cont = document.getElementById('sp-cont'), cover = document.getElementById('sp-cover'), icon = document.getElementById('sp-icon'), dot = document.getElementById('sp-dot');
-                document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Quiet Mode';
+                document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Not listening to Music at the moment';
                 document.getElementById('sp-song').innerText = sp ? sp.song : 'Silence';
                 document.getElementById('sp-artist').innerText = sp ? sp.artist : 'thataustrianone';
                 
