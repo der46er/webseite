@@ -1,31 +1,5 @@
 [
   {
-    "title": { "de": "PLATZHALTER_TITEL_DEUTSCH", "en": "PLACEHOLDER_TITLE_ENGLISH" },
-    "price": "99",
-    "description": { "de": "PLATZHALTER_BESCHREIBUNG_DEUTSCH", "en": "PLACEHOLDER_DESCRIPTION_ENGLISH" },
-    "images": [
-      "BILD_URL_1",
-      "BILD_URL_2",
-      "BILD_URL_3"
-    ],
-    "isSold": false,
-    "urls": [
-      "WILLHABEN_URL",
-      "EBAY_URL",
-      "VINTED_URL"
-    ]
-  },
-  {
-    "title": { "de": "WEITERER_PLATZHALTER", "en": "ANOTHER_PLACEHOLDER" },
-    "price": "50",
-    "description": { "de": "Einfach diesen Block kopieren für neue Artikel.", "en": "Just copy this block for new items." },
-    "images": [
-      "BILD_URL_1"
-    ],
-    "isSold": true,
-    "urls": []
-  },
-  {
     "title": { "de": "Corsair iCue Lüfter", "en": "Corsair iCue Fan" },
     "price": "15",
     "description": { "de": "Funktioniert einwandfrei. Kompatibel mit Corsair iCue. 6 Stück verfügbar.", "en": "Works perfectly. Compatible with Corsair iCue. 6 items available." },
