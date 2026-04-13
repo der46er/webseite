@@ -214,6 +214,7 @@
             const menuRef = useRef(null);
             const t = translations[lang];
 
+            // Close language menu on outside click
             useEffect(() => {
                 const handleClickOutside = (event) => {
                     if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
@@ -222,6 +223,39 @@
                 return () => document.removeEventListener("mousedown", handleClickOutside);
             }, []);
 
+            // Dynamic Favicon Canvas Logic
+            useEffect(() => {
+                const updateFaviconColor = (hexColor) => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    const img = new Image();
+                    
+                    img.crossOrigin = 'Anonymous';
+                    img.src = 'https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png';
+
+                    img.onload = () => {
+                        canvas.width = img.width || 32;
+                        canvas.height = img.height || 32;
+                        
+                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+                        ctx.globalCompositeOperation = 'source-in';
+                        ctx.fillStyle = hexColor;
+                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                        let link = document.querySelector("link[rel~='icon']");
+                        if (!link) {
+                            link = document.createElement('link');
+                            link.rel = 'icon';
+                            document.head.appendChild(link);
+                        }
+                        link.href = canvas.toDataURL('image/png');
+                    };
+                };
+
+                updateFaviconColor('#f97316'); // Call with your theme orange
+            }, []);
+
+            // Fetch Products Logic
             useEffect(() => {
                 const detectPlatform = (url) => {
                     const lowerUrl = url.toLowerCase();
@@ -231,7 +265,6 @@
                     return 'Shop';
                 };
 
-                // Updated fetch URL
                 fetch('https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/shop/products.json')
                     .then(res => res.json())
                     .then(data => {
