@@ -184,55 +184,53 @@
 
                     {/* Main Content Area */}
                     <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-32 sm:pt-48 pb-16 animate-in w-full flex-grow">
-                        <header className="flex flex-col items-center text-center mb-12 sm:mb-20 text-zinc-100">
-                            <div className="inline-block px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[8px] sm:text-[9px] font-black tracking-[0.2em] mb-6 sm:mb-8 border border-green-500/20 uppercase">{t.welcome}</div>
-                            <h1 className="header-logo-text text-4xl sm:text-7xl md:text-9xl mb-4 sm:mb-6 text-white leading-tight">that<span className="text-green-500">austrianone.</span></h1>
-                            <p className="text-zinc-400 text-base sm:text-xl font-medium max-w-sm sm:max-w-md italic leading-relaxed px-4">"{t.description}"</p>
-                        </header>
+    <header className="flex flex-col items-center text-center mb-12 sm:mb-20 text-zinc-100">
+        <div className="inline-block px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[8px] sm:text-[9px] font-black tracking-[0.2em] mb-6 sm:mb-8 border border-green-500/20 uppercase">{t.welcome}</div>
+    </header>
 
-                        <div className="max-w-2xl mx-auto flex flex-col gap-3 sm:gap-4 text-zinc-100">
-                            <MainCard 
-                                title={t.shopTitle} 
-                                desc={t.shopDesc} 
-                                icon={ShoppingCart} 
-                                href="https://thataustrianone.eu/shop/" 
-                                color="from-orange-500 via-amber-500 to-rose-500"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.servicesTitle} 
-                                desc={t.servicesDesc} 
-                                icon={TechIcon} 
-                                href="https://thataustrianone.eu/services/" 
-                                color="from-fuchsia-600 via-purple-600 to-indigo-600"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.projectsTitle} 
-                                desc={t.projectsDesc} 
-                                icon={CodeIcon} 
-                                href="https://thataustrianone.eu/projects/" 
-                                color="from-zinc-500 via-zinc-400 to-zinc-600"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.aboutTitle} 
-                                desc={t.aboutDesc} 
-                                icon={UserIcon} 
-                                href="https://thataustrianone.eu/about-me/" 
-                                color="from-blue-600 via-cyan-500 to-indigo-600"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.socialTitle} 
-                                desc={t.socialDesc} 
-                                icon={Share} 
-                                href="https://thataustrianone.eu/socials" 
-                                color="from-red-900 via-red-700 to-red-950"
-                                isExternal={true}
-                            />
-                        </div>
-                    </div>
+    <div className="max-w-2xl mx-auto flex flex-col gap-3 sm:gap-4 text-zinc-100">
+        <MainCard 
+            title={t.shopTitle} 
+            desc={t.shopDesc} 
+            icon={ShoppingCart} 
+            href="https://thataustrianone.eu/shop/" 
+            color="from-orange-500 via-amber-500 to-rose-500"
+            isExternal={false}
+        />
+        <MainCard 
+            title={t.servicesTitle} 
+            desc={t.servicesDesc} 
+            icon={TechIcon} 
+            href="https://thataustrianone.eu/services/" 
+            color="from-fuchsia-600 via-purple-600 to-indigo-600"
+            isExternal={false}
+        />
+        <MainCard 
+            title={t.projectsTitle} 
+            desc={t.projectsDesc} 
+            icon={CodeIcon} 
+            href="https://thataustrianone.eu/projects/" 
+            color="from-zinc-500 via-zinc-400 to-zinc-600"
+            isExternal={false}
+        />
+        <MainCard 
+            title={t.aboutTitle} 
+            desc={t.aboutDesc} 
+            icon={UserIcon} 
+            href="https://thataustrianone.eu/about-me/" 
+            color="from-blue-600 via-cyan-500 to-indigo-600"
+            isExternal={false}
+        />
+        <MainCard 
+            title={t.socialTitle} 
+            desc={t.socialDesc} 
+            icon={Share} 
+            href="https://thataustrianone.eu/socials" 
+            color="from-red-900 via-red-700 to-red-950"
+            isExternal={true}
+        />
+    </div>
+</div>
 
                     {/* Standard Footer (Scrolls into view naturally, no border/bg) */}
                     <footer className="mt-auto w-full z-40 text-center flex flex-col items-center gap-1.5 pt-12 pb-8 relative">
