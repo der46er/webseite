@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Kaffee Glockenspiel</title>
+    <title>Kaffee Glockenspiel | Tradition am Linzer Hauptplatz</title>
     <meta name="description" content="Kaffee Glockenspiel in Linz. Genießen Sie frischen Kaffee, hausgemachte Mehlspeisen und unsere beheizte Terrasse direkt am Hauptplatz.">
     
     <link rel="preconnect" href="https://fonts.googleapis.com/">
@@ -52,20 +52,6 @@
         body.show-en h2.lang-en, 
         body.show-en h3.lang-en { display: block; }
 
-        .lang-toggle {
-            cursor: pointer;
-            font-size: 1.8rem;
-            margin-left: 20px;
-            user-select: none;
-            transition: transform 0.2s;
-            display: flex;
-            align-items: center;
-        }
-
-        .lang-toggle:hover {
-            transform: scale(1.1);
-        }
-
         /* --- Navigation --- */
         nav {
             background-color: var(--white);
@@ -77,7 +63,12 @@
             position: sticky;
             top: 0;
             z-index: 1000;
-            flex-wrap: wrap;
+        }
+
+        .logo-container {
+            flex: 1;
+            display: flex;
+            justify-content: flex-start;
         }
 
         .logo {
@@ -89,12 +80,14 @@
         }
 
         .nav-links {
+            flex: 2;
             display: flex;
+            justify-content: center;
             align-items: center;
+            gap: 25px;
         }
 
         .nav-links a {
-            margin-left: 20px;
             text-decoration: none;
             color: var(--text-main);
             font-weight: 400;
@@ -106,9 +99,65 @@
             color: var(--gold);
         }
 
+        .nav-right {
+            flex: 1;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        /* --- Language Dropdown --- */
+        .lang-dropdown {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+            padding: 5px 10px;
+        }
+
+        #current-lang-display {
+            font-weight: bold;
+            color: var(--text-main);
+            transition: color 0.3s;
+        }
+
+        .lang-dropdown:hover #current-lang-display {
+            color: var(--gold);
+        }
+
+        .lang-dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: var(--white);
+            min-width: 120px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.1);
+            z-index: 1;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .lang-dropdown-content div {
+            color: var(--text-main);
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            font-size: 0.95rem;
+            transition: background 0.3s;
+        }
+
+        .lang-dropdown-content div:hover {
+            background-color: #f1f1f1;
+            color: var(--gold);
+        }
+
+        .lang-dropdown:hover .lang-dropdown-content {
+            display: block;
+        }
+
         /* --- Hero Section --- */
         .hero {
-            background: linear-gradient(rgba(44, 30, 22, 0.7), rgba(44, 30, 22, 0.7)), url('https://scontent.flnz1-1.fna.fbcdn.net/v/t39.30808-6/484072478_3820427778270123_1196573764640077124_n.jpg?stp=cp6_dst-jpg_tt6&_nc_cat=107&ccb=1-7&_nc_sid=b895b5&_nc_ohc=Qv6k0cAPGxMQ7kNvwE6lYez&_nc_oc=AdotUn2byX63I0evq20HOwFAv4Xhp89I1AYhHfn5DrzsNa2LF-Pj4mhnSM2mx-aPkQQ&_nc_zt=23&_nc_ht=scontent.flnz1-1.fna&_nc_gid=G5oZO-S1h6BCH_C5CIui9A&_nc_ss=7b289&oh=00_Af5BztYYr9DZe8g69TTxfp35pXFPTRQWmX3CkEOUFQEf3A&oe=6A02F48B') center/cover;
+            background: linear-gradient(rgba(44, 30, 22, 0.7), rgba(44, 30, 22, 0.7)), url('https://cdn.website.dish.co/media/06/db/825557.jpg') center/cover;
             height: 85vh;
             display: flex;
             flex-direction: column;
@@ -449,9 +498,13 @@
         .btn-cookie.deny:hover { background-color: rgba(197, 160, 89, 0.1); }
 
         /* --- Mobile Responsive adjustments --- */
-        @media (max-width: 768px) {
-            .nav-links {
-                display: none;
+        @media (max-width: 850px) {
+            nav {
+                flex-direction: column;
+                gap: 15px;
+            }
+            .logo-container, .nav-links, .nav-right {
+                justify-content: center;
             }
             .hero h1 {
                 font-size: 3rem;
@@ -459,16 +512,16 @@
             .menu-list {
                 grid-template-columns: 1fr;
             }
-            .lang-toggle {
-                margin-left: auto;
-            }
         }
     </style>
 </head>
 <body>
 
     <nav>
-        <a href="#" class="logo">Kaffee Glockenspiel</a>
+        <div class="logo-container">
+            <a href="#" class="logo">Kaffee Glockenspiel</a>
+        </div>
+        
         <div class="nav-links">
             <a href="#ueber-uns">
                 <span class="lang-de">Über uns</span>
@@ -488,8 +541,14 @@
             </a>
         </div>
         
-        <div class="lang-toggle" onclick="toggleLanguage()" title="Change Language">
-            <span id="flag-icon">🇬🇧</span>
+        <div class="nav-right">
+            <div class="lang-dropdown">
+                <span id="current-lang-display">DE &#9662;</span>
+                <div class="lang-dropdown-content">
+                    <div onclick="setLanguage('de')">🇩🇪 Deutsch</div>
+                    <div onclick="setLanguage('en')">🇬🇧 English</div>
+                </div>
+            </div>
         </div>
     </nav>
 
@@ -874,12 +933,12 @@
             <span class="lang-en">Our Gallery</span>
         </h2>
         <div class="gallery-grid">
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/Glockenspiel_aussen.jpeg" alt="Galerie Bild 1"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/500230343_18298740076300535_2449983070028365039_n.jpg" alt="Galerie Bild 2"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/486379007_1204799908316048_8694786173119087401_n.jpg" alt="Galerie Bild 3"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/482301702_1192271396235566_6716800935545321296_n.jpg" alt="Galerie Bild 4"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/98359394_2502583210054593_2607048906768384000_n.jpg" alt="Galerie Bild 5"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/469582968_18277832452300535_7158253557324170382_n.jpg" alt="Galerie Bild 6"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 1"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 2"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 3"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 4"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 5"></div>
+            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 6"></div>
         </div>
     </section>
 
@@ -961,11 +1020,15 @@
     <div id="cookie-banner" class="cookie-banner">
         <p>
             <span class="lang-de">Wir verwenden Cookies, um Ihre Spracheinstellungen zu speichern.</span>
-            <span class="lang-en" style="display:block; margin-top:5px;">We use cookies to save your language preferences.</span>
+            <span class="lang-en">We use cookies to save your language preferences.</span>
         </p>
         <div class="cookie-btns">
-            <button id="accept-cookies" class="btn-cookie accept">Akzeptieren / Accept</button>
-            <button id="deny-cookies" class="btn-cookie deny">Ablehnen / Deny</button>
+            <button id="accept-cookies" class="btn-cookie accept">
+                <span class="lang-de">Akzeptieren</span><span class="lang-en">Accept</span>
+            </button>
+            <button id="deny-cookies" class="btn-cookie deny">
+                <span class="lang-de">Ablehnen</span><span class="lang-en">Deny</span>
+            </button>
         </div>
     </div>
 
@@ -986,8 +1049,8 @@
             document.cookie = name + "=" + value + ";path=/;expires=" + d.toGMTString();
         }
 
-        function toggleLanguage() {
-            currentLang = currentLang === 'de' ? 'en' : 'de';
+        function setLanguage(lang) {
+            currentLang = lang;
             applyLanguage();
             if (cookiesAccepted) {
                 setCookie('lang', currentLang, 365);
@@ -995,15 +1058,13 @@
         }
 
         function applyLanguage() {
-            const flagIcon = document.getElementById('flag-icon');
+            const display = document.getElementById('current-lang-display');
             if (currentLang === 'en') {
                 document.body.classList.add('show-en');
-                flagIcon.innerText = '🇦🇹'; // Show Austrian flag when EN is active, indicating they can switch back
-                flagIcon.setAttribute('title', 'Zurück zu Deutsch');
+                display.innerHTML = 'GB &#9662;';
             } else {
                 document.body.classList.remove('show-en');
-                flagIcon.innerText = '🇬🇧'; // Show UK flag when DE is active
-                flagIcon.setAttribute('title', 'Switch to English');
+                display.innerHTML = 'DE &#9662;';
             }
         }
 
@@ -1027,12 +1088,10 @@
                 cookiesAccepted = true;
                 document.getElementById('cookie-banner').style.display = 'none';
                 
-                // Save consent cookie
                 let d = new Date();
                 d.setTime(d.getTime() + 24*60*60*1000*365);
                 document.cookie = "cookieConsent=accepted;path=/;expires=" + d.toGMTString();
                 
-                // Immediately save current language choice
                 setCookie('lang', currentLang, 365);
             });
 
@@ -1040,7 +1099,6 @@
                 cookiesAccepted = false;
                 document.getElementById('cookie-banner').style.display = 'none';
                 
-                // Save denial cookie so we don't bother them again for a year
                 let d = new Date();
                 d.setTime(d.getTime() + 24*60*60*1000*365);
                 document.cookie = "cookieConsent=denied;path=/;expires=" + d.toGMTString();
