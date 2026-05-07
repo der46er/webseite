@@ -72,29 +72,25 @@
         }
 
         .logo {
-            font-family: 'Playfair Display', serif;
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--dark-coffee);
             text-decoration: none;
         }
-
+        
         .logo img {
-            height: 55px; /* Adjust this value to make the logo bigger or smaller */
+            height: 55px; 
             width: auto;
             display: block;
-            border-radius: 4px; /* Optional: Adds slightly rounded corners to the image */
+            border-radius: 4px; 
         }
-        
+
         .nav-links {
             flex: 2;
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 25px;
         }
 
         .nav-links a {
+            margin-left: 20px;
             text-decoration: none;
             color: var(--text-main);
             font-weight: 400;
@@ -508,10 +504,31 @@
         @media (max-width: 850px) {
             nav {
                 flex-direction: column;
+                padding: 15px;
                 gap: 15px;
             }
-            .logo-container, .nav-links, .nav-right {
+            .logo-container {
                 justify-content: center;
+                width: 100%;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+                gap: 10px 20px;
+                width: 100%;
+            }
+            .nav-links a {
+                margin-left: 0; 
+                font-size: 0.95rem;
+            }
+            .nav-right {
+                justify-content: center;
+                width: 100%;
+            }
+            .lang-dropdown-content {
+                right: auto;
+                left: 50%;
+                transform: translateX(-50%);
             }
             .hero h1 {
                 font-size: 3rem;
@@ -552,7 +569,7 @@
         
         <div class="nav-right">
             <div class="lang-dropdown">
-                <span id="current-lang-display">DE &#9662;</span>
+                <span id="current-lang-display">DE ▾</span>
                 <div class="lang-dropdown-content">
                     <div onclick="setLanguage('de')">🇩🇪 Deutsch</div>
                     <div onclick="setLanguage('en')">🇬🇧 English</div>
@@ -942,12 +959,12 @@
             <span class="lang-en">Our Gallery</span>
         </h2>
         <div class="gallery-grid">
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 1"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1497935586351-b67a49e012bf?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 2"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 3"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1442512595331-e89e73853f31?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 4"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1509042239860-f550ce710b93?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 5"></div>
-            <div class="gallery-item"><img src="https://images.unsplash.com/photo-1481833761820-0509d3217039?auto=format&fit=crop&q=80&w=600" alt="Galerie Bild 6"></div>
+            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/Glockenspiel_aussen.jpeg" alt="Galerie Bild 1"></div>
+            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/500230343_18298740076300535_2449983070028365039_n.jpg" alt="Galerie Bild 2"></div>
+            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/486379007_1204799908316048_8694786173119087401_n.jpg" alt="Galerie Bild 3"></div>
+            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/482301702_1192271396235566_6716800935545321296_n.jpg" alt="Galerie Bild 4"></div>
+            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/98359394_2502583210054593_2607048906768384000_n.jpg" alt="Galerie Bild 5"></div>
+            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/469582968_18277832452300535_7158253557324170382_n.jpg" alt="Galerie Bild 6"></div>
         </div>
     </section>
 
@@ -1070,10 +1087,10 @@
             const display = document.getElementById('current-lang-display');
             if (currentLang === 'en') {
                 document.body.classList.add('show-en');
-                display.innerHTML = 'GB &#9662;';
+                display.innerHTML = 'GB ▾';
             } else {
                 document.body.classList.remove('show-en');
-                display.innerHTML = 'DE &#9662;';
+                display.innerHTML = 'DE ▾';
             }
         }
 
