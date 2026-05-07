@@ -6,8 +6,8 @@
     <title>Kaffee Glockenspiel | Tradition am Linzer Hauptplatz</title>
     <meta name="description" content="Kaffee Glockenspiel in Linz. Genießen Sie frischen Kaffee, hausgemachte Mehlspeisen und unsere beheizte Terrasse direkt am Hauptplatz.">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com/">
-    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -145,7 +145,7 @@
             margin: 0 auto;
         }
 
-        /* --- Menu Section (Modern One-Pager Layout) --- */
+        /* --- Menu Section --- */
         .menu-section {
             padding: 80px 5%;
             background-color: var(--white);
@@ -312,6 +312,43 @@
             padding: 10px 0;
         }
 
+        /* --- Icon Features (Moved from inline to head) --- */
+        .icon-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .icon-feature-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            width: 85px;
+            font-size: 0.85rem;
+        }
+
+        .icon-feature-item i {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-bottom: 10px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(197, 160, 89, 0.3);
+            border-radius: 50%;
+            width: 55px;
+            height: 55px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+        }
+
+        .icon-feature-item:hover i {
+            background: var(--gold);
+            color: var(--dark-coffee);
+        }
+
         /* --- Footer --- */
         footer {
             background-color: #1a120d;
@@ -351,6 +388,7 @@
         <div class="nav-links">
             <a href="#ueber-uns">Über uns</a>
             <a href="#speisekarte">Speisekarte</a>
+            <a href="#galerie">Galerie</a>
             <a href="#kontakt">Kontakt & Öffnungszeiten</a>
         </div>
     </nav>
@@ -586,8 +624,9 @@
                 </div>
             </div>
         </div>
+    </section>
         
-<section id="galerie" class="gallery-section">
+    <section id="galerie" class="gallery-section">
         <h2>Unsere Galerie</h2>
         <div class="gallery-grid">
             <div class="gallery-item">
@@ -610,45 +649,8 @@
             </div>
         </div>
     </section>
-        
-    </section>
 
     <section id="kontakt" class="contact-section">
-        <style>
-            .icon-features {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 15px;
-                margin-bottom: 25px;
-            }
-            .icon-feature-item {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
-                text-align: center;
-                width: 85px;
-                font-size: 0.85rem;
-            }
-            .icon-feature-item i {
-                font-size: 1.5rem;
-                color: var(--gold);
-                margin-bottom: 10px;
-                background: rgba(255, 255, 255, 0.05);
-                border: 1px solid rgba(197, 160, 89, 0.3);
-                border-radius: 50%;
-                width: 55px;
-                height: 55px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                transition: all 0.3s ease;
-            }
-            .icon-feature-item:hover i {
-                background: var(--gold);
-                color: var(--dark-coffee);
-            }
-        </style>
-
         <div class="contact-info">
             <h2>Kontakt</h2>
             <a href="https://maps.google.com/?q=Hauptplatz+18,+4020+Linz" target="_blank">
@@ -665,7 +667,7 @@
             </a>
             
             <div style="margin-top: 30px; max-width: 100%; overflow: hidden; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2653.8692944623112!2d14.284146217443848!3d48.30536520000001!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47739783fa21aed3%3A0xf72a01e662b930a6!2sKaffee%20Glockenspiel!5e0!3m2!1sde!2sat!4v1778186062371!5m2!1sde!2sat" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2654.5516999912773!2d14.283644215664166!3d48.30607997923642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477397858c8942b3%3A0x62cc708759fb9251!2sHauptplatz%2018%2C%204020%20Linz%2C%20Austria!5e0!3m2!1sen!2sus!4v1683492723321!5m2!1sen!2sus" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
         
