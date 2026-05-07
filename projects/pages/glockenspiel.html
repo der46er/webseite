@@ -552,6 +552,41 @@
     </section>
 
     <section id="kontakt" class="contact-section">
+        <style>
+            .icon-features {
+                display: flex;
+                flex-wrap: wrap;
+                gap: 15px;
+                margin-bottom: 25px;
+            }
+            .icon-feature-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                text-align: center;
+                width: 85px;
+                font-size: 0.85rem;
+            }
+            .icon-feature-item i {
+                font-size: 1.5rem;
+                color: var(--gold);
+                margin-bottom: 10px;
+                background: rgba(255, 255, 255, 0.05);
+                border: 1px solid rgba(197, 160, 89, 0.3);
+                border-radius: 50%;
+                width: 55px;
+                height: 55px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                transition: all 0.3s ease;
+            }
+            .icon-feature-item:hover i {
+                background: var(--gold);
+                color: var(--dark-coffee);
+            }
+        </style>
+
         <div class="contact-info">
             <h2>Kontakt</h2>
             <a href="https://maps.google.com/?q=Hauptplatz+18,+4020+Linz" target="_blank">
@@ -584,11 +619,28 @@
                 <li><span>Sonntag</span> <span>10:00 - 22:00</span></li>
             </ul>
             
-            <h3 style="color: var(--gold); margin-top: 30px; margin-bottom: 15px; font-size: 1.5rem;">Zahlungsmöglichkeiten</h3>
-            <p>AMEX, Barzahlung, Kontaktloses Bezahlen, MasterCard, Essensmarken, VISA, EC-Karte</p>
+            <h3 style="color: var(--gold); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem;">Zahlungsmöglichkeiten</h3>
+            <div class="icon-features">
+                <div class="icon-feature-item"><i class="fa-brands fa-cc-amex"></i><span>AMEX</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-money-bill-wave"></i><span>Barzahlung</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-wifi fa-rotate-90"></i><span>Kontaktlos</span></div>
+                <div class="icon-feature-item"><i class="fa-brands fa-cc-mastercard"></i><span>MasterCard</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-ticket"></i><span>Essensmarken</span></div>
+                <div class="icon-feature-item"><i class="fa-brands fa-cc-visa"></i><span>VISA</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-credit-card"></i><span>EC-Karte</span></div>
+            </div>
             
-            <h3 style="color: var(--gold); margin-top: 20px; margin-bottom: 15px; font-size: 1.5rem;">Services</h3>
-            <p>Barrierefrei, Kinderecke, Außenbereich, Private Veranstaltungen, Essen zum Mitnehmen, Beheizte Terrasse, Kostenloses WLAN, Haustiere erlaubt</p>
+            <h3 style="color: var(--gold); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem;">Services</h3>
+            <div class="icon-features">
+                <div class="icon-feature-item"><i class="fa-solid fa-wheelchair"></i><span>Barrierefrei</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-cubes"></i><span>Kinderecke</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-umbrella-beach"></i><span>Außenbereich</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-champagne-glasses"></i><span>Private Events</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-bag-shopping"></i><span>Mitnehmen</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-fire"></i><span>Beheizte Terrasse</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-wifi"></i><span>WLAN</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-paw"></i><span>Haustiere erlaubt</span></div>
+            </div>
         </div>
     </section>
 
