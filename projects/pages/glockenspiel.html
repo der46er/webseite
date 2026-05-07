@@ -1,1 +1,332 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kaffee Glockenspiel | Tradition am Linzer Hauptplatz</title>
+    <meta name="description" content="Kaffee Glockenspiel in Linz. Genießen Sie frischen Kaffee, hausgemachte Mehlspeisen und unsere beheizte Terrasse direkt am Hauptplatz.">
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
+    <style>
+        /* --- Color Palette & Variables --- */
+        :root {
+            --gold: #C5A059;
+            --dark-coffee: #2C1E16;
+            --cream: #F9F6F0;
+            --text-main: #333333;
+            --white: #FFFFFF;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Lato', sans-serif;
+            color: var(--text-main);
+            background-color: var(--cream);
+            line-height: 1.6;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Playfair Display', serif;
+            color: var(--dark-coffee);
+        }
+
+        /* --- Navigation --- */
+        nav {
+            background-color: var(--white);
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .logo {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--dark-coffee);
+            text-decoration: none;
+        }
+
+        .nav-links a {
+            margin-left: 20px;
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 400;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        /* --- Hero Section --- */
+        .hero {
+            /* Replace the URL below with an actual image of the cafe's exterior or coffee */
+            background: linear-gradient(rgba(44, 30, 22, 0.7), rgba(44, 30, 22, 0.7)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=2000') center/cover;
+            height: 85vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: var(--white);
+            padding: 0 20px;
+        }
+
+        .hero h1 {
+            color: var(--gold);
+            font-size: clamp(2.5rem, 5vw, 4.5rem);
+            margin-bottom: 10px;
+        }
+
+        .hero p {
+            font-size: 1.2rem;
+            margin-bottom: 30px;
+            max-width: 600px;
+            font-weight: 300;
+        }
+
+        .btn {
+            background-color: var(--gold);
+            color: var(--white);
+            padding: 15px 30px;
+            text-decoration: none;
+            font-size: 1.1rem;
+            border-radius: 3px;
+            transition: background 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .btn:hover {
+            background-color: #a88544;
+        }
+
+        /* --- Features Section --- */
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            padding: 60px 5%;
+            background-color: var(--white);
+            text-align: center;
+        }
+
+        .feature-box i {
+            font-size: 2.5rem;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        .feature-box h3 {
+            margin-bottom: 10px;
+            font-size: 1.3rem;
+        }
+
+        /* --- Menu Teaser --- */
+        .menu-teaser {
+            padding: 80px 5%;
+            text-align: center;
+        }
+
+        .menu-teaser h2 {
+            font-size: 2.5rem;
+            margin-bottom: 40px;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        .menu-item {
+            background: var(--white);
+            padding: 30px;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            border-top: 4px solid var(--gold);
+        }
+
+        .menu-item h3 {
+            font-size: 1.5rem;
+            margin-bottom: 15px;
+        }
+
+        /* --- Info & Contact Section --- */
+        .contact-section {
+            display: flex;
+            flex-wrap: wrap;
+            background-color: var(--dark-coffee);
+            color: var(--cream);
+        }
+
+        .contact-info, .opening-hours {
+            flex: 1;
+            min-width: 300px;
+            padding: 60px 5%;
+        }
+
+        .contact-section h2 {
+            color: var(--gold);
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
+
+        .contact-section p, .contact-section a {
+            color: var(--cream);
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+            text-decoration: none;
+            display: block;
+        }
+
+        .contact-section i {
+            color: var(--gold);
+            width: 25px;
+        }
+
+        .hours-list {
+            list-style: none;
+        }
+
+        .hours-list li {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding: 10px 0;
+        }
+
+        /* --- Footer --- */
+        footer {
+            background-color: #1a120d;
+            color: #888;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.9rem;
+        }
+
+        .secure-badge {
+            color: #4CAF50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        /* --- Mobile Responsive adjustments --- */
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none; /* Can add a hamburger menu later if needed */
+            }
+            .hero h1 {
+                font-size: 3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="#" class="logo">Kaffee Glockenspiel</a>
+        <div class="nav-links">
+            <a href="#angebot">Unser Angebot</a>
+            <a href="#kontakt">Kontakt & Öffnungszeiten</a>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1>Glockenspiel</h1>
+        <p>Ihr gemütlicher Logenplatz direkt am Linzer Hauptplatz. Genießen Sie Tradition, Herzlichkeit und hervorragenden Kaffee.</p>
+        <a href="#kontakt" class="btn">Tisch reservieren</a>
+    </header>
+
+    <section class="features">
+        <div class="feature-box">
+            <i class="fa-solid fa-mug-hot"></i>
+            <h3>Kaffeehaus Tradition</h3>
+            <p>Leckere Eiskaffees, frischer Kaffee und kleine Snacks für einen gemütlichen Nachmittag.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-sun"></i>
+            <h3>Beheizte Terrasse</h3>
+            <p>Unser Außenbereich lädt zum längeren Verweilen ein – auch wenn es mal kühler wird.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-chair"></i>
+            <h3>60 Sitzplätze</h3>
+            <p>Viel Platz für gemütliche Stunden. Unser Café ist barrierefrei zugänglich.</p>
+        </div>
+        <div class="feature-box">
+            <i class="fa-solid fa-puzzle-piece"></i>
+            <h3>Spielecke & WLAN</h3>
+            <p>Kostenloses High-Speed WLAN für Sie und eine tolle Spielecke für die Kleinen.</p>
+        </div>
+    </section>
+
+    <section id="angebot" class="menu-teaser">
+        <h2>Was wir anbieten</h2>
+        <div class="menu-grid">
+            <div class="menu-item">
+                <h3><i class="fa-solid fa-cake-candles" style="color: var(--gold);"></i> Mehlspeisen</h3>
+                <p>Klassische hausgemachte Kuchen, Torten und kleine Snacks, perfekt zum Nachmittagskaffee.</p>
+            </div>
+            <div class="menu-item">
+                <h3><i class="fa-solid fa-wine-glass" style="color: var(--gold);"></i> Getränkevielfalt</h3>
+                <p>Eine umfassende Getränkeauswahl von Kaffeespezialitäten bis hin zu erfrischenden Kaltgetränken.</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="kontakt" class="contact-section">
+        <div class="contact-info">
+            <h2>Kontakt</h2>
+            <a href="https://maps.google.com/?q=Hauptplatz+Linz" target="_blank">
+                <i class="fa-solid fa-location-dot"></i> Hauptplatz 18, 4020 Linz
+            </a>
+            <a href="tel:+43732774834">
+                <i class="fa-solid fa-phone"></i> 0732 / 774834
+            </a>
+            <a href="mailto:glockenspiel-linz@gmx.at">
+                <i class="fa-solid fa-envelope"></i> glockenspiel-linz@gmx.at
+            </a>
+        </div>
+        
+        <div class="opening-hours">
+            <h2>Öffnungszeiten</h2>
+            <ul class="hours-list">
+                <li><span>Montag - Freitag</span> <span>08:00 - 20:00</span></li>
+                <li><span>Samstag</span> <span>08:00 - 18:00</span></li>
+                <li><span>Sonntag</span> <span>Geschlossen</span></li>
+            </ul>
+            <p style="font-size: 0.9rem; margin-top: 15px; color: #aaa;">(Beispielhafte Zeiten - bitte anpassen)</p>
+        </div>
+    </section>
+
+    <footer>
+        <div class="secure-badge">
+            <i class="fa-solid fa-lock"></i> SSL-Gesichert & Lokal Gehostet
+        </div>
+        <p>&copy; 2026 Kaffee Glockenspiel Linz. Alle Rechte vorbehalten.</p>
+        <p style="font-size: 0.8rem; margin-top: 5px;">Webdesign Konzept by Niklas Außerwöger</p>
+    </footer>
+
+</body>
+</html>
