@@ -6,8 +6,8 @@
     <title>Kaffee Glockenspiel | Tradition am Linzer Hauptplatz</title>
     <meta name="description" content="Kaffee Glockenspiel in Linz. Genießen Sie frischen Kaffee, hausgemachte Mehlspeisen und unsere beheizte Terrasse direkt am Hauptplatz.">
     
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
     <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -40,6 +40,23 @@
             color: var(--dark-coffee);
         }
 
+        /* --- English Translation Styling --- */
+        .en-text {
+            display: block;
+            font-size: 0.9em;
+            color: #666;
+            font-style: italic;
+            margin-top: 2px;
+        }
+        
+        .en-title {
+            font-size: 0.7em;
+            color: #888;
+            font-style: italic;
+            font-family: 'Lato', sans-serif;
+            font-weight: 300;
+        }
+
         /* --- Navigation --- */
         nav {
             background-color: var(--white);
@@ -51,6 +68,7 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            flex-wrap: wrap;
         }
 
         .logo {
@@ -61,12 +79,18 @@
             text-decoration: none;
         }
 
+        .nav-links {
+            display: flex;
+            align-items: center;
+        }
+
         .nav-links a {
             margin-left: 20px;
             text-decoration: none;
             color: var(--text-main);
             font-weight: 400;
             transition: color 0.3s;
+            text-align: center;
         }
 
         .nav-links a:hover {
@@ -95,7 +119,7 @@
         .hero p {
             font-size: 1.2rem;
             margin-bottom: 30px;
-            max-width: 600px;
+            max-width: 700px;
             font-weight: 300;
         }
 
@@ -109,6 +133,7 @@
             transition: background 0.3s;
             text-transform: uppercase;
             letter-spacing: 1px;
+            text-align: center;
         }
 
         .btn:hover {
@@ -312,7 +337,7 @@
             padding: 10px 0;
         }
 
-        /* --- Icon Features (Moved from inline to head) --- */
+        /* --- Icon Features --- */
         .icon-features {
             display: flex;
             flex-wrap: wrap;
@@ -370,7 +395,7 @@
         /* --- Mobile Responsive adjustments --- */
         @media (max-width: 768px) {
             .nav-links {
-                display: none;
+                display: none; /* Consider adding a hamburger menu toggle here */
             }
             .hero h1 {
                 font-size: 3rem;
@@ -386,209 +411,220 @@
     <nav>
         <a href="#" class="logo">Kaffee Glockenspiel</a>
         <div class="nav-links">
-            <a href="#ueber-uns">Über uns</a>
-            <a href="#speisekarte">Speisekarte</a>
-            <a href="#galerie">Galerie</a>
-            <a href="#kontakt">Kontakt & Öffnungszeiten</a>
+            <a href="#ueber-uns">Über uns<br><span class="en-title">About Us</span></a>
+            <a href="#speisekarte">Speisekarte<br><span class="en-title">Menu</span></a>
+            <a href="#galerie">Galerie<br><span class="en-title">Gallery</span></a>
+            <a href="#kontakt">Kontakt & Öffnungszeiten<br><span class="en-title">Contact & Hours</span></a>
         </div>
     </nav>
 
     <header class="hero">
         <h1>Glockenspiel</h1>
-        <p>Ihr gemütlicher Logenplatz direkt am Linzer Hauptplatz. Genießen Sie Tradition, Herzlichkeit und hervorragenden Kaffee.</p>
-        <a href="#kontakt" class="btn">Tisch reservieren</a>
+        <p>
+            Ihr gemütlicher Logenplatz direkt am Linzer Hauptplatz. Genießen Sie Tradition, Herzlichkeit und hervorragenden Kaffee.<br>
+            <span class="en-text" style="color: #eee; margin-top: 10px;">Your cozy spot right on Linz's main square. Enjoy tradition, warmth, and excellent coffee.</span>
+        </p>
+        <a href="#kontakt" class="btn">Tisch reservieren<br><span style="font-size: 0.7em; font-weight: normal; display: block; margin-top: 3px;">Book a table</span></a>
     </header>
 
     <section class="features">
         <div class="feature-box">
             <i class="fa-solid fa-mug-hot"></i>
-            <h3>Kaffeehaus Tradition</h3>
-            <p>Leckere Eiskaffees, frischer Kaffee und kleine Snacks für einen gemütlichen Nachmittag.</p>
+            <h3>Kaffeehaus Tradition<br><span class="en-title">Coffeehouse Tradition</span></h3>
+            <p>Leckere Eiskaffees, frischer Kaffee und kleine Snacks für einen gemütlichen Nachmittag.<br>
+            <span class="en-text">Delicious iced coffees, fresh coffee, and small snacks for a cozy afternoon.</span></p>
         </div>
         <div class="feature-box">
             <i class="fa-solid fa-sun"></i>
-            <h3>Beheizte Terrasse</h3>
-            <p>Unser Außenbereich lädt zum längeren Verweilen ein – auch wenn es mal kühler wird.</p>
+            <h3>Beheizte Terrasse<br><span class="en-title">Heated Terrace</span></h3>
+            <p>Unser Außenbereich lädt zum längeren Verweilen ein – auch wenn es mal kühler wird.<br>
+            <span class="en-text">Our outdoor area invites you to linger longer – even when it gets chilly.</span></p>
         </div>
         <div class="feature-box">
             <i class="fa-solid fa-chair"></i>
-            <h3>60 Sitzplätze</h3>
-            <p>Viel Platz für gemütliche Stunden. Unser Café ist barrierefrei zugänglich.</p>
+            <h3>60 Sitzplätze<br><span class="en-title">60 Seats</span></h3>
+            <p>Viel Platz für gemütliche Stunden. Unser Café ist barrierefrei zugänglich.<br>
+            <span class="en-text">Plenty of space for cozy hours. Our café is wheelchair accessible.</span></p>
         </div>
         <div class="feature-box">
             <i class="fa-solid fa-puzzle-piece"></i>
-            <h3>Spielecke & WLAN</h3>
-            <p>Kostenloses High-Speed WLAN für Sie und eine tolle Spielecke für die Kleinen.</p>
+            <h3>Spielecke & WLAN<br><span class="en-title">Play Area & Wi-Fi</span></h3>
+            <p>Kostenloses High-Speed WLAN für Sie und eine tolle Spielecke für die Kleinen.<br>
+            <span class="en-text">Free high-speed Wi-Fi for you and a great play area for the little ones.</span></p>
         </div>
     </section>
 
     <section id="ueber-uns" class="about-section">
-        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Sie können zum Mitnehmen bestellen</h2>
-        <p style="margin-bottom: 30px;">Wir bieten Ihnen im „Kaffee Glockenspiel“ von leckerem Eiskaffee bis hin zu kleinen Snacks wie Kuchen eine Vielzahl an Angeboten für einen gemütlichen Nachmittag. Unser wundervolles Café ist günstig gelegen und sehr gemütlich eingerichtet, sodass Sie hier jederzeit für einen Kaffee oder zum Mittagessen vorbeisehen können. Der gemütliche Außenbereich sorgt für eine tolle Stimmung und angenehme Atmosphäre. Zum längeren Verweilen verlockt unsere beheizte Terrasse.</p>
+        <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Sie können zum Mitnehmen bestellen<br><span class="en-title">You can order to go</span></h2>
+        <p style="margin-bottom: 30px;">Wir bieten Ihnen im „Kaffee Glockenspiel“ von leckerem Eiskaffee bis hin zu kleinen Snacks wie Kuchen eine Vielzahl an Angeboten für einen gemütlichen Nachmittag. Unser wundervolles Café ist günstig gelegen und sehr gemütlich eingerichtet, sodass Sie hier jederzeit für einen Kaffee oder zum Mittagessen vorbeisehen können. Der gemütliche Außenbereich sorgt für eine tolle Stimmung und angenehme Atmosphäre. Zum längeren Verweilen verlockt unsere beheizte Terrasse.<br>
+        <span class="en-text">At "Kaffee Glockenspiel," we offer a variety of options for a cozy afternoon, from delicious iced coffee to small snacks like cake. Our wonderful café is conveniently located and very comfortably furnished, so you can drop by anytime for a coffee or lunch. The inviting outdoor area creates a great mood and pleasant atmosphere. Our heated terrace tempts you to stay a little longer.</span></p>
         
-        <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Hervorragendes Café mit umfassender Getränkeauswahl</h3>
-        <p style="margin-bottom: 30px;">Bei uns gibt es frischen Kaffee. Wir haben kostenloses WLAN, sodass Sie bei uns problemlos im Internet surfen können. Während Ihres Aufenthalts können Ihre Kleinen eine tolle Zeit in der Spielecke verbringen.</p>
+        <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Hervorragendes Café mit umfassender Getränkeauswahl<br><span class="en-title">Excellent café with an extensive beverage selection</span></h3>
+        <p style="margin-bottom: 30px;">Bei uns gibt es frischen Kaffee. Wir haben kostenloses WLAN, sodass Sie bei uns problemlos im Internet surfen können. Während Ihres Aufenthalts können Ihre Kleinen eine tolle Zeit in der Spielecke verbringen.<br>
+        <span class="en-text">We serve fresh coffee. We have free Wi-Fi, so you can easily browse the internet. During your visit, your little ones can have a great time in the play area.</span></p>
         
-        <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Wir organisieren Ihre Privatveranstaltung</h3>
-        <p>Bei uns ist ein barrierefreier Zugang garantiert. Wir haben ein Herz für Tiere: Auch Haustiere sind gerngesehene Gäste. Sie sind bei uns herzlich willkommen. Bitte schauen Sie einfach bei uns vorbei! Wir würden uns freuen, heute Abend Ihr Gastgeber zu sein. Als Bezahlmethode bieten wir die Bezahlung mit kontaktlosem Bezahlen, Essensmarken, EC-Karten sowie gängigen Kreditkarten oder bar. Wir verpacken Ihnen Ihr Essen auch zum Mitnehmen. Steht bei Ihnen ein Ereignis an, das Sie gerne in größerer Runde feiern mögen? Mieten Sie unsere Räume – wir freuen uns auf Sie. Sie können täglich bei uns einkehren.</p>
+        <h3 style="font-size: 1.8rem; margin-bottom: 15px;">Wir organisieren Ihre Privatveranstaltung<br><span class="en-title">We organize your private event</span></h3>
+        <p>Bei uns ist ein barrierefreier Zugang garantiert. Wir haben ein Herz für Tiere: Auch Haustiere sind gerngesehene Gäste. Sie sind bei uns herzlich willkommen. Bitte schauen Sie einfach bei uns vorbei! Wir würden uns freuen, heute Abend Ihr Gastgeber zu sein. Als Bezahlmethode bieten wir die Bezahlung mit kontaktlosem Bezahlen, Essensmarken, EC-Karten sowie gängigen Kreditkarten oder bar. Wir verpacken Ihnen Ihr Essen auch zum Mitnehmen. Steht bei Ihnen ein Ereignis an, das Sie gerne in größerer Runde feiern mögen? Mieten Sie unsere Räume – wir freuen uns auf Sie. Sie können täglich bei uns einkehren.<br>
+        <span class="en-text">Barrier-free access is guaranteed. We have a heart for animals: pets are also welcome guests. Please just drop by! We would be happy to be your host tonight. As payment methods, we accept contactless payment, meal vouchers, debit cards, common credit cards, or cash. We also pack your food to go. Do you have an upcoming event that you would like to celebrate with a larger group? Rent our rooms – we look forward to seeing you. You are welcome to visit us daily.</span></p>
     </section>
 
     <section id="speisekarte" class="menu-section">
         <div class="menu-header">
-            <h2>Unsere Speisekarte</h2>
-            <p class="menu-note">„Zeit nehmen is a bisserl wie einkaufen“</p>
+            <h2>Unsere Speisekarte <span style="font-weight: normal; color: #aaa;">/</span> Our Menu</h2>
+            <p class="menu-note">„Zeit nehmen is a bisserl wie einkaufen“<br><span class="en-text" style="text-align: center;">"Taking your time is a bit like shopping"</span></p>
         </div>
 
         <div class="menu-category">
-            <h3 class="menu-category-title"><i class="fa-solid fa-mug-saucer"></i> Kaffee & Heißgetränke</h3>
-            <p class="menu-note">Alle unsere Kaffees können auf Wunsch koffeinfrei zubereitet werden. Gerne servieren wir Ihren Kaffee auch mit Hafer-, Sojamilch oder laktosefreier Milch zu (+ 0,50).</p>
+            <h3 class="menu-category-title"><i class="fa-solid fa-mug-saucer"></i> Kaffee & Heißgetränke <br><span class="en-title">Coffee & Hot Beverages</span></h3>
+            <p class="menu-note">Alle unsere Kaffees können auf Wunsch koffeinfrei zubereitet werden. Gerne servieren wir Ihren Kaffee auch mit Hafer-, Sojamilch oder laktosefreier Milch zu (+ 0,50).<br><span class="en-text" style="text-align: center;">All our coffees can be made decaffeinated upon request. We also gladly serve your coffee with oat milk, soy milk, or lactose-free milk (+ 0.50).</span></p>
             <div class="menu-list">
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Espresso / Kleiner Brauner</span><span class="menu-item-price">3,90</span></div>
-                    <span class="menu-item-desc">Espresso serviert mit einem kleinen Kännchen Obers.</span>
+                    <span class="menu-item-desc">Espresso serviert mit einem kleinen Kännchen Obers.<br><span class="en-text">Espresso served with a small jug of cream.</span></span>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Espresso Macchiato</span><span class="menu-item-price">4,10</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Verlängerter</span><span class="menu-item-price">4,50</span></div>
-                    <span class="menu-item-desc">Espresso mit doppelter Wassermenge und Kännchen Obers.</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Verlängerter <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Americano</span></span><span class="menu-item-price">4,50</span></div>
+                    <span class="menu-item-desc">Espresso mit doppelter Wassermenge und Kännchen Obers.<br><span class="en-text">Espresso with double the water and a small jug of cream.</span></span>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Cappuccino</span><span class="menu-item-price">5,00</span></div>
-                    <span class="menu-item-desc">Espresso mit Milchschaum.</span>
+                    <span class="menu-item-desc">Espresso mit Milchschaum.<br><span class="en-text">Espresso with milk foam.</span></span>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Wiener Melange</span><span class="menu-item-price">4,80</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Milchkaffee (Schale)</span><span class="menu-item-price">4,90</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Milchkaffee (Schale) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Café au Lait</span></span><span class="menu-item-price">4,90</span></div>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Latte Macchiato</span><span class="menu-item-price">5,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Filter Kaffee (Mug) mit Milch</span><span class="menu-item-price">4,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Filter Kaffee (Mug) mit Milch <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Filter Coffee</span></span><span class="menu-item-price">4,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Tasse Schoko</span><span class="menu-item-price">5,10</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Tasse Schoko <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Cup of Hot Chocolate</span></span><span class="menu-item-price">5,10</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Heiße Schokolade (Kännchen)</span><span class="menu-item-price">5,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Heiße Schokolade (Kännchen) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Pot of Hot Chocolate</span></span><span class="menu-item-price">5,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Tee (diverse Sorten)</span><span class="menu-item-price">4,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Tee (diverse Sorten) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Tea (various types)</span></span><span class="menu-item-price">4,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Portion Schlagsahne</span><span class="menu-item-price">1,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Portion Schlagsahne <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Portion of Whipped Cream</span></span><span class="menu-item-price">1,50</span></div>
                 </div>
             </div>
         </div>
 
         <div class="menu-category">
-            <h3 class="menu-category-title"><i class="fa-solid fa-ice-cream"></i> Eis & Erfrischungen</h3>
+            <h3 class="menu-category-title"><i class="fa-solid fa-ice-cream"></i> Eis & Erfrischungen <br><span class="en-title">Ice Cream & Refreshments</span></h3>
             <div class="menu-list">
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Eiskaffee</span><span class="menu-item-price">7,50</span></div>
-                    <span class="menu-item-desc">Vanilleeis, kalter Kaffee, Schlagobers</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Eiskaffee <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Iced Coffee</span></span><span class="menu-item-price">7,50</span></div>
+                    <span class="menu-item-desc">Vanilleeis, kalter Kaffee, Schlagobers<br><span class="en-text">Vanilla ice cream, cold coffee, whipped cream</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Eisschokolade</span><span class="menu-item-price">7,50</span></div>
-                    <span class="menu-item-desc">Vanilleeis, kalte Schokolade, Schlagobers</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Eisschokolade <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Iced Chocolate</span></span><span class="menu-item-price">7,50</span></div>
+                    <span class="menu-item-desc">Vanilleeis, kalte Schokolade, Schlagobers<br><span class="en-text">Vanilla ice cream, cold chocolate, whipped cream</span></span>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Affogato</span><span class="menu-item-price">4,90</span></div>
-                    <span class="menu-item-desc">Espresso mit einer Kugel Vanilleeis</span>
+                    <span class="menu-item-desc">Espresso mit einer Kugel Vanilleeis<br><span class="en-text">Espresso with a scoop of vanilla ice cream</span></span>
                 </div>
             </div>
         </div>
 
         <div class="menu-category">
-            <h3 class="menu-category-title"><i class="fa-solid fa-croissant"></i> Frühstück</h3>
-            <p class="menu-note">Frühstück gibt es bei uns bis 14:00 Uhr.</p>
+            <h3 class="menu-category-title"><i class="fa-solid fa-croissant"></i> Frühstück <br><span class="en-title">Breakfast</span></h3>
+            <p class="menu-note">Frühstück gibt es bei uns bis 14:00 Uhr.<br><span class="en-text" style="text-align: center;">Breakfast is served until 2:00 PM.</span></p>
             <div class="menu-list">
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Glockenspiel Frühstück</span><span class="menu-item-price">15,90</span></div>
-                    <span class="menu-item-desc">Handsemmel, Kornspitz, Butter, hausgemachte Marmelade, weiches Ei, Schinken-Käse-Teller, Frischkäse, ein Glas Orangensaft und eine Kaffeespezialität.</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Glockenspiel Frühstück <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Glockenspiel Breakfast</span></span><span class="menu-item-price">15,90</span></div>
+                    <span class="menu-item-desc">Handsemmel, Kornspitz, Butter, hausgemachte Marmelade, weiches Ei, Schinken-Käse-Teller, Frischkäse, ein Glas Orangensaft und eine Kaffeespezialität.<br><span class="en-text">Bread roll, multi-grain roll, butter, homemade jam, soft-boiled egg, ham & cheese plate, cream cheese, a glass of orange juice, and a coffee specialty.</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Wiener Frühstück</span><span class="menu-item-price">9,90</span></div>
-                    <span class="menu-item-desc">2 Handsemmeln, Butter, hausgemachte Marmelade, weiches Ei, 1 Kaffeespezialität nach Wahl.</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Wiener Frühstück <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Viennese Breakfast</span></span><span class="menu-item-price">9,90</span></div>
+                    <span class="menu-item-desc">2 Handsemmeln, Butter, hausgemachte Marmelade, weiches Ei, 1 Kaffeespezialität nach Wahl.<br><span class="en-text">2 bread rolls, butter, homemade jam, soft-boiled egg, 1 coffee specialty of your choice.</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Vital Frühstück</span><span class="menu-item-price">13,90</span></div>
-                    <span class="menu-item-desc">Vollkornbrot, Butter, hausgemachte Marmelade, Joghurt mit frischen Früchten und Müsli, Gemüse-Sticks mit Dip, 1 Heißgetränk.</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Vital Frühstück <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Vital Breakfast</span></span><span class="menu-item-price">13,90</span></div>
+                    <span class="menu-item-desc">Vollkornbrot, Butter, hausgemachte Marmelade, Joghurt mit frischen Früchten und Müsli, Gemüse-Sticks mit Dip, 1 Heißgetränk.<br><span class="en-text">Whole wheat bread, butter, homemade jam, yogurt with fresh fruits and muesli, vegetable sticks with dip, 1 hot beverage.</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Glockenspiel Pancake Frühstück</span><span class="menu-item-price">10,90</span></div>
-                    <span class="menu-item-desc">Hausgemachte Pancakes, Ahornsirup, frische Früchte inkl. 1 Heißgetränk.</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Glockenspiel Pancake Frühstück <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Pancake Breakfast</span></span><span class="menu-item-price">10,90</span></div>
+                    <span class="menu-item-desc">Hausgemachte Pancakes, Ahornsirup, frische Früchte inkl. 1 Heißgetränk.<br><span class="en-text">Homemade pancakes, maple syrup, fresh fruits incl. 1 hot beverage.</span></span>
                 </div>
             </div>
         </div>
 
         <div class="menu-category">
-            <h3 class="menu-category-title"><i class="fa-solid fa-egg"></i> Frühstück Extras</h3>
+            <h3 class="menu-category-title"><i class="fa-solid fa-egg"></i> Frühstück Extras <br><span class="en-title">Breakfast Extras</span></h3>
             <div class="menu-list">
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Gebäck (Handsemmel, Kornspitz, Croissant)</span><span class="menu-item-price">1,90</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Gebäck (Handsemmel, Kornspitz, Croissant) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Pastries</span></span><span class="menu-item-price">1,90</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Butter / Marmelade / Honig / Nutella</span><span class="menu-item-price">1,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Butter / Marmelade / Honig / Nutella <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Spreads</span></span><span class="menu-item-price">1,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Portion Schinken oder Käse</span><span class="menu-item-price">3,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Portion Schinken oder Käse <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Portion of Ham or Cheese</span></span><span class="menu-item-price">3,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Weiches Ei</span><span class="menu-item-price">2,00</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Weiches Ei <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Soft-boiled egg</span></span><span class="menu-item-price">2,00</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Spiegelei oder Eierspeis (aus 2 Eiern)</span><span class="menu-item-price">4,50</span></div>
-                    <span class="menu-item-desc">mit Speck oder Schinken: + 1,50</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Spiegelei oder Eierspeis (aus 2 Eiern) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Fried or Scrambled Eggs</span></span><span class="menu-item-price">4,50</span></div>
+                    <span class="menu-item-desc">mit Speck oder Schinken: + 1,50 <br><span class="en-text">with bacon or ham: + 1.50</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Schnittlauchbrot</span><span class="menu-item-price">4,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Schnittlauchbrot <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Bread with Chives</span></span><span class="menu-item-price">4,50</span></div>
                 </div>
             </div>
         </div>
 
         <div class="menu-category">
-            <h3 class="menu-category-title"><i class="fa-solid fa-utensils"></i> Speisen im Glockenspiel</h3>
+            <h3 class="menu-category-title"><i class="fa-solid fa-utensils"></i> Speisen im Glockenspiel <br><span class="en-title">Food at Glockenspiel</span></h3>
             <div class="menu-list">
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Glockenspiel Toast</span><span class="menu-item-price">6,90</span></div>
-                    <span class="menu-item-desc">Schinken, Käse und Ketchup, serviert mit Salatgarnitur</span>
+                    <span class="menu-item-desc">Schinken, Käse und Ketchup, serviert mit Salatgarnitur<br><span class="en-text">Ham, cheese, and ketchup, served with a side salad</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Haustoast / Bauern Toast</span><span class="menu-item-price">7,50</span></div>
-                    <span class="menu-item-desc">Speck, Käse, Zwiebel und Pfefferoni, serviert mit Salatgarnitur</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Haustoast / Bauern Toast <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Farmer's Toast</span></span><span class="menu-item-price">7,50</span></div>
+                    <span class="menu-item-desc">Speck, Käse, Zwiebel und Pfefferoni, serviert mit Salatgarnitur<br><span class="en-text">Bacon, cheese, onions, and chili peppers, served with a side salad</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Flammkuchen "Klassik"</span><span class="menu-item-price">9,90</span></div>
-                    <span class="menu-item-desc">mit Speck und Zwiebeln</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Flammkuchen "Klassik" <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Tarte Flambée</span></span><span class="menu-item-price">9,90</span></div>
+                    <span class="menu-item-desc">mit Speck und Zwiebeln<br><span class="en-text">with bacon and onions</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Schinken-Stangerl</span><span class="menu-item-price">5,90</span></div>
-                    <span class="menu-item-desc">mit Dip nach Wahl</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Schinken-Stangerl <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Ham Sticks</span></span><span class="menu-item-price">5,90</span></div>
+                    <span class="menu-item-desc">mit Dip nach Wahl<br><span class="en-text">with your choice of dip</span></span>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Käsespätzle</span><span class="menu-item-price">12,90</span></div>
-                    <span class="menu-item-desc">mit Röstzwiebeln und grünem Salat</span>
+                    <span class="menu-item-desc">mit Röstzwiebeln und grünem Salat<br><span class="en-text">with roasted onions and green salad</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Portion Speck / Käse / Salami</span><span class="menu-item-price">7,50</span></div>
-                    <span class="menu-item-desc">mit Gebäck</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Portion Speck / Käse / Salami <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Cold Cuts Plate</span></span><span class="menu-item-price">7,50</span></div>
+                    <span class="menu-item-desc">mit Gebäck<br><span class="en-text">with bread/pastry</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Kleine Salatschüssel</span><span class="menu-item-price">5,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Kleine Salatschüssel <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Small Salad Bowl</span></span><span class="menu-item-price">5,50</span></div>
                 </div>
             </div>
         </div>
 
         <div class="menu-category">
-            <h3 class="menu-category-title"><i class="fa-solid fa-glass-water"></i> Alkoholfreie Getränke</h3>
+            <h3 class="menu-category-title"><i class="fa-solid fa-glass-water"></i> Alkoholfreie Getränke <br><span class="en-title">Non-Alcoholic Beverages</span></h3>
             <div class="menu-list">
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Römerquelle still / prickelnd (0,33l / 0,75l)</span><span class="menu-item-price">3,50 / 6,90</span></div>
+                    <span class="menu-item-desc en-text">Mineral water still / sparkling</span>
                 </div>
                 <div class="menu-item-container">
                     <div class="menu-item-row"><span class="menu-item-name">Coca-Cola / Zero / Fanta / Sprite / Almdudler (0,33l)</span><span class="menu-item-price">4,10</span></div>
@@ -600,59 +636,59 @@
                     <div class="menu-item-row"><span class="menu-item-name">Kombucha (0,33l)</span><span class="menu-item-price">4,90</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Hausgemachte Limonade (0,5l)</span><span class="menu-item-price">5,90</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Hausgemachte Limonade (0,5l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Homemade Lemonade</span></span><span class="menu-item-price">5,90</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Pago / Rauch Fruchtsäfte (0,20l)</span><span class="menu-item-price">4,10</span></div>
-                    <span class="menu-item-desc">gespritzt auf 0,5l: 5,50</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Pago / Rauch Fruchtsäfte (0,20l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Fruit Juices</span></span><span class="menu-item-price">4,10</span></div>
+                    <span class="menu-item-desc">gespritzt auf 0,5l: 5,50 <br><span class="en-text">mixed with soda water to 0.5l: 5.50</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Fruchtsäfte div. Sorten (0,25l)</span><span class="menu-item-price">3,90</span></div>
-                    <span class="menu-item-desc">Apfel, Orange, Johannisbeer, Marille, Pfirsich. gespritzt auf 0,5l: 4,90</span>
+                    <div class="menu-item-row"><span class="menu-item-name">Fruchtsäfte div. Sorten (0,25l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Fruit Juices var. types</span></span><span class="menu-item-price">3,90</span></div>
+                    <span class="menu-item-desc">Apfel, Orange, Johannisbeer, Marille, Pfirsich. gespritzt auf 0,5l: 4,90 <br><span class="en-text">Apple, orange, blackcurrant, apricot, peach. mixed with soda water to 0.5l: 4.90</span></span>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Frisch gepresster Orangensaft (0,25l)</span><span class="menu-item-price">5,90</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Frisch gepresster Orangensaft (0,25l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Fresh Orange Juice</span></span><span class="menu-item-price">5,90</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Leitungswasser (0,25l / 0,5l)</span><span class="menu-item-price">0,50 / 1,00</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Leitungswasser (0,25l / 0,5l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Tap Water</span></span><span class="menu-item-price">0,50 / 1,00</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Soda (0,25l / 0,5l)</span><span class="menu-item-price">2,00 / 3,50</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Soda (0,25l / 0,5l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Soda Water</span></span><span class="menu-item-price">2,00 / 3,50</span></div>
                 </div>
                 <div class="menu-item-container">
-                    <div class="menu-item-row"><span class="menu-item-name">Soda Zitrone / Himbeer (0,25l / 0,5l)</span><span class="menu-item-price">2,50 / 4,00</span></div>
+                    <div class="menu-item-row"><span class="menu-item-name">Soda Zitrone / Himbeer (0,25l / 0,5l) <span style="font-weight: normal; font-size: 0.9em; color: #888;">/ Soda Lemon / Raspberry</span></span><span class="menu-item-price">2,50 / 4,00</span></div>
                 </div>
             </div>
         </div>
     </section>
-        
+
     <section id="galerie" class="gallery-section">
-        <h2>Unsere Galerie</h2>
+        <h2>Unsere Galerie <span style="font-weight: normal; color: #aaa;">/</span> Our Gallery</h2>
         <div class="gallery-grid">
             <div class="gallery-item">
-                <img src="https://www.linztourismus.at/assets/Uploads/Glockenspiel_aussen.jpeg" alt="Galerie Bild 1">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/Glockenspiel_aussen.jpeg" alt="Galerie Bild 1">
             </div>
             <div class="gallery-item">
-                <img src="https://scontent.flnz1-1.fna.fbcdn.net/v/t51.75761-15/500230343_18298740076300535_2449983070028365039_n.jpg?stp=dst-jpegr_tt6&_nc_cat=102&ccb=1-7&_nc_sid=13d280&_nc_ohc=idkZVejmV0MQ7kNvwFKn33E&_nc_oc=Adri_TXVXnBU_ceQaeSz_RHuQAnJEKZSxfWqn5WRL3pE1bNfnbdfHrBqxNLTJYraqSQ&_nc_zt=23&se=-1&_nc_ht=scontent.flnz1-1.fna&_nc_gid=WKqb8fsBJ8a5uyr4kx8l5g&_nc_ss=7b289&oh=00_Af4S0Q-gl_d-Se4Qeic2zoal1C4Y3I3tAvQMc9Uh0OMbzw&oe=6A02C6C9" alt="Galerie Bild 2">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/500230343_18298740076300535_2449983070028365039_n.jpg" alt="Galerie Bild 2">
             </div>
             <div class="gallery-item">
-                <img src="https://scontent.flnz1-1.fna.fbcdn.net/v/t39.30808-6/486379007_1204799908316048_8694786173119087401_n.jpg?_nc_cat=102&ccb=1-7&_nc_sid=13d280&_nc_ohc=5_OzdnCjKZ4Q7kNvwHYqMTw&_nc_oc=Adrma3YuxMD8ux5psb1C0imJEdYWhb_Spw-Sa7b-NCLlPpRWOJ84Zv7nw43808bl2i8&_nc_zt=23&_nc_ht=scontent.flnz1-1.fna&_nc_gid=3O1MVv6Qfa_FXsAPLPM15w&_nc_ss=7b289&oh=00_Af6DQFvtkLJtMWfGOCrcmCYa7HOO-hsMQ2GXoYhPZ-3t3A&oe=6A02BCE4" alt="Galerie Bild 3">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/486379007_1204799908316048_8694786173119087401_n.jpg" alt="Galerie Bild 3">
             </div>
             <div class="gallery-item">
-                <img src="https://scontent.flnz1-1.fna.fbcdn.net/v/t39.30808-6/482301702_1192271396235566_6716800935545321296_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=13d280&_nc_ohc=BqwS4tw25hwQ7kNvwFRF8lA&_nc_oc=Adq2VdJQOk6y3yNX2fxVGiF_rNN48mQY4VaUTfRqvwlYUa4POyahv44Pm9KcB4LTEIE&_nc_zt=23&_nc_ht=scontent.flnz1-1.fna&_nc_gid=0g9z0-Xw89S5fVukxiwoWA&_nc_ss=7b289&oh=00_Af668U27toc0JTwNsgsvJRvYLqtpTf-QFEWJznVmRJb7Pw&oe=6A02E1C0" alt="Galerie Bild 4">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/482301702_1192271396235566_6716800935545321296_n.jpg" alt="Galerie Bild 4">
             </div>
             <div class="gallery-item">
-                <img src="https://scontent.flnz1-1.fna.fbcdn.net/v/t1.6435-9/98359394_2502583210054593_2607048906768384000_n.jpg?_nc_cat=100&ccb=1-7&_nc_sid=7b2446&_nc_ohc=rY1lWFw6VCkQ7kNvwEMULO5&_nc_oc=AdqiigU07-VsCGEe8xnmwGFU3DeagyTzRTNlxbkErPqc4Q5lIomdtIgxG6ti54OyDVg&_nc_zt=23&_nc_ht=scontent.flnz1-1.fna&_nc_gid=RgQqYYbtUf2wYbxgWDNScg&_nc_ss=7b289&oh=00_Af7l17en17GTxKm0wHRU_6LejjYuX6NNnOJR_cn829IZYw&oe=6A24824B" alt="Galerie Bild 5">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/98359394_2502583210054593_2607048906768384000_n.jpg" alt="Galerie Bild 5">
             </div>
             <div class="gallery-item">
-                <img src="https://scontent.flnz1-1.fna.fbcdn.net/v/t39.30808-6/469582968_18277832452300535_7158253557324170382_n.jpg?_nc_cat=103&ccb=1-7&_nc_sid=13d280&_nc_ohc=zjPvGECWgOUQ7kNvwGCPJ5Q&_nc_oc=AdrWFRD7AL04UssbdyAwQhOjp8RnFmbI2lP3I_p-Lm0hU3-LUhYydekLkLhkJCWV098&_nc_zt=23&_nc_ht=scontent.flnz1-1.fna&_nc_gid=OahfR_2YQJcmt1-1sVCWmA&_nc_ss=7b289&oh=00_Af6JBj_Tn0JXw_UyRlAWcYVo9l5zn6MELpWmLokrFA7FTw&oe=6A02CE04" alt="Galerie Bild 6">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/469582968_18277832452300535_7158253557324170382_n.jpg" alt="Galerie Bild 6">
             </div>
         </div>
     </section>
 
     <section id="kontakt" class="contact-section">
         <div class="contact-info">
-            <h2>Kontakt</h2>
+            <h2>Kontakt <span style="font-weight: normal; color: #aaa; font-size: 0.8em;">/ Contact</span></h2>
             <a href="https://maps.google.com/?q=Hauptplatz+18,+4020+Linz" target="_blank">
                 <i class="fa-solid fa-location-dot"></i> Hauptplatz 18, 4020 Linz
             </a>
@@ -667,43 +703,43 @@
             </a>
             
             <div style="margin-top: 30px; max-width: 100%; overflow: hidden; border-radius: 5px; box-shadow: 0 5px 15px rgba(0,0,0,0.2);">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2654.5516999912773!2d14.283644215664166!3d48.30607997923642!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x477397858c8942b3%3A0x62cc708759fb9251!2sHauptplatz%2018%2C%204020%20Linz%2C%20Austria!5e0!3m2!1sen!2sus!4v1683492723321!5m2!1sen!2sus" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+                <iframe src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/embed.html" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
         
         <div class="opening-hours">
-            <h2>Öffnungszeiten</h2>
+            <h2>Öffnungszeiten <span style="font-weight: normal; color: #aaa; font-size: 0.8em;">/ Hours</span></h2>
             <ul class="hours-list">
-                <li><span>Montag</span> <span>08:00 - 22:00</span></li>
-                <li><span>Dienstag</span> <span>08:00 - 22:00</span></li>
-                <li><span>Mittwoch</span> <span>08:00 - 22:00</span></li>
-                <li><span>Donnerstag</span> <span>08:00 - 22:00</span></li>
-                <li><span>Freitag</span> <span>08:00 - 22:00</span></li>
-                <li><span>Samstag</span> <span>08:00 - 22:00</span></li>
-                <li><span>Sonntag</span> <span>10:00 - 22:00</span></li>
+                <li><span>Montag <span class="en-title" style="display:inline;">/ Monday</span></span> <span>08:00 - 22:00</span></li>
+                <li><span>Dienstag <span class="en-title" style="display:inline;">/ Tuesday</span></span> <span>08:00 - 22:00</span></li>
+                <li><span>Mittwoch <span class="en-title" style="display:inline;">/ Wednesday</span></span> <span>08:00 - 22:00</span></li>
+                <li><span>Donnerstag <span class="en-title" style="display:inline;">/ Thursday</span></span> <span>08:00 - 22:00</span></li>
+                <li><span>Freitag <span class="en-title" style="display:inline;">/ Friday</span></span> <span>08:00 - 22:00</span></li>
+                <li><span>Samstag <span class="en-title" style="display:inline;">/ Saturday</span></span> <span>08:00 - 22:00</span></li>
+                <li><span>Sonntag <span class="en-title" style="display:inline;">/ Sunday</span></span> <span>10:00 - 22:00</span></li>
             </ul>
             
-            <h3 style="color: var(--gold); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem;">Zahlungsmöglichkeiten</h3>
+            <h3 style="color: var(--gold); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem;">Zahlungsmöglichkeiten <br><span class="en-title" style="color: var(--gold); opacity: 0.8;">Payment Options</span></h3>
             <div class="icon-features">
                 <div class="icon-feature-item"><i class="fa-brands fa-cc-amex"></i><span>AMEX</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-money-bill-wave"></i><span>Barzahlung</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-wifi fa-rotate-90"></i><span>Kontaktlos</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-money-bill-wave"></i><span>Barzahlung<br><span class="en-title">Cash</span></span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-wifi fa-rotate-90"></i><span>Kontaktlos<br><span class="en-title">Contactless</span></span></div>
                 <div class="icon-feature-item"><i class="fa-brands fa-cc-mastercard"></i><span>MasterCard</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-ticket"></i><span>Essensmarken</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-ticket"></i><span>Essensmarken<br><span class="en-title">Vouchers</span></span></div>
                 <div class="icon-feature-item"><i class="fa-brands fa-cc-visa"></i><span>VISA</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-credit-card"></i><span>EC-Karte</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-credit-card"></i><span>EC-Karte<br><span class="en-title">Debit Card</span></span></div>
             </div>
             
             <h3 style="color: var(--gold); margin-top: 30px; margin-bottom: 20px; font-size: 1.5rem;">Services</h3>
             <div class="icon-features">
-                <div class="icon-feature-item"><i class="fa-solid fa-wheelchair"></i><span>Barrierefrei</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-cubes"></i><span>Kinderecke</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-umbrella-beach"></i><span>Außenbereich</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-wheelchair"></i><span>Barrierefrei<br><span class="en-title">Accessible</span></span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-cubes"></i><span>Kinderecke<br><span class="en-title">Play Area</span></span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-umbrella-beach"></i><span>Außenbereich<br><span class="en-title">Outdoors</span></span></div>
                 <div class="icon-feature-item"><i class="fa-solid fa-champagne-glasses"></i><span>Private Events</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-bag-shopping"></i><span>Mitnehmen</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-fire"></i><span>Beheizte Terrasse</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-wifi"></i><span>WLAN</span></div>
-                <div class="icon-feature-item"><i class="fa-solid fa-paw"></i><span>Haustiere erlaubt</span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-bag-shopping"></i><span>Mitnehmen<br><span class="en-title">Takeaway</span></span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-fire"></i><span>Beheizte Terrasse<br><span class="en-title">Heated Terrace</span></span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-wifi"></i><span>WLAN<br><span class="en-title">Wi-Fi</span></span></div>
+                <div class="icon-feature-item"><i class="fa-solid fa-paw"></i><span>Haustiere erlaubt<br><span class="en-title">Pets Allowed</span></span></div>
             </div>
         </div>
     </section>
