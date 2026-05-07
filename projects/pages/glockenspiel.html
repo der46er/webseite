@@ -63,6 +63,12 @@
             position: sticky;
             top: 0;
             z-index: 1000;
+            transition: transform 0.3s ease-in-out; /* Added for smooth hiding */
+        }
+
+        /* Added class to hide navbar on scroll down */
+        nav.nav-hidden {
+            transform: translateY(-100%);
         }
 
         .logo-container {
@@ -541,7 +547,7 @@
 </head>
 <body>
 
-    <nav>
+    <nav id="navbar">
         <div class="logo-container">
             <a href="#" class="logo">
                 <img src="https://scontent.flnz1-1.fna.fbcdn.net/v/t1.6435-9/60834659_2206108203035430_5059496845059817472_n.jpg?_nc_cat=106&ccb=1-7&_nc_sid=7b2446&_nc_ohc=iDIbAPX6xTsQ7kNvwEnzatT&_nc_oc=AdrF_JJiUiAkdDLmRrJ9Z5vwDnvfqtIS7ZFzyiQ3f059m5jiYN0uumgrcqFIgp9qQSw&_nc_zt=23&_nc_ht=scontent.flnz1-1.fna&_nc_gid=DFdgXD0ONeFlNYQg9yT_VA&_nc_ss=7b289&oh=00_Af7GR_PpzCHHO1-2l9E_OTVMXLU5Lir5UhaDChkgC0DjmQ&oe=6A249166" alt="Kaffee Glockenspiel Logo">
@@ -959,12 +965,24 @@
             <span class="lang-en">Our Gallery</span>
         </h2>
         <div class="gallery-grid">
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/Glockenspiel_aussen.jpeg" alt="Galerie Bild 1"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/500230343_18298740076300535_2449983070028365039_n.jpg" alt="Galerie Bild 2"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/486379007_1204799908316048_8694786173119087401_n.jpg" alt="Galerie Bild 3"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/482301702_1192271396235566_6716800935545321296_n.jpg" alt="Galerie Bild 4"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/98359394_2502583210054593_2607048906768384000_n.jpg" alt="Galerie Bild 5"></div>
-            <div class="gallery-item"><img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/469582968_18277832452300535_7158253557324170382_n.jpg" alt="Galerie Bild 6"></div>
+            <div class="gallery-item">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/Glockenspiel_aussen.jpeg" alt="Galerie Bild 1">
+            </div>
+            <div class="gallery-item">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/500230343_18298740076300535_2449983070028365039_n.jpg" alt="Galerie Bild 2">
+            </div>
+            <div class="gallery-item">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/486379007_1204799908316048_8694786173119087401_n.jpg" alt="Galerie Bild 3">
+            </div>
+            <div class="gallery-item">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/482301702_1192271396235566_6716800935545321296_n.jpg" alt="Galerie Bild 4">
+            </div>
+            <div class="gallery-item">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/98359394_2502583210054593_2607048906768384000_n.jpg" alt="Galerie Bild 5">
+            </div>
+            <div class="gallery-item">
+                <img src="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/469582968_18277832452300535_7158253557324170382_n.jpg" alt="Galerie Bild 6">
+            </div>
         </div>
     </section>
 
@@ -1061,6 +1079,24 @@
     <script>
         let currentLang = 'de';
         let cookiesAccepted = false;
+        
+        // --- Scroll Hide Logic for Navbar ---
+        let lastScrollTop = 0;
+        const navbar = document.getElementById('navbar');
+
+        window.addEventListener('scroll', function() {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            
+            // If scrolling down and past the navbar height
+            if (scrollTop > lastScrollTop && scrollTop > navbar.offsetHeight) {
+                navbar.classList.add('nav-hidden');
+            } else {
+                // If scrolling up
+                navbar.classList.remove('nav-hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; // For Mobile or negative scrolling
+        }, false);
+        // ------------------------------------
 
         function getCookie(name) {
             let match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
