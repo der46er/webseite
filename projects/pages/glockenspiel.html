@@ -8,9 +8,8 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com/">
     <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
-    <link href="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/css2" rel="stylesheet">
-    
-    <link rel="stylesheet" href="./Kaffee Glockenspiel _ Tradition am Linzer Hauptplatz_files/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
         /* --- Color Palette & Variables --- */
@@ -33,9 +32,10 @@
             color: var(--text-main);
             background-color: var(--cream);
             line-height: 1.6;
+            scroll-behavior: smooth;
         }
 
-        h1, h2, h3 {
+        h1, h2, h3, h4 {
             font-family: 'Playfair Display', serif;
             color: var(--dark-coffee);
         }
@@ -75,7 +75,6 @@
 
         /* --- Hero Section --- */
         .hero {
-            /* Replace the URL below with an actual image of the cafe's exterior or coffee */
             background: linear-gradient(rgba(44, 30, 22, 0.7), rgba(44, 30, 22, 0.7)), url('https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&q=80&w=2000') center/cover;
             height: 85vh;
             display: flex;
@@ -137,36 +136,93 @@
             font-size: 1.3rem;
         }
 
-        /* --- Menu Teaser --- */
-        .menu-teaser {
-            padding: 80px 5%;
+        /* --- About Us Section --- */
+        .about-section {
+            padding: 60px 5%;
+            background-color: var(--cream);
             text-align: center;
-        }
-
-        .menu-teaser h2 {
-            font-size: 2.5rem;
-            margin-bottom: 40px;
-        }
-
-        .menu-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
             max-width: 1000px;
             margin: 0 auto;
         }
 
-        .menu-item {
-            background: var(--white);
-            padding: 30px;
-            border-radius: 5px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
-            border-top: 4px solid var(--gold);
+        /* --- Menu Section (Modern One-Pager Layout) --- */
+        .menu-section {
+            padding: 80px 5%;
+            background-color: var(--white);
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .menu-header {
+            text-align: center;
+            margin-bottom: 60px;
         }
 
-        .menu-item h3 {
-            font-size: 1.5rem;
+        .menu-header h2 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .menu-note {
+            text-align: center;
+            font-style: italic;
+            font-size: 0.95rem;
+            color: #777;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .menu-category {
+            margin-bottom: 60px;
+        }
+
+        .menu-category-title {
+            font-size: 2rem;
+            color: var(--gold);
+            border-bottom: 1px solid rgba(197, 160, 89, 0.3);
+            padding-bottom: 10px;
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .menu-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px 60px;
+        }
+
+        .menu-item-container {
             margin-bottom: 15px;
+        }
+
+        .menu-item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            border-bottom: 1px dotted #ccc;
+            padding-bottom: 5px;
+            margin-bottom: 8px;
+        }
+
+        .menu-item-name {
+            font-weight: bold;
+            color: var(--dark-coffee);
+            font-size: 1.1rem;
+        }
+
+        .menu-item-price {
+            font-weight: bold;
+            color: var(--gold);
+            margin-left: 15px;
+            font-size: 1.1rem;
+        }
+
+        .menu-item-desc {
+            font-size: 0.9rem;
+            color: #666;
+            display: block;
         }
 
         /* --- Info & Contact Section --- */
@@ -195,6 +251,11 @@
             font-size: 1.1rem;
             text-decoration: none;
             display: block;
+            transition: color 0.3s;
+        }
+        
+        .contact-section a:hover {
+            color: var(--gold);
         }
 
         .contact-section i {
@@ -234,10 +295,13 @@
         /* --- Mobile Responsive adjustments --- */
         @media (max-width: 768px) {
             .nav-links {
-                display: none; /* Can add a hamburger menu later if needed */
+                display: none;
             }
             .hero h1 {
                 font-size: 3rem;
+            }
+            .menu-list {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -245,17 +309,18 @@
 <body>
 
     <nav>
-        <a href="https://thataustrianone.eu/projects/pages/glockenspiel.html#" class="logo">Kaffee Glockenspiel</a>
+        <a href="#" class="logo">Kaffee Glockenspiel</a>
         <div class="nav-links">
-            <a href="https://thataustrianone.eu/projects/pages/glockenspiel.html#angebot">Unser Angebot</a>
-            <a href="https://thataustrianone.eu/projects/pages/glockenspiel.html#kontakt">Kontakt & Öffnungszeiten</a>
+            <a href="#ueber-uns">Über uns</a>
+            <a href="#speisekarte">Speisekarte</a>
+            <a href="#kontakt">Kontakt & Öffnungszeiten</a>
         </div>
     </nav>
 
     <header class="hero">
         <h1>Glockenspiel</h1>
         <p>Ihr gemütlicher Logenplatz direkt am Linzer Hauptplatz. Genießen Sie Tradition, Herzlichkeit und hervorragenden Kaffee.</p>
-        <a href="https://thataustrianone.eu/projects/pages/glockenspiel.html#kontakt" class="btn">Tisch reservieren</a>
+        <a href="#kontakt" class="btn">Tisch reservieren</a>
     </header>
 
     <section class="features">
@@ -281,7 +346,7 @@
         </div>
     </section>
 
-    <section id="ueber-uns" style="padding: 60px 5%; background-color: var(--cream); text-align: center; max-width: 1000px; margin: 0 auto;">
+    <section id="ueber-uns" class="about-section">
         <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Sie können zum Mitnehmen bestellen | Linz</h2>
         <p style="margin-bottom: 30px;">Wir bieten Ihnen im „Kaffee Glockenspiel“ von leckerem Eiskaffee bis hin zu kleinen Snacks wie Kuchen eine Vielzahl an Angeboten für einen gemütlichen Nachmittag. Unser wundervolles Café ist günstig gelegen und sehr gemütlich eingerichtet, sodass Sie hier jederzeit für einen Kaffee oder zum Mittagessen vorbeisehen können. Der gemütliche Außenbereich sorgt für eine tolle Stimmung und angenehme Atmosphäre. Zum längeren Verweilen verlockt unsere beheizte Terrasse.</p>
         
@@ -292,16 +357,133 @@
         <p>Bei uns ist ein barrierefreier Zugang garantiert. Wir haben ein Herz für Tiere: Auch Haustiere sind gerngesehene Gäste. Sie sind bei uns herzlich willkommen. Bitte schauen Sie einfach bei uns vorbei! Wir würden uns freuen, heute Abend Ihr Gastgeber zu sein. Als Bezahlmethode bieten wir die Bezahlung mit kontaktlosem Bezahlen, Essensmarken, EC-Karten sowie gängigen Kreditkarten oder bar. Wir verpacken Ihnen Ihr Essen auch zum Mitnehmen. Steht bei Ihnen ein Ereignis an, das Sie gerne in größerer Runde feiern mögen? Mieten Sie unsere Räume – wir freuen uns auf Sie. Sie können täglich bei uns einkehren.</p>
     </section>
 
-    <section id="angebot" class="menu-teaser">
-        <h2>Was wir anbieten</h2>
-        <div class="menu-grid">
-            <div class="menu-item">
-                <h3><i class="fa-solid fa-cake-candles" style="color: var(--gold);"></i> Mehlspeisen</h3>
-                <p>Klassische hausgemachte Kuchen, Torten und kleine Snacks, perfekt zum Nachmittagskaffee.</p>
+    <section id="speisekarte" class="menu-section">
+        <div class="menu-header">
+            <h2>Unsere Speisekarte</h2>
+            <p class="menu-note">„Zeit nehmen is a bisserl wie einkaufen“</p>
+        </div>
+
+        <div class="menu-category">
+            <h3 class="menu-category-title"><i class="fa-solid fa-mug-saucer"></i> Kaffee</h3>
+            <p class="menu-note">Alle unsere Kaffees können auf Wunsch koffeinfrei zubereitet werden. Gerne servieren wir Ihren Kaffee auch mit Hafer-, Sojamilch oder laktosefreier Milch zu (+ € 0,50).</p>
+            <div class="menu-list">
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Espresso / Kleiner Brauner</span>
+                        <span class="menu-item-price">3,90</span>
+                    </div>
+                    <span class="menu-item-desc">Espresso serviert mit einem kleinen Kännchen Obers.</span>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Verlängerter</span>
+                        <span class="menu-item-price">4,50</span>
+                    </div>
+                    <span class="menu-item-desc">Espresso mit doppelter Wassermenge und Kännchen Obers.</span>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Cappuccino</span>
+                        <span class="menu-item-price">5,00</span>
+                    </div>
+                    <span class="menu-item-desc">Espresso mit Milchschaum.</span>
+                </div>
             </div>
-            <div class="menu-item">
-                <h3><i class="fa-solid fa-wine-glass" style="color: var(--gold);"></i> Getränkevielfalt</h3>
-                <p>Eine umfassende Getränkeauswahl von Kaffeespezialitäten bis hin zu erfrischenden Kaltgetränken.</p>
+        </div>
+
+        <div class="menu-category">
+            <h3 class="menu-category-title"><i class="fa-solid fa-croissant"></i> Frühstück</h3>
+            <p class="menu-note">Frühstück gibt es bei uns bis 14:00 Uhr.</p>
+            <div class="menu-list">
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Glockenspiel Frühstück</span>
+                        <span class="menu-item-price">15,90</span>
+                    </div>
+                    <span class="menu-item-desc">Gebäck, Butter, hausgemachte Marmelade, Schinken-Käse-Teller, weiches Ei und mehr.</span>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Wiener Frühstück</span>
+                        <span class="menu-item-price">9,90</span>
+                    </div>
+                    <span class="menu-item-desc">Klassisches Gebäck, Butter und hausgemachte Marmelade.</span>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Pancake Frühstück</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                    <span class="menu-item-desc">Hausgemachte Pancakes mit frischen Früchten.</span>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Vital Frühstück</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                    <span class="menu-item-desc">Für den gesunden Start in den Tag.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-category">
+            <h3 class="menu-category-title"><i class="fa-solid fa-utensils"></i> Speisen im Glockenspiel</h3>
+            <div class="menu-list">
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Glockenspiel Toast</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Schinken-Stangerl</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Flammkuchen</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Hausgemachte Mehlspeisen</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                    <span class="menu-item-desc">Fragen Sie nach unseren täglichen Kuchen und Torten.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="menu-category">
+            <h3 class="menu-category-title"><i class="fa-solid fa-glass-water"></i> Erfrischungen & Drinks</h3>
+            <div class="menu-list">
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Hausgemachte Limonaden</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Bio Fruchtsäfte & Smoothies</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Aperol Spritz / Hugo / Lillet</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
+                <div class="menu-item-container">
+                    <div class="menu-item-row">
+                        <span class="menu-item-name">Bier vom Fass & Flaschenbiere</span>
+                        <span class="menu-item-price"></span>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -309,7 +491,7 @@
     <section id="kontakt" class="contact-section">
         <div class="contact-info">
             <h2>Kontakt</h2>
-            <a href="https://maps.google.com/?q=Hauptplatz+Linz" target="_blank">
+            <a href="https://maps.google.com/?q=Hauptplatz+18,+4020+Linz" target="_blank">
                 <i class="fa-solid fa-location-dot"></i> Hauptplatz 18, 4020 Linz
             </a>
             <a href="tel:+43732774834">
