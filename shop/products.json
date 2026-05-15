@@ -15,7 +15,6 @@
     "isSold": false,
     "urls": [
       "https://www.ebay.at/itm/147142307233",
-      "https://www.willhaben.at/iad/kaufen-und-verkaufen/d/corsair-icue-luefter-1623977017",
       "https://www.vinted.at/items/6750436046-corsair-icue-lufter"
     ]
   },
@@ -108,19 +107,5 @@
     "urls": [
       "https://www.vinted.at/items/7095905343-intel-wireless-ac-9560-m2-2230-wlan-und-bluetooth-50-karte"
     ]
-  },
-  {
-    "title": {
-      "de": "Test",
-      "en": "Test"
-    },
-    "price": "0",
-    "description": {
-      "de": "Testtt",
-      "en": "Testttt"
-    },
-    "images": [],
-    "isSold": false,
-    "urls": []
   }
 ]
