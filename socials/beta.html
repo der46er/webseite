@@ -43,30 +43,30 @@
     <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in gap-3 w-full pb-8">
         
        <header class="flex w-full gap-4 mb-4">
-            <a href="https://www.tiktok.com/@der_46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
-                <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
-                    <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-cyan-500 via-blue-500 to-purple-500"></div>
-                    <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#06b6d4,#3b82f6)]"></div>
-                    
-                    <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
-                        <img src="../assets/der_46er.webp" alt="Nick" class="w-full h-full object-cover object-center">
-                    </div>
-                </div>
-                <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@der_46er</h1>
-            </a>
+    <a href="https://www.tiktok.com/@der_46er" target="_blank" class="profile-card flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
+        <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
+            <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full" style="background: var(--dynamic-color, #333);"></div>
+            <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500" style="background: conic-gradient(transparent, transparent, transparent, var(--dynamic-color, #333));"></div>
             
-            <a href="https://www.tiktok.com/@not_der46er" target="_blank" class="flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
-                <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
-                    <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-yellow-300 via-yellow-500 to-amber-600"></div>
-                    <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#fde047,#f59e0b)]"></div>
-                    
-                    <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
-                        <img src="../assets/not_der46er.webp" alt="Nick&#39;s alter ego" class="w-full h-full object-cover object-center">
-                    </div>
-                </div>
-                <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@not_der46er</h1>
-            </a>
-        </header>
+            <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
+                <img src="../assets/der_46er.webp" alt="Nick" class="profile-img w-full h-full object-cover object-center">
+            </div>
+        </div>
+        <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@der_46er</h1>
+    </a>
+    
+    <a href="https://www.tiktok.com/@not_der46er" target="_blank" class="profile-card flex-1 group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
+        <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
+            <div class="absolute -inset-2 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full" style="background: var(--dynamic-color, #333);"></div>
+            <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500" style="background: conic-gradient(transparent, transparent, transparent, var(--dynamic-color, #333));"></div>
+            
+            <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
+                <img src="../assets/not_der46er.webp" alt="Nick's alter ego" class="profile-img w-full h-full object-cover object-center">
+            </div>
+        </div>
+        <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@not_der46er</h1>
+    </a>
+</header>
 
         <main class="flex flex-col gap-3">
             <a href="https://www.thataustrianone.eu" target="_blank" class="group flex items-center justify-center gap-3 p-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] theme-border-hover rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
@@ -248,6 +248,59 @@
         };
         fetchSpotify();
         setInterval(fetchSpotify, 10000);
+    </script>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const profileCards = document.querySelectorAll('.profile-card');
+
+            profileCards.forEach(card => {
+                const img = card.querySelector('.profile-img');
+
+                if (img.complete) {
+                    applyDynamicColor(img, card);
+                } else {
+                    img.addEventListener('load', () => applyDynamicColor(img, card));
+                }
+            });
+
+            function applyDynamicColor(imgElement, containerElement) {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                // Keep canvas small for performance
+                canvas.width = imgElement.naturalWidth || 100;
+                canvas.height = imgElement.naturalHeight || 100;
+
+                try {
+                    ctx.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
+                    const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+                    
+                    let r = 0, g = 0, b = 0, count = 0;
+                    
+                    // Jump through pixels by 16 (rgba * 4) to speed up calculation
+                    for (let i = 0; i < imageData.length; i += 16) {
+                        // Ignore fully transparent pixels
+                        if (imageData[i + 3] > 0) {
+                            r += imageData[i];
+                            g += imageData[i + 1];
+                            b += imageData[i + 2];
+                            count++;
+                        }
+                    }
+                    
+                    if (count > 0) {
+                        r = Math.floor(r / count);
+                        g = Math.floor(g / count);
+                        b = Math.floor(b / count);
+                        
+                        // Apply the calculated RGB to the custom CSS variable
+                        containerElement.style.setProperty('--dynamic-color', `rgb(${r}, ${g}, ${b})`);
+                    }
+                } catch (e) {
+                    console.error("Could not extract image color.", e);
+                }
+            }
+        });
     </script>
 </body>
 </html>
