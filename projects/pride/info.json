@@ -1,0 +1,17 @@
+{
+  "project": {
+    "id": "pride-pfp",
+    "title": "Pride pfp Generator",
+    "title_en": "Pride pfp Generator",
+    "description": "Erstellung eines Pride Profilbildes. Kostenlos und ohne Werbung.",
+    "description_en": "Generate Pride profile pictures. For free and without ADS",
+    "version": "0.13",
+    "date": "2026-05-31",
+    "status": "Live",
+    "technologies": [
+      "HTML5",
+      "JavaScript",
+      "GitHub Fonts (Static)"
+    ]
+  }
+}
