@@ -328,23 +328,11 @@
                             <div className="text-4xl sm:text-7xl font-black text-fuchsia-500 italic tracking-tighter">~45€ / Std.*</div>
                         </div>
 
-                        <footer className="mt-20 sm:mt-32 flex flex-col items-center w-full">
-                            <div className="glass-card rounded-[1.5rem] sm:rounded-[2.5rem] p-8 sm:p-12 text-center w-full max-w-4xl border-zinc-900/50 mb-12 magenta-glow">
-                                <div className="mb-6 flex justify-center"><div className="w-10 h-10 rounded-full border border-fuchsia-500/30 flex items-center justify-center text-fuchsia-500"><Info size={20} /></div></div>
-                                <div className="space-y-4">
-                                    <p className="text-zinc-400 text-[9px] sm:text-[11px] font-black uppercase tracking-[0.2em] sm:tracking-[0.3em] leading-loose max-w-2xl mx-auto italic">{t.privateNotice}</p>
-                                    <p className="text-fuchsia-400/80 text-[10px] sm:text-[12px] font-bold uppercase tracking-widest leading-relaxed max-w-xl mx-auto italic">
-                                        {t.disclaimerNotice}
-                                    </p>
-                                </div>
-                                <div className="w-16 h-1 bg-fuchsia-500/20 mx-auto mt-8 rounded-full" />
-                            </div>
-                            <button onClick={() => setShowLegal(true)} className="px-10 py-3.5 bg-white/5 border border-white/5 rounded-full text-[10px] sm:text-[12px] font-black tracking-[0.4em] text-zinc-500 hover:text-white transition-all uppercase mb-6 italic">{t.legal}</button>
-                            <div className="text-zinc-800 text-[8px] sm:text-[10px] font-black tracking-[0.6em] uppercase opacity-40 italic mb-2">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
-                            <div className="text-[9px] font-bold text-white/20 uppercase tracking-widest select-none italic">
-                                LIVE BUILD v1.3.1 | {new Date().toLocaleDateString('de-DE')}
-                            </div>
-                        </footer>
+                        <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none">
+    <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+        © 2026 — @der_46er
+    </p>
+</footer>
                     </div>
 
                     {/* DETAIL VIEW OVERLAY */}
