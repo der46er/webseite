@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PFP Generator</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'),
+                 local('Inter'),
+                 local('Segoe UI'),
+                 local('Roboto'),
+                 local('Helvetica Neue'),
+                 local('Arial'),
+                 sans-serif;
+            font-weight: 400;
+            font-display: swap;
+        }
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'),
+                 local('Inter Black'),
+                 local('Segoe UI Black'),
+                 local('Arial Black'),
+                 sans-serif;
+            font-weight: 900;
+            font-display: swap;
+        }
+        
+        :root { 
+            --accent-color: #bb86fc;
+            --glow-color-1: #FF0018; 
+            --glow-color-2: #86007D;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0b0d11; 
+            color: white; 
+            overflow-x: hidden; 
+        }
+
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .glow-1 { background-color: var(--glow-color-1); opacity: 0.15; }
+        .glow-2 { background-color: var(--glow-color-2); opacity: 0.15; }
+
+        input[type="file"] { display: none; }
+
+        .canvas-edit-mode {
+            box-shadow: 0 0 0 2px var(--glow-color-1), 0 0 20px rgba(0,0,0,0.5) !important;
+        }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            isolation: isolate;
+        }
+
+        #canvasWrapper {
+            touch-action: none; 
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen selection:bg-white/30 relative">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full glow-1 transition-colors duration-700"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full glow-2 transition-colors duration-700"></div>
+    </div>
+
+    <div class="fixed top-4 right-4 z-50 flex items-center p-1 gap-1 glass-panel rounded-full shadow-lg scale-90 sm:scale-100 origin-top-right">
+        <button id="tutorialBtn" title="How to use" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+        <a href="https://thataustrianone.eu/socials/" target="_blank" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        </a>
+        <a href="https://thataustrianone.eu/legal" target="_blank" title="Legal & Imprint" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </a>
+    </div>
+
+    <div id="tutorialModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in">
+        <div class="bg-[#161920] border border-white/10 rounded-[1.5rem] p-6 max-w-sm w-full shadow-2xl relative">
+            <button id="closeTutorial" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="font-black italic text-xl uppercase tracking-wide text-white mb-4">How to use</h2>
+            <ul class="text-zinc-300 text-sm space-y-3 font-medium">
+                <li><strong class="text-white">1.</strong> Choose your background flag or upload a custom one.</li>
+                <li><strong class="text-white">2.</strong> Upload a photo.</li>
+                <li><strong class="text-white">3.</strong> <strong>Double-click</strong> the image preview to enter edit mode.</li>
+                <li><strong class="text-white">4.</strong> Click and drag to move your photo. It locks to the edges.</li>
+                <li><strong class="text-white">5.</strong> Use the <strong>+/-</strong> buttons, mouse wheel, or pinch on mobile to zoom.</li>
+                <li><strong class="text-white">6.</strong> Double-click again to lock it, then download!</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-24 w-full animate-in">
+        <main class="flex flex-col gap-4 sm:gap-5 w-full">
+            
+            <div class="group flex flex-col gap-2 p-5 glass-panel rounded-[1.2rem] transition-all duration-300 shadow-lg hover:bg-white/[0.05]">
+                <label for="flagSelect" class="text-sm font-black italic tracking-wide text-zinc-100 uppercase leading-none">1. Choose Background</label>
+                <select id="flagSelect" class="w-full mt-2 p-3 bg-[#161920] text-white border border-white/10 rounded-xl focus:outline-none transition-colors cursor-pointer text-sm font-medium">
+                    <option value="custom">✨ Custom Image...</option>
+                </select>
+
+                <label id="customBgContainer" for="bgUpload" class="hidden mt-3 flex-col items-center justify-center p-4 bg-white/5 hover:bg-white/10 border border-white/10 border-dashed rounded-xl cursor-pointer transition-all">
+                    <span class="text-xs font-bold text-zinc-300 uppercase tracking-widest flex items-center gap-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Upload Background
+                    </span>
+                    <span id="bgFileNameDisplay" class="text-[10px] text-zinc-500 mt-1 truncate max-w-[200px]">No file chosen</span>
+                    <input type="file" id="bgUpload" accept="image/png, image/jpeg, image/webp">
+                </label>
+            </div>
+
+            <label for="imageUpload" class="group flex flex-col items-center justify-center p-6 glass-panel rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg cursor-pointer hover:bg-white/[0.05]">
+                <div class="shrink-0 w-10 h-10 mb-3 rounded-xl bg-[#161920] flex items-center justify-center shadow-md transition-transform group-hover:scale-105 border border-white/10 text-zinc-400 group-hover:text-white">
+                    <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
+                </div>
+                <h3 class="text-base sm:text-lg font-black italic tracking-wide text-zinc-100 group-hover:text-white transition-colors leading-none uppercase">2. Upload Photo</h3>
+                <p id="fileNameDisplay" class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-2 truncate max-w-[200px]">Click to browse files</p>
+                <input type="file" id="imageUpload" accept="image/png, image/jpeg, image/webp">
+            </label>
+
+            <div class="flex flex-col items-center p-5 glass-panel rounded-[1.2rem] shadow-lg hover:bg-white/[0.05]">
+                <div class="w-full flex justify-between items-end mb-4">
+                    <h3 class="text-sm font-black italic tracking-wide text-zinc-100 uppercase leading-none">3. Edit & Preview</h3>
+                    <span id="dragHint" class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 opacity-0 transition-opacity">Dbl-click to move</span>
+                </div>
+                
+                <div id="canvasWrapper" class="w-full max-w-[260px] sm:max-w-[300px] aspect-square rounded-xl overflow-hidden shadow-[0_0_20px_rgba(0,0,0,0.5)] border-2 border-[#161920] transition-all duration-300 relative select-none bg-[#0b0d11]">
+                    <canvas id="pfpCanvas" width="1000" height="1000" class="w-full h-full block"></canvas>
+                </div>
+
+                <div id="zoomControls" class="flex gap-4 mt-4 opacity-0 transition-opacity duration-300 pointer-events-none">
+                    <button id="zoomOut" class="w-10 h-10 rounded-full bg-[#161920] border border-white/10 flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all text-white shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12H4"></path></svg>
+                    </button>
+                    <button id="zoomIn" class="w-10 h-10 rounded-full bg-[#161920] border border-white/10 flex items-center justify-center hover:bg-white/10 active:scale-95 transition-all text-white shadow-lg">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
+                    </button>
+                </div>
+            </div>
+
+            <button id="downloadBtn" disabled class="group flex items-center justify-center p-4 bg-[#161920] hover:bg-white/10 disabled:bg-[#161920] disabled:text-zinc-600 disabled:cursor-not-allowed rounded-[1.2rem] transition-all duration-300 active:scale-[0.98] shadow-lg text-white border border-white/10 relative overflow-hidden mb-8">
+                <div class="absolute inset-0 w-full h-full glow-1 opacity-0 group-hover:opacity-40 transition-opacity disabled:hidden"></div>
+                <h3 class="relative z-10 text-lg font-black italic tracking-wide uppercase leading-none">Download</h3>
+            </button>
+            
+        </main>
+    </div>
+
+    <footer class="w-full text-center py-6 mt-auto z-10 relative">
+        <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 transition-opacity">
+            © 2026 — @der_46er
+        </p>
+    </footer>
+
+    <script>
+        const prideFlags = {
+            "rainbow": { name: "Rainbow (Classic)", colors: ["#FF0018", "#FFA52C", "#FFFF41", "#008018", "#0000F9", "#86007D"] },
+            "mlm": { name: "Gay (MLM)", colors: ["#078D70", "#26CEAA", "#98E8C1", "#FFFFFF", "#7BADE2", "#5049CC", "#3D1A78"] },
+            "lesbian": { name: "Lesbian", colors: ["#D52D00", "#EF7627", "#FF9A56", "#FFFFFF", "#D162A4", "#B21365", "#A30262"] },
+            "progress": { name: "Progress Pride", colors: ["#000000", "#784F17", "#5BCEFA", "#F5ABB9", "#FFFFFF", "#FF0018", "#FFA52C", "#FFFF41", "#008018", "#0000F9", "#86007D"] },
+            "bisexual": { name: "Bisexual", colors: ["#D60270", "#D60270", "#9B4F96", "#0038A8", "#0038A8"] },
+            "transgender": { name: "Transgender", colors: ["#5BCEFA", "#F5ABB9", "#FFFFFF", "#F5ABB9", "#5BCEFA"] },
+            "pansexual": { name: "Pansexual", colors: ["#FF218C", "#FFD800", "#21B1FF"] },
+            "nonbinary": { name: "Non-Binary", colors: ["#FCF434", "#FFFFFF", "#9C59D1", "#2C2C2C"] },
+            "asexual": { name: "Asexual", colors: ["#000000", "#A3A3A3", "#FFFFFF", "#810081"] },
+            "aromantic": { name: "Aromantic", colors: ["#3DA542", "#A7D379", "#FFFFFF", "#A9A9A9", "#000000"] },
+            "agender": { name: "Agender", colors: ["#000000", "#BCC4C6", "#FFFFFF", "#B5F582", "#FFFFFF", "#BCC4C6", "#000000"] },
+            "genderfluid": { name: "Genderfluid", colors: ["#FF75A2", "#FFFFFF", "#BE18D6", "#000000", "#333EBD"] },
+            "polysexual": { name: "Polysexual", colors: ["#F61CB9", "#07D569", "#1C92F6"] },
+            "omnisexual": { name: "Omnisexual", colors: ["#FE9ACE", "#FF53BF", "#200044", "#6760FE", "#8EA6FF"] },
+            "demisexual": { name: "Demisexual", colors: ["#FFFFFF", "#FFFFFF", "#810081", "#A3A3A3"] }
+        };
+
+        const canvas = document.getElementById("pfpCanvas");
+        const ctx = canvas.getContext("2d", { alpha: false }); 
+        const canvasWrapper = document.getElementById("canvasWrapper");
+        const flagSelect = document.getElementById("flagSelect");
+        const customBgContainer = document.getElementById("customBgContainer");
+        const bgUpload = document.getElementById("bgUpload");
+        const bgFileNameDisplay = document.getElementById("bgFileNameDisplay");
+        
+        const imageUpload = document.getElementById("imageUpload");
+        const downloadBtn = document.getElementById("downloadBtn");
+        const fileNameDisplay = document.getElementById("fileNameDisplay");
+        const dragHint = document.getElementById("dragHint");
+        
+        const zoomControls = document.getElementById("zoomControls");
+        const zoomInBtn = document.getElementById("zoomIn");
+        const zoomOutBtn = document.getElementById("zoomOut");
+        const tutorialBtn = document.getElementById("tutorialBtn");
+        const tutorialModal = document.getElementById("tutorialModal");
+        const closeTutorial = document.getElementById("closeTutorial");
+
+        let uploadedImage = null;
+        let customBackgroundImage = null;
+        
+        let imgOffsetX = 0, imgOffsetY = 0;
+        let userScale = 1.0;
+        const MIN_SCALE = 1.0, MAX_SCALE = 5.0;
+        
+        let dragModeEnabled = false, isDragging = false;
+        let startX, startY;
+        let initialPinchDistance = null, initialScaleAtPinch = 1.0;
+
+        tutorialBtn.addEventListener('click', () => {
+            tutorialModal.classList.remove('hidden');
+            tutorialModal.classList.add('flex');
+        });
+        closeTutorial.addEventListener('click', () => {
+            tutorialModal.classList.add('hidden');
+            tutorialModal.classList.remove('flex');
+        });
+
+        Object.keys(prideFlags).forEach(key => {
+            const option = document.createElement("option");
+            option.value = key;
+            option.textContent = prideFlags[key].name;
+            if (key === "rainbow") option.selected = true;
+            flagSelect.insertBefore(option, flagSelect.lastElementChild);
+        });
+
+        function updateThemeColors() {
+            if (flagSelect.value === "custom") {
+                document.documentElement.style.setProperty('--glow-color-1', '#ffffff');
+                document.documentElement.style.setProperty('--glow-color-2', '#444444');
+                customBgContainer.classList.remove('hidden');
+                customBgContainer.classList.add('flex');
+            } else {
+                const colors = prideFlags[flagSelect.value].colors;
+                document.documentElement.style.setProperty('--glow-color-1', colors[0]);
+                document.documentElement.style.setProperty('--glow-color-2', colors[colors.length - 1]);
+                customBgContainer.classList.add('hidden');
+                customBgContainer.classList.remove('flex');
+            }
+        }
+
+        flagSelect.addEventListener("change", () => {
+            updateThemeColors();
+            renderCanvas();
+        });
+
+        bgUpload.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            bgFileNameDisplay.textContent = file.name;
+            bgFileNameDisplay.style.color = "var(--accent-color)";
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    customBackgroundImage = img;
+                    renderCanvas();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+        
+        imageUpload.addEventListener("change", (event) => {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            fileNameDisplay.textContent = file.name;
+            fileNameDisplay.style.color = "var(--glow-color-1)";
+
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    uploadedImage = img;
+                    imgOffsetX = 0; 
+                    imgOffsetY = 0;
+                    userScale = 1.0;
+                    
+                    downloadBtn.disabled = false;
+                    dragHint.classList.remove("opacity-0");
+                    dragModeEnabled = false;
+                    updateDragUI();
+                    renderCanvas();
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        });
+
+        downloadBtn.addEventListener("click", () => {
+            if(!uploadedImage) return;
+            const link = document.createElement('a');
+            link.download = `pride-pfp-${flagSelect.value}.png`;
+            link.href = canvas.toDataURL('image/png', 1.0);
+            link.click();
+        });
+        
+        function updateDragUI() {
+            if (dragModeEnabled) {
+                canvasWrapper.classList.add('canvas-edit-mode');
+                zoomControls.classList.remove('opacity-0', 'pointer-events-none');
+                canvas.style.cursor = 'grab';
+                dragHint.textContent = "Lock image: Dbl-click";
+                dragHint.style.color = "var(--glow-color-1)";
+            } else {
+                canvasWrapper.classList.remove('canvas-edit-mode');
+                zoomControls.classList.add('opacity-0', 'pointer-events-none');
+                canvas.style.cursor = 'default';
+                dragHint.textContent = "Edit position: Dbl-click";
+                dragHint.style.color = "";
+            }
+        }
+
+        canvas.addEventListener('dblclick', (e) => {
+            e.preventDefault();
+            if (!uploadedImage) return;
+            dragModeEnabled = !dragModeEnabled;
+            updateDragUI();
+        });
+
+        function clampOffsets(drawW, drawH, maskR) {
+            const maxX = (drawW - maskR * 2) / 2;
+            const maxY = (drawH - maskR * 2) / 2;
+            
+            imgOffsetX = Math.max(-maxX, Math.min(maxX, imgOffsetX));
+            imgOffsetY = Math.max(-maxY, Math.min(maxY, imgOffsetY));
+        }
+
+        canvas.addEventListener('mousedown', (e) => {
+            if (!dragModeEnabled || !uploadedImage) return;
+            isDragging = true;
+            canvas.style.cursor = 'grabbing';
+            const rect = canvas.getBoundingClientRect();
+            startX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            startY = (e.clientY - rect.top) * (canvas.height / rect.height);
+        });
+
+        canvas.addEventListener('mousemove', (e) => {
+            if (!isDragging || !uploadedImage) return;
+            const rect = canvas.getBoundingClientRect();
+            const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
+            const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
+            imgOffsetX += (currentX - startX);
+            imgOffsetY += (currentY - startY);
+            
+            startX = currentX;
+            startY = currentY;
+            renderCanvas();
+        });
+
+        const stopDrag = () => {
+            isDragging = false;
+            if (dragModeEnabled) canvas.style.cursor = 'grab';
+            initialPinchDistance = null;
+        };
+        canvas.addEventListener('mouseup', stopDrag);
+        canvas.addEventListener('mouseleave', stopDrag);
+
+        canvas.addEventListener('touchstart', (e) => {
+            if (!dragModeEnabled || !uploadedImage) return;
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches.length === 1) {
+                isDragging = true;
+                startX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+                startY = (e.touches[0].clientY - rect.top) * (canvas.height / rect.height);
+            } else if (e.touches.length === 2) {
+                isDragging = false;
+                initialPinchDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                initialScaleAtPinch = userScale;
+            }
+        });
+
+        canvas.addEventListener('touchmove', (e) => {
+            if (!dragModeEnabled || !uploadedImage) return;
+            e.preventDefault(); 
+            const rect = canvas.getBoundingClientRect();
+            if (e.touches.length === 1 && isDragging) {
+                const currentX = (e.touches[0].clientX - rect.left) * (canvas.width / rect.width);
+                const currentY = (e.touches[0].clientY - rect.top) * (canvas.height / rect.height);
+                imgOffsetX += (currentX - startX);
+                imgOffsetY += (currentY - startY);
+                startX = currentX;
+                startY = currentY;
+                renderCanvas();
+            } else if (e.touches.length === 2 && initialPinchDistance) {
+                const currentDistance = Math.hypot(
+                    e.touches[0].clientX - e.touches[1].clientX,
+                    e.touches[0].clientY - e.touches[1].clientY
+                );
+                let scaleChange = currentDistance / initialPinchDistance;
+                userScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, initialScaleAtPinch * scaleChange));
+                renderCanvas();
+            }
+        }, { passive: false });
+
+        canvas.addEventListener('touchend', stopDrag);
+        canvas.addEventListener('touchcancel', stopDrag);
+
+        canvas.addEventListener('wheel', (e) => {
+            if (!dragModeEnabled || !uploadedImage) return;
+            e.preventDefault(); 
+            const zoomSensitivity = 0.001;
+            userScale -= e.deltaY * zoomSensitivity;
+            userScale = Math.max(MIN_SCALE, Math.min(MAX_SCALE, userScale));
+            renderCanvas();
+        }, { passive: false });
+
+        zoomInBtn.addEventListener('click', () => {
+            userScale = Math.min(MAX_SCALE, userScale + 0.2);
+            renderCanvas();
+        });
+        zoomOutBtn.addEventListener('click', () => {
+            userScale = Math.max(MIN_SCALE, userScale - 0.2);
+            renderCanvas();
+        });
+
+        function renderCanvas() {
+            const width = canvas.width;
+            const height = canvas.height;
+            
+            ctx.clearRect(0, 0, width, height);
+
+            if (flagSelect.value === "custom") {
+                if (customBackgroundImage) {
+                    const bgRatio = customBackgroundImage.width / customBackgroundImage.height;
+                    let drawW = width;
+                    let drawH = height;
+                    
+                    if (bgRatio > 1) { 
+                        drawW = height * bgRatio;
+                    } else { 
+                        drawH = width / bgRatio;
+                    }
+                    
+                    const drawX = (width - drawW) / 2;
+                    const drawY = (height - drawH) / 2;
+                    ctx.drawImage(customBackgroundImage, drawX, drawY, drawW, drawH);
+                } else {
+                    ctx.fillStyle = "#161920";
+                    ctx.fillRect(0, 0, width, height);
+                }
+            } else {
+                const selectedFlag = prideFlags[flagSelect.value].colors;
+                const stripeHeight = height / selectedFlag.length;
+                selectedFlag.forEach((color, index) => {
+                    ctx.fillStyle = color;
+                    ctx.fillRect(0, index * stripeHeight, width, Math.ceil(stripeHeight)); 
+                });
+            }
+
+            if (uploadedImage) {
+                const centerX = width / 2;
+                const centerY = height / 2;
+                const radius = (width / 2) * 0.85;
+
+                ctx.save();
+                ctx.beginPath();
+                ctx.arc(centerX, centerY, radius, 0, Math.PI * 2, true);
+                ctx.closePath();
+                ctx.clip();
+
+                const imgRatio = uploadedImage.width / uploadedImage.height;
+                const maskSize = radius * 2;
+                
+                let baseDrawWidth = maskSize;
+                let baseDrawHeight = maskSize;
+                
+                if (imgRatio > 1) { 
+                    baseDrawWidth = maskSize * imgRatio;
+                } else { 
+                    baseDrawHeight = maskSize / imgRatio;
+                }
+
+                const finalDrawWidth = baseDrawWidth * userScale;
+                const finalDrawHeight = baseDrawHeight * userScale;
+
+                clampOffsets(finalDrawWidth, finalDrawHeight, radius);
+
+                const drawX = centerX - (finalDrawWidth / 2) + imgOffsetX;
+                const drawY = centerY - (finalDrawHeight / 2) + imgOffsetY;
+                
+                ctx.drawImage(uploadedImage, drawX, drawY, finalDrawWidth, finalDrawHeight);
+                ctx.restore();
+            }
+        }
+
+        updateThemeColors();
+        renderCanvas();
+    </script>
+</body>
+</html>
