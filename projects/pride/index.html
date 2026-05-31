@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PFP Generator</title>
     
-    <!-- Default favicon loaded first -->
-    <link id="dynamic-favicon" rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -45,7 +44,6 @@
             background-color: #0b0d11; 
             color: white; 
             overflow-x: hidden; 
-            touch-action: none; 
         }
 
         ::-webkit-scrollbar { width: 5px; }
@@ -82,13 +80,11 @@
 </head>
 <body class="flex flex-col min-h-screen selection:bg-white/30 relative">
 
-    <!-- Ambient Background Glows -->
     <div class="fixed inset-0 pointer-events-none z-0">
         <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full glow-1 transition-colors duration-700"></div>
         <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full glow-2 transition-colors duration-700"></div>
     </div>
 
-    <!-- Floating Corner Buttons -->
     <div class="fixed top-4 right-4 z-50 flex items-center p-1 gap-1 glass-panel rounded-full shadow-lg scale-90 sm:scale-100 origin-top-right">
         <button id="tutorialBtn" title="How to use" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
@@ -101,7 +97,6 @@
         </a>
     </div>
 
-    <!-- Tutorial Modal -->
     <div id="tutorialModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in">
         <div class="bg-[#161920] border border-white/10 rounded-[1.5rem] p-6 max-w-sm w-full shadow-2xl relative">
             <button id="closeTutorial" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
@@ -119,7 +114,6 @@
         </div>
     </div>
 
-    <!-- Main Content Box -->
     <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-24 w-full animate-in">
         <main class="flex flex-col gap-4 sm:gap-5 w-full flex-grow">
             
@@ -175,7 +169,6 @@
             
         </main>
 
-        <!-- Footer securely fixed via flex structure -->
         <footer class="w-full text-center py-6 mt-auto">
             <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 transition-opacity">
                 © 2026 — @der_46er
@@ -183,7 +176,6 @@
         </footer>
     </div>
 
-    <!-- Cookie Consent Banner (Positioned absolutely over the layer, zero layout impact) -->
     <div id="cookieBanner" class="fixed bottom-0 left-0 w-full z-50 hidden slide-up p-4 pointer-events-none">
         <div class="max-w-xl mx-auto glass-panel p-5 rounded-[1.2rem] shadow-2xl flex flex-col sm:flex-row items-center gap-4 border border-white/10 bg-[#0b0d11]/80 pointer-events-auto">
             <div class="flex-grow text-center sm:text-left">
@@ -197,7 +189,6 @@
         </div>
     </div>
 
-    <!-- Script Logic -->
     <script>
         // --- Google Analytics Dynamic Loader ---
         function loadGoogleAnalytics() {
@@ -291,47 +282,6 @@
         let startX, startY;
         let initialPinchDistance = null, initialScaleAtPinch = 1.0;
 
-        const baseFaviconURL = "https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png";
-        const baseFaviconImage = new Image();
-        baseFaviconImage.crossOrigin = "anonymous";
-        baseFaviconImage.src = baseFaviconURL;
-
-        function updateDynamicFavicon() {
-            if (!baseFaviconImage.complete || baseFaviconImage.naturalWidth === 0) return;
-            
-            const favCanvas = document.createElement('canvas');
-            favCanvas.width = baseFaviconImage.width || 32;
-            favCanvas.height = baseFaviconImage.height || 32;
-            const favCtx = favCanvas.getContext('2d');
-            favCtx.drawImage(baseFaviconImage, 0, 0, favCanvas.width, favCanvas.height);
-            favCtx.globalCompositeOperation = "source-in";
-            
-            if (flagSelect.value === "custom") {
-                if (customBackgroundImage) {
-                    const bgRatio = customBackgroundImage.width / customBackgroundImage.height;
-                    let drawW = favCanvas.width;
-                    let drawH = favCanvas.height;
-                    if (bgRatio > 1) { drawW = favCanvas.height * bgRatio; } else { drawH = favCanvas.width / bgRatio; }
-                    const drawX = (favCanvas.width - drawW) / 2;
-                    const drawY = (favCanvas.height - drawH) / 2;
-                    favCtx.drawImage(customBackgroundImage, drawX, drawY, drawW, drawH);
-                } else {
-                    favCtx.fillStyle = "#ffffff";
-                    favCtx.fillRect(0, 0, favCanvas.width, favCanvas.height);
-                }
-            } else {
-                const colors = prideFlags[flagSelect.value].colors;
-                const stripeHeight = favCanvas.height / colors.length;
-                colors.forEach((color, index) => {
-                    favCtx.fillStyle = color;
-                    favCtx.fillRect(0, index * stripeHeight, favCanvas.width, Math.ceil(stripeHeight)); 
-                });
-            }
-            document.getElementById('dynamic-favicon').href = favCanvas.toDataURL('image/png');
-        }
-
-        baseFaviconImage.onload = () => { updateThemeColors(); };
-
         tutorialBtn.addEventListener('click', () => {
             tutorialModal.classList.remove('hidden');
             tutorialModal.classList.add('flex');
@@ -362,7 +312,6 @@
                 customBgContainer.classList.add('hidden');
                 customBgContainer.classList.remove('flex');
             }
-            updateDynamicFavicon();
         }
 
         flagSelect.addEventListener("change", () => {
@@ -383,7 +332,6 @@
                 img.onload = () => {
                     customBackgroundImage = img;
                     renderCanvas();
-                    updateDynamicFavicon();
                 };
                 img.src = e.target.result;
             };
@@ -405,6 +353,7 @@
                     imgOffsetX = 0; 
                     imgOffsetY = 0;
                     userScale = 1.0;
+                    
                     downloadBtn.disabled = false;
                     dragHint.classList.remove("opacity-0");
                     dragModeEnabled = false;
@@ -450,6 +399,7 @@
         function clampOffsets(drawW, drawH, maskR) {
             const maxX = (drawW - maskR * 2) / 2;
             const maxY = (drawH - maskR * 2) / 2;
+            
             imgOffsetX = Math.max(-maxX, Math.min(maxX, imgOffsetX));
             imgOffsetY = Math.max(-maxY, Math.min(maxY, imgOffsetY));
         }
@@ -468,8 +418,10 @@
             const rect = canvas.getBoundingClientRect();
             const currentX = (e.clientX - rect.left) * (canvas.width / rect.width);
             const currentY = (e.clientY - rect.top) * (canvas.height / rect.height);
+            
             imgOffsetX += (currentX - startX);
             imgOffsetY += (currentY - startY);
+            
             startX = currentX;
             startY = currentY;
             renderCanvas();
@@ -547,6 +499,7 @@
         function renderCanvas() {
             const width = canvas.width;
             const height = canvas.height;
+            
             ctx.clearRect(0, 0, width, height);
 
             if (flagSelect.value === "custom") {
@@ -554,7 +507,13 @@
                     const bgRatio = customBackgroundImage.width / customBackgroundImage.height;
                     let drawW = width;
                     let drawH = height;
-                    if (bgRatio > 1) { drawW = height * bgRatio; } else { drawH = width / bgRatio; }
+                    
+                    if (bgRatio > 1) { 
+                        drawW = height * bgRatio;
+                    } else { 
+                        drawH = width / bgRatio;
+                    }
+                    
                     const drawX = (width - drawW) / 2;
                     const drawY = (height - drawH) / 2;
                     ctx.drawImage(customBackgroundImage, drawX, drawY, drawW, drawH);
@@ -607,6 +566,7 @@
             }
         }
 
+        // Initialize colors without waiting for a favicon to load
         updateThemeColors();
         renderCanvas();
     </script>
