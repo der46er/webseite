@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Legal & Privacy | Nick</title>
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        zinc: { 950: '#0b0d11' }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+        
+        :root { --theme-color: #dc2626; --theme-rgb: 220, 38, 38; }
+        
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: white; overflow-x: hidden; }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .custom-scroll::-webkit-scrollbar { width: 5px; height: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        
+        /* Dynamic Theme Classes */
+        .theme-text { color: var(--theme-color); }
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+        .theme-bg-active { background-color: rgba(var(--theme-rgb), 0.1) !important; border-color: rgba(var(--theme-rgb), 0.3) !important; color: white !important;}
+        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen pb-12 selection:bg-emerald-500/30">
+    
+    <!-- Ambient Background Glows -->
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="flex-grow flex flex-col relative z-10 max-w-4xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 animate-in gap-6 w-full pb-32">
+        
+        <!-- Header & Language Toggle -->
+        <header class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-2">
+            <div class="flex items-center gap-3">
+                <a href="../" class="p-2 -ml-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-white/[0.01] border border-white/[0.03]">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"></line><polyline points="12 19 5 12 12 5"></polyline></svg>
+                </a>
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-white leading-none">
+                        LEGAL <span class="theme-text">INFO</span>
+                    </h1>
+                    <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-1">Imprint & Privacy Document</p>
+                </div>
+            </div>
+
+            <!-- Language Switcher -->
+            <div class="flex items-center gap-1 bg-white/[0.03] border border-white/[0.05] rounded-full p-1 shadow-lg shrink-0">
+                <button onclick="setLang('en')" id="btn-lang-en" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all duration-300 bg-white/[0.1] text-white">EN</button>
+                <button onclick="setLang('de')" id="btn-lang-de" class="px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all duration-300 text-zinc-500 hover:text-white">DE</button>
+            </div>
+        </header>
+
+        <!-- THE "ONE BIG BLOCK" -->
+        <main class="bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] shadow-lg flex flex-col md:flex-row overflow-hidden min-h-[500px]">
+            
+            <!-- Sidebar Navigation Menu -->
+            <nav class="md:w-1/3 lg:w-1/4 border-b md:border-b-0 md:border-r border-white/5 p-4 flex flex-row md:flex-col gap-2 overflow-x-auto custom-scroll shrink-0">
+                <button onclick="setTab('imprint')" id="btn-tab-imprint" class="tab-btn w-full text-left px-4 py-3 rounded-xl border border-transparent text-xs sm:text-sm font-black uppercase tracking-wide text-zinc-500 hover:text-white hover:bg-white/[0.02] transition-all whitespace-nowrap md:whitespace-normal theme-bg-active">01 / Imprint</button>
+                
+                <button onclick="setTab('architecture')" id="btn-tab-architecture" class="tab-btn w-full text-left px-4 py-3 rounded-xl border border-transparent text-xs sm:text-sm font-black uppercase tracking-wide text-zinc-500 hover:text-white hover:bg-white/[0.02] transition-all whitespace-nowrap md:whitespace-normal">02 / Architecture</button>
+                
+                <button onclick="setTab('privacy')" id="btn-tab-privacy" class="tab-btn w-full text-left px-4 py-3 rounded-xl border border-transparent text-xs sm:text-sm font-black uppercase tracking-wide text-zinc-500 hover:text-white hover:bg-white/[0.02] transition-all whitespace-nowrap md:whitespace-normal">03 / Privacy Policy</button>
+                
+                <button onclick="setTab('opensource')" id="btn-tab-opensource" class="tab-btn w-full text-left px-4 py-3 rounded-xl border border-transparent text-xs sm:text-sm font-black uppercase tracking-wide text-zinc-500 hover:text-white hover:bg-white/[0.02] transition-all whitespace-nowrap md:whitespace-normal">04 / Open-Source</button>
+            </nav>
+
+            <!-- Content Area -->
+            <section class="md:w-2/3 lg:w-3/4 p-6 md:p-8 flex flex-col gap-6 text-sm text-zinc-400 italic font-medium leading-relaxed overflow-y-auto">
+                
+                <!-- TAB 1: IMPRINT -->
+                <div id="content-imprint" class="tab-content block animate-in">
+                    <!-- EN -->
+                    <div class="lang-en block">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Disclosure (According to § 5 ECG / § 25 MedienG)</h2>
+                        
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5">Media Owner / Website Operator</p>
+                        <p class="text-white text-base font-black tracking-wide not-italic mb-1">Niklas Ausserwoeger</p>
+                        <p class="mb-4">4040 Linz, Austria</p>
+
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl mb-4">
+                            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-white not-italic mb-1">Address Protection & Privacy Safeguard</p>
+                            To ensure the physical safety and privacy of the platform operator as a public content creator, the complete physical street address is withheld from public display. In strict accordance with legitimate interest provisions, the full postal address is securely stored and will be disclosed via email exclusively upon justified request by a trusted source for verified, valid legal reasons.
+                        </div>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5 mt-4">Contact Information</p>
+                        <a href="mailto:niklas.ausserwoeger@gmail.com" class="text-white font-black tracking-wide not-italic hover:underline mb-4 inline-block">niklas.ausserwoeger@gmail.com</a>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5">Supervisory Authority</p>
+                                <p>Federal Ministry of Finance / Telecommunications Authority (Linz)</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5">Applicable Regulations</p>
+                                <p>Industrial Code (GewO), E-Commerce Act (ECG), Media Act (MedienG) — accessible via <a href="https://www.ris.bka.gv.at" target="_blank" class="text-white hover:underline">ris.bka.gv.at</a></p>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5 mt-6">Basic Editorial Direction (§ 25 Abs 4 MedienG)</p>
+                        <p>This website provides personal representation profiles, software engineering portfolios, interactive open-source utilities, and editorial content relating to technology, software development, entertainment, and digital culture.</p>
+                    </div>
+                    
+                    <!-- DE -->
+                    <div class="lang-de hidden">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Offenlegung (nach § 5 ECG / § 25 MedienG)</h2>
+                        
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5">Medieninhaber / Diensteanbieter</p>
+                        <p class="text-white text-base font-black tracking-wide not-italic mb-1">Niklas Ausserwoeger</p>
+                        <p class="mb-4">4040 Linz, Österreich</p>
+
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl mb-4">
+                            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-white not-italic mb-1">Anschriftsschutz & Privatsphäre-Sicherstellung</p>
+                            Zum Schutz der physischen Sicherheit und Privatsphäre des Plattformbetreibers als Person des öffentlichen digitalen Lebens wird die vollständige Straßenanschrift nicht öffentlich angezeigt. In Übereinstimmung mit den Bestimmungen zum berechtigten Interesse ist die vollständige Postanschrift hinterlegt und wird ausschließlich auf begründete Anfrage per E-Mail von einer vertrauenswürdigen Stelle aus berechtigten, validen rechtlichen Gründen offengelegt.
+                        </div>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5 mt-4">Kontakt-Informationen</p>
+                        <a href="mailto:niklas.ausserwoeger@gmail.com" class="text-white font-black tracking-wide not-italic hover:underline mb-4 inline-block">niklas.ausserwoeger@gmail.com</a>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5">Aufsichtsbehörde</p>
+                                <p>Bundesministerium für Finanzen / Fernmeldebehörde (Linz)</p>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5">Anwendbare Rechtsvorschriften</p>
+                                <p>Gewerbeordnung (GewO), E-Commerce-Gesetz (ECG), Mediengesetz (MedienG) — abrufbar unter <a href="https://www.ris.bka.gv.at" target="_blank" class="text-white hover:underline">ris.bka.gv.at</a></p>
+                            </div>
+                        </div>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-0.5 mt-6">Grundlegende Richtung des Mediums (§ 25 Abs 4 MedienG)</p>
+                        <p>Diese Website stellt persönliche Repräsentationsprofile, softwaretechnische Portfolios, interaktive Open-Source-Dienstprogramme sowie redaktionelle Inhalte aus den Bereichen Technologie, Softwareentwicklung, Unterhaltung und Fankultur bereit.</p>
+                    </div>
+                </div>
+
+                <!-- TAB 2: ARCHITECTURE -->
+                <div id="content-architecture" class="tab-content hidden animate-in">
+                    <!-- EN -->
+                    <div class="lang-en block">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">System Architecture & Packet Routing</h2>
+                        
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Infrastructure & Static Hosting</p>
+                        <p class="mb-6">This online presence is delivered as a static deployment utilizing the infrastructure of GitHub Pages (GitHub, Inc., 88 Colin P. Kelly Jr. St, San Francisco, CA 94107, USA). When loading these pages, your browser establishes a direct connection to GitHub’s global content delivery network. GitHub processes automated connection parameters (Server Log Files) strictly to ensure secure data transfer, load balancing, and network stability.</p>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Hybrid Backend Relays (Cloudflare Tunnel)</p>
+                        <p class="mb-3">To process dynamic background operations, selected sub-routes of this domain communicate with an isolated backend server infrastructure. This encrypted communication channel is established via a Cloudflare Tunnel daemon (Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA).</p>
+                        <p>The Cloudflare Tunnel forwards requests from the public internet directly to our internal processing server without exposing open inbound network ports to the public web. During this relay, data packets pass through Cloudflare's edge network to filter malicious traffic and secure server stability. No permanent storage of personal user metrics occurs beyond transient caching or temporary operational debugging profiles.</p>
+                    </div>
+
+                    <!-- DE -->
+                    <div class="lang-de hidden">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Systemarchitektur & Daten-Routing</h2>
+                        
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Infrastruktur & Statisches Hosting</p>
+                        <p class="mb-6">Diese Online-Präsenz wird als statisches Projekt auf den Serverstrukturen von GitHub Pages bereitgestellt (GitHub, Inc., 88 Colin P. Kelly Jr. St, San Francisco, CA 94107, USA). Beim Laden dieser Seiten stellt Ihr Browser eine direkte Verbindung zum globalen Content-Delivery-Network von GitHub her. GitHub verarbeitet automatisierte Verbindungsparameter (Server-Logfiles) ausschließlich zur Sicherstellung der Datenübertragung, zur Lastverteilung und zur Gewährleistung der Systemsicherheit.</p>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Hybride Backend-Relays (Cloudflare Tunnel)</p>
+                        <p class="mb-3">Zur Ausführung dynamischer Hintergrundprozesse kommunizieren ausgewählte Sub-Routen dieser Domain mit einer isolierten Backend-Server-Infrastruktur. Dieser verschlüsselte Kommunikationskanal wird über einen Cloudflare-Tunnel-Daemon (Cloudflare, Inc., 101 Townsend St, San Francisco, CA 94107, USA) realisiert.</p>
+                        <p>Der Cloudflare-Tunnel leitet Anfragen aus dem öffentlichen Internet direkt an unseren internen Verarbeitungsserver weiter, ohne offene eingehende Ports im öffentlichen Netz zu exponieren. Während dieses Vorgangs passieren Datenpakete das Edge-Netzwerk von Cloudflare, um schädlichen Traffic zu filtern und die Serverstabilität zu sichern. Es erfolgt keine dauerhafte Speicherung personenbezogener Nutzungsdaten über flüchtige Caching-Vorgänge oder temporäre Netzwerkananalysen hinaus.</p>
+                    </div>
+                </div>
+
+                <!-- TAB 3: PRIVACY POLICY -->
+                <div id="content-privacy" class="tab-content hidden animate-in">
+                    <!-- EN -->
+                    <div class="lang-en block">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Privacy Policy (Data Minimization Scope)</h2>
+                        
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl mb-6">
+                            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-white not-italic mb-1 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 block"></span> Exclusive Third-Party Tracking Scope
+                            </p>
+                            We operate this platform under a strict data minimization protocol. Google Analytics (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) is the <strong>exclusive system utilized for user tracking and behavioral analytics</strong> on this entire domain.
+                        </div>
+
+                        <p class="mb-3">Google Analytics gathers pseudo-anonymized parameters via cookies to evaluate basic traffic metrics and UI performance. IP addresses are truncated automatically within member states of the European Union or the EEA prior to transmission (IP Anonymization) to prevent direct tracking to a specific individual.</p>
+                        <p>No external database synchronizations, marketing trackers, or cross-platform behavioral pixels are active. You can completely block this processing layout inside your global browser software settings or by deploying local content blockers.</p>
+                    </div>
+
+                    <!-- DE -->
+                    <div class="lang-de hidden">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Datenschutzerklärung (Datenminimierung)</h2>
+                        
+                        <div class="p-4 bg-white/[0.02] border border-white/5 rounded-xl mb-6">
+                            <p class="text-[10px] font-black uppercase tracking-[0.1em] text-white not-italic mb-1 flex items-center gap-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 block"></span> Ausschließlicher Analyse-Umfang
+                            </p>
+                            Wir betreiben diese Plattform unter dem Grundsatz der strikten Datenminimierung. Google Analytics (Google LLC, 1600 Amphitheatre Parkway, Mountain View, CA 94043, USA) ist das <strong>einzige System zur Benutzerverfolgung und Verhaltensanalyse</strong>, das auf dieser Domain aktiv eingesetzt wird.
+                        </div>
+
+                        <p class="mb-3">Google Analytics erfasst pseudo-anonymisierte Parameter mithilfe von Cookies, um Traffic-Kennzahlen und UI-Interaktionen auszuwerten. IP-Adressen werden vor jeglicher Übertragung innerhalb der Mitgliedstaaten der Europäischen Union oder des EWR automatisch gekürzt (IP-Anonymisierung), um eine direkte Personenbeziehbarkeit auszuschließen.</p>
+                        <p>Es sind keine externen Datenbank-Synchronisationen, Marketing-Tracker oder Werbepixel von Drittanbietern aktiv. Sie können diese Verarbeitung über Ihre globalen Browsereinstellungen oder durch den Einsatz von Content-Blockern unterbinden.</p>
+                    </div>
+                </div>
+
+                <!-- TAB 4: OPEN-SOURCE -->
+                <div id="content-opensource" class="tab-content hidden animate-in">
+                    <!-- EN -->
+                    <div class="lang-en block">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Open-Source & Computational Ethics</h2>
+                        
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Utilization of Open-Source Components</p>
+                        <p class="mb-6">This platform integrates various client-side and server-side digital utilities, modular scripts, and software frameworks provided under established Open-Source Licensing models (such as MIT, Apache 2.0, or GNU GPL). These components are compiled directly within our sub-projects and utilities to deliver advanced front-end logic and processing mechanics. All copyright statements, licensing text arrays, and structural credits remain exclusively with their respective developers.</p>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Local Client-Side Processing Architecture</p>
+                        <p class="mb-3">Certain specialized software utilities on this website execute completely within your local browser instance on your device's CPU. The open-source libraries handling these operations process data entirely locally.</p>
+                        <p>No payload inputs, conversion strings, or processed data matrices are transmitted back to our central hosting nodes or external platforms. Your data stays securely inside your temporary sandboxed memory context.</p>
+                    </div>
+
+                    <!-- DE -->
+                    <div class="lang-de hidden">
+                        <h2 class="text-sm font-black uppercase tracking-[0.2em] theme-text mb-4 border-b border-white/5 pb-2 not-italic">Open-Source & Datenverarbeitung</h2>
+                        
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Nutzung von Open-Source-Komponenten</p>
+                        <p class="mb-6">Diese Plattform integriert diverse clientseitige und serverseitige digitale Dienstprogramme, modulare Skripte und Software-Frameworks, die unter etablierten Open-Source-Lizenzmodellen (z. B. MIT, Apache 2.0 oder GNU GPL) lizenziert sind. Diese Komponenten sind fest in unsere Sub-Projekte integriert, um erweiterte Logik- und Konversionsfunktionen bereitzustellen. Alle Urheberrechtserklärungen, Lizenztexte und strukturellen Credits verbleiben ausschließlich bei den jeweiligen Entwicklern.</p>
+
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-zinc-500 not-italic mb-1">Lokale Client-Side-Verarbeitungsarchitektur</p>
+                        <p class="mb-3">Bestimmte spezialisierte Dienstprogramme auf dieser Website – einschließlich interaktiver Textverarbeitungswerkzeuge, lokaler Berechnungen oder visueller Layoutkonfiguratoren – werden vollständig innerhalb Ihrer lokalen Browserinstanz auf der CPU Ihres Endgeräts ausgeführt. Die für diese Operationen verantwortlichen Open-Source-Bibliotheken verarbeiten Daten ausschließlich lokal.</p>
+                        <p>Es werden keine Eingabestrings, Nutzdaten oder generierten Konversionsmatrizen an unsere zentralen Hosting-Knoten oder externe Plattformen übertragen. Die Daten verbleiben sicher im flüchtigen Sandboxed-Speicherkontext Ihres Geräts.</p>
+                    </div>
+                </div>
+
+            </section>
+        </main>
+
+        <footer class="w-full text-center py-6 mt-auto">
+            <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 transition-opacity">
+                © 2026 — @der_46er
+            </p>
+        </footer>
+    </div>
+
+    <!-- Interface Logic -->
+    <script>
+        // Language state
+        let currentLang = 'en';
+        
+        function setLang(lang) {
+            currentLang = lang;
+            
+            // Update Toggle Buttons UI
+            document.getElementById('btn-lang-en').className = lang === 'en' 
+                ? 'px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all duration-300 bg-white/[0.1] text-white' 
+                : 'px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all duration-300 text-zinc-500 hover:text-white cursor-pointer';
+                
+            document.getElementById('btn-lang-de').className = lang === 'de' 
+                ? 'px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all duration-300 bg-white/[0.1] text-white' 
+                : 'px-4 py-1.5 rounded-full text-[10px] font-black uppercase transition-all duration-300 text-zinc-500 hover:text-white cursor-pointer';
+
+            // Show/Hide corresponding language blocks
+            document.querySelectorAll('.lang-en').forEach(el => {
+                lang === 'en' ? el.classList.remove('hidden') : el.classList.add('hidden');
+            });
+            document.querySelectorAll('.lang-de').forEach(el => {
+                lang === 'de' ? el.classList.remove('hidden') : el.classList.add('hidden');
+            });
+        }
+
+        // Tab state
+        function setTab(tabId) {
+            // Hide all tab contents
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            // Remove active class from all buttons
+            document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('theme-bg-active'));
+            
+            // Show selected content and activate button
+            document.getElementById(`content-${tabId}`).classList.remove('hidden');
+            document.getElementById(`btn-tab-${tabId}`).classList.add('theme-bg-active');
+        }
+
+        // Dynamic Colors & Canvas Engine
+        fetch('../assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
+            let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
+            if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
+                let c = hex.replace('#', '');
+                if(c.length === 3) c = c.split('').map(x=>x+x).join('');
+                document.documentElement.style.setProperty('--theme-color', hex);
+                document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
+                
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                    ctx.globalCompositeOperation = 'source-in';
+                    ctx.fillStyle = hex;
+                    ctx.fillRect(0, 0, canvas.width, canvas.height);
+                    let link = document.querySelector("link[rel~='icon']");
+                    link.href = canvas.toDataURL('image/png');
+                };
+                img.src = '../assets/favicon.png';
+            }
+        }).catch(()=>{});
+    </script>
+</body>
+</html>
