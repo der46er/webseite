@@ -191,17 +191,11 @@
                         </main>
                     </div>
 
-                    <footer className="mt-4 text-center flex flex-col items-center gap-1.5 mb-8 w-full mt-auto relative z-10">
-                        <a href="https://thataustrianone.eu/socials" className="text-white/20 text-[10px] font-black tracking-[0.5em] uppercase italic leading-none cursor-pointer">
-                            © {new Date().getFullYear()} — Nick (@der_46er)
-                        </a>
-                        <div className="text-[10px] font-bold text-white/20 uppercase tracking-widest select-none leading-none">
-                            LIVE BUILD v1.2.4 | {new Date().toLocaleDateString('de-DE')}
-                        </div>
-                        <button onClick={() => setShowLegal(true)} className="text-[9px] font-bold tracking-[0.3em] text-zinc-700 hover:text-zinc-400 transition-colors uppercase leading-none mt-0.5">
-                            LEGAL & INFO
-                        </button>
-                    </footer>
+                    <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none">
+    <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+        © 2026 — @der_46er
+    </p>
+</footer>
 
                     {/* Legal Modal */}
                     {showLegal && (

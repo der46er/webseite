@@ -373,12 +373,11 @@
                         </div>
                     </div>
 
-                    <footer className="mt-20 text-center flex flex-col items-center gap-8">
-                        <button onClick={() => setShowLegal(true)} className="flex items-center gap-2 px-12 py-4 bg-white/5 hover:bg-white/10 border border-white/5 rounded-full text-[12px] font-black tracking-[0.5em] transition-all text-zinc-500 hover:text-white uppercase">
-                            <Info size={16} /> {t.legal}
-                        </button>
-                        <div className="text-zinc-800 text-[10px] font-black tracking-[0.7em] uppercase opacity-50">© {new Date().getFullYear()} — THAT AUSTRIAN ONE</div>
-                    </footer>
+                    <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none">
+    <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+        © 2026 — @der_46er
+    </p>
+</footer>
 
                     {showLegal && (
                         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
