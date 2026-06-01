@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>PFP Generator</title>
+    <title>Pride pfp Maker</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
     
@@ -396,6 +396,25 @@
             updateDragUI();
         });
 
+      // Custom Double-Tap handler for iOS/Mobile
+let lastTapTime = 0;
+canvas.addEventListener('touchend', (e) => {
+    // Prevent interfering if the user is pinching/zooming with multiple fingers
+    if (e.changedTouches.length > 1) return;
+
+    const currentTime = new Date().getTime();
+    const tapLength = currentTime - lastTapTime;
+    
+    // If the time between taps is between 0 and 300ms, it's a double tap
+    if (tapLength < 300 && tapLength > 0) {
+        e.preventDefault();
+        if (!uploadedImage) return;
+        dragModeEnabled = !dragModeEnabled;
+        updateDragUI();
+    }
+    lastTapTime = currentTime;
+});
+      
         function clampOffsets(drawW, drawH, maskR) {
             const maxX = (drawW - maskR * 2) / 2;
             const maxY = (drawH - maskR * 2) / 2;
