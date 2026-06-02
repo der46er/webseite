@@ -246,27 +246,31 @@
         customModal.classList.add('hidden'); customModal.classList.remove('flex');
     });
 
-    // Initialize FFmpeg
-    async function initFFmpeg() {
-        if (isFFmpegLoaded) return;
-        try {
-            ffmpeg = new FFmpeg();
-            ffmpeg.on('log', ({ message }) => console.log(message));
-            
-            // Using core-mt for multi-threading where possible, falling back gracefully
-            const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-            await ffmpeg.load({
-                coreURL: await fetchFile(`${baseURL}/ffmpeg-core.js`),
-                wasmURL: await fetchFile(`${baseURL}/ffmpeg-core.wasm`)
-            });
-            isFFmpegLoaded = true;
-            document.getElementById('engineDot').classList.replace('bg-red-500', 'bg-green-500');
-            document.getElementById('engineStatus').innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> Engine Ready`;
-        } catch (e) {
-            console.error(e);
-            showModal("Engine Error", "Failed to load FFmpeg. Check connection.", true);
-        }
+   // Initialize FFmpeg
+async function initFFmpeg() {
+    if (isFFmpegLoaded) return;
+    try {
+        ffmpeg = new FFmpeg();
+        ffmpeg.on('log', ({ message }) => console.log(message));
+        
+        const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+        const ffmpegURL = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd';
+        
+        // Using the Blob URL bypass so it runs anywhere without strict server headers
+        await ffmpeg.load({
+            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+            classWorkerURL: await toBlobURL(`${ffmpegURL}/814.ffmpeg.js`, 'text/javascript')
+        });
+        
+        isFFmpegLoaded = true;
+        document.getElementById('engineDot').classList.replace('bg-red-500', 'bg-green-500');
+        document.getElementById('engineStatus').innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> Engine Ready`;
+    } catch (e) {
+        console.error(e);
+        showModal("Engine Error", "Failed to load FFmpeg. Check connection.", true);
     }
+}
     initFFmpeg(); // Load in background
 
     // Drag & Drop
