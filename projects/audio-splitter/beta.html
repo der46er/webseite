@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Audio Splitter | thataustrianone</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script src="https://unpkg.com/wavesurfer.js@7"></script>
+    <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
+
+    <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js"></script>
+
+    <style>
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'),
+                 local('Inter'), sans-serif;
+            font-weight: 400; font-display: swap;
+        }
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'),
+                 local('Inter Black'), sans-serif;
+            font-weight: 900; font-display: swap;
+        }
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0b0d11; 
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        .slide-up { animation: slideUp 0.5s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(100%); } to { opacity: 1; transform: translateY(0); } }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+        }
+
+        .text-accent { color: #FBB401; }
+        .bg-accent { background-color: #FBB401; }
+        .border-accent { border-color: #FBB401; }
+        .glow-accent { background-color: #FBB401; opacity: 0.15; }
+        
+        /* Prevent scroll selection on mobile zoom */
+        #waveform { touch-action: none; }
+    </style>
+</head>
+<body class="min-h-screen selection:bg-[#FBB401]/30 flex flex-col relative">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full glow-accent transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full glow-accent transition-all duration-1000"></div>
+    </div>
+
+    <div class="fixed top-4 right-4 z-50 flex items-center p-1 gap-1 glass-panel rounded-full shadow-lg scale-90 sm:scale-100 origin-top-right">
+        <button id="tutorialBtn" title="How to use" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+        <a href="https://thataustrianone.eu/socials/" target="_blank" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        </a>
+        <a href="https://thataustrianone.eu/legal" target="_blank" title="Legal & Imprint" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </a>
+    </div>
+
+    <div id="tutorialModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in">
+        <div class="bg-[#161920] border border-white/10 rounded-[1.5rem] p-6 max-w-sm w-full shadow-2xl relative">
+            <button id="closeTutorial" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="font-black italic text-xl uppercase tracking-wide text-white mb-4">How to use</h2>
+            <ul class="text-zinc-300 text-sm space-y-3 font-medium">
+                <li><strong class="text-white">1.</strong> Select an audio file from your device.</li>
+                <li><strong class="text-white">2.</strong> <strong class="text-accent">Zoom:</strong> Use your mouse wheel over the track, or pinch on mobile to zoom in/out.</li>
+                <li><strong class="text-white">3.</strong> <strong class="text-accent">Trim:</strong> Drag the yellow box edges to select the part you want to keep.</li>
+                <li><strong class="text-white">4.</strong> <strong class="text-accent">Split:</strong> Enter a target MB size and the tool will slice the audio into pieces.</li>
+                <li><strong class="text-white">5.</strong> Hit Export. Audio processes locally on your device!</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-20 pb-16 animate-in w-full flex-grow">
+        
+        <header class="mb-8 text-center sm:text-left">
+            <h1 class="text-3xl sm:text-5xl font-black italic uppercase tracking-tighter text-white leading-tight">
+                Audio <span class="text-accent">Splitter.</span>
+            </h1>
+            <p id="status" class="text-zinc-500 text-xs sm:text-sm font-bold uppercase tracking-widest mt-2">Ready. Drop an audio file to begin.</p>
+        </header>
+
+        <label id="dropZone" for="fileInput" class="group flex flex-col items-center justify-center p-12 sm:p-20 glass-panel rounded-[1.5rem] border-2 border-dashed border-white/10 hover:border-[#FBB401]/50 hover:bg-white/[0.05] transition-all duration-300 cursor-pointer shadow-lg mb-8">
+            <div class="shrink-0 w-16 h-16 mb-4 rounded-2xl bg-[#161920] flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 border border-white/10 text-zinc-400 group-hover:text-accent">
+                <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19V6l12-3v13M9 19c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zm12-3c0 1.105-1.343 2-3 2s-3-.895-3-2 1.343-2 3-2 3 .895 3 2zM9 10l12-3"></path></svg>
+            </div>
+            <h3 class="text-xl font-black italic tracking-wide text-zinc-100 group-hover:text-white transition-colors uppercase text-center">Select Audio File</h3>
+            <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest mt-2">Supports MP3, WAV, M4A</p>
+            <input type="file" id="fileInput" accept="audio/*" class="hidden">
+        </label>
+
+        <div id="editorUI" class="hidden flex-col gap-6">
+            <div class="glass-panel rounded-[1.5rem] p-4 sm:p-6 shadow-lg">
+                <div id="waveform" class="w-full bg-[#111] rounded-xl border border-white/10 overflow-hidden mb-4 cursor-crosshair"></div>
+                
+                <div class="flex flex-col sm:flex-row justify-between items-center gap-4">
+                    <div class="flex gap-2 w-full sm:w-auto">
+                        <button id="playBtn" class="flex-1 sm:flex-none px-6 py-3 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all active:scale-95 shadow-md">
+                            Play / Pause
+                        </button>
+                        <button id="playRegionBtn" class="flex-1 sm:flex-none px-6 py-3 bg-[#FBB401]/10 hover:bg-[#FBB401]/20 border border-[#FBB401]/30 rounded-xl text-xs font-black uppercase tracking-widest text-accent transition-all active:scale-95 shadow-md flex items-center justify-center gap-2">
+                            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg> Play Selection
+                        </button>
+                    </div>
+                    <span id="timeDisplay" class="text-zinc-400 font-mono text-sm font-bold tracking-wider bg-[#161920] px-4 py-2 rounded-lg border border-white/5">00:00 / 00:00</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="glass-panel rounded-[1.5rem] p-6 shadow-lg flex flex-col relative">
+                    <button id="resetRegionBtn" class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all" title="Reset Selection">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
+                    </button>
+                    <h3 class="text-lg font-black italic uppercase tracking-wide text-white mb-2 pr-10">Mode A: Visual Trim</h3>
+                    <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-6">Drag the yellow overlay to select a part.</p>
+                    <div class="mt-auto">
+                        <button id="exportTrimBtn" class="w-full px-6 py-4 bg-accent hover:opacity-90 rounded-xl text-black text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg">
+                            Export Selected Region
+                        </button>
+                    </div>
+                </div>
+
+                <div class="glass-panel rounded-[1.5rem] p-6 shadow-lg flex flex-col">
+                    <h3 class="text-lg font-black italic uppercase tracking-wide text-white mb-2">Mode B: Size Splitter</h3>
+                    <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-4">Target Max File Size (MB):</p>
+                    <input type="number" id="mbTarget" value="25" min="1" max="500" class="w-full bg-[#161920] text-white border border-white/10 rounded-xl px-4 py-3 mb-6 focus:outline-none focus:border-[#FBB401]/50 font-mono text-lg transition-colors">
+                    <div class="mt-auto">
+                        <button id="exportSplitBtn" class="w-full px-6 py-4 bg-accent hover:opacity-90 rounded-xl text-black text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg">
+                            Auto-Split & Export
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <button id="resetBtn" class="w-full px-6 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-zinc-400 hover:text-white transition-all active:scale-[0.99] mt-4">
+                Load Different File
+            </button>
+        </div>
+    </div>
+
+    <div id="customModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 bg-[#0b0d11]/90 backdrop-blur-md animate-in text-zinc-100">
+        <div class="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] flex flex-col shadow-2xl border border-white/10 bg-[#161920]">
+            <div class="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
+                <h2 id="modalTitle" class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">Notice</h2>
+                <button id="closeModalBtn" class="p-2 text-zinc-500 hover:text-white transition-all rounded-full hover:bg-white/5">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            <div class="p-8 md:p-10 overflow-y-auto custom-scroll text-left">
+                <div id="modalText" class="text-zinc-400 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-mono bg-[#0b0d11] p-4 rounded-xl border border-white/5 break-words"></div>
+            </div>
+            <div class="p-6 md:p-8 border-t border-white/5 flex justify-end">
+                <button id="modalOkBtn" class="px-8 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all active:scale-95">
+                    OK
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="cookieBanner" class="fixed bottom-0 left-0 w-full z-50 hidden slide-up p-4 pointer-events-none">
+        <div class="max-w-xl mx-auto glass-panel p-5 rounded-[1.2rem] shadow-2xl flex flex-col sm:flex-row items-center gap-4 border border-white/10 bg-[#0b0d11]/90 pointer-events-auto">
+            <div class="flex-grow text-center sm:text-left">
+                <h4 class="text-sm font-black italic uppercase text-white tracking-wide">We Value Your Privacy</h4>
+                <p class="text-xs font-medium text-zinc-400 mt-1">We use cookies and Google Analytics to see how the site is used. Do you accept cookies?</p>
+            </div>
+            <div class="flex gap-2 shrink-0 w-full sm:w-auto">
+                <button id="declineCookies" class="flex-1 sm:flex-none px-4 py-2 bg-transparent border border-white/10 hover:bg-white/5 rounded-lg text-xs font-black italic uppercase tracking-wider text-zinc-300 transition-all">Decline</button>
+                <button id="acceptCookies" class="flex-1 sm:flex-none px-4 py-2 bg-[#161920] border border-[#FBB401]/30 hover:border-[#FBB401] rounded-lg text-xs font-black italic uppercase tracking-wider text-[#FBB401] shadow-lg transition-all">Accept</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+    // --- Google Analytics ---
+    function loadGoogleAnalytics() {
+        const script = document.createElement('script');
+        script.async = true;
+        script.src = "https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC";
+        document.head.appendChild(script);
+
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-0WHX0WMFTC');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const cookieBanner = document.getElementById('cookieBanner');
+        const acceptBtn = document.getElementById('acceptCookies');
+        const declineBtn = document.getElementById('declineCookies');
+        const consentStatus = localStorage.getItem('ga_consent');
+
+        if (consentStatus === 'granted') {
+            loadGoogleAnalytics();
+        } else if (!consentStatus) {
+            cookieBanner.classList.remove('hidden');
+            cookieBanner.classList.add('flex');
+        }
+
+        acceptBtn.addEventListener('click', () => {
+            localStorage.setItem('ga_consent', 'granted');
+            cookieBanner.classList.add('hidden');
+            cookieBanner.classList.remove('flex');
+            loadGoogleAnalytics();
+        });
+
+        declineBtn.addEventListener('click', () => {
+            localStorage.setItem('ga_consent', 'denied');
+            cookieBanner.classList.add('hidden');
+            cookieBanner.classList.remove('flex');
+        });
+        
+        // Local File Origin Check
+        if (window.location.protocol === 'file:') {
+            showModal('Local Environment Warning', "You are opening this file directly (file://). FFmpeg WebAssembly requires a web server to run safely.\n\nExporting will fail with an 'origin null' error. Please run this via a local server (like VS Code Live Server) or upload it to your host.", true);
+        }
+    });
+
+    // --- Top Navigation Modals ---
+    const tutorialBtn = document.getElementById('tutorialBtn');
+    const tutorialModal = document.getElementById('tutorialModal');
+    const closeTutorial = document.getElementById('closeTutorial');
+    tutorialBtn.addEventListener('click', () => { tutorialModal.classList.remove('hidden'); tutorialModal.classList.add('flex'); });
+    closeTutorial.addEventListener('click', () => { tutorialModal.classList.add('hidden'); tutorialModal.classList.remove('flex'); });
+
+    // --- System Variables ---
+    const { FFmpeg } = window.FFmpegWASM;
+    const ffmpeg = new FFmpeg();
+    let isFFmpegLoaded = false;
+    let wavesurfer = null;
+    let wsRegions = null;
+    let currentFile = null;
+    let currentFileName = "";
+    let fileExtension = "";
+    let activeRegion = null;
+    let currentZoom = 0; // base px per second
+
+    // --- UI Elements ---
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const editorUI = document.getElementById('editorUI');
+    const statusEl = document.getElementById('status');
+    const playBtn = document.getElementById('playBtn');
+    const playRegionBtn = document.getElementById('playRegionBtn');
+    const resetRegionBtn = document.getElementById('resetRegionBtn');
+    const timeDisplay = document.getElementById('timeDisplay');
+    const resetBtn = document.getElementById('resetBtn');
+    const waveformContainer = document.getElementById('waveform');
+    
+    const customModal = document.getElementById('customModal');
+    const modalTitle = document.getElementById('modalTitle');
+    const modalText = document.getElementById('modalText');
+    
+    function showModal(title, text, isError = false) {
+        modalTitle.innerText = title;
+        modalTitle.style.color = isError ? '#ef4444' : '#ffffff';
+        modalText.innerText = text;
+        customModal.classList.remove('hidden');
+        customModal.classList.add('flex');
+    }
+    function closeModal() {
+        customModal.classList.add('hidden');
+        customModal.classList.remove('flex');
+    }
+    document.getElementById('closeModalBtn').addEventListener('click', closeModal);
+    document.getElementById('modalOkBtn').addEventListener('click', closeModal);
+
+    async function loadFFmpeg() {
+        if (!isFFmpegLoaded) {
+            statusEl.innerText = "Loading FFmpeg engine...";
+            await ffmpeg.load({
+                coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
+                wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
+            });
+            isFFmpegLoaded = true;
+            statusEl.innerText = `Ready to process: ${currentFileName}`;
+        }
+    }
+
+    dropZone.addEventListener('click', () => fileInput.click());
+    dropZone.addEventListener('dragover', (e) => { e.preventDefault(); dropZone.style.borderColor = '#FBB401'; dropZone.style.backgroundColor = 'rgba(255,255,255,0.05)'; });
+    dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'rgba(255,255,255,0.1)'; dropZone.style.backgroundColor = 'transparent'; });
+    dropZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropZone.style.borderColor = 'rgba(255,255,255,0.1)'; dropZone.style.backgroundColor = 'transparent';
+        if (e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]);
+    });
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length) loadFile(e.target.files[0]);
+    });
+
+    function formatTime(seconds) {
+        const m = Math.floor(seconds / 60).toString().padStart(2, '0');
+        const s = Math.floor(seconds % 60).toString().padStart(2, '0');
+        return `${m}:${s}`;
+    }
+
+    function createDefaultRegion(duration) {
+        if (activeRegion) activeRegion.remove();
+        activeRegion = wsRegions.addRegion({
+            start: duration * 0.25,
+            end: duration * 0.75,
+            color: 'rgba(251, 180, 1, 0.3)', 
+            drag: true,
+            resize: true,
+        });
+    }
+
+    async function loadFile(file) {
+        if(!file) return;
+        currentFile = file;
+        currentFileName = file.name;
+        fileExtension = currentFileName.split('.').pop() || 'mp3';
+        currentZoom = 0;
+        
+        dropZone.classList.add('hidden');
+        editorUI.classList.remove('hidden');
+        editorUI.classList.add('flex');
+        statusEl.innerText = `Loaded: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`;
+
+        if (wavesurfer) wavesurfer.destroy();
+        
+        wavesurfer = WaveSurfer.create({
+            container: '#waveform',
+            waveColor: '#555',
+            progressColor: '#FBB401',
+            cursorColor: '#fff',
+            barWidth: 2,
+            height: 120,
+            normalize: true,
+            minPxPerSec: 10 // Reset zoom
+        });
+
+        wsRegions = wavesurfer.registerPlugin(WaveSurfer.Regions.create());
+        const fileUrl = URL.createObjectURL(file);
+        wavesurfer.load(fileUrl);
+
+        wavesurfer.on('ready', () => {
+            const duration = wavesurfer.getDuration();
+            timeDisplay.innerText = `00:00 / ${formatTime(duration)}`;
+            createDefaultRegion(duration);
+        });
+
+        wavesurfer.on('audioprocess', () => {
+            timeDisplay.innerText = `${formatTime(wavesurfer.getCurrentTime())} / ${formatTime(wavesurfer.getDuration())}`;
+        });
+
+        // Smart Clamping: Fix the shrinking box issue
+        wsRegions.on('region-update', (region) => {
+            const duration = wavesurfer.getDuration();
+            const length = region.end - region.start;
+            if (region.start < 0) {
+                region.start = 0;
+                region.end = length;
+            }
+            if (region.end > duration) {
+                region.end = duration;
+                region.start = duration - length;
+            }
+        });
+    }
+
+    // Zooming Logic
+    waveformContainer.addEventListener('wheel', (e) => {
+        if(!wavesurfer) return;
+        e.preventDefault();
+        currentZoom = currentZoom === 0 ? 10 : currentZoom; // base
+        currentZoom += e.deltaY < 0 ? 10 : -10; 
+        currentZoom = Math.max(10, Math.min(currentZoom, 500));
+        wavesurfer.zoom(currentZoom);
+    });
+
+    let initialPinchDistance = null;
+    let initialZoom = 0;
+    waveformContainer.addEventListener('touchstart', (e) => {
+        if (e.touches.length === 2) {
+            initialPinchDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            initialZoom = currentZoom === 0 ? 10 : currentZoom;
+        }
+    });
+    waveformContainer.addEventListener('touchmove', (e) => {
+        if(!wavesurfer) return;
+        if (e.touches.length === 2 && initialPinchDistance) {
+            e.preventDefault();
+            const currentDistance = Math.hypot(e.touches[0].clientX - e.touches[1].clientX, e.touches[0].clientY - e.touches[1].clientY);
+            currentZoom = initialZoom * (currentDistance / initialPinchDistance);
+            currentZoom = Math.max(10, Math.min(currentZoom, 500));
+            wavesurfer.zoom(currentZoom);
+        }
+    }, { passive: false });
+
+    playBtn.addEventListener('click', () => wavesurfer.playPause());
+    playRegionBtn.addEventListener('click', () => {
+        if (activeRegion && wavesurfer) {
+            wavesurfer.setTime(activeRegion.start);
+            wavesurfer.play();
+        }
+    });
+    
+    resetRegionBtn.addEventListener('click', () => {
+        if(wavesurfer) {
+            createDefaultRegion(wavesurfer.getDuration());
+            wavesurfer.zoom(10);
+            currentZoom = 10;
+        }
+    });
+
+    resetBtn.addEventListener('click', () => {
+        editorUI.classList.add('hidden');
+        editorUI.classList.remove('flex');
+        dropZone.classList.remove('hidden');
+        dropZone.classList.add('flex');
+        statusEl.innerText = "Ready. Drop an audio file to begin.";
+        if (wavesurfer) wavesurfer.destroy();
+        fileInput.value = "";
+    });
+
+    function downloadBlob(data, filename) {
+        const url = URL.createObjectURL(new Blob([data.buffer], { type: `audio/${fileExtension}` }));
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+    }
+
+    document.getElementById('exportTrimBtn').addEventListener('click', async () => {
+        if (!activeRegion || !currentFile) return;
+        if (window.location.protocol === 'file:') {
+            showModal('Local Error', 'FFmpeg cannot run from file:// path. Upload to a server first.', true);
+            return;
+        }
+        
+        const start = activeRegion.start.toFixed(2);
+        const duration = (activeRegion.end - activeRegion.start).toFixed(2);
+
+        try {
+            showModal('Processing...', 'Loading FFmpeg and trimming audio.\nThis may take a moment based on file size.');
+            await loadFFmpeg();
+
+            const inputName = `input.${fileExtension}`;
+            const outputName = `output.${fileExtension}`;
+
+            const fileData = await currentFile.arrayBuffer();
+            await ffmpeg.writeFile(inputName, new Uint8Array(fileData));
+            await ffmpeg.exec(['-i', inputName, '-ss', start, '-t', duration, outputName]);
+
+            const data = await ffmpeg.readFile(outputName);
+            downloadBlob(data, `trimmed_${currentFileName}`);
+            
+            showModal('Success', 'Audio trimmed successfully! Check your downloads folder.');
+        } catch (error) {
+            console.error(error);
+            showModal('Error', 'An error occurred during processing. Ensure your server has COOP/COEP headers enabled.', true);
+        }
+    });
+
+    document.getElementById('exportSplitBtn').addEventListener('click', async () => {
+        const targetMB = parseFloat(document.getElementById('mbTarget').value);
+        const totalSizeMB = currentFile.size / (1024 * 1024);
+        const totalSeconds = wavesurfer.getDuration();
+
+        if (window.location.protocol === 'file:') {
+            showModal('Local Error', 'FFmpeg cannot run from file:// path. Upload to a server first.', true);
+            return;
+        }
+
+        if (totalSizeMB <= targetMB) {
+            showModal('Action not required', "The original file is already smaller than your target limit!", true);
+            return;
+        }
+
+        const partsNeeded = Math.ceil(totalSizeMB / targetMB);
+        const segmentDuration = totalSeconds / partsNeeded;
+
+        try {
+            showModal('Processing...', `Splitting into ${partsNeeded} parts.\nPlease wait while the files are generated...`);
+            await loadFFmpeg();
+
+            const inputName = `input.${fileExtension}`;
+            const fileData = await currentFile.arrayBuffer();
+            await ffmpeg.writeFile(inputName, new Uint8Array(fileData));
+
+            for (let i = 0; i < partsNeeded; i++) {
+                let start = (i * segmentDuration).toFixed(2);
+                let durationStr = segmentDuration.toFixed(2);
+                let outputName = `part_${i + 1}.${fileExtension}`;
+
+                await ffmpeg.exec(['-i', inputName, '-ss', start, '-t', durationStr, outputName]);
+                const data = await ffmpeg.readFile(outputName);
+                
+                downloadBlob(data, `split_${i + 1}_${currentFileName}`);
+            }
+
+            showModal('Success', `Successfully split into ${partsNeeded} files! Check your downloads folder.`);
+        } catch (error) {
+            console.error(error);
+            showModal('Error', 'An error occurred during processing. Ensure your server has COOP/COEP headers enabled.', true);
+        }
+    });
+
+</script>
+</body>
+</html>
