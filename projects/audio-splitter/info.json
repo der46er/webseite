@@ -1,0 +1,18 @@
+{
+  "project": {
+    "id": "audio-splitter",
+    "title": "Audio Splitter",
+    "title_en": "Audio Splitter",
+    "description": "Zerteilen sie Audiodateien. Kostenlos und ohne Werbung.",
+    "description_en": "Split Audio Files. For free and without ADS",
+    "version": "0.4",
+    "date": "2026-06-02",
+    "status": "Live",
+    "technologies": [
+      "HTML5",
+      "JavaScript",
+      "FFmpeg",
+      "GitHub Fonts (Static)"
+    ]
+  }
+}
