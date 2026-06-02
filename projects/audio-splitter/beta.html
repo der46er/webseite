@@ -7,13 +7,21 @@
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-0WHX0WMFTC');
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
     
     <script src="https://unpkg.com/wavesurfer.js@7"></script>
     <script src="https://unpkg.com/wavesurfer.js@7/dist/plugins/regions.min.js"></script>
 
     <script src="https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd/ffmpeg.js"></script>
-    <script src="https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js"></script>
+    <script src="https://unpkg.com/@ffmpeg/util@0.12.1/dist/umd/index.js"></script>
 
     <style>
         @font-face { 
@@ -58,7 +66,6 @@
         .border-accent { border-color: #FBB401; }
         .glow-accent { background-color: #FBB401; opacity: 0.15; }
         
-        /* Prevent scroll selection on mobile zoom */
         #waveform { touch-action: none; }
     </style>
 </head>
@@ -97,7 +104,7 @@
         </div>
     </div>
 
-    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-20 pb-16 animate-in w-full flex-grow">
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-20 pb-16 animate-in w-full flex-grow flex flex-col">
         
         <header class="mb-8 text-center sm:text-left">
             <h1 class="text-3xl sm:text-5xl font-black italic uppercase tracking-tighter text-white leading-tight">
@@ -115,7 +122,7 @@
             <input type="file" id="fileInput" accept="audio/*" class="hidden">
         </label>
 
-        <div id="editorUI" class="hidden flex-col gap-6">
+        <div id="editorUI" class="hidden flex-col gap-6 w-full">
             <div class="glass-panel rounded-[1.5rem] p-4 sm:p-6 shadow-lg">
                 <div id="waveform" class="w-full bg-[#111] rounded-xl border border-white/10 overflow-hidden mb-4 cursor-crosshair"></div>
                 
@@ -134,13 +141,13 @@
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div class="glass-panel rounded-[1.5rem] p-6 shadow-lg flex flex-col relative">
-                    <button id="resetRegionBtn" class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white bg-white/5 hover:bg-white/10 rounded-lg transition-all" title="Reset Selection">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    </button>
-                    <h3 class="text-lg font-black italic uppercase tracking-wide text-white mb-2 pr-10">Mode A: Visual Trim</h3>
+                    <h3 class="text-lg font-black italic uppercase tracking-wide text-white mb-2">Mode A: Visual Trim</h3>
                     <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mb-6">Drag the yellow overlay to select a part.</p>
-                    <div class="mt-auto">
-                        <button id="exportTrimBtn" class="w-full px-6 py-4 bg-accent hover:opacity-90 rounded-xl text-black text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg">
+                    <div class="mt-auto flex gap-2">
+                        <button id="resetRegionBtn" class="px-4 py-4 bg-white/5 hover:bg-white/10 border border-white/10 rounded-xl text-xs font-black uppercase tracking-widest text-white transition-all active:scale-95 shadow-md" title="Reset Selection">
+                            Reset
+                        </button>
+                        <button id="exportTrimBtn" class="flex-grow px-4 py-4 bg-accent hover:opacity-90 rounded-xl text-black text-xs font-black uppercase tracking-widest transition-all active:scale-[0.98] shadow-lg">
                             Export Selected Region
                         </button>
                     </div>
@@ -162,6 +169,15 @@
                 Load Different File
             </button>
         </div>
+        
+        <footer class="w-full text-center py-6 mt-auto flex flex-col gap-2 items-center">
+            <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-200 cursor-pointer">
+                © 2026 — @der_46er
+            </p>
+            <button id="openCookiesBtn" class="text-zinc-600 text-[9px] font-bold uppercase tracking-widest hover:text-[#FBB401] transition-colors underline decoration-zinc-700 hover:decoration-[#FBB401] cursor-pointer">
+                Cookie Settings
+            </button>
+        </footer>
     </div>
 
     <div id="customModal" class="fixed inset-0 z-[100] hidden items-center justify-center p-4 sm:p-6 bg-[#0b0d11]/90 backdrop-blur-md animate-in text-zinc-100">
@@ -199,7 +215,9 @@
 <script>
     // --- Google Analytics ---
     function loadGoogleAnalytics() {
+        if (document.getElementById('ga-script')) return; 
         const script = document.createElement('script');
+        script.id = 'ga-script';
         script.async = true;
         script.src = "https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC";
         document.head.appendChild(script);
@@ -214,6 +232,7 @@
         const cookieBanner = document.getElementById('cookieBanner');
         const acceptBtn = document.getElementById('acceptCookies');
         const declineBtn = document.getElementById('declineCookies');
+        const openCookiesBtn = document.getElementById('openCookiesBtn');
         const consentStatus = localStorage.getItem('ga_consent');
 
         if (consentStatus === 'granted') {
@@ -236,10 +255,10 @@
             cookieBanner.classList.remove('flex');
         });
         
-        // Local File Origin Check
-        if (window.location.protocol === 'file:') {
-            showModal('Local Environment Warning', "You are opening this file directly (file://). FFmpeg WebAssembly requires a web server to run safely.\n\nExporting will fail with an 'origin null' error. Please run this via a local server (like VS Code Live Server) or upload it to your host.", true);
-        }
+        openCookiesBtn.addEventListener('click', () => {
+            cookieBanner.classList.remove('hidden');
+            cookieBanner.classList.add('flex');
+        });
     });
 
     // --- Top Navigation Modals ---
@@ -249,17 +268,19 @@
     tutorialBtn.addEventListener('click', () => { tutorialModal.classList.remove('hidden'); tutorialModal.classList.add('flex'); });
     closeTutorial.addEventListener('click', () => { tutorialModal.classList.add('hidden'); tutorialModal.classList.remove('flex'); });
 
-    // --- System Variables ---
+    // --- System Variables & FFmpeg Blob Bypass ---
     const { FFmpeg } = window.FFmpegWASM;
+    const { fetchFile, toBlobURL } = window.FFmpegUtil;
     const ffmpeg = new FFmpeg();
     let isFFmpegLoaded = false;
+    
     let wavesurfer = null;
     let wsRegions = null;
     let currentFile = null;
     let currentFileName = "";
     let fileExtension = "";
     let activeRegion = null;
-    let currentZoom = 0; // base px per second
+    let currentZoom = 0; 
 
     // --- UI Elements ---
     const dropZone = document.getElementById('dropZone');
@@ -291,12 +312,14 @@
     document.getElementById('closeModalBtn').addEventListener('click', closeModal);
     document.getElementById('modalOkBtn').addEventListener('click', closeModal);
 
+    // Bypass Origin 'null' Worker Error
     async function loadFFmpeg() {
         if (!isFFmpegLoaded) {
             statusEl.innerText = "Loading FFmpeg engine...";
+            const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
             await ffmpeg.load({
-                coreURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.js',
-                wasmURL: 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd/ffmpeg-core.wasm'
+                coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+                wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
             });
             isFFmpegLoaded = true;
             statusEl.innerText = `Ready to process: ${currentFileName}`;
@@ -327,8 +350,6 @@
             start: duration * 0.25,
             end: duration * 0.75,
             color: 'rgba(251, 180, 1, 0.3)', 
-            drag: true,
-            resize: true,
         });
     }
 
@@ -354,10 +375,16 @@
             barWidth: 2,
             height: 120,
             normalize: true,
-            minPxPerSec: 10 // Reset zoom
+            minPxPerSec: 10 
         });
 
         wsRegions = wavesurfer.registerPlugin(WaveSurfer.Regions.create());
+        
+        // Fix: Enable dragging to create regions, but manage them strictly
+        wsRegions.enableDragSelection({
+            color: 'rgba(251, 180, 1, 0.3)',
+        });
+
         const fileUrl = URL.createObjectURL(file);
         wavesurfer.load(fileUrl);
 
@@ -371,17 +398,18 @@
             timeDisplay.innerText = `${formatTime(wavesurfer.getCurrentTime())} / ${formatTime(wavesurfer.getDuration())}`;
         });
 
-        // Smart Clamping: Fix the shrinking box issue
-        wsRegions.on('region-update', (region) => {
-            const duration = wavesurfer.getDuration();
-            const length = region.end - region.start;
-            if (region.start < 0) {
-                region.start = 0;
-                region.end = length;
+        // Fix: Prevent zero-length selection & enforce only one active region
+        wsRegions.on('region-created', (region) => {
+            if (activeRegion && activeRegion !== region) {
+                activeRegion.remove();
             }
-            if (region.end > duration) {
-                region.end = duration;
-                region.start = duration - length;
+            activeRegion = region;
+        });
+
+        wsRegions.on('region-updated', (region) => {
+            const minLength = 0.5;
+            if (region.end - region.start < minLength) {
+                region.end = region.start + minLength;
             }
         });
     }
@@ -390,7 +418,7 @@
     waveformContainer.addEventListener('wheel', (e) => {
         if(!wavesurfer) return;
         e.preventDefault();
-        currentZoom = currentZoom === 0 ? 10 : currentZoom; // base
+        currentZoom = currentZoom === 0 ? 10 : currentZoom; 
         currentZoom += e.deltaY < 0 ? 10 : -10; 
         currentZoom = Math.max(10, Math.min(currentZoom, 500));
         wavesurfer.zoom(currentZoom);
@@ -453,10 +481,6 @@
 
     document.getElementById('exportTrimBtn').addEventListener('click', async () => {
         if (!activeRegion || !currentFile) return;
-        if (window.location.protocol === 'file:') {
-            showModal('Local Error', 'FFmpeg cannot run from file:// path. Upload to a server first.', true);
-            return;
-        }
         
         const start = activeRegion.start.toFixed(2);
         const duration = (activeRegion.end - activeRegion.start).toFixed(2);
@@ -478,7 +502,7 @@
             showModal('Success', 'Audio trimmed successfully! Check your downloads folder.');
         } catch (error) {
             console.error(error);
-            showModal('Error', 'An error occurred during processing. Ensure your server has COOP/COEP headers enabled.', true);
+            showModal('Error', `Processing failed: ${error.message}`, true);
         }
     });
 
@@ -486,11 +510,6 @@
         const targetMB = parseFloat(document.getElementById('mbTarget').value);
         const totalSizeMB = currentFile.size / (1024 * 1024);
         const totalSeconds = wavesurfer.getDuration();
-
-        if (window.location.protocol === 'file:') {
-            showModal('Local Error', 'FFmpeg cannot run from file:// path. Upload to a server first.', true);
-            return;
-        }
 
         if (totalSizeMB <= targetMB) {
             showModal('Action not required', "The original file is already smaller than your target limit!", true);
@@ -522,7 +541,7 @@
             showModal('Success', `Successfully split into ${partsNeeded} files! Check your downloads folder.`);
         } catch (error) {
             console.error(error);
-            showModal('Error', 'An error occurred during processing. Ensure your server has COOP/COEP headers enabled.', true);
+            showModal('Error', `Processing failed: ${error.message}`, true);
         }
     });
 
