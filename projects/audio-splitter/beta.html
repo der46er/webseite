@@ -64,7 +64,6 @@
             width: 100%; height: 4px; cursor: pointer; background: rgba(255, 255, 255, 0.1); border-radius: 2px;
         }
 
-        /* Toggle Switch Styling */
         .toggle-checkbox:checked {
             right: 0;
             border-color: #FBB401;
@@ -220,7 +219,7 @@
 <script>
     // System Variables
     const { FFmpeg } = window.FFmpegWASM;
-    const { fetchFile } = window.FFmpegUtil;
+    const { fetchFile, toBlobURL } = window.FFmpegUtil;
     let ffmpeg = null;
     let isFFmpegLoaded = false;
     
@@ -246,31 +245,30 @@
         customModal.classList.add('hidden'); customModal.classList.remove('flex');
     });
 
-   // Initialize FFmpeg
-async function initFFmpeg() {
-    if (isFFmpegLoaded) return;
-    try {
-        ffmpeg = new FFmpeg();
-        ffmpeg.on('log', ({ message }) => console.log(message));
-        
-        const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
-        const ffmpegURL = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd';
-        
-        // Using the Blob URL bypass so it runs anywhere without strict server headers
-        await ffmpeg.load({
-            coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-            wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
-            classWorkerURL: await toBlobURL(`${ffmpegURL}/814.ffmpeg.js`, 'text/javascript')
-        });
-        
-        isFFmpegLoaded = true;
-        document.getElementById('engineDot').classList.replace('bg-red-500', 'bg-green-500');
-        document.getElementById('engineStatus').innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> Engine Ready`;
-    } catch (e) {
-        console.error(e);
-        showModal("Engine Error", "Failed to load FFmpeg. Check connection.", true);
+    // Initialize FFmpeg - FIXED
+    async function initFFmpeg() {
+        if (isFFmpegLoaded) return;
+        try {
+            ffmpeg = new FFmpeg();
+            ffmpeg.on('log', ({ message }) => console.log(message));
+            
+            const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+            
+            // Replaced fetchFile with toBlobURL and removed the non-existent classWorkerURL
+            await ffmpeg.load({
+                coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
+                wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+            });
+            
+            isFFmpegLoaded = true;
+            document.getElementById('engineDot').classList.replace('bg-red-500', 'bg-green-500');
+            document.getElementById('engineStatus').innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> Engine Ready`;
+        } catch (e) {
+            console.error(e);
+            // Added exact error message output so we can see why it fails
+            showModal("Engine Error", `Failed to load FFmpeg. Check connection.\n\nError details: ${e.message}`, true);
+        }
     }
-}
     initFFmpeg(); // Load in background
 
     // Drag & Drop
@@ -381,7 +379,7 @@ async function initFFmpeg() {
             document.body.appendChild(a); a.click(); document.body.removeChild(a);
             showModal('Success!', `File saved to downloads: ${outName}`);
         } catch (e) {
-            showModal('Error', 'FFmpeg processing failed.', true);
+            showModal('Error', `FFmpeg processing failed.\n${e.message}`, true);
         }
     }
 
@@ -421,7 +419,6 @@ async function initFFmpeg() {
         const outName = `${originalFileName}_muted.${ext}`;
         const inExt = currentFile.name.split('.').pop();
         
-        // Mute specific time region using volume filter
         const filter = `volume=enable='between(t,${activeRegion.start},${activeRegion.end})':volume=0`;
         let args = ['-i', `input.${inExt}`, '-af', filter, outName];
         
@@ -436,8 +433,6 @@ async function initFFmpeg() {
         const ext = document.getElementById('exportFormat').value;
         const inExt = currentFile.name.split('.').pop();
         
-        // Convert target size to bitrate roughly to slice by segment (FFmpeg segment muxer)
-        // For accurate file size splitting, usually you split by time. We'll approximate duration per chunk.
         const totalSize = currentFile.size / (1024*1024);
         const parts = Math.ceil(totalSize / mb);
         const secPerPart = wavesurfer.getDuration() / parts;
@@ -465,7 +460,6 @@ async function initFFmpeg() {
         const outPattern = `${originalFileName}_part%03d.${ext}`;
         let args = ['-i', `input.${inExt}`, '-f', 'segment', '-segment_time', secPerPart.toString(), '-c', 'copy'];
         
-        // If converting format, can't stream copy
         if(ext !== inExt.toLowerCase()) {
             args = ['-i', `input.${inExt}`, '-f', 'segment', '-segment_time', secPerPart.toString(), outPattern];
         } else {
@@ -474,7 +468,6 @@ async function initFFmpeg() {
 
         try {
             await ffmpeg.exec(args);
-            // FFmpeg creates part000, part001... we need to read and download them
             const files = await ffmpeg.listDir('.');
             let partsCreated = 0;
             for(let f of files) {
@@ -489,7 +482,7 @@ async function initFFmpeg() {
             }
             showModal('Success!', `Created ${partsCreated} split files.`);
         } catch (e) {
-            showModal('Error', 'Splitting failed.', true);
+            showModal('Error', `Splitting failed.\n${e.message}`, true);
         }
     }
 
