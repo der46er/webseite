@@ -245,7 +245,7 @@
         customModal.classList.add('hidden'); customModal.classList.remove('flex');
     });
 
-    // Initialize FFmpeg - FIXED
+    // Initialize FFmpeg - FIXED WORKER ORIGIN
     async function initFFmpeg() {
         if (isFFmpegLoaded) return;
         try {
@@ -253,11 +253,12 @@
             ffmpeg.on('log', ({ message }) => console.log(message));
             
             const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
+            const wrapperURL = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd';
             
-            // Replaced fetchFile with toBlobURL and removed the non-existent classWorkerURL
             await ffmpeg.load({
                 coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-                wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm')
+                wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+                classWorkerURL: await toBlobURL(`${wrapperURL}/814.ffmpeg.js`, 'text/javascript')
             });
             
             isFFmpegLoaded = true;
@@ -265,7 +266,6 @@
             document.getElementById('engineStatus').innerHTML = `<div class="w-2 h-2 rounded-full bg-green-500 shadow-[0_0_10px_#22c55e]"></div> Engine Ready`;
         } catch (e) {
             console.error(e);
-            // Added exact error message output so we can see why it fails
             showModal("Engine Error", `Failed to load FFmpeg. Check connection.\n\nError details: ${e.message}`, true);
         }
     }
