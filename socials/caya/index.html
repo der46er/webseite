@@ -1,11 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" style="--theme-color: #dc2626; --theme-rgb: 220, 38, 38;">
+<html lang="en" style="--theme-color: #e9e7ed; --theme-rgb: 233, 231, 237;">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Links | Caya</title>
     
-    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23dc2626'/%3E%3C/svg%3E">
+    <link rel="icon" type="image/png" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%23e9e7ed'/%3E%3C/svg%3E">
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -13,13 +13,13 @@
         @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
         @font-face { font-family: 'Inter'; src: url('../assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
         
-        :root { --theme-color: #dc2626; --theme-rgb: 220, 38, 38; }
+        :root { --theme-color: #e9e7ed; --theme-rgb: 233, 231, 237; }
         
         body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: white; overflow-x: hidden; }
         .animate-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
         @keyframes rotate { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
-        .group:hover .animate-rotate-slow { animation: rotate 3s linear infinite; }
+        .animate-rotate-slow { animation: rotate 3s linear infinite; }
         @keyframes vinyl-spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         .animate-vinyl { animation: vinyl-spin 8s linear infinite; }
         
@@ -27,8 +27,10 @@
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         
+        /* Dynamic Theme Classes */
         .theme-text { color: var(--theme-color); }
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
         .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
     </style>
 </head>
@@ -41,20 +43,26 @@
 
     <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 pt-20 sm:pt-28 md:pt-36 w-full pb-8">
         
-        <header class="flex w-full gap-4 mb-4 justify-center">
+       <header class="flex w-full gap-4 mb-4 justify-center">
             <a href="https://www.tiktok.com/@your_caya" target="_blank" class="flex-1 max-w-[250px] group transition-transform active:scale-[0.98] flex flex-col items-center gap-3">
-                <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
-                    <div class="absolute -inset-2 opacity-20 group-hover:opacity-60 transition duration-1000 rounded-full bg-gradient-to-r from-red-600 via-red-500 to-rose-700" style="filter: blur(24px);"></div>
-                    <div class="absolute inset-0 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 bg-[conic-gradient(transparent,transparent,transparent,#dc2626,#ef4444)]"></div>
-                    <img src="https://raw.githubusercontent.com/der46er/webseite/main/socials/caya/caya_pfp.webp" alt="Caya" class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl object-cover scale-[1.15] bg-[#161920] z-10">
+        
+             <div class="w-[clamp(100px,40vw,200px)] h-[clamp(100px,40vw,200px)] relative shrink-0">
+                <div class="absolute -inset-3 opacity-20 blur-xl group-hover:opacity-60 transition duration-1000 rounded-full theme-bg-glow"></div>
+            
+                  <div class="absolute -inset-1 animate-rotate-slow rounded-full opacity-40 group-hover:opacity-80 transition duration-500 theme-bg-glow" style="background-image: conic-gradient(transparent, transparent, transparent, var(--theme-color), var(--theme-color))"></div>
+            
+                    <div class="relative w-full h-full rounded-full border-4 border-[#0b0d11] shadow-2xl overflow-hidden bg-[#161920] z-10">
+                       <img src="https://raw.githubusercontent.com/der46er/webseite/main/socials/caya/caya_pfp.webp" alt="Caya" class="w-full h-full object-cover object-center scale-[1.15]">
+                   </div>
                 </div>
-                <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@your_caya</h1>
+        
+               <h1 class="font-black italic uppercase tracking-tighter drop-shadow-lg leading-none text-[clamp(0.85rem,4vw,1.25rem)] w-full text-center truncate">@your_caya</h1>
             </a>
         </header>
 
         <main class="flex flex-col gap-3">
-            <a href="https://www.craftify-mc.eu/" target="_blank" class="group flex flex-col items-center justify-center py-6 px-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-red-500/30 rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg relative overflow-hidden">
-                <h2 class="text-xl sm:text-2xl font-black uppercase italic mb-0.5 text-white tracking-wide z-10">Craftify <span class="text-[#dc2626]">Mc</span></h2>
+            <a href="https://www.craftify-mc.eu/" target="_blank" class="group flex flex-col items-center justify-center py-6 px-4 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] theme-border-hover rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg relative overflow-hidden">
+                <h2 class="text-xl sm:text-2xl font-black uppercase italic mb-0.5 text-white tracking-wide z-10">Craftify <span class="theme-text">Mc</span></h2>
                 <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest z-10">www.craftify-mc.eu</p>
             </a>
 
@@ -114,7 +122,7 @@
                     <div id="sp-cont" class="w-14 h-14 rounded-full bg-[#161920] flex items-center justify-center border-2 border-white/5 relative overflow-hidden shrink-0 shadow-xl">
                         <img id="sp-cover" src="" class="hidden w-full h-full object-cover rounded-full" alt="Cover">
                         <div id="sp-dot" class="hidden absolute w-2 h-2 bg-[#0b0d11] rounded-full border border-white/20 z-10"></div>
-                        <div id="sp-icon" class="w-8 h-8 opacity-20 transition-all duration-500" style="background-color: #dc2626; -webkit-mask: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png') center/contain no-repeat; mask: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png') center/contain no-repeat;"></div>
+                        <div id="sp-icon" class="w-8 h-8 opacity-20 transition-all duration-500" style="background-color: var(--theme-color); -webkit-mask: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png') center/contain no-repeat; mask: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png') center/contain no-repeat;"></div>
                     </div>
                     <div class="text-left overflow-hidden">
                         <p id="sp-title" class="text-[8px] font-black uppercase tracking-[0.2em] mb-0.5 theme-text transition-colors duration-500">Quiet Mode</p>
@@ -126,10 +134,10 @@
         </main>
 
         <footer onclick="window.location.href='https://thataustrianone.eu/legal/'" class="w-full text-center py-6 mt-auto cursor-pointer group select-none">
-    <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
-        © 2026 — @der_46er
-    </p>
-</footer>
+            <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+                © 2026 — @der_46er
+            </p>
+        </footer>
     </div>
 
     <div id="modal" class="fixed inset-0 flex items-center justify-center p-4 animate-in text-zinc-100 z-[9999] bg-[#0b0d11] hidden">
@@ -148,11 +156,16 @@
 
     <script>
         const d = new Date();
-        document.getElementById('year').innerText = d.getFullYear();
-        document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
+        const yearEl = document.getElementById('year');
+        const dateEl = document.getElementById('date');
+        if (yearEl) yearEl.innerText = d.getFullYear();
+        if (dateEl) dateEl.innerText = d.toLocaleDateString('de-DE');
 
         const modal = document.getElementById('modal');
-        document.getElementById('legal-btn').onclick = () => modal.classList.remove('hidden');
+        const legalBtn = document.getElementById('legal-btn');
+        if (legalBtn) {
+            legalBtn.onclick = () => modal.classList.remove('hidden');
+        }
         document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
 
         // Copy Discord Username logic
@@ -165,22 +178,51 @@
             setTimeout(() => { textEl.innerText = originalText; }, 2000);
         }
 
-        // Dynamic Favicon script
-        const img = new Image();
-        img.crossOrigin = "anonymous";
-        img.src = 'https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png';
-        img.onload = () => {
-            const c = document.createElement('canvas'), ctx = c.getContext('2d');
-            c.width = img.width; c.height = img.height;
-            ctx.drawImage(img, 0, 0);
-            ctx.globalCompositeOperation = 'source-in';
-            ctx.fillStyle = '#dc2626';
-            ctx.fillRect(0, 0, c.width, c.height);
-            let link = document.querySelector("link[rel~='icon']");
-            if (!link) { link = document.createElement('link'); link.rel = 'icon'; document.head.appendChild(link); }
-            link.href = c.toDataURL();
-        };
+        // Helper function for the dynamic Favicon with MIME type fix
+        function updateFavicon(color) {
+            const img = new Image();
+            img.crossOrigin = "anonymous";
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                
+                ctx.drawImage(img, 0, 0);
+                ctx.globalCompositeOperation = 'source-in';
+                ctx.fillStyle = color;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                let link = document.querySelector("link[rel~='icon']");
+                if (!link) { 
+                    link = document.createElement('link'); 
+                    link.rel = 'icon'; 
+                    document.head.appendChild(link); 
+                }
+                link.type = 'image/png';
+                link.href = canvas.toDataURL('image/png');
+            };
+            img.src = 'https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png';
+        }
 
+        // Fetch Theme Color from external file
+        fetch('theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
+            let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
+            if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
+                let c = hex.replace('#', '');
+                if(c.length === 3) c = c.split('').map(x=>x+x).join('');
+                document.documentElement.style.setProperty('--theme-color', hex);
+                document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
+                
+                updateFavicon(hex);
+            } else {
+                updateFavicon('#e9e7ed'); // Fallback to default red
+            }
+        }).catch(() => {
+            updateFavicon('#e9e7ed'); // Fallback to default red
+        });
+
+        // Spotify Lanyard Integration
         const fetchSpotify = async () => {
             try {
                 const res = await fetch('https://api.lanyard.rest/v1/users/1305583149887262792', { cache: 'no-cache' });
