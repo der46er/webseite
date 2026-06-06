@@ -81,9 +81,6 @@
             </a>
 
             <a href="https://open.spotify.com/user/31sgsrlrsi2k635blq2rkgrymqva" target="_blank" class="group flex items-center p-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg relative overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-5 text-zinc-500 group-hover:scale-110 transition-transform duration-500 theme-text pointer-events-none">
-                    <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"></path><circle cx="6" cy="18" r="3"></circle><circle cx="18" cy="16" r="3"></circle></svg>
-                </div>
                 <div class="flex items-center gap-5 w-full text-left relative z-10">
                     <div id="sp-cont" class="w-14 h-14 rounded-full bg-[#161920] flex items-center justify-center border-2 border-white/5 relative overflow-hidden shrink-0 shadow-xl group-hover:scale-105 transition-transform duration-200">
                         <img id="sp-cover" src="" class="hidden w-full h-full object-cover rounded-full" alt="Cover">
@@ -152,10 +149,13 @@
     </div>
 
     <script>
-        // Set dynamic dates
+        // Set dynamic dates safely
         const d = new Date();
-        document.getElementById('year').innerText = d.getFullYear();
-        document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
+        const yearEl = document.getElementById('year');
+        if (yearEl) yearEl.innerText = d.getFullYear();
+        
+        const dateEl = document.getElementById('date');
+        if (dateEl) dateEl.innerText = d.toLocaleDateString('de-DE');
 
         // Function to paint the favicon dynamically
         function updateFaviconColor(hex) {
@@ -204,15 +204,20 @@
             }
         }).catch(()=>{});
 
-        // Legal Modal Logic
+        // Legal Modal Logic safely guarded
         const modal = document.getElementById('modal');
         const legalText = document.getElementById('legal-text');
-        document.getElementById('legal-btn').onclick = () => modal.classList.remove('hidden');
-        document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
+        const legalBtn = document.getElementById('legal-btn');
+        const closeModalBtn = document.getElementById('close-modal');
         
-        fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
-            .then(r => r.text()).then(t => legalText.innerText = t)
-            .catch(() => legalText.innerText = "Error loading legal information.");
+        if (legalBtn && modal) legalBtn.onclick = () => modal.classList.remove('hidden');
+        if (closeModalBtn && modal) closeModalBtn.onclick = () => modal.classList.add('hidden');
+        
+        if (legalText) {
+            fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
+                .then(r => r.text()).then(t => legalText.innerText = t)
+                .catch(() => legalText.innerText = "Error loading legal information.");
+        }
 
         // Spotify Lanyard Integration
         const fetchSpotify = async () => {
@@ -222,21 +227,23 @@
                 const sp = data?.listening_to_spotify ? data.spotify : null;
                 
                 const cont = document.getElementById('sp-cont'), cover = document.getElementById('sp-cover'), icon = document.getElementById('sp-icon'), dot = document.getElementById('sp-dot');
-                document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Spotify';
-                document.getElementById('sp-song').innerText = sp ? sp.song : 'Silence';
-                document.getElementById('sp-artist').innerText = sp ? sp.artist : '(Not listening to music at the moment)';
+                if (document.getElementById('sp-title')) document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Spotify';
+                if (document.getElementById('sp-song')) document.getElementById('sp-song').innerText = sp ? sp.song : 'Silence';
+                if (document.getElementById('sp-artist')) document.getElementById('sp-artist').innerText = sp ? sp.artist : '(Not listening to music at the moment)';
                 
-                if (sp) {
-                    cont.classList.add('animate-vinyl');
-                    cover.src = sp.album_art_url;
-                    cover.classList.remove('hidden');
-                    dot.classList.remove('hidden');
-                    icon.classList.add('hidden');
-                } else {
-                    cont.classList.remove('animate-vinyl');
-                    cover.classList.add('hidden');
-                    dot.classList.add('hidden');
-                    icon.classList.remove('hidden');
+                if (cont && cover && dot && icon) {
+                    if (sp) {
+                        cont.classList.add('animate-vinyl');
+                        cover.src = sp.album_art_url;
+                        cover.classList.remove('hidden');
+                        dot.classList.remove('hidden');
+                        icon.classList.add('hidden');
+                    } else {
+                        cont.classList.remove('animate-vinyl');
+                        cover.classList.add('hidden');
+                        dot.classList.add('hidden');
+                        icon.classList.remove('hidden');
+                    }
                 }
             } catch(e) {}
         };
