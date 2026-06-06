@@ -152,10 +152,13 @@
     </div>
 
     <script>
-        // Set dynamic dates
+        // Set dynamic dates safely
         const d = new Date();
-        document.getElementById('year').innerText = d.getFullYear();
-        document.getElementById('date').innerText = d.toLocaleDateString('de-DE');
+        const yearEl = document.getElementById('year');
+        if (yearEl) yearEl.innerText = d.getFullYear();
+        
+        const dateEl = document.getElementById('date');
+        if (dateEl) dateEl.innerText = d.toLocaleDateString('de-DE');
 
         // Function to paint the favicon dynamically
         function updateFaviconColor(hex) {
@@ -204,15 +207,20 @@
             }
         }).catch(()=>{});
 
-        // Legal Modal Logic
+        // Legal Modal Logic safely guarded
         const modal = document.getElementById('modal');
         const legalText = document.getElementById('legal-text');
-        document.getElementById('legal-btn').onclick = () => modal.classList.remove('hidden');
-        document.getElementById('close-modal').onclick = () => modal.classList.add('hidden');
+        const legalBtn = document.getElementById('legal-btn');
+        const closeModalBtn = document.getElementById('close-modal');
         
-        fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
-            .then(r => r.text()).then(t => legalText.innerText = t)
-            .catch(() => legalText.innerText = "Error loading legal information.");
+        if (legalBtn && modal) legalBtn.onclick = () => modal.classList.remove('hidden');
+        if (closeModalBtn && modal) closeModalBtn.onclick = () => modal.classList.add('hidden');
+        
+        if (legalText) {
+            fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
+                .then(r => r.text()).then(t => legalText.innerText = t)
+                .catch(() => legalText.innerText = "Error loading legal information.");
+        }
 
         // Spotify Lanyard Integration
         const fetchSpotify = async () => {
@@ -222,21 +230,23 @@
                 const sp = data?.listening_to_spotify ? data.spotify : null;
                 
                 const cont = document.getElementById('sp-cont'), cover = document.getElementById('sp-cover'), icon = document.getElementById('sp-icon'), dot = document.getElementById('sp-dot');
-                document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Spotify';
-                document.getElementById('sp-song').innerText = sp ? sp.song : 'Silence';
-                document.getElementById('sp-artist').innerText = sp ? sp.artist : '(Not listening to music at the moment)';
+                if (document.getElementById('sp-title')) document.getElementById('sp-title').innerText = sp ? 'Currently listening:' : 'Spotify';
+                if (document.getElementById('sp-song')) document.getElementById('sp-song').innerText = sp ? sp.song : 'Silence';
+                if (document.getElementById('sp-artist')) document.getElementById('sp-artist').innerText = sp ? sp.artist : '(Not listening to music at the moment)';
                 
-                if (sp) {
-                    cont.classList.add('animate-vinyl');
-                    cover.src = sp.album_art_url;
-                    cover.classList.remove('hidden');
-                    dot.classList.remove('hidden');
-                    icon.classList.add('hidden');
-                } else {
-                    cont.classList.remove('animate-vinyl');
-                    cover.classList.add('hidden');
-                    dot.classList.add('hidden');
-                    icon.classList.remove('hidden');
+                if (cont && cover && dot && icon) {
+                    if (sp) {
+                        cont.classList.add('animate-vinyl');
+                        cover.src = sp.album_art_url;
+                        cover.classList.remove('hidden');
+                        dot.classList.remove('hidden');
+                        icon.classList.add('hidden');
+                    } else {
+                        cont.classList.remove('animate-vinyl');
+                        cover.classList.add('hidden');
+                        dot.classList.add('hidden');
+                        icon.classList.remove('hidden');
+                    }
                 }
             } catch(e) {}
         };
