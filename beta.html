@@ -21,44 +21,43 @@
         .header-logo-text { font-weight: 900; font-style: normal; text-transform: lowercase; letter-spacing: -0.04em; }
         @media (min-width: 640px) { .header-logo-text { letter-spacing: -0.06em; } }
 
-        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
         
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        /* Dynamic Theme Classes matched to Socials.html */
+        /* Dynamic Theme Classes */
         .theme-text { color: var(--theme-color); }
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
-        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
-        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
+        .theme-drop-shadow { filter: drop-shadow(0 0 12px var(--theme-color)); }
     </style>
 </head>
 <body class="flex flex-col min-h-screen selection:bg-white/10">
     
     <div class="fixed inset-0 pointer-events-none z-0">
-        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
-        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] blur-[120px] rounded-full theme-bg-glow transition-all duration-1000 opacity-60"></div>
+        <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] blur-[120px] rounded-full theme-bg-glow transition-all duration-1000 opacity-60"></div>
     </div>
 
     <nav class="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#0b0d11]/80">
         <div class="flex-1 hidden md:block"></div>
-        <div class="flex items-center gap-2 sm:gap-3 flex-1 md:flex-none">
-             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300" id="nav-logo">
+        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-1 md:flex-none">
+             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-500 theme-drop-shadow" id="nav-logo">
              <span class="header-logo-text text-xl sm:text-2xl">that<span class="theme-text transition-colors duration-500">austrianone.</span></span>
         </div>
         <div class="flex-1 flex justify-end relative">
-            <button id="lang-btn" class="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3.5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] rounded-full transition-all text-[11px] sm:text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-lg active:scale-[0.98]">
+            <button id="lang-btn" class="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3.5 bg-white/[0.02] hover:bg-white/[0.06] border border-white/10 rounded-full transition-all text-[11px] sm:text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-lg active:scale-[0.98]">
                 <span id="current-lang-code">GB</span> 
                 <svg id="lang-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300"><polyline points="6 9 12 15 18 9"/></svg>
             </button>
-            <div id="lang-menu" class="hidden absolute right-0 top-14 sm:top-16 w-40 sm:w-48 bg-[#0b0d11] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
-                <button onclick="setLang('de')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.07]" data-lang="de">
+            <div id="lang-menu" class="hidden absolute right-0 top-14 sm:top-16 w-40 sm:w-48 bg-[#12151c] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl z-50 transform origin-top-right transition-all duration-200">
+                <button onclick="setLang('de')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.05]" data-lang="de">
                     <span class="text-zinc-500 lang-code">AT</span>
                     <span class="text-zinc-400 lang-name">DEUTSCH</span>
                 </button>
-                <button onclick="setLang('en')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.07]" data-lang="en">
+                <button onclick="setLang('en')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.05]" data-lang="en">
                     <span class="text-zinc-500 lang-code">GB</span>
                     <span class="text-zinc-400 lang-name">ENGLISH</span>
                 </button>
@@ -66,56 +65,120 @@
         </div>
     </nav>
 
-    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-32 sm:pt-48 pb-16 animate-in w-full flex-grow">
-        <div id="cards-container" class="max-w-2xl mx-auto flex flex-col gap-3 sm:gap-4 text-zinc-100">
-            </div>
-    </div>
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-16 w-full flex-grow flex flex-col">
+        
+        <div class="w-full text-center mb-10 sm:mb-16 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-4">
+                Welcome to <span class="theme-text transition-colors duration-500">My World.</span>
+            </h1>
+            <p id="hero-desc" class="text-zinc-400 text-sm sm:text-base font-medium max-w-xl mx-auto tracking-wide">
+                </p>
+        </div>
 
-    <footer onclick="window.location.href='https://thataustrianone.eu/legal/'" class="w-full text-center py-6 mt-auto cursor-pointer group select-none relative z-10">
-        <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+        <div id="bento-grid" class="w-full grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 auto-rows-[180px] md:auto-rows-[220px] animate-in" style="animation-delay: 0.2s; opacity: 0;">
+            </div>
+    </main>
+
+    <footer onclick="window.location.href='https://thataustrianone.eu/legal/'" class="w-full text-center py-8 mt-auto cursor-pointer group select-none relative z-10">
+        <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
         </p>
     </footer>
 
-    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-md border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-xl border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
         <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
             <p id="cookie-text"></p>
         </div>
         <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
             <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"></button>
-            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white/10 text-white hover:bg-white/20 border border-white/20 transition-colors uppercase tracking-widest shadow-lg theme-border-hover"></button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
         </div>
     </div>
 
     <script>
-        // Set dynamic date
         document.getElementById('year').innerText = new Date().getFullYear();
 
-        // --- TRANSLATIONS & DATA ---
+        // --- TRANSLATIONS & BENTO DATA ---
+        // Each card defines its specific grid sizing, color accents, and icon.
+        const cardData = [
+            { 
+                id: 'projects', 
+                href: "https://thataustrianone.eu/projects/", 
+                isExternal: false,
+                gridClass: "md:col-span-2 md:row-span-2 flex flex-col justify-end p-6 sm:p-8",
+                iconClass: "text-cyan-400 bg-cyan-400/10",
+                hoverBorder: "hover:border-cyan-400/50",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(34,211,238,0.2)]",
+                icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>'
+            },
+            { 
+                id: 'shop', 
+                href: "https://thataustrianone.eu/shop/", 
+                isExternal: false,
+                gridClass: "md:col-span-2 md:row-span-1 flex items-center p-6",
+                iconClass: "text-orange-500 bg-orange-500/10",
+                hoverBorder: "hover:border-orange-500/50",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]",
+                icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>'
+            },
+            { 
+                id: 'services', 
+                href: "https://thataustrianone.eu/services/", 
+                isExternal: false,
+                gridClass: "md:col-span-1 md:row-span-1 flex flex-col justify-between p-6",
+                iconClass: "text-purple-500 bg-purple-500/10",
+                hoverBorder: "hover:border-purple-500/50",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]",
+                icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'
+            },
+            { 
+                id: 'about', 
+                href: "https://thataustrianone.eu/about-me/", 
+                isExternal: false,
+                gridClass: "md:col-span-1 md:row-span-1 flex flex-col justify-between p-6",
+                iconClass: "text-emerald-400 bg-emerald-400/10",
+                hoverBorder: "hover:border-emerald-400/50",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.2)]",
+                icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+            },
+            { 
+                id: 'socials', 
+                href: "https://thataustrianone.eu/socials", 
+                isExternal: true,
+                gridClass: "md:col-span-4 md:row-span-1 flex items-center justify-between p-6 sm:p-8",
+                iconClass: "text-red-500 bg-red-500/10",
+                hoverBorder: "hover:border-red-500/50",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
+                icon: '<path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>'
+            }
+        ];
+
         const translations = {
             de: {
                 code: "AT", name: "DEUTSCH",
+                heroDesc: "Entdecke meine Hardware, Software-Projekte und Tech-Services.",
                 cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
                 cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
-                cards: [
-                    { id: 'shop', title: "Hardware Marketplace", desc: "Check meine aktuellen Inserate", href: "https://thataustrianone.eu/shop/", isExternal: false, icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>' },
-                    { id: 'services', title: "Tech-Hilfe & Support", desc: "Zusammenbau, Reinigung & mehr", href: "https://thataustrianone.eu/services/", isExternal: false, icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>' },
-                    { id: 'projects', title: "Meine Projekte", desc: "Software, Webseiten & Experimente", href: "https://thataustrianone.eu/projects/", isExternal: false, icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>' },
-                    { id: 'about', title: "Meine Story", desc: "Wer steckt hinter thataustrianone?", href: "https://thataustrianone.eu/about-me/", isExternal: false, icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
-                    { id: 'socials', title: "Social Links", desc: "Folge mir auf meinen Kanälen", href: "https://thataustrianone.eu/socials", isExternal: true, icon: '<path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>' }
-                ]
+                content: {
+                    projects: { title: "Meine Projekte", desc: "Software, Webseiten & Experimente" },
+                    shop: { title: "Hardware Market", desc: "Check meine aktuellen Inserate" },
+                    services: { title: "Tech Support", desc: "Zusammenbau & Reinigung" },
+                    about: { title: "Meine Story", desc: "Wer steckt dahinter?" },
+                    socials: { title: "Social Links", desc: "Folge mir auf meinen Kanälen" }
+                }
             },
             en: {
                 code: "GB", name: "ENGLISH",
+                heroDesc: "Explore my hardware listings, software projects, and tech services.",
                 cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
                 cookieDecline: "Decline", cookieAccept: "Accept",
-                cards: [
-                    { id: 'shop', title: "Hardware Marketplace", desc: "Browse my latest listings", href: "https://thataustrianone.eu/shop/", isExternal: false, icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>' },
-                    { id: 'services', title: "Tech Help & Support", desc: "Assembly, cleaning & more", href: "https://thataustrianone.eu/services/", isExternal: false, icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>' },
-                    { id: 'projects', title: "My Projects", desc: "Software, websites & experiments", href: "https://thataustrianone.eu/projects/", isExternal: false, icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>' },
-                    { id: 'about', title: "My Story", desc: "Who is thataustrianone?", href: "https://thataustrianone.eu/about-me/", isExternal: false, icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
-                    { id: 'socials', title: "Social Links", desc: "Follow me on my channels", href: "https://thataustrianone.eu/socials", isExternal: true, icon: '<path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>' }
-                ]
+                content: {
+                    projects: { title: "My Projects", desc: "Software, websites & experiments" },
+                    shop: { title: "Hardware Market", desc: "Browse my latest listings" },
+                    services: { title: "Tech Support", desc: "Assembly & cleaning" },
+                    about: { title: "My Story", desc: "Who is thataustrianone?" },
+                    socials: { title: "Social Links", desc: "Follow me on my channels" }
+                }
             }
         };
 
@@ -125,8 +188,11 @@
         function render() {
             const t = translations[currentLang];
             
-            // Update Lang Switcher UI
+            // Header & Hero
             document.getElementById('current-lang-code').innerText = t.code;
+            document.getElementById('hero-desc').innerText = t.heroDesc;
+            
+            // Lang Menu styling
             document.querySelectorAll('.lang-option').forEach(btn => {
                 const isSelected = btn.dataset.lang === currentLang;
                 btn.classList.toggle('bg-white/[0.05]', isSelected);
@@ -136,28 +202,54 @@
                 btn.querySelector('.lang-name').classList.toggle('text-zinc-400', !isSelected);
             });
 
-            // Update Cookie Banner UI
+            // Cookies
             document.getElementById('cookie-text').innerText = t.cookieText;
             document.getElementById('cookie-decline').innerText = t.cookieDecline;
             document.getElementById('cookie-accept').innerText = t.cookieAccept;
 
-            // Render Theme-Matched Cards
-            const container = document.getElementById('cards-container');
-            container.innerHTML = t.cards.map(c => `
-                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group flex items-center p-4 sm:p-5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] theme-border-hover rounded-[1.2rem] sm:rounded-[1.5rem] transition-all duration-300 active:scale-[0.99] shadow-lg relative overflow-hidden">
-                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shrink-0 relative overflow-hidden theme-bg-glow border border-white/5">
-                        <svg class="w-6 h-6 sm:w-7 sm:h-7 theme-text relative z-10 theme-drop-shadow" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
-                    </div>
+            // Render Bento Grid
+            const grid = document.getElementById('bento-grid');
+            grid.innerHTML = cardData.map(c => {
+                const text = t.content[c.id];
+                
+                // Logic to differentiate layout inside the cards based on their grid size
+                const isLarge = c.id === 'projects';
+                const isWide = c.id === 'socials' || c.id === 'shop';
+                
+                return `
+                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" 
+                   class="group relative overflow-hidden bg-[#12151c] border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass}">
                     
-                    <div class="text-left flex-grow overflow-hidden ml-4 sm:ml-5">
-                        <h2 class="text-lg sm:text-xl font-black text-white tracking-wide group-hover:translate-x-1 transition-transform duration-300 italic uppercase leading-none mb-1 truncate">${c.title}</h2>
-                        <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate sm:whitespace-normal group-hover:text-zinc-400 transition-colors">${c.desc}</p>
-                    </div>
-                    <div class="text-zinc-700 group-hover:text-white transition-all group-hover:translate-x-1 shrink-0 ml-2">
-                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                    </div>
+                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+
+                    ${isWide || !isLarge ? `
+                        <div class="flex items-center gap-4 w-full z-10">
+                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass}">
+                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                            </div>
+                            <div class="flex-grow">
+                                <h2 class="text-xl font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors">${text.title}</h2>
+                                <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">${text.desc}</p>
+                            </div>
+                            <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            </div>
+                        </div>
+                    ` : `
+                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-auto transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-105 ${c.iconClass} z-10">
+                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                        </div>
+                        <div class="mt-8 z-10 relative">
+                            <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight italic uppercase leading-none mb-2">${text.title}</h2>
+                            <p class="text-zinc-400 text-xs sm:text-sm font-bold uppercase tracking-widest">${text.desc}</p>
+                        </div>
+                        <div class="absolute bottom-6 right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="10 5 19 5 19 14"></polyline></svg>
+                        </div>
+                    `}
                 </a>
-            `).join('');
+                `;
+            }).join('');
         }
 
         // --- LANGUAGE DROPDOWN LOGIC ---
@@ -168,12 +260,19 @@
         langBtn.onclick = (e) => {
             e.stopPropagation();
             const isHidden = langMenu.classList.contains('hidden');
-            langMenu.classList.toggle('hidden', !isHidden);
+            if (isHidden) {
+                langMenu.classList.remove('hidden');
+                setTimeout(() => langMenu.classList.remove('opacity-0', 'scale-95'), 10);
+            } else {
+                langMenu.classList.add('opacity-0', 'scale-95');
+                setTimeout(() => langMenu.classList.add('hidden'), 200);
+            }
             langChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
         };
 
         window.onclick = () => {
-            langMenu.classList.add('hidden');
+            langMenu.classList.add('opacity-0', 'scale-95');
+            setTimeout(() => langMenu.classList.add('hidden'), 200);
             langChevron.style.transform = 'rotate(0deg)';
         };
 
@@ -213,11 +312,12 @@
 
         window.handleCookie = (status) => {
             localStorage.setItem('siteCookieConsent', status);
-            cookieBanner.classList.add('hidden');
+            cookieBanner.classList.add('opacity-0', 'translate-y-full');
+            setTimeout(() => cookieBanner.classList.add('hidden'), 400);
             if (status === 'granted') injectGA();
         };
 
-        // --- THEME & FAVICON LOGIC ---
+        // --- THEME LOGIC ---
         function updateFaviconColor(hex) {
             const img = new Image();
             img.crossOrigin = 'Anonymous';
@@ -238,15 +338,11 @@
                     document.head.appendChild(link);
                 }
                 link.href = canvas.toDataURL('image/png');
-                
-                // Optional: apply a drop shadow to the navigation logo to sync with theme
-                const navLogo = document.getElementById('nav-logo');
-                if(navLogo) navLogo.style.filter = `drop-shadow(0 0 6px ${hex}80)`;
             };
             img.src = './assets/favicon.png';
         }
 
-        // Initialize UI with defaults
+        // Init UI
         updateFaviconColor('#22c55e');
         render();
 
