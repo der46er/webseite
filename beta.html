@@ -3,54 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Home | thataustrianone</title>
+    <title>Home | Nick</title>
     
     <link rel="icon" type="image/png" href="./assets/favicon.png">
 
-    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Lokale Schriftarten */
-        @font-face {
-            font-family: 'Inter';
-            src: url('./assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
-        }
-        @font-face {
-            font-family: 'Inter';
-            src: url('./assets/fonts/inter-v12-latin-900.woff2') format('woff2');
-            font-weight: 900;
-            font-style: normal;
-            font-display: swap;
-        }
+        /* Local Fonts */
+        @font-face { font-family: 'Inter'; src: url('./assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('./assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
         
-        body { 
-            font-family: 'Inter', sans-serif; 
-            background-color: #0b0d11; 
-            margin: 0; 
-            padding: 0; 
-            overflow-x: hidden;
-            color: white;
-        }
+        :root { --theme-color: #22c55e; --theme-rgb: 34, 197, 94; }
         
-        .header-logo-text {
-            font-weight: 900;
-            font-style: normal;
-            text-transform: lowercase;
-            letter-spacing: -0.04em;
-        }
-
-        @media (min-width: 640px) {
-            .header-logo-text {
-                letter-spacing: -0.06em;
-            }
-        }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: white; overflow-x: hidden; margin: 0; padding: 0; }
+        
+        .header-logo-text { font-weight: 900; font-style: normal; text-transform: lowercase; letter-spacing: -0.04em; }
+        @media (min-width: 640px) { .header-logo-text { letter-spacing: -0.06em; } }
 
         .animate-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -59,257 +28,240 @@
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
         .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
 
-        .logo-themed {
-            filter: sepia(100%) saturate(300%) hue-rotate(80deg) brightness(100%) drop-shadow(0 0 5px rgba(34, 197, 94, 0.5));
-            transition: all 0.3s ease;
-        }
+        /* Dynamic Theme Classes matched to Socials.html */
+        .theme-text { color: var(--theme-color); }
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
     </style>
 </head>
-<body>
-    <div id="root"></div>
+<body class="flex flex-col min-h-screen selection:bg-white/10">
+    
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+    </div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+    <nav class="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#0b0d11]/80">
+        <div class="flex-1 hidden md:block"></div>
+        <div class="flex items-center gap-2 sm:gap-3 flex-1 md:flex-none">
+             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-300" id="nav-logo">
+             <span class="header-logo-text text-xl sm:text-2xl">that<span class="theme-text transition-colors duration-500">austrianone.</span></span>
+        </div>
+        <div class="flex-1 flex justify-end relative">
+            <button id="lang-btn" class="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3.5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] rounded-full transition-all text-[11px] sm:text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-lg active:scale-[0.98]">
+                <span id="current-lang-code">GB</span> 
+                <svg id="lang-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div id="lang-menu" class="hidden absolute right-0 top-14 sm:top-16 w-40 sm:w-48 bg-[#0b0d11] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                <button onclick="setLang('de')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.07]" data-lang="de">
+                    <span class="text-zinc-500 lang-code">AT</span>
+                    <span class="text-zinc-400 lang-name">DEUTSCH</span>
+                </button>
+                <button onclick="setLang('en')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.07]" data-lang="en">
+                    <span class="text-zinc-500 lang-code">GB</span>
+                    <span class="text-zinc-400 lang-name">ENGLISH</span>
+                </button>
+            </div>
+        </div>
+    </nav>
 
-        // --- Icons ---
-        const ChevronRight = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
-        const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
-        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
-        const ShoppingCart = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>;
-        const Share = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/></svg>;
-        const UserIcon = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>;
-        const TechIcon = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>;
-        const CodeIcon = ({className}) => <svg className={className} fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" viewBox="0 0 24 24"><polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/></svg>;
+    <div class="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-32 sm:pt-48 pb-16 animate-in w-full flex-grow">
+        <div id="cards-container" class="max-w-2xl mx-auto flex flex-col gap-3 sm:gap-4 text-zinc-100">
+            </div>
+    </div>
 
+    <footer onclick="window.location.href='https://thataustrianone.eu/legal/'" class="w-full text-center py-6 mt-auto cursor-pointer group select-none relative z-10">
+        <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-md border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+        <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
+            <p id="cookie-text"></p>
+        </div>
+        <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
+            <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"></button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white/10 text-white hover:bg-white/20 border border-white/20 transition-colors uppercase tracking-widest shadow-lg theme-border-hover"></button>
+        </div>
+    </div>
+
+    <script>
+        // Set dynamic date
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        // --- TRANSLATIONS & DATA ---
         const translations = {
             de: {
                 code: "AT", name: "DEUTSCH",
-                shopTitle: "Hardware Marketplace", shopDesc: "Check meine aktuellen Inserate",
-                servicesTitle: "Tech-Hilfe & Support", servicesDesc: "Zusammenbau, Reinigung & mehr",
-                projectsTitle: "Meine Projekte", projectsDesc: "Software, Webseiten & Experimente",
-                aboutTitle: "Meine Story", aboutDesc: "Wer steckt hinter thataustrianone?",
-                socialTitle: "Social Links", socialDesc: "Folge mir auf meinen Kanälen",
                 cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
-                cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren"
+                cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
+                cards: [
+                    { id: 'shop', title: "Hardware Marketplace", desc: "Check meine aktuellen Inserate", href: "https://thataustrianone.eu/shop/", isExternal: false, icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>' },
+                    { id: 'services', title: "Tech-Hilfe & Support", desc: "Zusammenbau, Reinigung & mehr", href: "https://thataustrianone.eu/services/", isExternal: false, icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>' },
+                    { id: 'projects', title: "Meine Projekte", desc: "Software, Webseiten & Experimente", href: "https://thataustrianone.eu/projects/", isExternal: false, icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>' },
+                    { id: 'about', title: "Meine Story", desc: "Wer steckt hinter thataustrianone?", href: "https://thataustrianone.eu/about-me/", isExternal: false, icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+                    { id: 'socials', title: "Social Links", desc: "Folge mir auf meinen Kanälen", href: "https://thataustrianone.eu/socials", isExternal: true, icon: '<path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>' }
+                ]
             },
             en: {
                 code: "GB", name: "ENGLISH",
-                shopTitle: "Hardware Marketplace", shopDesc: "Browse my latest listings",
-                servicesTitle: "Tech Help & Support", servicesDesc: "Assembly, cleaning & more",
-                projectsTitle: "My Projects", projectsDesc: "Software, websites & experiments",
-                aboutTitle: "My Story", aboutDesc: "Who is thataustrianone?",
-                socialTitle: "Social Links", socialDesc: "Follow me on my channels",
                 cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
-                cookieDecline: "Decline", cookieAccept: "Accept"
+                cookieDecline: "Decline", cookieAccept: "Accept",
+                cards: [
+                    { id: 'shop', title: "Hardware Marketplace", desc: "Browse my latest listings", href: "https://thataustrianone.eu/shop/", isExternal: false, icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>' },
+                    { id: 'services', title: "Tech Help & Support", desc: "Assembly, cleaning & more", href: "https://thataustrianone.eu/services/", isExternal: false, icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>' },
+                    { id: 'projects', title: "My Projects", desc: "Software, websites & experiments", href: "https://thataustrianone.eu/projects/", isExternal: false, icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>' },
+                    { id: 'about', title: "My Story", desc: "Who is thataustrianone?", href: "https://thataustrianone.eu/about-me/", isExternal: false, icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+                    { id: 'socials', title: "Social Links", desc: "Follow me on my channels", href: "https://thataustrianone.eu/socials", isExternal: true, icon: '<path d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"/>' }
+                ]
             }
         };
 
-        const MainCard = ({ title, desc, icon: Icon, href, color, isExternal }) => (
-            <a 
-                href={href} 
-                target={isExternal ? "_blank" : "_self"}
-                className="group flex items-center gap-4 sm:gap-6 p-4 sm:p-6 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.1] rounded-[1.2rem] sm:rounded-[1.5rem] transition-all duration-300 active:scale-[0.99] shadow-lg relative overflow-hidden"
-            >
-                <div className={`w-12 h-12 sm:w-16 sm:h-16 rounded-xl flex items-center justify-center bg-gradient-to-br ${color} group-hover:scale-110 transition-transform duration-500 shadow-lg shrink-0 relative overflow-hidden border border-white/20`}>
-                    <div className="absolute inset-0 bg-black/30 group-hover:bg-transparent transition-colors duration-500"></div>
-                    <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white relative z-10 drop-shadow-md" />
-                </div>
-                
-                <div className="text-left flex-grow overflow-hidden">
-                    <h2 className="text-lg sm:text-2xl font-black text-white tracking-wide group-hover:translate-x-1 transition-transform duration-300 italic uppercase leading-none mb-1 truncate">{title}</h2>
-                    <p className="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate sm:whitespace-normal group-hover:text-zinc-400 transition-colors">{desc}</p>
-                </div>
-                <div className="text-zinc-700 group-hover:text-white transition-all group-hover:translate-x-1 shrink-0">
-                    <ChevronRight size={24} />
-                </div>
-            </a>
-        );
+        let currentLang = localStorage.getItem('siteLang') || 'en';
 
-        const App = () => {
-            // Memory setup: checks localStorage first, defaults to 'en' if not set
-            const [lang, setLangState] = useState(() => localStorage.getItem('siteLang') || 'en');
-            const [showLegal, setShowLegal] = useState(false);
-            const [showLangMenu, setShowLangMenu] = useState(false);
-            const [legalText, setLegalText] = useState('Loading legal information...');
-            const [cookieConsent, setCookieConsent] = useState(() => localStorage.getItem('siteCookieConsent'));
+        // --- RENDER LOGIC ---
+        function render() {
+            const t = translations[currentLang];
             
-            const menuRef = useRef(null);
-            const t = translations[lang];
+            // Update Lang Switcher UI
+            document.getElementById('current-lang-code').innerText = t.code;
+            document.querySelectorAll('.lang-option').forEach(btn => {
+                const isSelected = btn.dataset.lang === currentLang;
+                btn.classList.toggle('bg-white/[0.05]', isSelected);
+                btn.querySelector('.lang-code').classList.toggle('theme-text', isSelected);
+                btn.querySelector('.lang-code').classList.toggle('text-zinc-500', !isSelected);
+                btn.querySelector('.lang-name').classList.toggle('theme-text', isSelected);
+                btn.querySelector('.lang-name').classList.toggle('text-zinc-400', !isSelected);
+            });
 
-            // Custom language setter to save user choice
-            const setLang = (newLang) => {
-                setLangState(newLang);
-                localStorage.setItem('siteLang', newLang);
-            };
+            // Update Cookie Banner UI
+            document.getElementById('cookie-text').innerText = t.cookieText;
+            document.getElementById('cookie-decline').innerText = t.cookieDecline;
+            document.getElementById('cookie-accept').innerText = t.cookieAccept;
 
-            useEffect(() => {
-                const handleClickOutside = (event) => {
-                    if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
-                };
-                document.addEventListener("mousedown", handleClickOutside);
-                return () => document.removeEventListener("mousedown", handleClickOutside);
-            }, []);
-
-            // Fetch dynamic legal text
-            useEffect(() => {
-                fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
-                    .then(res => res.text())
-                    .then(text => setLegalText(text))
-                    .catch(() => setLegalText("Error loading legal information."));
-            }, []);
-
-            // Inject Google Analytics conditionally
-            useEffect(() => {
-                if (cookieConsent === 'granted') {
-                    if (document.getElementById('ga-script')) return; // Prevent duplicate injects
+            // Render Theme-Matched Cards
+            const container = document.getElementById('cards-container');
+            container.innerHTML = t.cards.map(c => `
+                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group flex items-center p-4 sm:p-5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] theme-border-hover rounded-[1.2rem] sm:rounded-[1.5rem] transition-all duration-300 active:scale-[0.99] shadow-lg relative overflow-hidden">
+                    <div class="w-12 h-12 sm:w-14 sm:h-14 rounded-xl flex items-center justify-center group-hover:scale-105 transition-transform duration-300 shadow-lg shrink-0 relative overflow-hidden theme-bg-glow border border-white/5">
+                        <svg class="w-6 h-6 sm:w-7 sm:h-7 theme-text relative z-10 theme-drop-shadow" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                    </div>
                     
-                    const script1 = document.createElement('script');
-                    script1.id = 'ga-script';
-                    script1.async = true;
-                    script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
-                    document.head.appendChild(script1);
-
-                    const script2 = document.createElement('script');
-                    script2.innerHTML = `
-                        window.dataLayer = window.dataLayer || [];
-                        function gtag(){dataLayer.push(arguments);}
-                        gtag('js', new Date());
-                        gtag('config', 'G-0WHX0WMFTC');
-                    `;
-                    document.head.appendChild(script2);
-                }
-            }, [cookieConsent]);
-
-            return (
-                <div className="min-h-screen selection:bg-green-500/30 overflow-x-hidden flex flex-col relative">
-                    {/* Background Glows */ }
-                    <div className="fixed inset-0 pointer-events-none z-0">
-                        <div className="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full bg-green-600/15 transition-all duration-1000"></div>
-                        <div className="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full bg-emerald-600/15 transition-all duration-1000"></div>
+                    <div class="text-left flex-grow overflow-hidden ml-4 sm:ml-5">
+                        <h2 class="text-lg sm:text-xl font-black text-white tracking-wide group-hover:translate-x-1 transition-transform duration-300 italic uppercase leading-none mb-1 truncate">${c.title}</h2>
+                        <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate sm:whitespace-normal group-hover:text-zinc-400 transition-colors">${c.desc}</p>
                     </div>
-
-                    {/* Navbar */}
-                    <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#0b0d11]/80">
-                        <div className="flex-1 hidden md:block"></div>
-                        <div className="flex items-center gap-2 sm:gap-3 flex-1 md:flex-none">
-                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain logo-themed" />
-                             <span className="header-logo-text text-xl sm:text-2xl">that<span className="text-green-500">austrianone.</span></span>
-                        </div>
-                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
-                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3.5 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] rounded-full transition-all text-[11px] sm:text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-lg active:scale-[0.98]">
-                                <span>{t.code}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
-                            </button>
-                            {showLangMenu && (
-                                <div className="absolute right-0 top-14 sm:top-16 w-40 sm:w-48 bg-[#0b0d11] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
-                                    {Object.keys(translations).map((key) => (
-                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.07] ${lang === key ? 'bg-white/[0.05]' : ''}`}>
-                                            <span className={lang === key ? 'text-green-500' : 'text-zinc-500'}>{translations[key].code}</span>
-                                            <span className={lang === key ? 'text-green-500' : 'text-zinc-400'}>{translations[key].name}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </nav>
-
-                    {/* Main Content Area (Header entirely removed) */}
-                    <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 pt-32 sm:pt-48 pb-16 animate-in w-full flex-grow">
-                        <div className="max-w-2xl mx-auto flex flex-col gap-3 sm:gap-4 text-zinc-100">
-                            <MainCard 
-                                title={t.shopTitle} 
-                                desc={t.shopDesc} 
-                                icon={ShoppingCart} 
-                                href="https://thataustrianone.eu/shop/" 
-                                color="from-orange-500 via-amber-500 to-rose-500"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.servicesTitle} 
-                                desc={t.servicesDesc} 
-                                icon={TechIcon} 
-                                href="https://thataustrianone.eu/services/" 
-                                color="from-fuchsia-600 via-purple-600 to-indigo-600"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.projectsTitle} 
-                                desc={t.projectsDesc} 
-                                icon={CodeIcon} 
-                                href="https://thataustrianone.eu/projects/" 
-                                color="from-zinc-500 via-zinc-400 to-zinc-600"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.aboutTitle} 
-                                desc={t.aboutDesc} 
-                                icon={UserIcon} 
-                                href="https://thataustrianone.eu/about-me/" 
-                                color="from-blue-600 via-cyan-500 to-indigo-600"
-                                isExternal={false}
-                            />
-                            <MainCard 
-                                title={t.socialTitle} 
-                                desc={t.socialDesc} 
-                                icon={Share} 
-                                href="https://thataustrianone.eu/socials" 
-                                color="from-red-900 via-red-700 to-red-950"
-                                isExternal={true}
-                            />
-                        </div>
+                    <div class="text-zinc-700 group-hover:text-white transition-all group-hover:translate-x-1 shrink-0 ml-2">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                     </div>
+                </a>
+            `).join('');
+        }
 
-                    {/* Standard Footer */}
-                    <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none">
-    <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
-        © 2026 — @der_46er
-    </p>
-</footer>
+        // --- LANGUAGE DROPDOWN LOGIC ---
+        const langBtn = document.getElementById('lang-btn');
+        const langMenu = document.getElementById('lang-menu');
+        const langChevron = document.getElementById('lang-chevron');
 
-                    {/* Dynamic Legal Modal */}
-                    {showLegal && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-[#0b0d11]/90 backdrop-blur-md animate-in text-zinc-100">
-                            <div className="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11]">
-                                <div className="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
-                                    <h2 className="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white">Legal Information</h2>
-                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white transition-all">
-                                        <X size={24} />
-                                    </button>
-                                </div>
-                                <div className="p-8 md:p-10 overflow-y-auto custom-scroll text-left">
-                                    <div className="text-zinc-400 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-medium italic">{legalText}</div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
-
-                    {/* Cookie Banner */}
-                    {!cookieConsent && (
-                        <div className="fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-md border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
-                            <div className="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
-                                <p>{t.cookieText}</p>
-                            </div>
-                            <div className="flex gap-3 flex-shrink-0 w-full sm:w-auto">
-                                <button 
-                                    onClick={() => { setCookieConsent('denied'); localStorage.setItem('siteCookieConsent', 'denied'); }}
-                                    className="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"
-                                >
-                                    {t.cookieDecline}
-                                </button>
-                                <button 
-                                    onClick={() => { setCookieConsent('granted'); localStorage.setItem('siteCookieConsent', 'granted'); }}
-                                    className="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-green-500/10 text-green-500 hover:bg-green-500/20 border border-green-500/30 transition-colors uppercase tracking-widest shadow-lg"
-                                >
-                                    {t.cookieAccept}
-                                </button>
-                            </div>
-                        </div>
-                    )}
-                </div>
-            );
+        langBtn.onclick = (e) => {
+            e.stopPropagation();
+            const isHidden = langMenu.classList.contains('hidden');
+            langMenu.classList.toggle('hidden', !isHidden);
+            langChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        window.onclick = () => {
+            langMenu.classList.add('hidden');
+            langChevron.style.transform = 'rotate(0deg)';
+        };
+
+        window.setLang = (lang) => {
+            currentLang = lang;
+            localStorage.setItem('siteLang', lang);
+            render();
+        };
+
+        // --- GOOGLE ANALYTICS & COOKIES LOGIC ---
+        const cookieBanner = document.getElementById('cookie-banner');
+        const cookieConsent = localStorage.getItem('siteCookieConsent');
+
+        function injectGA() {
+            if (document.getElementById('ga-script')) return;
+            const script1 = document.createElement('script');
+            script1.id = 'ga-script';
+            script1.async = true;
+            script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
+            document.head.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-0WHX0WMFTC');
+            `;
+            document.head.appendChild(script2);
+        }
+
+        if (!cookieConsent) {
+            cookieBanner.classList.remove('hidden');
+        } else if (cookieConsent === 'granted') {
+            injectGA();
+        }
+
+        window.handleCookie = (status) => {
+            localStorage.setItem('siteCookieConsent', status);
+            cookieBanner.classList.add('hidden');
+            if (status === 'granted') injectGA();
+        };
+
+        // --- THEME & FAVICON LOGIC ---
+        function updateFaviconColor(hex) {
+            const img = new Image();
+            img.crossOrigin = 'Anonymous';
+            img.onload = () => {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+                ctx.globalCompositeOperation = 'source-in';
+                ctx.fillStyle = hex;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                let link = document.querySelector("link[rel~='icon']");
+                if (!link) {
+                    link = document.createElement('link');
+                    link.rel = 'icon';
+                    document.head.appendChild(link);
+                }
+                link.href = canvas.toDataURL('image/png');
+                
+                // Optional: apply a drop shadow to the navigation logo to sync with theme
+                const navLogo = document.getElementById('nav-logo');
+                if(navLogo) navLogo.style.filter = `drop-shadow(0 0 6px ${hex}80)`;
+            };
+            img.src = './assets/favicon.png';
+        }
+
+        // Initialize UI with defaults
+        updateFaviconColor('#22c55e');
+        render();
+
+        // Fetch user defined theme colors remotely
+        fetch('./assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
+            let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
+            if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
+                let c = hex.replace('#', '');
+                if(c.length === 3) c = c.split('').map(x=>x+x).join('');
+                document.documentElement.style.setProperty('--theme-color', hex);
+                document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
+                updateFaviconColor(hex);
+            }
+        }).catch(()=>{});
+
     </script>
 </body>
 </html>
