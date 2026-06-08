@@ -69,6 +69,10 @@
         document.getElementById('year').innerText = new Date().getFullYear();
 
         // --- BENTO DATA ---
+        // Includes specific arrow SVGs to match the screenshot accurately
+        const arrowRight = '<polyline points="9 18 15 12 9 6"></polyline>';
+        const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
+
         const cardData = [
             { 
                 id: 'projects', 
@@ -78,7 +82,8 @@
                 iconClass: "text-zinc-300 bg-zinc-300/10",
                 hoverBorder: "hover:border-zinc-300/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(212,212,216,0.2)]",
-                icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>'
+                icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
+                arrowIcon: arrowUpRight
             },
             { 
                 id: 'shop', 
@@ -88,7 +93,8 @@
                 iconClass: "text-orange-500 bg-orange-500/10",
                 hoverBorder: "hover:border-orange-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]",
-                icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>'
+                icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
+                arrowIcon: arrowRight
             },
             { 
                 id: 'services', 
@@ -98,7 +104,8 @@
                 iconClass: "text-purple-500 bg-purple-500/10",
                 hoverBorder: "hover:border-purple-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]",
-                icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>'
+                icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
+                arrowIcon: arrowUpRight
             },
             { 
                 id: 'about', 
@@ -108,7 +115,8 @@
                 iconClass: "text-blue-500 bg-blue-500/10",
                 hoverBorder: "hover:border-blue-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.2)]",
-                icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>'
+                icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
+                arrowIcon: arrowUpRight
             },
             { 
                 id: 'socials', 
@@ -118,7 +126,8 @@
                 iconClass: "text-red-500 bg-red-500/10",
                 hoverBorder: "hover:border-red-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
-                icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>'
+                icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
+                arrowIcon: arrowRight
             }
         ];
 
@@ -184,9 +193,10 @@
                 const wideTitleClass = 'text-lg sm:text-xl md:text-2xl';
                 const wideDescClass = 'text-[10px] sm:text-xs md:text-sm';
 
+                // Notice the dark translucent glass classes: bg-[#12151c]/70 hover:bg-[#12151c]/90 backdrop-blur-lg
                 if (isSquare) {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.06] hover:bg-white/[0.06] backdrop-blur-lg border border-white/[0.05] rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c]/70 hover:bg-[#12151c]/90 backdrop-blur-lg border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
                         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
@@ -199,13 +209,13 @@
                         </div>
 
                         <div class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10 ${c.id === 'projects' ? 'block' : 'hidden md:block'}">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="10 5 19 5 19 14"></polyline></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
                         </div>
                     </a>
                     `;
                 } else {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.06] hover:bg-white/[0.06] backdrop-blur-lg border border-white/[0.05] rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c]/70 hover:bg-[#12151c]/90 backdrop-blur-lg border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
                         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
@@ -218,7 +228,7 @@
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0 z-10">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
                         </div>
                     </a>
                     `;
