@@ -16,71 +16,42 @@
         
         :root { --theme-color: #22c55e; --theme-rgb: 34, 197, 94; }
         
-        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: white; overflow-x: hidden; margin: 0; padding: 0; }
+        body { font-family: 'Inter', sans-serif; background-color: #0b0d11; color: white; margin: 0; padding: 0; }
         
-        .header-logo-text { font-weight: 900; font-style: normal; text-transform: lowercase; letter-spacing: -0.04em; }
-        @media (min-width: 640px) { .header-logo-text { letter-spacing: -0.06em; } }
-
         .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
         /* Dynamic Theme Classes */
         .theme-text { color: var(--theme-color); }
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
-        .theme-drop-shadow { filter: drop-shadow(0 0 12px var(--theme-color)); }
     </style>
 </head>
-<body class="flex flex-col min-h-screen selection:bg-white/10">
+<body class="flex flex-col h-screen w-screen overflow-hidden selection:bg-white/10 relative">
     
-    <div class="fixed inset-0 pointer-events-none z-0">
+    <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div class="absolute -top-[10%] -left-[10%] w-[50%] h-[50%] blur-[120px] rounded-full theme-bg-glow transition-all duration-1000 opacity-60"></div>
         <div class="absolute -bottom-[10%] -right-[10%] w-[50%] h-[50%] blur-[120px] rounded-full theme-bg-glow transition-all duration-1000 opacity-60"></div>
     </div>
 
-    <nav class="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-[#0b0d11]/80">
-        <div class="flex-1 hidden md:block"></div>
-        <div class="flex items-center justify-center gap-2 sm:gap-3 flex-1 md:flex-none">
-             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" class="w-8 h-8 sm:w-10 sm:h-10 object-contain transition-all duration-500 theme-drop-shadow" id="nav-logo">
-             <span class="header-logo-text text-xl sm:text-2xl">that<span class="theme-text transition-colors duration-500">austrianone.</span></span>
-        </div>
-        <div class="flex-1 flex justify-end relative">
-            <button id="lang-btn" class="flex items-center gap-3 px-4 py-2 sm:px-6 sm:py-3.5 bg-white/[0.02] hover:bg-white/[0.06] border border-white/10 rounded-full transition-all text-[11px] sm:text-[12px] font-black uppercase tracking-[0.1em] text-white shadow-lg active:scale-[0.98]">
-                <span id="current-lang-code">GB</span> 
-                <svg id="lang-chevron" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300"><polyline points="6 9 12 15 18 9"/></svg>
-            </button>
-            <div id="lang-menu" class="hidden absolute right-0 top-14 sm:top-16 w-40 sm:w-48 bg-[#12151c] border border-white/10 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl z-50 transform origin-top-right transition-all duration-200">
-                <button onclick="setLang('de')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.05]" data-lang="de">
-                    <span class="text-zinc-500 lang-code">AT</span>
-                    <span class="text-zinc-400 lang-name">DEUTSCH</span>
-                </button>
-                <button onclick="setLang('en')" class="lang-option flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/[0.05]" data-lang="en">
-                    <span class="text-zinc-500 lang-code">GB</span>
-                    <span class="text-zinc-400 lang-name">ENGLISH</span>
-                </button>
-            </div>
-        </div>
-    </nav>
-
-    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-32 sm:pt-40 pb-16 w-full flex-grow flex flex-col">
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-6 sm:py-8 h-full min-h-0">
         
-        <div class="w-full text-center mb-10 sm:mb-16 animate-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-4">
+        <div class="w-full text-center shrink-0 mb-6 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-2">
                 Welcome to <span class="theme-text transition-colors duration-500">My World.</span>
             </h1>
-            <p id="hero-desc" class="text-zinc-400 text-sm sm:text-base font-medium max-w-xl mx-auto tracking-wide">
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm font-medium max-w-xl mx-auto tracking-wide">
                 </p>
         </div>
 
-        <div id="bento-grid" class="w-full grid grid-cols-1 md:grid-cols-4 gap-4 sm:gap-6 auto-rows-[180px] md:auto-rows-[220px] animate-in" style="animation-delay: 0.2s; opacity: 0;">
+        <div id="bento-grid" class="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 auto-rows-[minmax(0,1fr)] flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
             </div>
     </main>
 
-    <footer onclick="window.location.href='https://thataustrianone.eu/legal/'" class="w-full text-center py-8 mt-auto cursor-pointer group select-none relative z-10">
-        <p class="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-300">
+    <footer class="w-full flex justify-between items-center px-6 py-4 shrink-0 relative z-10 select-none">
+        <button onclick="toggleLang()" class="text-zinc-500 hover:text-white text-[10px] sm:text-xs font-black uppercase tracking-widest transition-colors duration-200">
+            <span id="lang-indicator">EN</span> / Switch
+        </button>
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
         </p>
     </footer>
@@ -99,13 +70,13 @@
         document.getElementById('year').innerText = new Date().getFullYear();
 
         // --- TRANSLATIONS & BENTO DATA ---
-        // Each card defines its specific grid sizing, color accents, and icon.
+        // Layout configured to fit standard screens natively
         const cardData = [
             { 
                 id: 'projects', 
                 href: "https://thataustrianone.eu/projects/", 
                 isExternal: false,
-                gridClass: "md:col-span-2 md:row-span-2 flex flex-col justify-end p-6 sm:p-8",
+                gridClass: "col-span-2 md:col-span-2 row-span-2 md:row-span-2 flex flex-col justify-end p-5 sm:p-8",
                 iconClass: "text-cyan-400 bg-cyan-400/10",
                 hoverBorder: "hover:border-cyan-400/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(34,211,238,0.2)]",
@@ -115,7 +86,7 @@
                 id: 'shop', 
                 href: "https://thataustrianone.eu/shop/", 
                 isExternal: false,
-                gridClass: "md:col-span-2 md:row-span-1 flex items-center p-6",
+                gridClass: "col-span-2 md:col-span-2 row-span-1 flex items-center p-4 sm:p-6",
                 iconClass: "text-orange-500 bg-orange-500/10",
                 hoverBorder: "hover:border-orange-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]",
@@ -125,7 +96,7 @@
                 id: 'services', 
                 href: "https://thataustrianone.eu/services/", 
                 isExternal: false,
-                gridClass: "md:col-span-1 md:row-span-1 flex flex-col justify-between p-6",
+                gridClass: "col-span-1 md:col-span-1 row-span-1 flex flex-col justify-between p-4 sm:p-6",
                 iconClass: "text-purple-500 bg-purple-500/10",
                 hoverBorder: "hover:border-purple-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]",
@@ -135,7 +106,7 @@
                 id: 'about', 
                 href: "https://thataustrianone.eu/about-me/", 
                 isExternal: false,
-                gridClass: "md:col-span-1 md:row-span-1 flex flex-col justify-between p-6",
+                gridClass: "col-span-1 md:col-span-1 row-span-1 flex flex-col justify-between p-4 sm:p-6",
                 iconClass: "text-emerald-400 bg-emerald-400/10",
                 hoverBorder: "hover:border-emerald-400/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.2)]",
@@ -145,7 +116,7 @@
                 id: 'socials', 
                 href: "https://thataustrianone.eu/socials", 
                 isExternal: true,
-                gridClass: "md:col-span-4 md:row-span-1 flex items-center justify-between p-6 sm:p-8",
+                gridClass: "col-span-2 md:col-span-4 row-span-1 flex items-center justify-between p-4 sm:p-6",
                 iconClass: "text-red-500 bg-red-500/10",
                 hoverBorder: "hover:border-red-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
@@ -155,7 +126,7 @@
 
         const translations = {
             de: {
-                code: "AT", name: "DEUTSCH",
+                code: "AT", 
                 heroDesc: "Entdecke meine Hardware, Software-Projekte und Tech-Services.",
                 cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
                 cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
@@ -168,7 +139,7 @@
                 }
             },
             en: {
-                code: "GB", name: "ENGLISH",
+                code: "GB",
                 heroDesc: "Explore my hardware listings, software projects, and tech services.",
                 cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
                 cookieDecline: "Decline", cookieAccept: "Accept",
@@ -188,31 +159,18 @@
         function render() {
             const t = translations[currentLang];
             
-            // Header & Hero
-            document.getElementById('current-lang-code').innerText = t.code;
             document.getElementById('hero-desc').innerText = t.heroDesc;
+            document.getElementById('lang-indicator').innerText = t.code;
             
-            // Lang Menu styling
-            document.querySelectorAll('.lang-option').forEach(btn => {
-                const isSelected = btn.dataset.lang === currentLang;
-                btn.classList.toggle('bg-white/[0.05]', isSelected);
-                btn.querySelector('.lang-code').classList.toggle('theme-text', isSelected);
-                btn.querySelector('.lang-code').classList.toggle('text-zinc-500', !isSelected);
-                btn.querySelector('.lang-name').classList.toggle('theme-text', isSelected);
-                btn.querySelector('.lang-name').classList.toggle('text-zinc-400', !isSelected);
-            });
-
             // Cookies
             document.getElementById('cookie-text').innerText = t.cookieText;
             document.getElementById('cookie-decline').innerText = t.cookieDecline;
             document.getElementById('cookie-accept').innerText = t.cookieAccept;
 
-            // Render Bento Grid
+            // Render Grid natively scaled to the container height
             const grid = document.getElementById('bento-grid');
             grid.innerHTML = cardData.map(c => {
                 const text = t.content[c.id];
-                
-                // Logic to differentiate layout inside the cards based on their grid size
                 const isLarge = c.id === 'projects';
                 const isWide = c.id === 'socials' || c.id === 'shop';
                 
@@ -223,28 +181,28 @@
                     <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
 
                     ${isWide || !isLarge ? `
-                        <div class="flex items-center gap-4 w-full z-10">
-                            <div class="w-12 h-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass}">
-                                <svg class="w-6 h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                        <div class="flex items-center gap-3 sm:gap-4 w-full z-10 h-full">
+                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass}">
+                                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                             </div>
-                            <div class="flex-grow">
-                                <h2 class="text-xl font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors">${text.title}</h2>
-                                <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest">${text.desc}</p>
+                            <div class="flex-grow min-w-0">
+                                <h2 class="text-sm sm:text-xl font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                                <p class="text-zinc-500 text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-widest truncate">${text.desc}</p>
                             </div>
                             <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0">
-                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                                <svg width="20" height="20" class="sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
                             </div>
                         </div>
                     ` : `
-                        <div class="w-16 h-16 rounded-2xl flex items-center justify-center mb-auto transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-105 ${c.iconClass} z-10">
-                            <svg class="w-8 h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-auto transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-105 ${c.iconClass} z-10">
+                            <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                         </div>
-                        <div class="mt-8 z-10 relative">
-                            <h2 class="text-3xl sm:text-4xl font-black text-white tracking-tight italic uppercase leading-none mb-2">${text.title}</h2>
-                            <p class="text-zinc-400 text-xs sm:text-sm font-bold uppercase tracking-widest">${text.desc}</p>
+                        <div class="mt-4 sm:mt-8 z-10 relative">
+                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight italic uppercase leading-none mb-1 sm:mb-2">${text.title}</h2>
+                            <p class="text-zinc-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest">${text.desc}</p>
                         </div>
-                        <div class="absolute bottom-6 right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
-                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="10 5 19 5 19 14"></polyline></svg>
+                        <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
+                            <svg width="24" height="24" class="sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="10 5 19 5 19 14"></polyline></svg>
                         </div>
                     `}
                 </a>
@@ -252,33 +210,10 @@
             }).join('');
         }
 
-        // --- LANGUAGE DROPDOWN LOGIC ---
-        const langBtn = document.getElementById('lang-btn');
-        const langMenu = document.getElementById('lang-menu');
-        const langChevron = document.getElementById('lang-chevron');
-
-        langBtn.onclick = (e) => {
-            e.stopPropagation();
-            const isHidden = langMenu.classList.contains('hidden');
-            if (isHidden) {
-                langMenu.classList.remove('hidden');
-                setTimeout(() => langMenu.classList.remove('opacity-0', 'scale-95'), 10);
-            } else {
-                langMenu.classList.add('opacity-0', 'scale-95');
-                setTimeout(() => langMenu.classList.add('hidden'), 200);
-            }
-            langChevron.style.transform = isHidden ? 'rotate(180deg)' : 'rotate(0deg)';
-        };
-
-        window.onclick = () => {
-            langMenu.classList.add('opacity-0', 'scale-95');
-            setTimeout(() => langMenu.classList.add('hidden'), 200);
-            langChevron.style.transform = 'rotate(0deg)';
-        };
-
-        window.setLang = (lang) => {
-            currentLang = lang;
-            localStorage.setItem('siteLang', lang);
+        // Single button language toggle
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            localStorage.setItem('siteLang', currentLang);
             render();
         };
 
