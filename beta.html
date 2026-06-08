@@ -193,10 +193,10 @@
                 const wideTitleClass = 'text-lg sm:text-xl md:text-2xl';
                 const wideDescClass = 'text-[10px] sm:text-xs md:text-sm';
 
-                // Notice the dark translucent glass classes: bg-[#12151c]/70 hover:bg-[#12151c]/90 backdrop-blur-lg
+                // Notice the dark translucent glass classes: bg-[#12151c]/50 hover:bg-[#12151c]/90 backdrop-blur-lg
                 if (isSquare) {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c]/70 hover:bg-[#12151c]/90 backdrop-blur-lg border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c]/50 hover:bg-[#12151c]/90 backdrop-blur-lg border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
                         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
@@ -215,7 +215,7 @@
                     `;
                 } else {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c]/70 hover:bg-[#12151c]/90 backdrop-blur-lg border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c]/50 hover:bg-[#12151c]/90 backdrop-blur-lg border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
                         <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
