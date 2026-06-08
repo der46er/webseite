@@ -36,20 +36,19 @@
     <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-6 sm:py-8 h-full min-h-0">
         
         <div class="w-full text-center shrink-0 mb-6 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 id="hero-title" class="text-3xl sm:text-4xl md:text-5xl font-black italic uppercase tracking-tighter text-white mb-2">
-                Welcome to <span class="theme-text transition-colors duration-500">My World.</span>
-            </h1>
-            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm font-medium max-w-xl mx-auto tracking-wide">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+                </h1>
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide">
                 </p>
         </div>
 
-        <div id="bento-grid" class="w-full grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 auto-rows-[minmax(0,1fr)] flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
+        <div id="bento-grid" class="w-full grid grid-cols-2 md:grid-cols-4 grid-rows-5 md:grid-rows-3 gap-3 sm:gap-4 flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
             </div>
     </main>
 
     <footer class="w-full flex justify-between items-center px-6 py-4 shrink-0 relative z-10 select-none">
-        <button onclick="toggleLang()" class="text-zinc-500 hover:text-white text-[10px] sm:text-xs font-black uppercase tracking-widest transition-colors duration-200">
-            <span id="lang-indicator">EN</span> / Switch
+        <button onclick="toggleLang()" id="lang-indicator" class="text-zinc-500 hover:text-white text-xs sm:text-sm font-black uppercase tracking-widest transition-colors duration-200">
+            GB
         </button>
         <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
@@ -69,14 +68,13 @@
     <script>
         document.getElementById('year').innerText = new Date().getFullYear();
 
-        // --- TRANSLATIONS & BENTO DATA ---
-        // Layout configured to fit standard screens natively
+        // --- BENTO DATA ---
         const cardData = [
             { 
                 id: 'projects', 
                 href: "https://thataustrianone.eu/projects/", 
                 isExternal: false,
-                gridClass: "col-span-2 md:col-span-2 row-span-2 md:row-span-2 flex flex-col justify-end p-5 sm:p-8",
+                gridClass: "col-span-2 row-span-2",
                 iconClass: "text-cyan-400 bg-cyan-400/10",
                 hoverBorder: "hover:border-cyan-400/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(34,211,238,0.2)]",
@@ -86,7 +84,7 @@
                 id: 'shop', 
                 href: "https://thataustrianone.eu/shop/", 
                 isExternal: false,
-                gridClass: "col-span-2 md:col-span-2 row-span-1 flex items-center p-4 sm:p-6",
+                gridClass: "col-span-2 row-span-1",
                 iconClass: "text-orange-500 bg-orange-500/10",
                 hoverBorder: "hover:border-orange-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(249,115,22,0.2)]",
@@ -96,7 +94,7 @@
                 id: 'services', 
                 href: "https://thataustrianone.eu/services/", 
                 isExternal: false,
-                gridClass: "col-span-1 md:col-span-1 row-span-1 flex flex-col justify-between p-4 sm:p-6",
+                gridClass: "col-span-1 row-span-1",
                 iconClass: "text-purple-500 bg-purple-500/10",
                 hoverBorder: "hover:border-purple-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.2)]",
@@ -106,7 +104,7 @@
                 id: 'about', 
                 href: "https://thataustrianone.eu/about-me/", 
                 isExternal: false,
-                gridClass: "col-span-1 md:col-span-1 row-span-1 flex flex-col justify-between p-4 sm:p-6",
+                gridClass: "col-span-1 row-span-1",
                 iconClass: "text-emerald-400 bg-emerald-400/10",
                 hoverBorder: "hover:border-emerald-400/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(52,211,153,0.2)]",
@@ -116,7 +114,7 @@
                 id: 'socials', 
                 href: "https://thataustrianone.eu/socials", 
                 isExternal: true,
-                gridClass: "col-span-2 md:col-span-4 row-span-1 flex items-center justify-between p-4 sm:p-6",
+                gridClass: "col-span-2 md:col-span-4 row-span-1",
                 iconClass: "text-red-500 bg-red-500/10",
                 hoverBorder: "hover:border-red-500/50",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
@@ -124,10 +122,12 @@
             }
         ];
 
+        // --- TRANSLATIONS ---
         const translations = {
             de: {
                 code: "AT", 
-                heroDesc: "Entdecke meine Hardware, Software-Projekte und Tech-Services.",
+                heroTitle: "Willkommen<span class='theme-text'>.</span>",
+                heroDesc: "Entdecke meine Hardware, Software-Projekte, Socials und mehr",
                 cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
                 cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
                 content: {
@@ -140,7 +140,8 @@
             },
             en: {
                 code: "GB",
-                heroDesc: "Explore my hardware listings, software projects, and tech services.",
+                heroTitle: "Welcome<span class='theme-text'>.</span>",
+                heroDesc: "Explore my hardware listings, software projects, socials, and more",
                 cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
                 cookieDecline: "Decline", cookieAccept: "Accept",
                 content: {
@@ -159,6 +160,7 @@
         function render() {
             const t = translations[currentLang];
             
+            document.getElementById('hero-title').innerHTML = t.heroTitle;
             document.getElementById('hero-desc').innerText = t.heroDesc;
             document.getElementById('lang-indicator').innerText = t.code;
             
@@ -167,46 +169,60 @@
             document.getElementById('cookie-decline').innerText = t.cookieDecline;
             document.getElementById('cookie-accept').innerText = t.cookieAccept;
 
-            // Render Grid natively scaled to the container height
+            // Render Grid dynamically
             const grid = document.getElementById('bento-grid');
             grid.innerHTML = cardData.map(c => {
                 const text = t.content[c.id];
-                const isLarge = c.id === 'projects';
-                const isWide = c.id === 'socials' || c.id === 'shop';
                 
-                return `
-                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" 
-                   class="group relative overflow-hidden bg-[#12151c] border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass}">
-                    
-                    <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none"></div>
+                // Identify if it's a square block or wide block to change internal layout
+                const isSquare = ['projects', 'services', 'about'].includes(c.id);
+                
+                // Class overrides for perfect typography scaling
+                const titleClass = c.id === 'projects' ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-base sm:text-lg';
+                const descClass = c.id === 'projects' ? 'text-[10px] sm:text-xs' : 'text-[9px] sm:text-[10px]';
+                
+                const wideTitleClass = 'text-lg sm:text-xl md:text-2xl';
+                const wideDescClass = 'text-[10px] sm:text-xs md:text-sm';
 
-                    ${isWide || !isLarge ? `
-                        <div class="flex items-center gap-3 sm:gap-4 w-full z-10 h-full">
-                            <div class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass}">
-                                <svg class="w-5 h-5 sm:w-6 sm:h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
-                            </div>
-                            <div class="flex-grow min-w-0">
-                                <h2 class="text-sm sm:text-xl font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
-                                <p class="text-zinc-500 text-[9px] sm:text-[10px] md:text-xs font-bold uppercase tracking-widest truncate">${text.desc}</p>
-                            </div>
-                            <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0">
-                                <svg width="20" height="20" class="sm:w-6 sm:h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                            </div>
+                if (isSquare) {
+                    return `
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c] border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
+                        
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                         </div>
-                    ` : `
-                        <div class="w-12 h-12 sm:w-16 sm:h-16 rounded-xl sm:rounded-2xl flex items-center justify-center mb-auto transition-transform duration-500 group-hover:-translate-y-1 group-hover:scale-105 ${c.iconClass} z-10">
-                            <svg class="w-6 h-6 sm:w-8 sm:h-8" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                        
+                        <div class="z-10 mt-auto pt-4 flex flex-col justify-end">
+                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
                         </div>
-                        <div class="mt-4 sm:mt-8 z-10 relative">
-                            <h2 class="text-2xl sm:text-3xl md:text-4xl font-black text-white tracking-tight italic uppercase leading-none mb-1 sm:mb-2">${text.title}</h2>
-                            <p class="text-zinc-400 text-[10px] sm:text-xs font-bold uppercase tracking-widest">${text.desc}</p>
+
+                        <div class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10 ${c.id === 'projects' ? 'block' : 'hidden md:block'}">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="10 5 19 5 19 14"></polyline></svg>
                         </div>
-                        <div class="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
-                            <svg width="24" height="24" class="sm:w-7 sm:h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="19" x2="19" y2="5"></line><polyline points="10 5 19 5 19 14"></polyline></svg>
+                    </a>
+                    `;
+                } else {
+                    return `
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-[#12151c] border border-white/5 rounded-3xl transition-all duration-500 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.98] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
+                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
+                        
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                         </div>
-                    `}
-                </a>
-                `;
+                        
+                        <div class="flex-grow min-w-0 z-10">
+                            <h2 class="${wideTitleClass} font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                            <p class="text-zinc-500 ${wideDescClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
+                        </div>
+                        
+                        <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0 z-10">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                        </div>
+                    </a>
+                    `;
+                }
             }).join('');
         }
 
@@ -252,36 +268,10 @@
             if (status === 'granted') injectGA();
         };
 
-        // --- THEME LOGIC ---
-        function updateFaviconColor(hex) {
-            const img = new Image();
-            img.crossOrigin = 'Anonymous';
-            img.onload = () => {
-                const canvas = document.createElement('canvas');
-                canvas.width = img.width;
-                canvas.height = img.height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-                ctx.globalCompositeOperation = 'source-in';
-                ctx.fillStyle = hex;
-                ctx.fillRect(0, 0, canvas.width, canvas.height);
-                
-                let link = document.querySelector("link[rel~='icon']");
-                if (!link) {
-                    link = document.createElement('link');
-                    link.rel = 'icon';
-                    document.head.appendChild(link);
-                }
-                link.href = canvas.toDataURL('image/png');
-            };
-            img.src = './assets/favicon.png';
-        }
-
         // Init UI
-        updateFaviconColor('#22c55e');
         render();
 
-        // Fetch user defined theme colors remotely
+        // Fetch user defined theme colors remotely for the glow effects
         fetch('./assets/theme.txt', { cache: 'no-cache' }).then(r => r.text()).then(t => {
             let hex = t.trim().startsWith('#') ? t.trim() : '#' + t.trim();
             if (/^#([0-9A-F]{3}|[0-9A-F]{6})$/i.test(hex)) {
@@ -289,7 +279,6 @@
                 if(c.length === 3) c = c.split('').map(x=>x+x).join('');
                 document.documentElement.style.setProperty('--theme-color', hex);
                 document.documentElement.style.setProperty('--theme-rgb', `${parseInt(c.substr(0,2),16)}, ${parseInt(c.substr(2,2),16)}, ${parseInt(c.substr(4,2),16)}`);
-                updateFaviconColor(hex);
             }
         }).catch(()=>{});
 
