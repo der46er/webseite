@@ -1,0 +1,17 @@
+{
+  "project": {
+    "id": "vivaldi-themes",
+    "title": "Vivaldi Themes",
+    "title_en": "Vivaldi Themes",
+    "description": "Themes für den Vivaldi Browser",
+    "description_en": "Themes for the Vivaldi browser",
+    "version": "1.0",
+    "date": "2026-06-08",
+    "status": "Live",
+    "technologies": [
+      "Vivaldi Theme Engine",
+      "JSON",
+      "CSS"
+    ]
+  }
+}
