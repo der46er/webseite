@@ -137,7 +137,7 @@
         </button>
         
         <button onclick="toggleLanguage()" id="langToggleBtn" title="Switch to English" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 overflow-hidden p-2.5">
-            <img id="langFlagImg" src="../assets/flags/uk-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
+            <img id="langFlagImg" src="/assets/flags/uk-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
         </button>
         
         <a href="https://thataustrianone.eu/socials/" target="_blank" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
@@ -359,11 +359,11 @@
                 if (flagImg && toggleBtn) {
                     if (currentLang === 'en') {
                         // English active -> Show Austria flag to toggle to German
-                        flagImg.src = "../assets/flags/austria-flag.webp";
+                        flagImg.src = "/assets/flags/austria-flag.webp";
                         toggleBtn.title = "Wechseln zu Deutsch";
                     } else {
                         // German active -> Show UK flag to toggle to English
-                        flagImg.src = "../assets/flags/uk-flag.webp";
+                        flagImg.src = "/assets/flags/uk-flag.webp";
                         toggleBtn.title = "Switch to English";
                     }
                 }
