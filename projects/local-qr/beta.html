@@ -4,12 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAO | Local QR</title>
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+    
+    <link rel="icon" type="image/png" href="./assets/favicon.png">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        /* --- Font Integration (Match Socials) --- */
         @font-face {
             font-family: 'Inter';
             src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
@@ -40,13 +41,8 @@
             padding: 1.5rem 1.5rem 0 1.5rem;
         }
 
-        /* --- Socials Design Elements --- */
         .animate-in { animation: fadeIn 0.4s ease-out forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
-        
-        .custom-scroll::-webkit-scrollbar { width: 5px; }
-        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         
         .theme-text { color: var(--theme-color); }
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
@@ -61,7 +57,6 @@
             isolation: isolate;
         }
 
-        /* Format Toggle (JPG/PNG) */
         .format-control { padding: 4px; display: flex; }
         .format-control button { color: rgba(255,255,255,0.5); border-radius: 1rem; transition: all 0.3s; flex: 1; border: 1px solid transparent; }
         .format-control button.active {
@@ -71,9 +66,8 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* --- PERFECT QR ALIGNMENT FIX (No Black Borders) --- */
         #qr-gradient-wrapper {
-            padding: 8px; /* Thickness of dynamic gradient border */
+            padding: 8px; 
             border-radius: 1.5rem;
             display: flex; 
             align-items: center;
@@ -81,13 +75,13 @@
             transition: background 0.5s ease;
             box-shadow: 0 15px 40px rgba(0,0,0,0.6);
             margin: 1.5rem 0;
-            background: #444; /* Fallback */
+            background: #444; 
             width: fit-content;
         }
         
         #qr-white-zone {
             background: #ffffff;
-            padding: 16px; /* The quiet zone */
+            padding: 16px; 
             border-radius: 1rem;
             display: flex; 
             align-items: center;
@@ -104,10 +98,9 @@
             aspect-ratio: 1/1;
             object-fit: contain;
             margin: 0; padding: 0;
-            image-rendering: pixelated; /* Keeps edges sharp */
+            image-rendering: pixelated; 
         }
 
-        /* Inputs */
         #qrText {
             background: rgba(255,255,255,0.03);
             border: 1px solid rgba(255,255,255,0.05);
@@ -119,33 +112,11 @@
             box-shadow: 0 0 0 4px rgba(var(--theme-rgb), 0.2);
         }
 
-        /* Template Buttons */
         .template-buttons button.active {
             background: rgba(255, 255, 255, 0.1) !important;
             border-color: rgba(255, 255, 255, 0.3) !important;
             color: #fff;
         }
-
-        /* Settings Header Tabs */
-        .settings-header-tabs {
-            display: flex; gap: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; margin-bottom: 1.5rem; 
-            overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
-        }
-        .settings-header-tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { 
-            padding: 0.8rem 1.2rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 700; color: #888; transition: 0.2s; border: 1px solid transparent; white-space: nowrap;
-        }
-        .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
-        .tab-btn.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
-        
-        /* Language Flags List */
-        .language-options li { 
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 1rem; 
-            cursor: pointer; transition: all 0.2s; color: #ccc; margin-bottom: 6px; border: 1px solid transparent; 
-        }
-        .language-options li:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .language-options li.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); font-weight: 700; }
-        .flag-icon { width: 24px; height: 18px; border-radius: 3px; }
 
         @media (max-width: 768px) {
             body { padding: 1rem 1rem 0 1rem; align-items: flex-start; overflow-y: auto; }
@@ -159,7 +130,6 @@
         <defs>
             <g id="flag-de"><rect width="20" height="15" fill="#000"/><rect y="5" width="20" height="10" fill="#D00"/><rect y="10" width="20" height="5" fill="#FFCE00"/></g>
             <g id="flag-gb"><rect width="20" height="15" fill="#012169"/><path d="M0,0L20,15M20,0L0,15" stroke="#fff" stroke-width="3"/><path d="M0,0L20,15M20,0L0,15" stroke="#C8102E" stroke-width="2"/><path d="M10,0V15M0,7.5H20" stroke="#fff" stroke-width="5"/><path d="M10,0V15M0,7.5H20" stroke="#C8102E" stroke-width="3"/></g>
-            <g id="icon-check" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></g>
         </defs>
     </svg>
 
@@ -191,13 +161,11 @@
                 <li><strong class="text-white">2.</strong> Select a social preset for quick profile templates.</li>
                 <li><strong class="text-white">3.</strong> Customize the look using the gradient and color buttons.</li>
                 <li><strong class="text-white">4.</strong> Choose PNG or JPG and click save, or print directly.</li>
-                <li><strong class="text-white">5.</strong> Download the HTML (via Settings) to use this generator offline!</li>
             </ul>
         </div>
     </div>
 
     <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 w-full pb-8 justify-center items-center h-full min-h-0 animate-in">
-        
         <div class="bg-white/[0.03] border border-white/[0.05] shadow-2xl rounded-[2.5rem] p-8 w-full flex flex-col items-center">
             
             <div class="relative w-full mb-6">
@@ -240,85 +208,6 @@
         </div>
     </div>
 
-    <div id="settings-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md" onclick="closeSettings(event)">
-        <div class="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11]" onclick="event.stopPropagation()">
-            
-            <div class="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
-                <div class="settings-header-tabs w-full m-0 border-none pb-0">
-                    <button class="tab-btn active" onclick="switchTab('tab-lang')" id="m-lang">Language</button>
-                    <button class="tab-btn" onclick="switchTab('tab-legal')" id="m-legal">Info & Impressum</button>
-                </div>
-                <button onclick="closeSettings(true)" class="p-2 text-zinc-500 hover:text-white transition-all ml-4">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
-                </button>
-            </div>
-            
-            <div class="p-8 md:p-10 overflow-y-auto custom-scroll text-left flex-grow">
-                <div id="tab-lang">
-                    <h3 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6" id="language-title">Select Language</h3>
-                    <ul class="language-options" id="language-options"></ul>
-                </div>
-
-                <div id="tab-legal" class="hidden">
-                    <div class="text-zinc-400 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-medium space-y-6">
-                        <h3 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6" id="leg-title">Legal Notice</h3>
-                        
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-prov">Service Provider</h4>
-                            <p>Niklas Außerwöger<br>Oberösterreich<br>E-Mail: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56383f3d3a37257837232525332421393331332416313b373f3a7835393b">[email&#160;protected]</a></p>
-                            <p class="text-white/50 italic mt-1 text-[10px]" id="leg-addr">Address available upon justified request. Legal action will be taken against spam.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-usage-title">Rights of Use</h4>
-                            <p id="leg-usage">Everyone is allowed to use the QR codes generated and saved with this tool freely, without restriction, and for any purpose (including commercial use).</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-api-title">APIs & Libraries Used</h4>
-                            <p id="leg-api">This application is fully local and uses the following resources:</p>
-                            <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
-                                <li><strong>QRious JS:</strong> Zur lokalen und schnellen Generierung der QR-Codes direkt im Browser.</li>
-                                <li><strong>Tailwind CSS:</strong> Für das UI-Design und das responsive Styling.</li>
-                                <li><strong>Inter Font:</strong> Schriftart, bereitgestellt über das GitHub-Repository.</li>
-                            </ul>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-brand-title">Trademark & External Links</h4>
-                            <p id="leg-brand">The company names mentioned on this website (like Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) are protected trademarks of their respective owners. This website and its operator are not associated or affiliated with these companies. No liability is assumed for the function, security, or content of external links.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-liab-title">Liability for Content</h4>
-                            <p id="leg-liab">The contents of our pages were created with great care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-data-title">Privacy Policy</h4>
-                            <p id="leg-data">This application processes data exclusively locally in the user's browser. No personal data is transmitted to or stored on our own servers.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-copy-title">Copyright</h4>
-                            <p id="leg-copy">The content and works created by the site operators on these pages are subject to Austrian copyright law. Reproduction, editing, distribution require consent.</p>
-                        </div>
-                        
-                        <div class="pt-4 border-t border-white/5 text-white/30 text-[10px]">
-                            <p>Local QR pro v8.1 - Theme Engine</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="p-8 border-t border-white/5 flex-shrink-0 bg-[#0b0d11]">
-                <button id="downloadHtmlButton" class="w-full bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] py-4 rounded-[1.2rem] font-bold text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 text-white shadow-lg">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> <span id="download-html-text">Download HTML (STRG+S Mode)</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
     <div id="save-preview-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md" onclick="closePreview(event)">
         <div class="rounded-[2.5rem] w-full max-w-sm overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11] p-8 md:p-10 text-center relative" onclick="event.stopPropagation()">
             <button onclick="closePreview(true)" class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all">
@@ -336,7 +225,8 @@
         </p>
     </footer>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script>
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
             // --- Elements ---
             const qrText = document.getElementById('qrText');
@@ -346,9 +236,7 @@
             const savePreviewOverlay = document.getElementById('save-preview-overlay');
             const savePreviewCanvas = document.getElementById('preview-canvas');
             const formatControl = document.querySelector('.format-control');
-            const settingsMenu = document.getElementById('settings-overlay');
             const tutorialModal = document.getElementById('tutorialModal');
-            const langOptionsContainer = document.getElementById('language-options');
             
             // --- State ---
             let currentSaveFormat = 'png';
@@ -368,8 +256,7 @@
                 return `${r}, ${g}, ${b}`;
             };
 
-            // --- Language & Data Setup ---
-            const flagMap = { de: 'de', en: 'gb' };
+            // --- Templates & Translations ---
             const socialTemplates = [
                 { name: "Facebook", prefix: "https://www.facebook.com/" },
                 { name: "Instagram", prefix: "https://www.instagram.com/" },
@@ -379,35 +266,19 @@
                 { name: "LinkedIn", prefix: "https://www.linkedin.com/in/" },
                 { name: "WhatsApp", prefix: "https://wa.me/" },
                 { name: "GitHub", prefix: "https://github.com/" },
-                { name: "Discord", prefix: "https://discord.com/" },
+                { name: "Discord", prefix: "https://discord.com/" }
             ];
 
             const translations = {
                 en: { 
-                    langName: "English", langTitle: "Select Language", qrPlaceholder: "Text or URL", 
+                    qrPlaceholder: "Text or URL", 
                     saveButton: "Save", printButtonTitle: "Print", resetButtonTitle: "Clear input", refreshGradientButtonText: "New Gradient", 
-                    downloadHtmlText: "Download HTML", 
-                    initialQrValue: "Hello World!", fileName: "local_qr_pro", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Preview", previewDownload: "Download", m_lang: "Language", m_legal: "Legal Info",
-                    leg_title: "Legal Notice", leg_prov: "Service Provider", leg_addr: "Address available upon justified request. Legal action will be taken against spam.",
-                    leg_usage_title: "Rights of Use", leg_usage: "Everyone is allowed to use the QR codes generated and saved with this tool freely, without restriction, and for any purpose (including commercial use).",
-                    leg_api_title: "APIs & Libraries Used", leg_api: "This application is fully local and uses the following resources:",
-                    leg_brand_title: "Trademark & External Links", leg_brand: "The company names mentioned on this website (like Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) are protected trademarks of their respective owners. This website and its operator are not associated or affiliated with these companies. No liability is assumed for the function, security, or content of external links.",
-                    leg_liab_title: "Liability for Content", leg_liab: "The contents of our pages were created with great care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.",
-                    leg_data_title: "Privacy Policy", leg_data: "This application processes data exclusively locally in the user's browser. No personal data is transmitted to or stored on our own servers.",
-                    leg_copy_title: "Copyright", leg_copy: "The content and works created by the site operators on these pages are subject to Austrian copyright law. Reproduction, editing, distribution require consent."
+                    initialQrValue: "Hello World!", fileName: "local_qr_pro", previewTitle: "Preview", previewDownload: "Download"
                 },
                 de: { 
-                    langName: "Deutsch", langTitle: "Sprache wählen", qrPlaceholder: "Text oder URL", 
+                    qrPlaceholder: "Text oder URL", 
                     saveButton: "Speichern", printButtonTitle: "Drucken", resetButtonTitle: "Eingabe löschen", refreshGradientButtonText: "Neuer Verlauf", 
-                    downloadHtmlText: "Download HTML",
-                    initialQrValue: "Hallo Welt!", fileName: "local_qr_pro", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Vorschau", previewDownload: "Herunterladen", m_lang: "Sprache", m_legal: "Info & Impressum",
-                    leg_title: "Impressum & Rechtliches", leg_prov: "Diensteanbieter", leg_addr: "Ladungsfähige Anschrift auf begründete Anfrage verfügbar. Rechtliche Schritte gegen Spam und Missbrauch der Kontaktdaten werden vorbehalten.",
-                    leg_usage_title: "Nutzungsrechte der QR-Codes", leg_usage: "Jeder darf die mit diesem Generator erstellten und gespeicherten QR-Codes frei, uneingeschränkt und für beliebige Zwecke (inklusive kommerzieller Nutzung) verwenden.",
-                    leg_api_title: "Verwendete APIs & Ressourcen", leg_api: "Diese Anwendung ist vollständig lokal und nutzt folgende Bibliotheken:",
-                    leg_brand_title: "Markenrecht & Externe Links", leg_brand: "Die auf dieser Webseite als Vorlagen erwähnten Firmennamen (wie Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) sind geschützte Marken der jeweiligen Eigentümer. Diese Webseite und deren Betreiber stehen in keinerlei Verbindung zu diesen Unternehmen und sind nicht mit ihnen affiliiert. Für die Funktion, Sicherheit oder Inhalte externer Links und generierter Vorlagen wird ausdrücklich keine Haftung übernommen.",
-                    leg_liab_title: "Haftung für Inhalte", leg_liab: "Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.",
-                    leg_data_title: "Datenschutz", leg_data: "Diese Anwendung verarbeitet Daten ausschließlich lokal im Browser. Es werden keine personenbezogenen Daten an eigene Server übertragen oder extern gespeichert.",
-                    leg_copy_title: "Urheberrecht", leg_copy: "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung bedürfen der Zustimmung."
+                    initialQrValue: "Hallo Welt!", fileName: "local_qr_pro", previewTitle: "Vorschau", previewDownload: "Herunterladen"
                 }
             };
 
@@ -478,32 +349,29 @@
                 if (el && text) el.textContent = text;
             };
 
+            window.toggleLanguage = () => {
+                const nextLang = currentLang === 'en' ? 'de' : 'en';
+                setLanguage(nextLang);
+            };
+
             const setLanguage = (lang) => {
                 const t = translations[lang] || translations['en'];
                 currentLang = translations[lang] ? lang : 'en';
 
-                safeSetText('language-title', t.langTitle);
-                safeSetText('download-html-text', t.downloadHtmlText);
+                const flagUse = document.getElementById('langFlagUse');
+                const toggleBtn = document.getElementById('langToggleBtn');
+                if (flagUse && toggleBtn) {
+                    if (currentLang === 'en') {
+                        flagUse.setAttribute('href', '#flag-de'); 
+                        toggleBtn.title = "Wechseln zu Deutsch";
+                    } else {
+                        flagUse.setAttribute('href', '#flag-gb');
+                        toggleBtn.title = "Switch to English";
+                    }
+                }
+
                 safeSetText('preview-title', t.previewTitle);
                 safeSetText('preview-download-button', t.previewDownload);
-                safeSetText('m-lang', t.m_lang);
-                safeSetText('m-legal', t.m_legal);
-
-                safeSetText('leg-title', t.leg_title);
-                safeSetText('leg-prov', t.leg_prov);
-                safeSetText('leg-addr', t.leg_addr);
-                safeSetText('leg-usage-title', t.leg_usage_title);
-                safeSetText('leg-usage', t.leg_usage);
-                safeSetText('leg-api-title', t.leg_api_title);
-                safeSetText('leg-api', t.leg_api);
-                safeSetText('leg-brand-title', t.leg_brand_title);
-                safeSetText('leg-brand', t.leg_brand);
-                safeSetText('leg-liab-title', t.leg_liab_title);
-                safeSetText('leg-liab', t.leg_liab);
-                safeSetText('leg-data-title', t.leg_data_title);
-                safeSetText('leg-data', t.leg_data);
-                safeSetText('leg-copy-title', t.leg_copy_title);
-                safeSetText('leg-copy', t.leg_copy);
                 
                 if(qrText) qrText.placeholder = t.qrPlaceholder;
                 const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
@@ -513,12 +381,6 @@
                 safeSetTitle('saveQrCodeButton', t.saveButton);
                 safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
 
-                if (langOptionsContainer) {
-                    langOptionsContainer.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-                    const activeLi = langOptionsContainer.querySelector(`li[data-lang="${currentLang}"]`);
-                    if(activeLi) activeLi.classList.add('active');
-                }
-                
                 if (qrText && !qrText.value) updateQr();
                 localStorage.setItem('qrGeneratorLanguage', currentLang);
             };
@@ -530,79 +392,17 @@
                         `<button data-prefix="${template.prefix}" class="bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
                     ).join('');
                 }
-
-                if (langOptionsContainer) {
-                    langOptionsContainer.innerHTML = Object.entries(translations).map(([key, value]) =>
-                         `<li data-lang="${key}">
-                            <div class="flex items-center gap-4">
-                                <svg class="flag-icon"><use href="#flag-${flagMap[key] || key}"></use></svg>
-                                <span class="font-medium tracking-wide">${value.langName}</span>
-                            </div>
-                            <svg class="check-icon w-5 h-5 hidden"><use href="#icon-check"></use></svg>
-                         </li>`
-                    ).join('');
-                }
-                
-                const style = document.createElement('style');
-                style.innerHTML = `.language-options li.active .check-icon { display: block !important; color: var(--theme-color); transition: color 0.5s ease; }`;
-                document.head.appendChild(style);
             };
 
-            // Simple Language Toggle Function
-            window.toggleLanguage = () => {
-                const nextLang = currentLang === 'en' ? 'de' : 'en';
-                setLanguage(nextLang);
+            // UI Functionality
+            window.openTutorial = () => { if(tutorialModal) { tutorialModal.classList.remove('hidden'); tutorialModal.classList.add('flex'); } };
+            window.closeTutorialModal = (force) => {
+                if (tutorialModal && (force === true || event.target.id === 'tutorialModal')) { tutorialModal.classList.add('hidden'); tutorialModal.classList.remove('flex'); }
+            };
+            window.closePreview = (force) => {
+                if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.classList.add('hidden');
             };
 
-            const setLanguage = (lang) => {
-                const t = translations[lang] || translations['en'];
-                currentLang = translations[lang] ? lang : 'en';
-                
-                // Update Flag UI asset reference based on selection
-                const flagUse = document.getElementById('langFlagUse');
-                const toggleBtn = document.getElementById('langToggleBtn');
-                if (flagUse && toggleBtn) {
-                    if (currentLang === 'en') {
-                        flagUse.setAttribute('href', '#flag-de'); // Button shows the *alternative* path option
-                        toggleBtn.title = "Wechseln zu Deutsch";
-                    } else {
-                        flagUse.setAttribute('href', '#flag-gb');
-                        toggleBtn.title = "Switch to English";
-                    }
-                }
-
-                if(qrText) qrText.placeholder = t.qrPlaceholder;
-                const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
-                
-                safeSetTitle('resetTextButton', t.resetButtonTitle);
-                safeSetTitle('printQrCodeButton', t.printButtonTitle);
-                safeSetTitle('saveQrCodeButton', t.saveButton);
-                safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
-                
-                // Set text targets for modal preview titles dynamically
-                safeSetText('preview-title', t.previewTitle);
-                safeSetText('preview-download-button', t.previewDownload);
-                safeSetText('download-html-text', t.downloadHtmlText);
-                safeSetText('leg-title', t.leg_title);
-                safeSetText('leg-prov', t.leg_prov);
-                safeSetText('leg-addr', t.leg_addr);
-                safeSetText('leg-usage-title', t.leg_usage_title);
-                safeSetText('leg-usage', t.leg_usage);
-                safeSetText('leg-api-title', t.leg_api_title);
-                safeSetText('leg-api', t.leg_api);
-                safeSetText('leg-brand-title', t.leg_brand_title);
-                safeSetText('leg-brand', t.leg_brand);
-                safeSetText('leg-liab-title', t.leg_liab_title);
-                safeSetText('leg-liab', t.leg_liab);
-                safeSetText('leg-data-title', t.leg_data_title);
-                safeSetText('leg-data', t.leg_data);
-                safeSetText('leg-copy-title', t.leg_copy_title);
-                safeSetText('leg-copy', t.leg_copy);
-                
-                if (qrText && !qrText.value) updateQr();
-                localStorage.setItem('qrGeneratorLanguage', currentLang);
-            };
-            
             // Event Listeners
             const setupEventListeners = () => {
                 if(qrText) qrText.addEventListener('input', updateQr);
@@ -649,13 +449,6 @@
                     });
                 }
 
-                if(langOptionsContainer) {
-                    langOptionsContainer.addEventListener('click', (e) => {
-                        const li = e.target.closest('li');
-                        if(li) setLanguage(li.dataset.lang);
-                    });
-                }
-
                 // Export logic
                 const saveBtn = document.getElementById('saveQrCodeButton');
                 if(saveBtn) {
@@ -689,26 +482,6 @@
                         const win = window.open('', '_blank');
                         win.document.write(`<img src="${dataUrl}" style="max-width:100%; border-radius:16px;" onload="window.print(); setTimeout(()=>window.close(), 100)">`);
                         win.document.close();
-                    });
-                }
-
-                const dlHtmlBtn = document.getElementById('downloadHtmlButton');
-                if(dlHtmlBtn) {
-                    dlHtmlBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        
-                        if(qrText) qrText.setAttribute('value', qrText.value);
-                        if(bgColorPicker) bgColorPicker.setAttribute('value', bgColorPicker.value);
-                        
-                        const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-                        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-                        
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(blob);
-                        a.download = translations[currentLang].downloadFileName;
-                        a.click();
-                        
-                        URL.revokeObjectURL(a.href);
                     });
                 }
             };
