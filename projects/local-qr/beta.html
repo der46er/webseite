@@ -126,13 +126,6 @@
 </head>
 <body class="selection:bg-emerald-500/30">
 
-    <svg width="0" height="0" style="position:absolute">
-        <defs>
-            <g id="flag-de"><rect width="20" height="15" fill="#000"/><rect y="5" width="20" height="10" fill="#D00"/><rect y="10" width="20" height="5" fill="#FFCE00"/></g>
-            <g id="flag-gb"><rect width="20" height="15" fill="#012169"/><path d="M0,0L20,15M20,0L0,15" stroke="#fff" stroke-width="3"/><path d="M0,0L20,15M20,0L0,15" stroke="#C8102E" stroke-width="2"/><path d="M10,0V15M0,7.5H20" stroke="#fff" stroke-width="5"/><path d="M10,0V15M0,7.5H20" stroke="#C8102E" stroke-width="3"/></g>
-        </defs>
-    </svg>
-
     <div class="fixed inset-0 pointer-events-none z-0">
         <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
         <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
@@ -148,7 +141,7 @@
         </button>
         
         <a href="https://thataustrianone.eu/socials/" target="_blank" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 00-5.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
         </a>
     </div>
 
@@ -388,6 +381,15 @@
 
                 if (qrText && !qrText.value) updateQr();
                 localStorage.setItem('qrGeneratorLanguage', currentLang);
+            };
+
+            const populateStaticUI = () => {
+                const templateButtonsContainer = document.querySelector('.template-buttons');
+                if (templateButtonsContainer) {
+                    templateButtonsContainer.innerHTML = socialTemplates.map(template =>
+                        `<button data-prefix="${template.prefix}" class="bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
+                    ).join('');
+                }
             };
 
             // UI Functionality
