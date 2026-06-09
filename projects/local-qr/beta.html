@@ -356,15 +356,38 @@
                 setLanguage(nextLang);
             };
 
-            const setLanguage
+            const setLanguage = (lang) => {
+                const t = translations[lang] || translations['en'];
+                currentLang = translations[lang] ? lang : 'en';
 
-            const populateStaticUI = () => {
-                const templateButtonsContainer = document.querySelector('.template-buttons');
-                if (templateButtonsContainer) {
-                    templateButtonsContainer.innerHTML = socialTemplates.map(template =>
-                        `<button data-prefix="${template.prefix}" class="bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
-                    ).join('');
+                const flagImg = document.getElementById('langFlagImg');
+                const toggleBtn = document.getElementById('langToggleBtn');
+                
+                if (flagImg && toggleBtn) {
+                    if (currentLang === 'en') {
+                        // English active -> Show Austria flag to toggle to German
+                        flagImg.src = "../assets/flags/austria-flag.webp";
+                        toggleBtn.title = "Wechseln zu Deutsch";
+                    } else {
+                        // German active -> Show UK flag to toggle to English
+                        flagImg.src = "../assets/flags/uk-flag.webp";
+                        toggleBtn.title = "Switch to English";
+                    }
                 }
+
+                safeSetText('preview-title', t.previewTitle);
+                safeSetText('preview-download-button', t.previewDownload);
+                
+                if(qrText) qrText.placeholder = t.qrPlaceholder;
+                const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
+                
+                safeSetTitle('resetTextButton', t.resetButtonTitle);
+                safeSetTitle('printQrCodeButton', t.printButtonTitle);
+                safeSetTitle('saveQrCodeButton', t.saveButton);
+                safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
+
+                if (qrText && !qrText.value) updateQr();
+                localStorage.setItem('qrGeneratorLanguage', currentLang);
             };
 
             // UI Functionality
