@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Local QR pro</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        /* --- Font Integration (Match Socials) --- */
+        @font-face {
+            font-family: 'Inter';
+            src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+            font-weight: 100 900;
+            font-display: swap;
+            font-style: normal;
+        }
+
+        :root {
+            --theme-color: #007bff;
+            --theme-rgb: 0, 123, 255;
+            --app-font: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--app-font);
+            background-color: #0b0d11;
+            color: white;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 1.5rem;
+        }
+
+        /* --- Socials Design Elements --- */
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        
+        .theme-text { color: var(--theme-color); }
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
+
+        /* Navigation Buttons (Top Right) */
+        .top-nav { position: fixed; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.8rem; z-index: 100; }
+        
+        /* Format Toggle (JPG/PNG) */
+        .format-control { padding: 4px; display: flex; }
+        .format-control button { color: rgba(255,255,255,0.5); border-radius: 1rem; transition: all 0.3s; flex: 1; border: 1px solid transparent; }
+        .format-control button.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* --- PERFECT QR ALIGNMENT FIX (No Black Borders) --- */
+        #qr-gradient-wrapper {
+            padding: 8px; /* Thickness of dynamic gradient border */
+            border-radius: 1.5rem;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            transition: background 0.5s ease;
+            box-shadow: 0 15px 40px rgba(0,0,0,0.6);
+            margin: 1.5rem 0;
+            background: #444; /* Fallback */
+            width: fit-content;
+        }
+        
+        #qr-white-zone {
+            background: #ffffff;
+            padding: 16px; /* The quiet zone */
+            border-radius: 1rem;
+            display: flex; 
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+
+        canvas { 
+            display: block; 
+            width: 100%; 
+            height: auto;
+            max-width: 220px;
+            aspect-ratio: 1/1;
+            object-fit: contain;
+            margin: 0; padding: 0;
+            image-rendering: pixelated; /* Keeps edges sharp */
+        }
+
+        /* Inputs */
+        #qrText {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        #qrText:focus {
+            border-color: var(--theme-color);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(var(--theme-rgb), 0.2);
+        }
+
+        /* Template Buttons */
+        .template-buttons button.active {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            color: #fff;
+        }
+
+        /* Settings Header Tabs */
+        .settings-header-tabs {
+            display: flex; gap: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.05); padding-bottom: 1rem; margin-bottom: 1.5rem; 
+            overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
+        }
+        .settings-header-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn { 
+            padding: 0.8rem 1.2rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 700; color: #888; transition: 0.2s; border: 1px solid transparent; white-space: nowrap;
+        }
+        .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
+        .tab-btn.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
+        
+        /* Language Flags List */
+        .language-options li { 
+            display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 1rem; 
+            cursor: pointer; transition: all 0.2s; color: #ccc; margin-bottom: 6px; border: 1px solid transparent; 
+        }
+        .language-options li:hover { background: rgba(255,255,255,0.05); color: #fff; }
+        .language-options li.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); font-weight: 700; }
+        .flag-icon { width: 24px; height: 18px; border-radius: 3px; }
+
+        @media (max-width: 768px) {
+            body { padding: 1rem; align-items: flex-start; overflow-y: auto; }
+            canvas { max-width: 200px !important; }
+        }
+    </style>
+</head>
+<body class="selection:bg-emerald-500/30">
+
+    <svg width="0" height="0" style="position:absolute">
+        <defs>
+            <g id="flag-de"><rect width="20" height="15" fill="#000"/><rect y="5" width="20" height="10" fill="#D00"/><rect y="10" width="20" height="5" fill="#FFCE00"/></g>
+            <g id="flag-gb"><rect width="20" height="15" fill="#012169"/><path d="M0,0L20,15M20,0L0,15" stroke="#fff" stroke-width="3"/><path d="M0,0L20,15M20,0L0,15" stroke="#C8102E" stroke-width="2"/><path d="M10,0V15M0,7.5H20" stroke="#fff" stroke-width="5"/><path d="M10,0V15M0,7.5H20" stroke="#C8102E" stroke-width="3"/></g>
+            <g id="flag-es"><rect width="20" height="15" fill="#C60B1E"/><rect y="3.75" width="20" height="7.5" fill="#FFC400"/></g>
+            <g id="flag-fr"><rect width="20" height="15" fill="#ED2939"/><rect width="13.33" height="15" fill="#fff"/><rect width="6.67" height="15" fill="#002395"/></g>
+            <g id="flag-it"><rect width="20" height="15" fill="#009246"/><rect width="13.33" height="15" fill="#fff"/><rect width="6.67" height="15" fill="#CE2B37"/></g>
+            <g id="flag-cs"><rect width="20" height="15" fill="#fff"/><rect y="7.5" width="20" height="7.5" fill="#D7141A"/><path d="M0,0L10,7.5L0,15z" fill="#11457E"/></g>
+            <g id="flag-sk"><rect width="20" height="15" fill="#fff"/><rect y="5" width="20" height="5" fill="#0b4ea2"/><rect y="10" width="20" height="5" fill="#ee1c25"/></g>
+            <g id="flag-hu"><rect width="20" height="15" fill="#436F4D"/><rect width="20" height="10" fill="#fff"/><rect width="20" height="5" fill="#CD2A3E"/></g>
+            <g id="flag-pt"><rect width="20" height="15" fill="#006600"/><rect width="8" height="15" fill="#FF0000"/></g>
+            <g id="flag-ru"><rect width="20" height="5" y="0" fill="#fff"/><rect width="20" height="5" y="5" fill="#0039A6"/><rect width="20" height="5" y="10" fill="#D52B1E"/></g>
+            <g id="flag-cn"><rect width="20" height="15" fill="#EE1C25"/><use href="#star-cn" transform="translate(3.75 3.75) scale(1.5)" fill="#FF0"/><use href="#star-cn" transform="translate(7.5 1.5) rotate(23)" fill="#FF0"/><use href="#star-cn" transform="translate(9 3.75) rotate(45)" fill="#FF0"/><use href="#star-cn" transform="translate(7.5 6) rotate(68)" fill="#FF0"/><use href="#star-cn" transform="translate(5.25 7.5)" fill="#FF0"/></g>
+            <polygon id="star-cn" points="0,-1 0.22,-0.31 0.95,-0.31 0.36,0.12 0.59,0.81 0,0.38 -0.59,0.81 -0.36,0.12 -0.95,-0.31 -0.22,-0.31"/>
+            <g id="flag-jp"><rect width="20" height="15" fill="#fff"/><circle cx="10" cy="7.5" r="4.5" fill="#BC002D"/></g>
+            <g id="flag-hi"><rect width="20" height="5" fill="#FF9933"/><rect y="5" width="20" height="5" fill="#FFFFFF"/><rect y="10" width="20" height="5" fill="#138808"/><circle cx="10" cy="7.5" r="1.5" fill="none" stroke="#000080" stroke-width="0.5"/></g>
+            <g id="icon-check" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></g>
+        </defs>
+    </svg>
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+    </div>
+
+    <div class="top-nav">
+        <button class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" onclick="openSettings()" title="Settings">
+            <svg viewBox="0 0 24 24" class="w-6 h-6 text-white" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        </button>
+    </div>
+
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 mt-20 md:mt-2 animate-in w-full pb-8 items-center">
+        
+        <div class="bg-white/[0.03] border border-white/[0.05] shadow-2xl rounded-[2.5rem] p-8 w-full flex flex-col items-center">
+            
+            <h1 id="main-title" class="text-3xl font-black italic uppercase tracking-tighter text-white mb-6 w-full text-center drop-shadow-lg">LOCAL QR <span class="theme-text transition-colors duration-500">PRO</span></h1>
+            
+            <div class="relative w-full mb-6">
+                 <input type="text" id="qrText" placeholder="Text oder URL eingeben" class="w-full rounded-[1.2rem] px-6 py-4 pr-12 text-center font-bold tracking-wider text-sm transition-colors shadow-lg">
+                 <button id="resetTextButton" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-red-400 transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                 </button>
+            </div>
+
+            <div class="template-buttons flex flex-wrap justify-center gap-2 mb-6 w-full"></div>
+
+            <div id="qr-gradient-wrapper">
+                <div id="qr-white-zone">
+                    <canvas id="qrCodeCanvas"></canvas>
+                </div>
+            </div>
+
+            <div class="w-full flex flex-col items-center gap-5 mt-4">
+                <div class="format-control flex w-[180px] p-1 bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] shadow-lg">
+                    <button data-format="jpeg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">JPG</button>
+                    <button data-format="png" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase active">PNG</button>
+                </div>
+                
+                <div class="flex gap-3 justify-center w-full">
+                    <button id="printQrCodeButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Drucken">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M19,8H5C3.34,8,2,9.34,2,11v6h4v4h12v-4h4v-6C22,9.34,20.66,8,19,8z M16,19H8v-5h8V19z M19,12c-0.55,0-1-0.45-1-1 s0.45-1,1-1s1,0.45,1,1S19.55,12,19,12z M18,3H6v4h12V3z"/></svg>
+                    </button>
+                    <button id="saveQrCodeButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Speichern">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></svg>
+                    </button>
+                    <button id="refreshGradientButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Neuer Verlauf">
+                         <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    </button>
+                    <label class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg relative cursor-pointer" title="Farbe ändern">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3c-4.97 0-9 4.03-9 9s4.03 9 9 9c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c2.76 0 5-2.24 5-5 0-4.42-3.58-8-8-8zm-5.5 9c-.83 0-1.5-.67-1.5-1.5S5.67 9 6.5 9 8 9.67 8 10.5 7.33 12 6.5 12zm3-4C8.67 8 8 7.33 8 6.5S8.67 5 9.5 5s1.5.67 1.5 1.5S10.33 8 9.5 8zm5 0c-.83 0-1.5-.67-1.5-1.5S13.67 5 14.5 5s1.5.67 1.5 1.5S15.33 8 14.5 8zm3 4c-.83 0-1.5-.67-1.5-1.5S16.67 9 17.5 9s1.5.67 1.5 1.5-.67 1.5-1.5 1.5z"/></svg>
+                        <input type="color" id="bgColorPicker" value="#000000" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
+                    </label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="settings-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md" onclick="closeSettings(event)">
+        <div class="rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11]" onclick="event.stopPropagation()">
+            
+            <div class="p-8 md:p-10 border-b border-white/5 flex justify-between items-center text-left">
+                <div class="settings-header-tabs w-full m-0 border-none pb-0">
+                    <button class="tab-btn active" onclick="switchTab('tab-lang')" id="m-lang">Sprache</button>
+                    <button class="tab-btn" onclick="switchTab('tab-instructions')" id="m-instructions">Anleitung</button>
+                    <button class="tab-btn" onclick="switchTab('tab-legal')" id="m-legal">Info & Impressum</button>
+                </div>
+                <button onclick="closeSettings(true)" class="p-2 text-zinc-500 hover:text-white transition-all ml-4">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div class="p-8 md:p-10 overflow-y-auto custom-scroll text-left flex-grow">
+                <div id="tab-lang">
+                    <h3 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6" id="language-title">Sprache wählen</h3>
+                    <ul class="language-options" id="language-options"></ul>
+                </div>
+
+                <div id="tab-instructions" class="hidden">
+                    <h3 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6" id="instructions-title">Offline Nutzung</h3>
+                    <ol id="instructions-list" class="space-y-3 text-zinc-400 text-sm leading-relaxed list-decimal pl-5 font-medium"></ol>
+                </div>
+
+                <div id="tab-legal" class="hidden">
+                    <div class="text-zinc-400 text-xs sm:text-sm whitespace-pre-wrap leading-relaxed font-medium space-y-6">
+                        <h3 class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6" id="leg-title">Impressum & Rechtliches</h3>
+                        
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-prov">Diensteanbieter</h4>
+                            <p>Niklas Außerwöger<br>Oberösterreich<br>E-Mail: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56383f3d3a37257837232525332421393331332416313b373f3a7835393b">[email&#160;protected]</a></p>
+                            <p class="text-white/50 italic mt-1 text-[10px]" id="leg-addr">Ladungsfähige Anschrift auf begründete Anfrage verfügbar. Rechtliche Schritte gegen Spam und Missbrauch der Kontaktdaten werden vorbehalten.</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-usage-title">Nutzungsrechte der QR-Codes</h4>
+                            <p id="leg-usage">Jeder darf die mit diesem Generator erstellten und gespeicherten QR-Codes frei, uneingeschränkt und für beliebige Zwecke (inklusive kommerzieller Nutzung) verwenden.</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-api-title">Verwendete APIs & Ressourcen</h4>
+                            <p id="leg-api">Diese Anwendung ist vollständig lokal und nutzt folgende Bibliotheken:</p>
+                            <ul class="list-disc pl-4 mt-1 space-y-1 text-xs">
+                                <li><strong>QRious JS:</strong> Zur lokalen und schnellen Generierung der QR-Codes direkt im Browser.</li>
+                                <li><strong>Tailwind CSS:</strong> Für das UI-Design und das responsive Styling.</li>
+                                <li><strong>Inter Font:</strong> Schriftart, bereitgestellt über das GitHub-Repository.</li>
+                            </ul>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-brand-title">Markenrecht & Externe Links</h4>
+                            <p id="leg-brand">Die auf dieser Webseite als Vorlagen erwähnten Firmennamen (wie Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) sind geschützte Marken der jeweiligen Eigentümer. Diese Webseite und deren Betreiber stehen in keinerlei Verbindung zu diesen Unternehmen und sind nicht mit ihnen affiliiert. Für die Funktion, Sicherheit oder Inhalte externer Links und generierter Vorlagen wird ausdrücklich keine Haftung übernommen.</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-liab-title">Haftung für Inhalte</h4>
+                            <p id="leg-liab">Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-data-title">Datenschutz</h4>
+                            <p id="leg-data">Diese Anwendung ("Local QR pro") verarbeitet Daten ausschließlich lokal im Browser des Endgeräts. Es werden keine personenbezogenen Daten an eigene Server übertragen oder extern gespeichert.</p>
+                        </div>
+
+                        <div class="space-y-1">
+                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/5 pb-1" id="leg-copy-title">Urheberrecht</h4>
+                            <p id="leg-copy">Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung bedürfen der Zustimmung.</p>
+                        </div>
+                        
+                        <div class="pt-4 border-t border-white/5 text-white/30 text-[10px]">
+                            <p>Local QR pro v8.1 - Theme Engine</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="p-8 border-t border-white/5 flex-shrink-0 bg-[#0b0d11]">
+                <button id="downloadHtmlButton" class="w-full bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] py-4 rounded-[1.2rem] font-bold text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] flex items-center justify-center gap-2 text-white shadow-lg">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> <span id="download-html-text">Download HTML (STRG+S Modus)</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-preview-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md" onclick="closePreview(event)">
+        <div class="rounded-[2.5rem] w-full max-w-sm overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11] p-8 md:p-10 text-center relative" onclick="event.stopPropagation()">
+            <button onclick="closePreview(true)" class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 id="preview-title" class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6">Vorschau</h3>
+            <canvas id="preview-canvas" class="mx-auto rounded-xl shadow-2xl mb-6 border border-white/10" style="max-width: 240px; image-rendering: pixelated;"></canvas>
+            <a href="#" id="preview-download-button" class="block w-full bg-white text-black hover:bg-gray-200 py-4 rounded-[1.2rem] font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] shadow-lg">Herunterladen</a>
+        </div>
+    </div>
+
+    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // --- Elements ---
+            const qrText = document.getElementById('qrText');
+            const qrCodeCanvas = document.getElementById('qrCodeCanvas');
+            const qrGradientWrapper = document.getElementById('qr-gradient-wrapper');
+            const bgColorPicker = document.getElementById('bgColorPicker');
+            const savePreviewOverlay = document.getElementById('save-preview-overlay');
+            const savePreviewCanvas = document.getElementById('preview-canvas');
+            const formatControl = document.querySelector('.format-control');
+            const settingsMenu = document.getElementById('settings-overlay');
+            const langOptionsContainer = document.getElementById('language-options');
+            
+            // --- State ---
+            let currentSaveFormat = 'png';
+            let currentLang = 'de';
+            let gradientParams = {};
+
+            // --- Theme Integration ---
+            const hexToRgbString = (hex) => {
+                let cleanHex = hex.replace('#', '');
+                if (cleanHex.length === 3) cleanHex = cleanHex.split('').map(x => x + x).join('');
+                const r = parseInt(cleanHex.substr(0, 2), 16);
+                const g = parseInt(cleanHex.substr(2, 2), 16);
+                const b = parseInt(cleanHex.substr(4, 2), 16);
+                return `${r}, ${g}, ${b}`;
+            };
+
+            // --- Language & Data Setup ---
+            const flagMap = { de: 'de', en: 'gb', es: 'es', fr: 'fr', it: 'it', cs: 'cs', sk: 'sk', hu: 'hu', pt: 'pt', ru: 'ru', cn: 'cn', jp: 'jp', hi: 'hi' };
+            const socialTemplates = [
+                { name: "Facebook", prefix: "https://www.facebook.com/" },
+                { name: "Instagram", prefix: "https://www.instagram.com/" },
+                { name: "TikTok", prefix: "https://www.tiktok.com/" },
+                { name: "YouTube", prefix: "https://www.youtube.com/" },
+                { name: "X", prefix: "https://twitter.com/" },
+                { name: "LinkedIn", prefix: "https://www.linkedin.com/in/" },
+                { name: "WhatsApp", prefix: "https://wa.me/" },
+                { name: "GitHub", prefix: "https://github.com/" },
+                { name: "Discord", prefix: "https://discord.com/" },
+            ];
+
+            const translations = {
+                de: { 
+                    langName: "Deutsch", langTitle: "Sprache wählen", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Text oder URL", 
+                    saveButton: "Speichern", printButtonTitle: "Drucken", resetButtonTitle: "Eingabe löschen", refreshGradientButtonText: "Neuer Verlauf", 
+                    downloadHtmlText: "Download HTML", instructionsTitle: "Offline Nutzung", 
+                    instructionsList: ["Klicke auf Download HTML.", "Speichere die Datei auf deinem Computer.", "Doppelklicke auf die Datei, um sie lokal und offline zu nutzen."], 
+                    initialQrValue: "Hallo Welt!", fileName: "local_qr_pro", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Vorschau", previewDownload: "Herunterladen", m_lang: "Sprache", m_instructions: "Anleitung", m_legal: "Info & Impressum",
+                    leg_title: "Impressum & Rechtliches", leg_prov: "Diensteanbieter", leg_addr: "Ladungsfähige Anschrift auf begründete Anfrage verfügbar. Rechtliche Schritte gegen Spam und Missbrauch der Kontaktdaten werden vorbehalten.",
+                    leg_usage_title: "Nutzungsrechte der QR-Codes", leg_usage: "Jeder darf die mit diesem Generator erstellten und gespeicherten QR-Codes frei, uneingeschränkt und für beliebige Zwecke (inklusive kommerzieller Nutzung) verwenden.",
+                    leg_api_title: "Verwendete APIs & Ressourcen", leg_api: "Diese Anwendung ist vollständig lokal und nutzt folgende Bibliotheken:",
+                    leg_brand_title: "Markenrecht & Externe Links", leg_brand: "Die auf dieser Webseite als Vorlagen erwähnten Firmennamen (wie Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) sind geschützte Marken der jeweiligen Eigentümer. Diese Webseite und deren Betreiber stehen in keinerlei Verbindung zu diesen Unternehmen und sind nicht mit ihnen affiliiert. Für die Funktion, Sicherheit oder Inhalte externer Links und generierter Vorlagen wird ausdrücklich keine Haftung übernommen.",
+                    leg_liab_title: "Haftung für Inhalte", leg_liab: "Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.",
+                    leg_data_title: "Datenschutz", leg_data: "Diese Anwendung verarbeitet Daten ausschließlich lokal im Browser. Es werden keine personenbezogenen Daten an eigene Server übertragen oder extern gespeichert.",
+                    leg_copy_title: "Urheberrecht", leg_copy: "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung bedürfen der Zustimmung."
+                },
+                en: { 
+                    langName: "English", langTitle: "Select Language", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Text or URL", 
+                    saveButton: "Save", printButtonTitle: "Print", resetButtonTitle: "Clear input", refreshGradientButtonText: "New Gradient", 
+                    downloadHtmlText: "Download HTML", instructionsTitle: "Offline Usage", 
+                    instructionsList: ["Click Download HTML.", "Save the file to your computer.", "Double-click the file to use the generator locally and offline."], 
+                    initialQrValue: "Hello World!", fileName: "local_qr_pro", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Preview", previewDownload: "Download", m_lang: "Language", m_instructions: "Guide", m_legal: "Legal Info",
+                    leg_title: "Legal Notice", leg_prov: "Service Provider", leg_addr: "Address available upon justified request. Legal action will be taken against spam.",
+                    leg_usage_title: "Rights of Use", leg_usage: "Everyone is allowed to use the QR codes generated and saved with this tool freely, without restriction, and for any purpose (including commercial use).",
+                    leg_api_title: "APIs & Libraries Used", leg_api: "This application is fully local and uses the following resources:",
+                    leg_brand_title: "Trademark & External Links", leg_brand: "The company names mentioned on this website (like Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) are protected trademarks of their respective owners. This website and its operator are not associated or affiliated with these companies. No liability is assumed for the function, security, or content of external links.",
+                    leg_liab_title: "Liability for Content", leg_liab: "The contents of our pages were created with great care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.",
+                    leg_data_title: "Privacy Policy", leg_data: "This application processes data exclusively locally in the user's browser. No personal data is transmitted to or stored on our own servers.",
+                    leg_copy_title: "Copyright", leg_copy: "The content and works created by the site operators on these pages are subject to Austrian copyright law. Reproduction, editing, distribution require consent."
+                },
+                es: { langName: "Español", langTitle: "Seleccionar Idioma", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Texto o URL", saveButton: "Guardar", printButtonTitle: "Imprimir", resetButtonTitle: "Limpiar", refreshGradientButtonText: "Nuevo Gradiente", downloadHtmlText: "Descargar HTML", instructionsTitle: "Uso sin conexión", instructionsList: ["Haz clic en Descargar HTML.", "Guarda el archivo.", "Ábrelo para usarlo sin conexión."], initialQrValue: "¡Hola Mundo!", fileName: "codigo_qr", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Vista Previa", previewDownload: "Descargar", m_lang: "Idioma", m_instructions: "Guía", m_legal: "Aviso Legal", leg_title: "Aviso Legal", leg_prov: "Proveedor", leg_addr: "Dirección disponible a petición.", leg_usage_title: "Derechos de uso", leg_usage: "Uso libre y comercial permitido.", leg_api_title: "APIs usadas", leg_api: "Bibliotecas locales.", leg_brand_title: "Marcas", leg_brand: "No afiliados a las marcas mencionadas.", leg_liab_title: "Responsabilidad", leg_liab: "Sin garantía de contenido.", leg_data_title: "Privacidad", leg_data: "Datos procesados localmente.", leg_copy_title: "Copyright", leg_copy: "Sujeto a derechos de autor." },
+                fr: { langName: "Français", langTitle: "Choisir la Langue", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Texte ou URL", saveButton: "Sauvegarder", printButtonTitle: "Imprimer", resetButtonTitle: "Effacer", refreshGradientButtonText: "Nouveau Dégradé", downloadHtmlText: "Télécharger HTML", instructionsTitle: "Utilisation hors ligne", instructionsList: ["Cliquez sur Télécharger HTML.", "Enregistrez le fichier.", "Ouvrez-le pour l'utiliser hors ligne."], initialQrValue: "Bonjour le monde !", fileName: "code_qr", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Aperçu", previewDownload: "Télécharger", m_lang: "Langue", m_instructions: "Guide", m_legal: "Mentions Légales", leg_title: "Mentions Légales", leg_prov: "Fournisseur", leg_addr: "Adresse sur demande.", leg_usage_title: "Droits d'utilisation", leg_usage: "Utilisation libre et commerciale autorisée.", leg_api_title: "APIs utilisées", leg_api: "Bibliothèques locales.", leg_brand_title: "Marques", leg_brand: "Non affilié aux marques.", leg_liab_title: "Responsabilité", leg_liab: "Aucune garantie sur le contenu.", leg_data_title: "Confidentialité", leg_data: "Données traitées localement.", leg_copy_title: "Droit d'auteur", leg_copy: "Soumis au droit d'auteur autrichien." },
+                it: { langName: "Italiano", langTitle: "Seleziona Lingua", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Testo o URL", saveButton: "Salva", printButtonTitle: "Stampa", resetButtonTitle: "Cancella", refreshGradientButtonText: "Nuovo Gradiente", downloadHtmlText: "Scarica HTML", instructionsTitle: "Uso offline", instructionsList: ["Clicca su Scarica HTML.", "Salva il file.", "Apri per usare offline."], initialQrValue: "Ciao Mondo!", fileName: "codice_qr", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Anteprima", previewDownload: "Scarica", m_lang: "Lingua", m_instructions: "Guida", m_legal: "Info Legali", leg_title: "Note Legali", leg_prov: "Fornitore", leg_addr: "Indirizzo su richiesta.", leg_usage_title: "Diritti d'uso", leg_usage: "Uso libero e commerciale consentito.", leg_api_title: "API utilizzate", leg_api: "Librerie locali.", leg_brand_title: "Marchi", leg_brand: "Non affiliato ai marchi.", leg_liab_title: "Responsabilità", leg_liab: "Nessuna garanzia sui contenuti.", leg_data_title: "Privacy", leg_data: "Dati processados localmente.", leg_copy_title: "Copyright", leg_copy: "Soggetto a copyright." },
+                cs: { langName: "Čeština", langTitle: "Vyberte Jazyk", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Text nebo URL", saveButton: "Uložit", printButtonTitle: "Tisk", resetButtonTitle: "Vymazat", refreshGradientButtonText: "Nový Přechod", downloadHtmlText: "Stáhnout HTML", instructionsTitle: "Použití offline", instructionsList: ["Klikněte na Stáhnout HTML.", "Uložte soubor.", "Otevřete pro offline použití."], initialQrValue: "Ahoj světe!", fileName: "qr_kod", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Náhled", previewDownload: "Stáhnout", m_lang: "Jazyk", m_instructions: "Návod", m_legal: "Právní info", leg_title: "Právní upozornění", leg_prov: "Poskytovatel", leg_addr: "Adresa na vyžádání.", leg_usage_title: "Práva", leg_usage: "Volné komerční použití.", leg_api_title: "API", leg_api: "Lokální knihovny.", leg_brand_title: "Značky", leg_brand: "Nejsme spojeni se značkami.", leg_liab_title: "Odpovědnost", leg_liab: "Bez záruky obsahu.", leg_data_title: "Soukromí", leg_data: "Data zpracována lokálně.", leg_copy_title: "Autorská práva", leg_copy: "Podléhá autorským právům." },
+                sk: { langName: "Slovenčina", langTitle: "Vyberte Jazyk", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Text alebo URL", saveButton: "Uložiť", printButtonTitle: "Tlač", resetButtonTitle: "Vymazať", refreshGradientButtonText: "Nový Prechod", downloadHtmlText: "Stiahnuť HTML", instructionsTitle: "Použitie offline", instructionsList: ["Kliknite na Stiahnuť HTML.", "Uložte súbor.", "Otvorte pre offline použitie."], initialQrValue: "Ahoj svet!", fileName: "qr_kod", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Náhľad", previewDownload: "Stiahnuť", m_lang: "Jazyk", m_instructions: "Návod", m_legal: "Právne info", leg_title: "Právne upozornenie", leg_prov: "Poskytovateľ", leg_addr: "Adresa na vyžiadanie.", leg_usage_title: "Práva", leg_usage: "Voľné komerčné použitie.", leg_api_title: "API", leg_api: "Lokálne knižnice.", leg_brand_title: "Značky", leg_brand: "Nie sme spojení so značkami.", leg_liab_title: "Zodpovednosť", leg_liab: "Bez záruky obsahu.", leg_data_title: "Súkromie", leg_data: "Dáta spracované lokálne.", leg_copy_title: "Autorské práva", leg_copy: "Podlieha autorským právam." },
+                hu: { langName: "Magyar", langTitle: "Nyelv Kiválasztása", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Szöveg vagy URL", saveButton: "Mentés", printButtonTitle: "Nyomtatás", resetButtonTitle: "Törlés", refreshGradientButtonText: "Új Színátmenet", downloadHtmlText: "HTML Letöltése", instructionsTitle: "Offline Használat", instructionsList: ["Kattintson a HTML Letöltésre.", "Mentse a fájlt.", "Nyissa meg offline használathoz."], initialQrValue: "Helló Világ!", fileName: "qr_kod", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Előnézet", previewDownload: "Letöltés", m_lang: "Nyelv", m_instructions: "Útmutató", m_legal: "Jogi Info", leg_title: "Jogi Nyilatkozat", leg_prov: "Szolgáltató", leg_addr: "Cím kérésre.", leg_usage_title: "Jogok", leg_usage: "Ingyenes kereskedelmi használat.", leg_api_title: "API-k", leg_api: "Helyi könyvtárak.", leg_brand_title: "Márkák", leg_brand: "Nincs kapcsolat a márkákkal.", leg_liab_title: "Felelősség", leg_liab: "Nincs garancia a tartalomra.", leg_data_title: "Adatvédelem", leg_data: "Helyi adatfeldolgozás.", leg_copy_title: "Szerzői jog", leg_copy: "Szerzői jogvédelem alatt áll." },
+                pt: { langName: "Português", langTitle: "Selecionar Idioma", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Texto ou URL", saveButton: "Salvar", printButtonTitle: "Imprimir", resetButtonTitle: "Limpar", refreshGradientButtonText: "Novo Gradiente", downloadHtmlText: "Baixar HTML", instructionsTitle: "Uso Offline", instructionsList: ["Clique em Baixar HTML.", "Salve o arquivo.", "Abra para usar offline."], initialQrValue: "Olá Mundo!", fileName: "codigo_qr", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Pré-visualização", previewDownload: "Baixar", m_lang: "Idioma", m_instructions: "Guia", m_legal: "Info Legal", leg_title: "Aviso Legal", leg_prov: "Provedor", leg_addr: "Endereço a pedido.", leg_usage_title: "Direitos", leg_usage: "Uso comercial livre.", leg_api_title: "APIs", leg_api: "Bibliotecas locais.", leg_brand_title: "Marcas", leg_brand: "Não afiliado às marcas.", leg_liab_title: "Responsabilidade", leg_liab: "Sem garantia de conteúdo.", leg_data_title: "Privacidade", leg_data: "Dados processados localmente.", leg_copy_title: "Direitos de autor", leg_copy: "Sujeito a direitos de autor." },
+                ru: { langName: "Русский", langTitle: "Выбрать Язык", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Текст или URL", saveButton: "Сохранить", printButtonTitle: "Печать", resetButtonTitle: "Очистить", refreshGradientButtonText: "Новый градиент", downloadHtmlText: "Скачать HTML", instructionsTitle: "Офлайн", instructionsList: ["Нажмите Скачать HTML.", "Сохраните файл.", "Откройте для работы офлайн."], initialQrValue: "Привет, мир!", fileName: "qr_код", downloadFileName: "local_qr_pro_v8.html", previewTitle: "Предпросмотр", previewDownload: "Скачать", m_lang: "Язык", m_instructions: "Гид", m_legal: "Право", leg_title: "Правовая информация", leg_prov: "Провайдер", leg_addr: "Адрес по запросу.", leg_usage_title: "Права", leg_usage: "Свободное коммерческое использование.", leg_api_title: "API", leg_api: "Локальные библиотеки.", leg_brand_title: "Бренды", leg_brand: "Не связано с брендами.", leg_liab_title: "Ответственность", leg_liab: "Без гарантий контента.", leg_data_title: "Конфиденциальность", leg_data: "Данные обрабатываются локально.", leg_copy_title: "Авторское право", leg_copy: "Защищено авторским правом." },
+                cn: { langName: "中文", langTitle: "选择语言", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "文本或网址", saveButton: "保存", printButtonTitle: "打印", resetButtonTitle: "清除", refreshGradientButtonText: "新渐变", downloadHtmlText: "下载HTML", instructionsTitle: "离线使用", instructionsList: ["点击下载HTML。", "保存文件。", "打开文件离线使用。"], initialQrValue: "你好，世界！", fileName: "二维码", downloadFileName: "local_qr_pro_v8.html", previewTitle: "预览", previewDownload: "下载", m_lang: "语言", m_instructions: "指南", m_legal: "法律信息", leg_title: "法律声明", leg_prov: "提供商", leg_addr: "可根据要求提供地址。", leg_usage_title: "使用权", leg_usage: "允许免费商业使用。", leg_api_title: "API", leg_api: "本地库。", leg_brand_title: "品牌", leg_brand: "不隶属于提及的品牌。", leg_liab_title: "责任", leg_liab: "不保证内容准确。", leg_data_title: "隐私", leg_data: "数据在本地处理。", leg_copy_title: "版权", leg_copy: "受版权保护。" },
+                jp: { langName: "日本語", langTitle: "言語を選択", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "テキストまたはURL", saveButton: "保存", printButtonTitle: "印刷", resetButtonTitle: "クリア", refreshGradientButtonText: "新しいグラデーション", downloadHtmlText: "HTMLをダウンロード", instructionsTitle: "オフライン使用", instructionsList: ["HTMLをダウンロードをクリック。", "ファイルを保存。", "オフラインで開く。"], initialQrValue: "こんにちは世界！", fileName: "qr_コード", downloadFileName: "local_qr_pro_v8.html", previewTitle: "プレビュー", previewDownload: "ダウンロード", m_lang: "言語", m_instructions: "ガイド", m_legal: "法的情報", leg_title: "法的通知", leg_prov: "プロバイダ", leg_addr: "要求に応じて住所を提供。", leg_usage_title: "利用権", leg_usage: "自由な商業利用が可能です。", leg_api_title: "API", leg_api: "ローカルライブラリ。", leg_brand_title: "ブランド", leg_brand: "言及されたブランドとは提携していません。", leg_liab_title: "責任", leg_liab: "内容の保証はありません。", leg_data_title: "プライバシー", leg_data: "データはローカルで処理されます。", leg_copy_title: "著作権", leg_copy: "著作権の対象です。" },
+                hi: { langName: "हिन्दी", langTitle: "भाषा चुनें", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "टेक्स्ट या URL", saveButton: "सहेजें", printButtonTitle: "प्रिंट", resetButtonTitle: "साफ़ करें", refreshGradientButtonText: "नया ढाल", downloadHtmlText: "HTML डाउनलोड करें", instructionsTitle: "ऑफ़लाइन उपयोग", instructionsList: ["HTML डाउनलोड पर क्लिक करें।", "फ़ाइल सहेजें।", "ऑफ़लाइन खोलने के लिए डबल क्लिक करें।"], initialQrValue: "नमस्ते दुनिया!", fileName: "qr_code", downloadFileName: "local_qr_pro_v8.html", previewTitle: "पूर्वावलोकन", previewDownload: "डाउनलोड", m_lang: "भाषा", m_instructions: "गाइड", m_legal: "कानूनी जानकारी", leg_title: "कानूनी नोटिस", leg_prov: "सेवा प्रदाता", leg_addr: "अनुरोध पर पता उपलब्ध है।", leg_usage_title: "उपयोग के अधिकार", leg_usage: "मुफ्त व्यावसायिक उपयोग की अनुमति है।", leg_api_title: "API", leg_api: "स्थानीय पुस्तकालय।", leg_brand_title: "ब्रांड", leg_brand: "उल्लेखित ब्रांडों से संबद्ध नहीं है।", leg_liab_title: "ज़िम्मेदारी", leg_liab: "सामग्री की कोई गारंटी नहीं।", leg_data_title: "गोपनीयता", leg_data: "डेटा स्थानीय रूप से संसाधित होता है।", leg_copy_title: "कॉपीराइट", leg_copy: "कॉपीराइट के अधीन।" }
+            };
+
+            // Setup QRious
+            const qr = new QRious({ element: qrCodeCanvas, size: 1024, padding: 0, background: '#ffffff', foreground: '#000000' });
+
+            // --- Core Logic ---
+            const applyRandomGradient = () => {
+                const angle = Math.floor(Math.random() * 360);
+                const colors = ['#dc2626', '#007bff', '#8b5cf6', '#ec4899', '#06b6d4', '#3b82f6', '#1DB954', '#FF6600', '#FFD700', '#ff2d55', '#4ade80'];
+                const color1 = colors[Math.floor(Math.random() * colors.length)];
+                let color2 = colors[Math.floor(Math.random() * colors.length)];
+                while(color1 === color2) color2 = colors[Math.floor(Math.random() * colors.length)];
+                
+                qrGradientWrapper.style.background = `linear-gradient(${angle}deg, ${color1}, ${color2})`;
+                
+                // Update Socials Theme Variable
+                document.documentElement.style.setProperty('--theme-color', color1);
+                document.documentElement.style.setProperty('--theme-rgb', hexToRgbString(color1));
+
+                gradientParams = { angle, color1, color2 };
+            };
+
+            const updateQr = () => {
+                const txt = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
+                qr.value = txt;
+                qr.foreground = bgColorPicker.value || '#000000';
+                qr.update();
+            };
+
+            const getFinalImage = () => {
+                const tempCanvas = document.createElement('canvas');
+                const ctx = tempCanvas.getContext('2d');
+                
+                const qrSize = 1024; 
+                const quietZone = 128; 
+                const borderThickness = 64; 
+                
+                const totalSize = qrSize + (quietZone * 2) + (borderThickness * 2);
+                
+                tempCanvas.width = totalSize;
+                tempCanvas.height = totalSize;
+                
+                // 1. Draw Gradient Background
+                const grad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
+                grad.addColorStop(0, gradientParams.color1);
+                grad.addColorStop(1, gradientParams.color2);
+                ctx.fillStyle = grad;
+                ctx.beginPath();
+                ctx.roundRect ? ctx.roundRect(0, 0, totalSize, totalSize, 128) : ctx.rect(0,0,totalSize,totalSize);
+                ctx.fill();
+                
+                // 2. Draw White Quiet Zone Background
+                ctx.fillStyle = '#ffffff'; 
+                ctx.beginPath();
+                ctx.roundRect ? ctx.roundRect(borderThickness, borderThickness, totalSize - (borderThickness*2), totalSize - (borderThickness*2), 64) : ctx.rect(borderThickness, borderThickness, totalSize - (borderThickness*2), totalSize - (borderThickness*2));
+                ctx.fill();
+                
+                // 3. Draw the actual QR Code
+                const offset = borderThickness + quietZone;
+                ctx.drawImage(qrCodeCanvas, offset, offset, qrSize, qrSize);
+                
+                return tempCanvas;
+            };
+
+            const safeSetText = (id, text) => {
+                const el = document.getElementById(id);
+                if (el && text) el.textContent = text;
+            };
+
+            const setLanguage = (lang) => {
+                const t = translations[lang] || translations['en'];
+                currentLang = translations[lang] ? lang : 'en';
+
+                document.title = `${t.mainTitle} ${t.pro}`;
+                const titleEl = document.getElementById('main-title');
+                if(titleEl) titleEl.innerHTML = `${t.mainTitle} <span class="theme-text transition-colors duration-500">${t.pro}</span>`;
+                
+                safeSetText('language-title', t.langTitle);
+                safeSetText('instructions-title', t.instructionsTitle);
+                safeSetText('download-html-text', t.downloadHtmlText);
+                safeSetText('preview-title', t.previewTitle);
+                safeSetText('preview-download-button', t.previewDownload);
+                safeSetText('m-lang', t.m_lang);
+                safeSetText('m-instructions', t.m_instructions);
+                safeSetText('m-legal', t.m_legal);
+
+                safeSetText('leg-title', t.leg_title);
+                safeSetText('leg-prov', t.leg_prov);
+                safeSetText('leg-addr', t.leg_addr);
+                safeSetText('leg-usage-title', t.leg_usage_title);
+                safeSetText('leg-usage', t.leg_usage);
+                safeSetText('leg-api-title', t.leg_api_title);
+                safeSetText('leg-api', t.leg_api);
+                safeSetText('leg-brand-title', t.leg_brand_title);
+                safeSetText('leg-brand', t.leg_brand);
+                safeSetText('leg-liab-title', t.leg_liab_title);
+                safeSetText('leg-liab', t.leg_liab);
+                safeSetText('leg-data-title', t.leg_data_title);
+                safeSetText('leg-data', t.leg_data);
+                safeSetText('leg-copy-title', t.leg_copy_title);
+                safeSetText('leg-copy', t.leg_copy);
+                
+                if(qrText) qrText.placeholder = t.qrPlaceholder;
+                const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
+                
+                safeSetTitle('resetTextButton', t.resetButtonTitle);
+                safeSetTitle('printQrCodeButton', t.printButtonTitle);
+                safeSetTitle('saveQrCodeButton', t.saveButton);
+                safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
+
+                const instructionsListEl = document.getElementById('instructions-list');
+                if (instructionsListEl && t.instructionsList) {
+                    instructionsListEl.innerHTML = '';
+                    t.instructionsList.forEach(item => {
+                        const li = document.createElement('li');
+                        li.innerHTML = `<span class="bg-white/[0.05] border border-white/5 px-3 py-1.5 rounded-lg text-white/90 block shadow-sm">${item}</span>`;
+                        instructionsListEl.appendChild(li);
+                    });
+                }
+                
+                if (langOptionsContainer) {
+                    langOptionsContainer.querySelectorAll('li').forEach(li => li.classList.remove('active'));
+                    const activeLi = langOptionsContainer.querySelector(`li[data-lang="${currentLang}"]`);
+                    if(activeLi) activeLi.classList.add('active');
+                }
+                
+                if (qrText && !qrText.value) updateQr();
+                localStorage.setItem('qrGeneratorLanguage', currentLang);
+            };
+
+            const populateStaticUI = () => {
+                const templateButtonsContainer = document.querySelector('.template-buttons');
+                if (templateButtonsContainer) {
+                    templateButtonsContainer.innerHTML = socialTemplates.map(template =>
+                        `<button data-prefix="${template.prefix}" class="bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
+                    ).join('');
+                }
+
+                if (langOptionsContainer) {
+                    langOptionsContainer.innerHTML = Object.entries(translations).map(([key, value]) =>
+                         `<li data-lang="${key}">
+                            <div class="flex items-center gap-4">
+                                <svg class="flag-icon"><use href="#flag-${flagMap[key] || key}"></use></svg>
+                                <span class="font-medium tracking-wide">${value.langName}</span>
+                            </div>
+                            <svg class="check-icon w-5 h-5 hidden"><use href="#icon-check"></use></svg>
+                         </li>`
+                    ).join('');
+                }
+                
+                const style = document.createElement('style');
+                style.innerHTML = `.language-options li.active .check-icon { display: block !important; color: var(--theme-color); transition: color 0.5s ease; }`;
+                document.head.appendChild(style);
+            };
+
+            // UI Functionality (Adapted to Tailwind classes for modals)
+            window.openSettings = () => { if(settingsMenu) settingsMenu.classList.remove('hidden'); };
+            window.closeSettings = (force) => {
+                if (settingsMenu && (force === true || event.target.id === 'settings-overlay')) settingsMenu.classList.add('hidden');
+            };
+            window.closePreview = (force) => {
+                if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.classList.add('hidden');
+            };
+            window.switchTab = (tabId) => {
+                const overlay = document.getElementById('settings-overlay');
+                if(overlay) {
+                    overlay.querySelectorAll('.settings-card > div:not(.settings-header-tabs):not(.mt-auto) > div').forEach(el => el.classList.add('hidden')); // Keep if adjusting structure, else just hide tabs directly
+                    // Simpler targeting for the new structure:
+                    document.getElementById('tab-lang').classList.add('hidden');
+                    document.getElementById('tab-instructions').classList.add('hidden');
+                    document.getElementById('tab-legal').classList.add('hidden');
+                }
+                document.querySelectorAll('.settings-header-tabs .tab-btn').forEach(el => el.classList.remove('active'));
+                const tab = document.getElementById(tabId);
+                if(tab) tab.classList.remove('hidden');
+                if(event && event.currentTarget) event.currentTarget.classList.add('active');
+            };
+
+            // Event Listeners
+            const setupEventListeners = () => {
+                if(qrText) qrText.addEventListener('input', updateQr);
+                if(bgColorPicker) bgColorPicker.addEventListener('input', updateQr);
+                
+                const refreshBtn = document.getElementById('refreshGradientButton');
+                if(refreshBtn) refreshBtn.addEventListener('click', applyRandomGradient);
+                
+                const resetBtn = document.getElementById('resetTextButton');
+                if(resetBtn) {
+                    resetBtn.addEventListener('click', () => { 
+                        qrText.value = ''; 
+                        document.querySelectorAll('.template-buttons button').forEach(b => b.classList.remove('active'));
+                        updateQr(); 
+                        qrText.focus(); 
+                    });
+                }
+                
+                if(formatControl) {
+                    formatControl.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'BUTTON') {
+                            currentSaveFormat = e.target.dataset.format;
+                            formatControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                            e.target.classList.add('active');
+                            localStorage.setItem('qrGeneratorSaveFormat', currentSaveFormat);
+                        }
+                    });
+                }
+
+                const tbContainer = document.querySelector('.template-buttons');
+                if(tbContainer) {
+                    tbContainer.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'BUTTON') {
+                            document.querySelectorAll('.template-buttons button').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            
+                            const prefix = e.target.dataset.prefix;
+                            if(qrText) {
+                                qrText.value = prefix;
+                                updateQr();
+                                qrText.focus();
+                            }
+                        }
+                    });
+                }
+
+                if(langOptionsContainer) {
+                    langOptionsContainer.addEventListener('click', (e) => {
+                        const li = e.target.closest('li');
+                        if(li) setLanguage(li.dataset.lang);
+                    });
+                }
+
+                // Export logic
+                const saveBtn = document.getElementById('saveQrCodeButton');
+                if(saveBtn) {
+                    saveBtn.addEventListener('click', () => {
+                        const final = getFinalImage();
+                        if(savePreviewCanvas) {
+                            savePreviewCanvas.width = final.width;
+                            savePreviewCanvas.height = final.height;
+                            savePreviewCanvas.getContext('2d').drawImage(final, 0, 0);
+                        }
+                        if(savePreviewOverlay) savePreviewOverlay.classList.remove('hidden');
+                    });
+                }
+                
+                const pDwnBtn = document.getElementById('preview-download-button');
+                if(pDwnBtn) {
+                    pDwnBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const link = document.createElement('a');
+                        link.download = `${translations[currentLang].fileName}.${currentSaveFormat === 'jpeg' ? 'jpg' : 'png'}`;
+                        link.href = savePreviewCanvas.toDataURL(`image/${currentSaveFormat}`, 1.0);
+                        link.click();
+                        if(savePreviewOverlay) savePreviewOverlay.classList.add('hidden');
+                    });
+                }
+
+                const printBtn = document.getElementById('printQrCodeButton');
+                if(printBtn) {
+                    printBtn.addEventListener('click', () => {
+                        const dataUrl = getFinalImage().toDataURL('image/png');
+                        const win = window.open('', '_blank');
+                        win.document.write(`<img src="${dataUrl}" style="max-width:100%; border-radius:16px;" onload="window.print(); setTimeout(()=>window.close(), 100)">`);
+                        win.document.close();
+                    });
+                }
+
+                const dlHtmlBtn = document.getElementById('downloadHtmlButton');
+                if(dlHtmlBtn) {
+                    dlHtmlBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        
+                        if(qrText) qrText.setAttribute('value', qrText.value);
+                        if(bgColorPicker) bgColorPicker.setAttribute('value', bgColorPicker.value);
+                        
+                        const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
+                        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
+                        
+                        const a = document.createElement('a');
+                        a.href = URL.createObjectURL(blob);
+                        a.download = translations[currentLang].downloadFileName;
+                        a.click();
+                        
+                        URL.revokeObjectURL(a.href);
+                    });
+                }
+            };
+
+            // Init
+            const init = () => {
+                populateStaticUI();
+                setupEventListeners();
+                
+                currentSaveFormat = localStorage.getItem('qrGeneratorSaveFormat') || 'png';
+                if(formatControl) {
+                    formatControl.querySelectorAll('button').forEach(btn => {
+                        if(btn.dataset.format === currentSaveFormat) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    });
+                }
+
+                setLanguage(localStorage.getItem('qrGeneratorLanguage') || 'de');
+                applyRandomGradient();
+                updateQr();
+            };
+
+            init();
+        });
+    </script>
+</body>
+</html>
