@@ -548,30 +548,61 @@
                 document.head.appendChild(style);
             };
 
-            // UI Functionality 
-            window.openSettings = () => { if(settingsMenu) settingsMenu.classList.remove('hidden'); };
-            window.closeSettings = (force) => {
-                if (settingsMenu && (force === true || event.target.id === 'settings-overlay')) settingsMenu.classList.add('hidden');
-            };
-            window.openTutorial = () => { if(tutorialModal) { tutorialModal.classList.remove('hidden'); tutorialModal.classList.add('flex'); } };
-            window.closeTutorialModal = (force) => {
-                if (tutorialModal && (force === true || event.target.id === 'tutorialModal')) { tutorialModal.classList.add('hidden'); tutorialModal.classList.remove('flex'); }
-            };
-            window.closePreview = (force) => {
-                if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.classList.add('hidden');
-            };
-            window.switchTab = (tabId) => {
-                const overlay = document.getElementById('settings-overlay');
-                if(overlay) {
-                    document.getElementById('tab-lang').classList.add('hidden');
-                    document.getElementById('tab-legal').classList.add('hidden');
-                }
-                document.querySelectorAll('.settings-header-tabs .tab-btn').forEach(el => el.classList.remove('active'));
-                const tab = document.getElementById(tabId);
-                if(tab) tab.classList.remove('hidden');
-                if(event && event.currentTarget) event.currentTarget.classList.add('active');
+            // Simple Language Toggle Function
+            window.toggleLanguage = () => {
+                const nextLang = currentLang === 'en' ? 'de' : 'en';
+                setLanguage(nextLang);
             };
 
+            const setLanguage = (lang) => {
+                const t = translations[lang] || translations['en'];
+                currentLang = translations[lang] ? lang : 'en';
+                
+                // Update Flag UI asset reference based on selection
+                const flagUse = document.getElementById('langFlagUse');
+                const toggleBtn = document.getElementById('langToggleBtn');
+                if (flagUse && toggleBtn) {
+                    if (currentLang === 'en') {
+                        flagUse.setAttribute('href', '#flag-de'); // Button shows the *alternative* path option
+                        toggleBtn.title = "Wechseln zu Deutsch";
+                    } else {
+                        flagUse.setAttribute('href', '#flag-gb');
+                        toggleBtn.title = "Switch to English";
+                    }
+                }
+
+                if(qrText) qrText.placeholder = t.qrPlaceholder;
+                const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
+                
+                safeSetTitle('resetTextButton', t.resetButtonTitle);
+                safeSetTitle('printQrCodeButton', t.printButtonTitle);
+                safeSetTitle('saveQrCodeButton', t.saveButton);
+                safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
+                
+                // Set text targets for modal preview titles dynamically
+                safeSetText('preview-title', t.previewTitle);
+                safeSetText('preview-download-button', t.previewDownload);
+                safeSetText('download-html-text', t.downloadHtmlText);
+                safeSetText('leg-title', t.leg_title);
+                safeSetText('leg-prov', t.leg_prov);
+                safeSetText('leg-addr', t.leg_addr);
+                safeSetText('leg-usage-title', t.leg_usage_title);
+                safeSetText('leg-usage', t.leg_usage);
+                safeSetText('leg-api-title', t.leg_api_title);
+                safeSetText('leg-api', t.leg_api);
+                safeSetText('leg-brand-title', t.leg_brand_title);
+                safeSetText('leg-brand', t.leg_brand);
+                safeSetText('leg-liab-title', t.leg_liab_title);
+                safeSetText('leg-liab', t.leg_liab);
+                safeSetText('leg-data-title', t.leg_data_title);
+                safeSetText('leg-data', t.leg_data);
+                safeSetText('leg-copy-title', t.leg_copy_title);
+                safeSetText('leg-copy', t.leg_copy);
+                
+                if (qrText && !qrText.value) updateQr();
+                localStorage.setItem('qrGeneratorLanguage', currentLang);
+            };
+            
             // Event Listeners
             const setupEventListeners = () => {
                 if(qrText) qrText.addEventListener('input', updateQr);
