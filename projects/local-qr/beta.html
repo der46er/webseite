@@ -1,14 +1,16 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Local QR pro</title>
+    <title>TAO | Local QR</title>
+    
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     
     <style>
-        /* --- Font Integration (GitHub Assets) --- */
         @font-face {
             font-family: 'Inter';
             src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
@@ -18,112 +20,62 @@
         }
 
         :root {
-            --color-1: #007bff;
-            --color-2: #8b5cf6;
-            --color-3: #ec4899;
-            --color-4: #06b6d4;
-            --color-5: #3b82f6;
-            --ui-accent: #007bff;
+            --theme-color: #007bff;
+            --theme-rgb: 0, 123, 255;
             --app-font: 'Inter', sans-serif;
         }
 
         body {
             font-family: var(--app-font);
-            background-color: #050505;
-            color: #fff;
+            background-color: #0b0d11;
+            color: white;
             overflow-x: hidden;
             margin: 0;
             min-height: 100vh;
-            width: 100vw;
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: center;
+            justify-content: space-between;
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
-            padding: 1.5rem;
+            padding: 1.5rem 1.5rem 0 1.5rem;
         }
 
-        /* Ambient Background with 5 Blobs */
-        #bg-container { position: fixed; inset: 0; z-index: -1; background: #000; overflow: hidden; }
-        .blob { 
-            position: absolute; width: 100vmax; height: 100vmax; filter: blur(140px); opacity: 0.4; border-radius: 50%; 
-            transition: background 4s cubic-bezier(0.4, 0, 0.2, 1); animation: moveFlow 40s infinite alternate ease-in-out; 
-            mix-blend-mode: screen;
-        }
-        #blob-1 { top: -20%; left: -20%; background: var(--color-1); animation-duration: 45s; }
-        #blob-2 { bottom: -20%; right: -20%; background: var(--color-2); animation-delay: -5s; animation-duration: 50s; }
-        #blob-3 { top: 40%; right: 30%; background: var(--color-3); opacity: 0.3; animation-delay: -10s; animation-duration: 60s; }
-        #blob-4 { bottom: 10%; left: 20%; background: var(--color-4); opacity: 0.3; animation-delay: -15s; animation-duration: 55s; }
-        #blob-5 { top: 10%; right: 10%; background: var(--color-5); opacity: 0.2; animation-delay: -20s; animation-duration: 65s; }
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .theme-text { color: var(--theme-color); }
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
 
-        @keyframes moveFlow {
-            0% { transform: translate(0, 0) scale(1) rotate(0deg); }
-            100% { transform: translate(10%, 15%) scale(1.2) rotate(15deg); }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            isolation: isolate;
         }
 
-        /* --- UNIFIED DARK ACRYLIC --- */
-        .ui-dark-acrylic {
-            background: rgba(15, 15, 15, 0.6) !important;
-            backdrop-filter: blur(40px);
-            -webkit-backdrop-filter: blur(40px);
-            border: 2px solid rgba(255, 255, 255, 0.12);
+        .format-control { padding: 4px; display: flex; }
+        .format-control button { color: rgba(255,255,255,0.5); border-radius: 1rem; transition: all 0.3s; flex: 1; border: 1px solid transparent; }
+        .format-control button.active {
+            background: rgba(255, 255, 255, 0.1);
             color: #fff;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-color: rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* --- ACTIVE STATE FOR BUTTONS (White Border Focus) --- */
-        .ui-dark-acrylic.active, .format-control button.active, .template-buttons button.active {
-            border: 2px solid #ffffff !important;
-            background: rgba(255, 255, 255, 0.2) !important;
-            box-shadow: 0 0 20px rgba(255, 255, 255, 0.2), 0 15px 35px rgba(0,0,0,0.5);
+        /* Active state for Quality Selection */
+        .quality-btn.active {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
             color: #fff !important;
-            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* Navigation Buttons (Top Right) */
-        .top-nav { position: fixed; top: 1.5rem; right: 1.5rem; display: flex; gap: 0.8rem; z-index: 100; }
-        
-        .nav-btn, .action-btn { 
-            display: flex; align-items: center; justify-content: center; 
-            cursor: pointer; 
-        }
-        .nav-btn:hover, .action-btn:hover, .template-buttons button:hover { 
-            background: rgba(40, 40, 40, 0.8) !important; 
-            border-color: rgba(255,255,255,0.4); 
-        }
-        
-        /* Specific Button Sizes */
-        .nav-btn { width: 3.5rem; height: 3.5rem; border-radius: 1.2rem; }
-        .nav-btn svg { width: 1.4rem; height: 1.4rem; stroke-width: 2.2; }
-        .action-btn { width: 4rem; height: 4rem; border-radius: 1.2rem; flex-shrink: 0; }
-        .action-btn svg { width: 1.5rem; height: 1.5rem; }
-
-        /* Format Toggle */
-        .format-control { padding: 4px; border-radius: 1.2rem; display: flex; }
-        .format-control button { color: rgba(255,255,255,0.5); border-radius: 1rem; transition: all 0.3s; border: 2px solid transparent; flex: 1; }
-
-        /* Main Generator Card */
-        .generator-card {
-            background: rgba(255, 255, 255, 0.02);
-            backdrop-filter: blur(50px);
-            -webkit-backdrop-filter: blur(50px);
-            border: 1px solid rgba(255, 255, 255, 0.12);
-            box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-            position: relative; isolation: isolate;
-            border-radius: 2.5rem; padding: 2.5rem 2rem; width: 100%; max-width: 580px;
-            display: flex; flex-direction: column; align-items: center; z-index: 10;
-            margin-top: 2rem;
-        }
-        .generator-card::after {
-            content: ""; position: absolute; inset: 0; z-index: -1; opacity: 0.04; pointer-events: none;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-            border-radius: inherit; mix-blend-mode: overlay;
-        }
-
-        /* --- PERFECT QR ALIGNMENT FIX --- */
         #qr-gradient-wrapper {
-            padding: 8px;
+            padding: 8px; 
             border-radius: 1.5rem;
             display: flex; 
             align-items: center;
@@ -157,286 +109,172 @@
             image-rendering: pixelated; 
         }
 
-        /* Inputs */
         #qrText {
-            background: rgba(0,0,0,0.4);
-            border: 2px solid rgba(255,255,255,0.15);
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
             color: #fff;
         }
         #qrText:focus {
-            border-color: var(--ui-accent);
+            border-color: var(--theme-color);
             outline: none;
-            box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.2);
+            box-shadow: 0 0 0 4px rgba(var(--theme-rgb), 0.2);
         }
 
-        /* Template Buttons */
-        .template-buttons button {
-            border: 2px solid rgba(255, 255, 255, 0.12);
+        .template-buttons button.active {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            color: #fff;
         }
 
-        /* MENUS & MODALS */
-        .modal-overlay { 
-            position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(25px); 
-            z-index: 1000; display: none; align-items: center; justify-content: center; padding: 1.5rem; 
-            animation: fadeIn 0.3s ease; 
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-
-        /* Centered Settings Box */
-        .settings-card { 
-            width: 100%; max-width: 700px; border-radius: 2rem; display: flex; flex-direction: column; padding: 2rem;
-            position: relative; max-height: 90vh;
-        }
-
-        .settings-header-tabs {
-            display: flex; gap: 0.5rem; border-bottom: 1px solid rgba(255,255,255,0.1); padding-bottom: 1rem; margin-bottom: 1.5rem; 
-            overflow-x: auto; scrollbar-width: none; flex-shrink: 0;
-        }
-        .settings-header-tabs::-webkit-scrollbar { display: none; }
-        .tab-btn { 
-            padding: 0.8rem 1.2rem; border-radius: 1rem; font-size: 0.85rem; font-weight: 700; color: #888; transition: 0.2s; border: 1px solid transparent; white-space: nowrap;
-        }
-        .tab-btn:hover { color: #fff; background: rgba(255,255,255,0.05); }
-        .tab-btn.active { background: rgba(255,255,255,0.1); color: #fff; border-color: rgba(255,255,255,0.2); }
-        
-        /* Language Flags List */
-        .language-options li { 
-            display: flex; align-items: center; justify-content: space-between; padding: 12px 16px; border-radius: 1rem; 
-            cursor: pointer; transition: all 0.2s; color: #ccc; margin-bottom: 6px; border: 1px solid transparent; 
-        }
-        .language-options li:hover { background: rgba(255,255,255,0.05); color: #fff; }
-        .language-options li.active { background: rgba(255,255,255,0.15); color: #fff; border-color: rgba(255,255,255,0.3); font-weight: 700; }
-        .flag-icon { width: 24px; height: 18px; border-radius: 3px; }
-
-        /* Quality specific selected styling */
-        .quality-btn.active {
-            border-color: #ffffff;
-            background: rgba(255,255,255,0.2);
-            box-shadow: 0 0 15px rgba(255,255,255,0.2);
-            color: white;
-        }
-
-        /* --- MOBILE RESPONSIVENESS --- */
         @media (max-width: 768px) {
-            body { padding: 1rem; align-items: flex-start; overflow-y: auto; }
-            .generator-card { padding: 2rem 1.2rem; border-radius: 2rem; margin-top: 4rem; }
-            
-            /* Responsive Buttons */
-            .action-btn { width: 3.5rem; height: 3.5rem; }
-            .template-buttons button { font-size: 0.65rem; padding: 0.5rem 0.7rem; }
-            
-            /* Make sure modals fit nicely */
-            .settings-card { padding: 1.5rem; border-radius: 1.5rem; }
-            .modal-overlay { padding: 1rem; }
-            
+            body { padding: 1rem 1rem 0 1rem; align-items: flex-start; overflow-y: auto; }
             canvas { max-width: 200px !important; }
         }
     </style>
 </head>
-<body>
+<body class="selection:bg-emerald-500/30">
 
-    <div id="bg-container">
-        <div id="blob-1" class="blob"></div>
-        <div id="blob-2" class="blob"></div>
-        <div id="blob-3" class="blob"></div>
-        <div id="blob-4" class="blob"></div>
-        <div id="blob-5" class="blob"></div>
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
     </div>
 
-    <div class="top-nav">
-        <button class="nav-btn ui-dark-acrylic" onclick="openSettings()" title="Settings">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+    <div class="fixed top-4 right-4 z-50 flex items-center p-1 gap-1 glass-panel rounded-full shadow-lg scale-90 sm:scale-100 origin-top-right">
+        <button onclick="openTutorial()" title="How to use" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </button>
         
-        <button onclick="toggleLanguage()" id="langToggleBtn" title="Switch to English" class="nav-btn ui-dark-acrylic overflow-hidden p-2.5">
-            <img id="langFlagImg" src="/assets/flags/uk-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
+        <button onclick="toggleLanguage()" id="langToggleBtn" title="Switch to English" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 overflow-hidden p-2.5">
+            <img id="langFlagImg" src="/assets/flags/united-kingdom-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
         </button>
         
-        <a href="https://thataustrianone.eu/socials/" target="_self" title="My Social Links" class="nav-btn ui-dark-acrylic">
-            <svg fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        <a href="https://thataustrianone.eu/socials/" target="_self" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
         </a>
     </div>
 
-    <div class="generator-card">
-        <h1 id="main-title" class="text-3xl font-black italic tracking-tighter text-white mb-6 w-full text-center">LOCAL QR <span class="text-[#007bff]">PRO</span></h1>
-        
-        <div class="relative w-full mb-6">
-             <input type="text" id="qrText" placeholder="Text oder URL eingeben" class="w-full rounded-2xl px-6 py-4 pr-12 text-center font-bold tracking-wider text-sm transition-colors">
-             <button id="resetTextButton" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-red-400 transition-colors">
-                <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
-             </button>
+    <div id="tutorialModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in" onclick="closeTutorialModal(event)">
+        <div class="bg-[#161920] border border-white/10 rounded-[1.5rem] p-6 max-w-sm w-full shadow-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeTutorialModal(true)" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 class="font-black italic text-xl uppercase tracking-wide text-white mb-4">How to use</h2>
+            <ul class="text-zinc-300 text-sm space-y-3 font-medium">
+                <li><strong class="text-white">1.</strong> Type your desired text or URL in the input field.</li>
+                <li><strong class="text-white">2.</strong> Select a social preset for quick profile templates.</li>
+                <li><strong class="text-white">3.</strong> Customize your design using individual background, code, and gradient swatches.</li>
+                <li><strong class="text-white">4.</strong> Choose your file type, adjust quality, download the output, copy directly, or print.</li>
+            </ul>
         </div>
+    </div>
 
-        <div class="template-buttons flex flex-wrap justify-center gap-2 mb-6"></div>
-
-        <div id="qr-gradient-wrapper">
-            <div id="qr-white-zone">
-                <canvas id="qrCodeCanvas"></canvas>
-            </div>
-        </div>
-
-        <div class="w-full flex flex-col items-center gap-5 mt-4">
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 w-full pb-8 justify-center items-center h-full min-h-0 animate-in">
+        <div class="bg-white/[0.03] border border-white/[0.05] shadow-2xl rounded-[2.5rem] p-8 w-full flex flex-col items-center">
             
-            <div class="flex flex-wrap justify-center gap-4 w-full mb-2">
-                <label class="flex flex-col items-center gap-2 cursor-pointer group">
-                    <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR Code</span>
-                    <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
-                        <input type="color" id="qrColorPicker" value="#000000" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
-                    </div>
-                </label>
-                <label class="flex flex-col items-center gap-2 cursor-pointer group">
-                    <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Background</span>
-                    <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
-                        <input type="color" id="bgZoneColorPicker" value="#ffffff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
-                    </div>
-                </label>
-                <label class="flex flex-col items-center gap-2 cursor-pointer group">
-                    <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Gradient 1</span>
-                    <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
-                        <input type="color" id="grad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
-                    </div>
-                </label>
-                <label class="flex flex-col items-center gap-2 cursor-pointer group">
-                    <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Gradient 2</span>
-                    <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
-                        <input type="color" id="grad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
-                    </div>
-                </label>
+            <div class="relative w-full mb-6">
+                 <input type="text" id="qrText" placeholder="Enter text or URL" class="w-full rounded-[1.2rem] px-6 py-4 pr-12 text-center font-bold tracking-wider text-sm transition-colors shadow-lg">
+                 <button id="resetTextButton" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-red-400 transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                 </button>
             </div>
 
-            <div class="format-control ui-dark-acrylic flex w-full max-w-[320px] p-1">
-                <button data-format="jpeg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">JPG</button>
-                <button data-format="png" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase active">PNG</button>
-                <button data-format="webp" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">WEBP</button>
-                <button data-format="svg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">SVG</button>
+            <div class="template-buttons flex flex-wrap justify-center gap-2 mb-6 w-full"></div>
+
+            <div id="qr-gradient-wrapper">
+                <div id="qr-white-zone">
+                    <canvas id="qrCodeCanvas"></canvas>
+                </div>
             </div>
-            
-            <div class="flex gap-3 justify-center w-full">
-                <button id="printQrCodeButton" class="action-btn ui-dark-acrylic" title="Drucken">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M19,8H5C3.34,8,2,9.34,2,11v6h4v4h12v-4h4v-6C22,9.34,20.66,8,19,8z M16,19H8v-5h8V19z M19,12c-0.55,0-1-0.45-1-1 s0.45-1,1-1s1,0.45,1,1S19.55,12,19,12z M18,3H6v4h12V3z"/></svg>
-                </button>
-                <button id="saveQrCodeButton" class="action-btn ui-dark-acrylic" title="Speichern">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></svg>
-                </button>
-                <button id="copyQrCodeButton" class="action-btn ui-dark-acrylic" title="Kopieren">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-                </button>
-                <button id="refreshGradientButton" class="action-btn ui-dark-acrylic" title="Neuer Verlauf">
-                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
-                </button>
+
+            <div class="w-full flex flex-col items-center gap-5 mt-4">
+                
+                <div class="flex flex-wrap justify-center gap-4 w-full mb-2">
+                    <label class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR Code</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="qrColorPicker" value="#000000" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    <label class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Background</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="bgZoneColorPicker" value="#ffffff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    <label class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Gradient 1</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="grad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    <label class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Gradient 2</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="grad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="format-control flex w-full max-w-[320px] p-1 bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] shadow-lg">
+                    <button data-format="jpeg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">JPG</button>
+                    <button data-format="png" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase active">PNG</button>
+                    <button data-format="webp" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">WEBP</button>
+                    <button data-format="svg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">SVG</button>
+                </div>
+                
+                <div class="flex gap-3 justify-center w-full">
+                    <button id="printQrCodeButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Print">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M19,8H5C3.34,8,2,9.34,2,11v6h4v4h12v-4h4v-6C22,9.34,20.66,8,19,8z M16,19H8v-5h8V19z M19,12c-0.55,0-1-0.45-1-1 s0.45-1,1-1s1,0.45,1,1S19.55,12,19,12z M18,3H6v4h12V3z"/></svg>
+                    </button>
+                    <button id="saveQrCodeButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Save">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></svg>
+                    </button>
+                    <button id="copyQrCodeButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Copy Image">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                    <button id="refreshGradientButton" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg" title="Randomize Colors">
+                         <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    </button>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="settings-overlay" class="modal-overlay" onclick="closeSettings(event)">
-        <div class="settings-card ui-dark-acrylic" onclick="event.stopPropagation()">
-            <button onclick="closeSettings(true)" class="absolute top-4 right-6 border-none bg-none text-3xl cursor-pointer text-white/50 hover:text-white transition-colors z-50">×</button>
-            
-            <div class="settings-header-tabs">
-                <button class="tab-btn active" onclick="switchTab('tab-lang')" id="m-lang">Sprache</button>
-                <button class="tab-btn" onclick="switchTab('tab-instructions')" id="m-instructions">Anleitung</button>
-                <button class="tab-btn" onclick="switchTab('tab-legal')" id="m-legal">Info & Impressum</button>
-            </div>
-            
-            <div class="flex-grow overflow-y-auto mb-4 pr-2">
-                <div id="tab-lang">
-                    <h3 class="text-xl font-black text-white mb-4 uppercase tracking-tight italic" id="language-title">Sprache wählen</h3>
-                    <ul class="language-options" id="language-options"></ul>
-                </div>
-
-                <div id="tab-instructions" class="hidden">
-                    <h3 class="text-xl font-black text-white mb-4 uppercase tracking-tight italic" id="instructions-title">Offline Nutzung</h3>
-                    <ol id="instructions-list" class="space-y-3 text-gray-300 text-xs leading-relaxed list-decimal pl-5"></ol>
-                </div>
-
-                <div id="tab-legal" class="hidden">
-                    <div class="text-gray-400 text-xs leading-loose space-y-6">
-                        <h3 class="text-xl font-black text-white mb-4 uppercase tracking-tight italic" id="leg-title">Impressum & Rechtliches</h3>
-                        
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-prov">Diensteanbieter</h4>
-                            <p>Niklas Außerwöger<br>Oberösterreich<br>E-Mail: <a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="56383f3d3a37257837232525332421393331332416313b373f3a7835393b">[email&#160;protected]</a></p>
-                            <p class="text-white/50 italic mt-1" id="leg-addr">Ladungsfähige Anschrift auf begründete Anfrage verfügbar. Rechtliche Schritte gegen Spam und Missbrauch der Kontaktdaten werden vorbehalten.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-usage-title">Nutzungsrechte der QR-Codes</h4>
-                            <p id="leg-usage">Jeder darf die mit diesem Generator erstellten und gespeicherten QR-Codes frei, uneingeschränkt und für beliebige Zwecke (inklusive kommerzieller Nutzung) verwenden.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-api-title">Verwendete APIs & Ressourcen</h4>
-                            <p id="leg-api">Diese Anwendung ist vollständig lokal und nutzt folgende Bibliotheken:</p>
-                            <ul class="list-disc pl-4 mt-1 space-y-1 text-[11px]">
-                                <li><strong>QRious JS:</strong> Zur lokalen und schnellen Generierung der QR-Codes direkt im Browser.</li>
-                                <li><strong>Tailwind CSS:</strong> Für das UI-Design und das responsive Styling.</li>
-                                <li><strong>Inter Font:</strong> Schriftart, bereitgestellt über das GitHub-Repository.</li>
-                            </ul>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-brand-title">Markenrecht & Externe Links</h4>
-                            <p id="leg-brand">Die auf dieser Webseite als Vorlagen erwähnten Firmennamen (wie Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) sind geschützte Marken der jeweiligen Eigentümer. Diese Webseite und deren Betreiber stehen in keinerlei Verbindung zu diesen Unternehmen und sind nicht mit ihnen affiliiert. Für die Funktion, Sicherheit oder Inhalte externer Links und generierter Vorlagen wird ausdrücklich keine Haftung übernommen.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-liab-title">Haftung für Inhalte</h4>
-                            <p id="leg-liab">Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-data-title">Datenschutz</h4>
-                            <p id="leg-data">Diese Anwendung ("Local QR pro") verarbeitet Daten ausschließlich lokal im Browser des Endgeräts. Es werden keine personenbezogenen Daten an eigene Server übertragen oder extern gespeichert.</p>
-                        </div>
-
-                        <div class="space-y-1">
-                            <h4 class="text-white font-bold uppercase tracking-wide border-b border-white/10 pb-1" id="leg-copy-title">Urheberrecht</h4>
-                            <p id="leg-copy">Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung bedürfen der Zustimmung.</p>
-                        </div>
-                        
-                        <div class="pt-4 border-t border-white/10 text-white/30 text-[10px]">
-                            <p>Local QR pro v9.0 - SVG & Quality Engine</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="mt-auto pt-4 border-t border-white/10 flex-shrink-0">
-                <button id="downloadHtmlButton" class="w-full bg-[#007bff]/20 hover:bg-[#007bff]/40 text-[#007bff] border border-[#007bff]/30 py-3 rounded-xl font-bold text-[11px] uppercase tracking-widest transition-all flex items-center justify-center gap-2">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> <span id="download-html-text">Download HTML (STRG+S Modus)</span>
-                </button>
-            </div>
-        </div>
-    </div>
-
-    <div id="save-preview-overlay" class="modal-overlay" onclick="closePreview(event)">
-        <div class="ui-dark-acrylic p-8 rounded-[2rem] text-center relative w-full max-w-sm" onclick="event.stopPropagation()">
-            <button onclick="closePreview(true)" class="absolute top-4 right-6 border-none bg-none text-2xl cursor-pointer text-white/50 hover:text-white transition-colors">×</button>
-            <h3 id="preview-title" class="text-2xl font-black text-white mb-6 uppercase tracking-tight italic">Vorschau</h3>
-            
-            <canvas id="preview-canvas" class="mx-auto rounded-xl shadow-2xl mb-6 border border-white/10 w-full" style="max-width: 240px; image-rendering: pixelated;"></canvas>
+    <div id="save-preview-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md" onclick="closePreview(event)">
+        <div class="rounded-[2.5rem] w-full max-w-sm overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11] p-8 md:p-10 text-center relative" onclick="event.stopPropagation()">
+            <button onclick="closePreview(true)" class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 id="preview-title" class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6">Preview</h3>
+            <canvas id="preview-canvas" class="mx-auto rounded-xl shadow-2xl mb-6 border border-white/10" style="max-width: 240px; image-rendering: pixelated;"></canvas>
             
             <div class="mb-6 flex flex-col gap-2 w-full text-left">
                 <label class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Quality</label>
-                <div class="flex gap-2">
-                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border-2 border-transparent bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="512">Low</button>
-                    <button class="quality-btn active flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border-2 border-transparent bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="1024">Med</button>
-                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border-2 border-transparent bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="2048">High</button>
-                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border-2 border-transparent bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="4096">Ultra</button>
+                <div class="flex gap-2 w-full" id="quality-selector">
+                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="512">Low</button>
+                    <button class="quality-btn active flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/30 bg-white/10 transition-all text-white shadow-lg" data-size="1024">Med</button>
+                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="2048">High</button>
+                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400 hover:text-white" data-size="4096">Ultra</button>
                 </div>
             </div>
 
-            <a href="#" id="preview-download-button" class="block w-full bg-white text-black hover:bg-gray-200 py-3 rounded-xl font-black text-xs uppercase tracking-widest transition-all">Herunterladen</a>
+            <a href="#" id="preview-download-button" class="block w-full bg-white text-black hover:bg-gray-200 py-4 rounded-[1.2rem] font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] shadow-lg">Download</a>
         </div>
     </div>
 
-    <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
+    <footer class="w-full flex justify-center items-center px-6 py-4 shrink-0 relative z-10 select-none mt-auto">
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <script>
         document.addEventListener('DOMContentLoaded', () => {
-            // --- Elements ---
             const qrText = document.getElementById('qrText');
             const qrCodeCanvas = document.getElementById('qrCodeCanvas');
             const qrGradientWrapper = document.getElementById('qr-gradient-wrapper');
             const qrWhiteZone = document.getElementById('qr-white-zone');
+            
             const qrColorPicker = document.getElementById('qrColorPicker');
             const bgZoneColorPicker = document.getElementById('bgZoneColorPicker');
             const grad1ColorPicker = document.getElementById('grad1ColorPicker');
@@ -446,64 +284,16 @@
             const savePreviewOverlay = document.getElementById('save-preview-overlay');
             const savePreviewCanvas = document.getElementById('preview-canvas');
             const formatControl = document.querySelector('.format-control');
-            const settingsMenu = document.getElementById('settings-overlay');
-            const langOptionsContainer = document.getElementById('language-options');
+            const tutorialModal = document.getElementById('tutorialModal');
             const qualityBtns = document.querySelectorAll('.quality-btn');
             
-            // --- State ---
             let currentSaveFormat = 'png';
-            let currentLang = 'de';
-            let gradientParams = { angle: 135, color1: '#007bff', color2: '#8b5cf6' }; // Default 135deg top-left to bottom-right
+            let currentLang = 'en';
+            let currentQuality = 1024;
+            let gradientParams = { angle: 135, color1: '#007bff', color2: '#8b5cf6' };
 
-            // --- Language & Data Setup ---
-            const flagMap = { de: 'de', en: 'gb', es: 'es', fr: 'fr', it: 'it', cs: 'cs', sk: 'sk', hu: 'hu', pt: 'pt', ru: 'ru', cn: 'cn', jp: 'jp', hi: 'hi' };
-            const socialTemplates = [
-                { name: "Facebook", prefix: "https://www.facebook.com/" },
-                { name: "Instagram", prefix: "https://www.instagram.com/" },
-                { name: "TikTok", prefix: "https://www.tiktok.com/" },
-                { name: "YouTube", prefix: "https://www.youtube.com/" },
-                { name: "X (Twitter)", prefix: "https://twitter.com/" },
-                { name: "LinkedIn", prefix: "https://www.linkedin.com/in/" },
-                { name: "WhatsApp", prefix: "https://wa.me/" },
-                { name: "GitHub", prefix: "https://github.com/" },
-                { name: "Discord", prefix: "https://discord.com/" },
-            ];
+            document.getElementById('year').innerText = new Date().getFullYear();
 
-            const translations = {
-                de: { 
-                    langName: "Deutsch", langTitle: "Sprache wählen", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Text oder URL", 
-                    saveButton: "Speichern", printButtonTitle: "Drucken", resetButtonTitle: "Eingabe löschen", refreshGradientButtonText: "Farben mischen", 
-                    downloadHtmlText: "Download HTML", instructionsTitle: "Offline Nutzung", 
-                    instructionsList: ["Klicke auf Download HTML.", "Speichere die Datei auf deinem Computer.", "Doppelklicke auf die Datei, um sie lokal und offline zu nutzen."], 
-                    initialQrValue: "Hallo Welt!", fileName: "local_qr_pro", downloadFileName: "local_qr_pro_v9.html", previewTitle: "Vorschau", previewDownload: "Herunterladen", m_lang: "Sprache", m_instructions: "Anleitung", m_legal: "Info & Impressum",
-                    leg_title: "Impressum & Rechtliches", leg_prov: "Diensteanbieter", leg_addr: "Ladungsfähige Anschrift auf begründete Anfrage verfügbar. Rechtliche Schritte gegen Spam und Missbrauch der Kontaktdaten werden vorbehalten.",
-                    leg_usage_title: "Nutzungsrechte der QR-Codes", leg_usage: "Jeder darf die mit diesem Generator erstellten und gespeicherten QR-Codes frei, uneingeschränkt und für beliebige Zwecke (inklusive kommerzieller Nutzung) verwenden.",
-                    leg_api_title: "Verwendete APIs & Ressourcen", leg_api: "Diese Anwendung ist vollständig lokal und nutzt folgende Bibliotheken:",
-                    leg_brand_title: "Markenrecht & Externe Links", leg_brand: "Die auf dieser Webseite als Vorlagen erwähnten Firmennamen (wie Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) sind geschützte Marken der jeweiligen Eigentümer. Diese Webseite und deren Betreiber stehen in keinerlei Verbindung zu diesen Unternehmen und sind nicht mit ihnen affiliiert. Für die Funktion, Sicherheit oder Inhalte externer Links und generierter Vorlagen wird ausdrücklich keine Haftung übernommen.",
-                    leg_liab_title: "Haftung für Inhalte", leg_liab: "Die Inhalte unserer Seiten wurden mit größter Sorgfalt erstellt. Für die Richtigkeit, Vollständigkeit und Aktualität der Inhalte können wir jedoch keine Gewähr übernehmen.",
-                    leg_data_title: "Datenschutz", leg_data: "Diese Anwendung verarbeitet Daten ausschließlich lokal im Browser. Es werden keine personenbezogenen Daten an eigene Server übertragen oder extern gespeichert.",
-                    leg_copy_title: "Urheberrecht", leg_copy: "Die durch die Seitenbetreiber erstellten Inhalte und Werke auf diesen Seiten unterliegen dem österreichischen Urheberrecht. Die Vervielfältigung, Bearbeitung, Verbreitung bedürfen der Zustimmung."
-                },
-                en: { 
-                    langName: "English", langTitle: "Select Language", mainTitle: "Local QR", pro: "PRO", qrPlaceholder: "Text or URL", 
-                    saveButton: "Save", printButtonTitle: "Print", resetButtonTitle: "Clear input", refreshGradientButtonText: "Randomize Colors", 
-                    downloadHtmlText: "Download HTML", instructionsTitle: "Offline Usage", 
-                    instructionsList: ["Click Download HTML.", "Save the file to your computer.", "Double-click the file to use the generator locally and offline."], 
-                    initialQrValue: "Hello World!", fileName: "local_qr_pro", downloadFileName: "local_qr_pro_v9.html", previewTitle: "Preview", previewDownload: "Download", m_lang: "Language", m_instructions: "Guide", m_legal: "Legal Info",
-                    leg_title: "Legal Notice", leg_prov: "Service Provider", leg_addr: "Address available upon justified request. Legal action will be taken against spam.",
-                    leg_usage_title: "Rights of Use", leg_usage: "Everyone is allowed to use the QR codes generated and saved with this tool freely, without restriction, and for any purpose (including commercial use).",
-                    leg_api_title: "APIs & Libraries Used", leg_api: "This application is fully local and uses the following resources:",
-                    leg_brand_title: "Trademark & External Links", leg_brand: "The company names mentioned on this website (like Facebook, Instagram, TikTok, YouTube, X, LinkedIn, WhatsApp, GitHub, Discord) are protected trademarks of their respective owners. This website and its operator are not associated or affiliated with these companies. No liability is assumed for the function, security, or content of external links.",
-                    leg_liab_title: "Liability for Content", leg_liab: "The contents of our pages were created with great care. However, we cannot guarantee the accuracy, completeness, or timeliness of the content.",
-                    leg_data_title: "Privacy Policy", leg_data: "This application processes data exclusively locally in the user's browser. No personal data is transmitted to or stored on our own servers.",
-                    leg_copy_title: "Copyright", leg_copy: "The content and works created by the site operators on these pages are subject to Austrian copyright law. Reproduction, editing, distribution require consent."
-                }
-            };
-
-            // Setup UI Display QRious (Hardcoded High Resolution purely for the DOM Display Canvas)
-            const qr = new QRious({ element: qrCodeCanvas, size: 1024, padding: 0, background: '#ffffff', foreground: '#000000' });
-
-            // --- Core Logic ---
             const hexToRgbString = (hex) => {
                 let cleanHex = hex.replace('#', '');
                 if (cleanHex.length === 3) cleanHex = cleanHex.split('').map(x => x + x).join('');
@@ -513,26 +303,57 @@
                 return `${r}, ${g}, ${b}`;
             };
 
+            const socialTemplates = [
+                { name: "Facebook", prefix: "https://www.facebook.com/" },
+                { name: "Instagram", prefix: "https://www.instagram.com/" },
+                { name: "TikTok", prefix: "https://www.tiktok.com/" },
+                { name: "YouTube", prefix: "https://www.youtube.com/" },
+                { name: "X", prefix: "https://twitter.com/" },
+                { name: "LinkedIn", prefix: "https://www.linkedin.com/in/" },
+                { name: "WhatsApp", prefix: "https://wa.me/" },
+                { name: "GitHub", prefix: "https://github.com/" },
+                { name: "Discord", prefix: "https://discord.com/" }
+            ];
+
+            const translations = {
+                en: { 
+                    qrPlaceholder: "Text or URL", 
+                    saveButton: "Save", printButtonTitle: "Print", resetButtonTitle: "Clear input", refreshGradientButtonText: "Randomize Colors", 
+                    initialQrValue: "Hello World!", fileName: "local_qr_pro", previewTitle: "Preview", previewDownload: "Download"
+                },
+                de: { 
+                    qrPlaceholder: "Text oder URL", 
+                    saveButton: "Speichern", printButtonTitle: "Drucken", resetButtonTitle: "Eingabe löschen", refreshGradientButtonText: "Farben mischen", 
+                    initialQrValue: "Hallo Welt!", fileName: "local_qr_pro", previewTitle: "Vorschau", previewDownload: "Herunterladen"
+                }
+            };
+
+            // Setup QRious core 
+            const qr = new QRious({ element: qrCodeCanvas, size: 1024, padding: 0, background: '#ffffff', foreground: '#000000' });
+
+            // Apply specific layout: Top Left to Bottom Right strictly 135deg
             const applyGradientFromPickers = () => {
                 const color1 = grad1ColorPicker.value;
                 const color2 = grad2ColorPicker.value;
-                gradientParams.angle = 135; // Top-Left to Bottom-Right locked
+                gradientParams.angle = 135; 
                 
                 qrGradientWrapper.style.background = `linear-gradient(${gradientParams.angle}deg, ${color1}, ${color2})`;
-                document.documentElement.style.setProperty('--ui-accent', color1);
+                document.documentElement.style.setProperty('--theme-color', color1);
+                document.documentElement.style.setProperty('--theme-rgb', hexToRgbString(color1));
                 
                 gradientParams.color1 = color1;
                 gradientParams.color2 = color2;
             };
 
             const applyRandomGradient = () => {
-                const colors = ['#007bff', '#8b5cf6', '#ec4899', '#06b6d4', '#3b82f6', '#1DB954', '#FF6600', '#FFD700', '#ff2d55'];
+                const colors = ['#dc2626', '#007bff', '#8b5cf6', '#ec4899', '#06b6d4', '#3b82f6', '#1DB954', '#FF6600', '#FFD700', '#ff2d55', '#4ade80'];
                 const color1 = colors[Math.floor(Math.random() * colors.length)];
                 let color2 = colors[Math.floor(Math.random() * colors.length)];
                 while(color1 === color2) color2 = colors[Math.floor(Math.random() * colors.length)];
                 
                 grad1ColorPicker.value = color1;
                 grad2ColorPicker.value = color2;
+                
                 applyGradientFromPickers();
             };
 
@@ -546,15 +367,14 @@
                 if (qrWhiteZone) qrWhiteZone.style.backgroundColor = bgZoneColorPicker.value || '#ffffff';
             };
 
-            // Size-Dynamic Image Generator (Quality Setting Supported)
+            // Dynamic Image Size Generator
             const generateImageOfSize = (baseSize) => {
                 const qrSize = parseInt(baseSize);
-                const quietZone = qrSize * (128 / 1024); // 1/8th of QR Size
-                const borderThickness = qrSize * (64 / 1024); // 1/16th of QR Size
+                const quietZone = qrSize * (128 / 1024);
+                const borderThickness = qrSize * (64 / 1024);
                 
                 const outerRadius = qrSize * (128 / 1024);
                 const innerRadius = qrSize * (64 / 1024);
-                
                 const totalSize = qrSize + (quietZone * 2) + (borderThickness * 2);
 
                 const tempCanvas = document.createElement('canvas');
@@ -562,7 +382,6 @@
                 tempCanvas.height = totalSize;
                 const ctx = tempCanvas.getContext('2d');
                 
-                // Temp QRious Instance for true resolution match
                 const tempQrCanvas = document.createElement('canvas');
                 new QRious({
                     element: tempQrCanvas,
@@ -573,7 +392,7 @@
                     background: bgZoneColorPicker.value || '#ffffff'
                 });
 
-                // 1. Draw Gradient Background (0,0 to totalSize, totalSize is 135deg visually)
+                // Top-Left to Bottom-Right corresponds to 0,0 -> totalSize,totalSize in Context2D
                 const grad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
                 grad.addColorStop(0, gradientParams.color1);
                 grad.addColorStop(1, gradientParams.color2);
@@ -586,7 +405,6 @@
                 }
                 ctx.fill();
                 
-                // 2. Draw Customized Background Inner Zone
                 ctx.fillStyle = bgZoneColorPicker.value || '#ffffff'; 
                 ctx.beginPath();
                 if (ctx.roundRect) {
@@ -596,17 +414,15 @@
                 }
                 ctx.fill();
                 
-                // 3. Render Matrix Data
                 const offset = borderThickness + quietZone;
                 ctx.drawImage(tempQrCanvas, offset, offset, qrSize, qrSize);
                 
                 return { canvas: tempCanvas, totalSize, qrSize, quietZone, borderThickness, outerRadius, innerRadius, tempQrCanvas };
             };
 
-            // True SVG Generation logic using Base64 Matrix embedding
             const generateSVGString = (sizeData) => {
                 const { totalSize, qrSize, quietZone, borderThickness, outerRadius, innerRadius, tempQrCanvas } = sizeData;
-                const dataUrl = tempQrCanvas.toDataURL("image/png"); 
+                const dataUrl = tempQrCanvas.toDataURL("image/png");
                 const offset = borderThickness + quietZone;
 
                 return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
@@ -636,36 +452,21 @@
                 const t = translations[lang] || translations['en'];
                 currentLang = translations[lang] ? lang : 'en';
 
-                document.title = `${t.mainTitle} ${t.pro}`;
-                const titleEl = document.getElementById('main-title');
-                if(titleEl) titleEl.innerHTML = `${t.mainTitle} <span class="text-[#007bff]">${t.pro}</span>`;
+                const flagImg = document.getElementById('langFlagImg');
+                const toggleBtn = document.getElementById('langToggleBtn');
                 
-                // Texts update safely
-                safeSetText('language-title', t.langTitle);
-                safeSetText('instructions-title', t.instructionsTitle);
-                safeSetText('download-html-text', t.downloadHtmlText);
+                if (flagImg && toggleBtn) {
+                    if (currentLang === 'en') {
+                        flagImg.src = "/assets/flags/austria-flag.webp";
+                        toggleBtn.title = "Wechseln zu Deutsch";
+                    } else {
+                        flagImg.src = "/assets/flags/united-kingdom-flag.webp";
+                        toggleBtn.title = "Switch to English";
+                    }
+                }
+
                 safeSetText('preview-title', t.previewTitle);
                 safeSetText('preview-download-button', t.previewDownload);
-                safeSetText('m-lang', t.m_lang);
-                safeSetText('m-instructions', t.m_instructions);
-                safeSetText('m-legal', t.m_legal);
-
-                // Legal Texts update safely
-                safeSetText('leg-title', t.leg_title);
-                safeSetText('leg-prov', t.leg_prov);
-                safeSetText('leg-addr', t.leg_addr);
-                safeSetText('leg-usage-title', t.leg_usage_title);
-                safeSetText('leg-usage', t.leg_usage);
-                safeSetText('leg-api-title', t.leg_api_title);
-                safeSetText('leg-api', t.leg_api);
-                safeSetText('leg-brand-title', t.leg_brand_title);
-                safeSetText('leg-brand', t.leg_brand);
-                safeSetText('leg-liab-title', t.leg_liab_title);
-                safeSetText('leg-liab', t.leg_liab);
-                safeSetText('leg-data-title', t.leg_data_title);
-                safeSetText('leg-data', t.leg_data);
-                safeSetText('leg-copy-title', t.leg_copy_title);
-                safeSetText('leg-copy', t.leg_copy);
                 
                 if(qrText) qrText.placeholder = t.qrPlaceholder;
                 const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
@@ -675,35 +476,6 @@
                 safeSetTitle('saveQrCodeButton', t.saveButton);
                 safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
 
-                const flagImg = document.getElementById('langFlagImg');
-                const toggleBtn = document.getElementById('langToggleBtn');
-                
-                if (flagImg && toggleBtn) {
-                    if (currentLang === 'en') {
-                        flagImg.src = "/assets/flags/austria-flag.webp";
-                        toggleBtn.title = "Wechseln zu Deutsch";
-                    } else {
-                        flagImg.src = "/assets/flags/uk-flag.webp";
-                        toggleBtn.title = "Switch to English";
-                    }
-                }
-
-                const instructionsListEl = document.getElementById('instructions-list');
-                if (instructionsListEl && t.instructionsList) {
-                    instructionsListEl.innerHTML = '';
-                    t.instructionsList.forEach(item => {
-                        const li = document.createElement('li');
-                        li.innerHTML = `<span class="bg-white/10 px-3 py-1.5 rounded-lg text-white/90 font-medium block">${item}</span>`;
-                        instructionsListEl.appendChild(li);
-                    });
-                }
-                
-                if (langOptionsContainer) {
-                    langOptionsContainer.querySelectorAll('li').forEach(li => li.classList.remove('active'));
-                    const activeLi = langOptionsContainer.querySelector(`li[data-lang="${currentLang}"]`);
-                    if(activeLi) activeLi.classList.add('active');
-                }
-                
                 if (qrText && !qrText.value) updateQr();
                 localStorage.setItem('qrGeneratorLanguage', currentLang);
             };
@@ -712,57 +484,36 @@
                 const templateButtonsContainer = document.querySelector('.template-buttons');
                 if (templateButtonsContainer) {
                     templateButtonsContainer.innerHTML = socialTemplates.map(template =>
-                        `<button data-prefix="${template.prefix}" class="ui-dark-acrylic px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-xl transition-all">${template.name}</button>`
+                        `<button data-prefix="${template.prefix}" class="bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
                     ).join('');
                 }
-
-                if (langOptionsContainer) {
-                    langOptionsContainer.innerHTML = Object.entries(translations).map(([key, value]) =>
-                         `<li data-lang="${key}">
-                            <div class="flex items-center gap-4">
-                                <svg class="flag-icon"><use href="#flag-${flagMap[key] || key}"></use></svg>
-                                <span class="font-medium tracking-wide">${value.langName}</span>
-                            </div>
-                            <svg class="check-icon w-5 h-5 hidden"><use href="#icon-check"></use></svg>
-                         </li>`
-                    ).join('');
-                }
-                
-                const style = document.createElement('style');
-                style.innerHTML = `.language-options li.active .check-icon { display: block !important; color: var(--ui-accent); }`;
-                document.head.appendChild(style);
             };
 
-            // UI Functionality
-            window.openSettings = () => { if(settingsMenu) settingsMenu.style.display = 'flex'; };
-            window.closeSettings = (force) => {
-                if (settingsMenu && (force === true || event.target.id === 'settings-overlay')) settingsMenu.style.display = 'none';
+            window.openTutorial = () => { if(tutorialModal) { tutorialModal.classList.remove('hidden'); tutorialModal.classList.add('flex'); } };
+            window.closeTutorialModal = (force) => {
+                if (tutorialModal && (force === true || event.target.id === 'tutorialModal')) { tutorialModal.classList.add('hidden'); tutorialModal.classList.remove('flex'); }
             };
             window.closePreview = (force) => {
-                if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.style.display = 'none';
-            };
-            window.switchTab = (tabId) => {
-                const overlay = document.getElementById('settings-overlay');
-                if(overlay) {
-                    overlay.querySelectorAll('.settings-card > div:not(.settings-header-tabs):not(.mt-auto) > div').forEach(el => el.classList.add('hidden'));
-                }
-                document.querySelectorAll('.settings-header-tabs .tab-btn').forEach(el => el.classList.remove('active'));
-                const tab = document.getElementById(tabId);
-                if(tab) tab.classList.remove('hidden');
-                if(event && event.currentTarget) event.currentTarget.classList.add('active');
+                if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.classList.add('hidden');
             };
 
-            // Quality Selectors UI Mechanics
+            // Quality Selectors UI
             qualityBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     qualityBtns.forEach(b => {
                         b.classList.remove('active');
+                        b.classList.remove('border-white/30', 'text-white', 'shadow-lg');
+                        b.classList.add('border-white/10', 'text-zinc-400');
                     });
+                    
                     e.target.classList.add('active');
+                    e.target.classList.remove('border-white/10', 'text-zinc-400');
+                    e.target.classList.add('border-white/30', 'text-white', 'shadow-lg');
+                    
+                    currentQuality = parseInt(e.target.dataset.size);
                 });
             });
 
-            // Event Listeners
             const setupEventListeners = () => {
                 if(qrText) qrText.addEventListener('input', updateQr);
                 
@@ -815,14 +566,13 @@
                 const saveBtn = document.getElementById('saveQrCodeButton');
                 if(saveBtn) {
                     saveBtn.addEventListener('click', () => {
-                        // Generate a fast UI-only preview
-                        const previewData = generateImageOfSize(512);
+                        const previewData = generateImageOfSize(512); // Always show fast 512 preview on DOM
                         if(savePreviewCanvas) {
                             savePreviewCanvas.width = previewData.totalSize;
                             savePreviewCanvas.height = previewData.totalSize;
                             savePreviewCanvas.getContext('2d').drawImage(previewData.canvas, 0, 0);
                         }
-                        if(savePreviewOverlay) savePreviewOverlay.style.display = 'flex';
+                        if(savePreviewOverlay) savePreviewOverlay.classList.remove('hidden');
                     });
                 }
                 
@@ -832,10 +582,7 @@
                         e.preventDefault();
                         const link = document.createElement('a');
                         
-                        // Grab selected export quality
-                        const activeQualityBtn = document.querySelector('.quality-btn.active');
-                        const qualitySize = activeQualityBtn ? parseInt(activeQualityBtn.dataset.size) : 1024;
-                        const sizeData = generateImageOfSize(qualitySize);
+                        const sizeData = generateImageOfSize(currentQuality);
                         
                         if (currentSaveFormat === 'svg') {
                             const svgString = generateSVGString(sizeData);
@@ -848,17 +595,16 @@
                         }
                         
                         link.click();
-                        if(savePreviewOverlay) savePreviewOverlay.style.display = 'none';
+                        if(savePreviewOverlay) savePreviewOverlay.classList.add('hidden');
                     });
                 }
 
-                // Robust Clipboard Copy Engine using async Blob promises
                 if (copyQrCodeButton) {
                     copyQrCodeButton.addEventListener('click', async () => {
                         try {
                             const clipboardItem = new ClipboardItem({
                                 'image/png': new Promise(resolve => {
-                                    // Generate default 1024px version for clipboard
+                                    // Generate a standard default 1024px size for clipboard output
                                     const sizeData = generateImageOfSize(1024);
                                     sizeData.canvas.toBlob(resolve, 'image/png');
                                 })
@@ -866,11 +612,11 @@
                             await navigator.clipboard.write([clipboardItem]);
                             
                             const originalHTML = copyQrCodeButton.innerHTML;
-                            copyQrCodeButton.innerHTML = `<svg class="text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                            copyQrCodeButton.innerHTML = `<svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
                             setTimeout(() => copyQrCodeButton.innerHTML = originalHTML, 2000);
                         } catch (err) {
                             console.error("Failed to copy image: ", err);
-                            alert("Clipboard permission required. Make sure you're using a secure connection (HTTPS).");
+                            alert("Clipboard access required. Ensure you are on a secure HTTPS connection.");
                         }
                     });
                 }
@@ -883,30 +629,6 @@
                         const win = window.open('', '_blank');
                         win.document.write(`<img src="${dataUrl}" style="max-width:100%; border-radius:16px;" onload="window.print(); setTimeout(()=>window.close(), 100)">`);
                         win.document.close();
-                    });
-                }
-
-                // --- STRG+S Behavior / Download HTML ---
-                const dlHtmlBtn = document.getElementById('downloadHtmlButton');
-                if(dlHtmlBtn) {
-                    dlHtmlBtn.addEventListener('click', (e) => {
-                        e.preventDefault();
-                        
-                        if(qrText) qrText.setAttribute('value', qrText.value);
-                        if(qrColorPicker) qrColorPicker.setAttribute('value', qrColorPicker.value);
-                        if(bgZoneColorPicker) bgZoneColorPicker.setAttribute('value', bgZoneColorPicker.value);
-                        if(grad1ColorPicker) grad1ColorPicker.setAttribute('value', grad1ColorPicker.value);
-                        if(grad2ColorPicker) grad2ColorPicker.setAttribute('value', grad2ColorPicker.value);
-                        
-                        const htmlContent = "<!DOCTYPE html>\n" + document.documentElement.outerHTML;
-                        const blob = new Blob([htmlContent], { type: 'text/html;charset=utf-8' });
-                        
-                        const a = document.createElement('a');
-                        a.href = URL.createObjectURL(blob);
-                        a.download = translations[currentLang].downloadFileName;
-                        a.click();
-                        
-                        URL.revokeObjectURL(a.href);
                     });
                 }
             };
@@ -923,8 +645,8 @@
                     });
                 }
 
-                setLanguage(localStorage.getItem('qrGeneratorLanguage') || 'de');
-                applyGradientFromPickers(); // Initialize with fixed 135deg gradient
+                setLanguage(localStorage.getItem('qrGeneratorLanguage') || 'en');
+                applyGradientFromPickers(); // Will default to 135 angle with input colors
                 updateQr();
             };
 
