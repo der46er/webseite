@@ -224,7 +224,6 @@
                     <div class="flex flex-wrap justify-center gap-2">
                         <button id="transparentBgBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
                         <button id="qrShapeToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Circle Shape</button>
-                        <button id="fakePixelsToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Fill Circle</button>
                         <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
                         <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
                     </div>
@@ -324,7 +323,6 @@
             const matchFrameToggleBtn = document.getElementById('matchFrameToggleBtn');
             const disableFrameToggleBtn = document.getElementById('disableFrameToggleBtn');
             const qrShapeToggleBtn = document.getElementById('qrShapeToggleBtn');
-            const fakePixelsToggleBtn = document.getElementById('fakePixelsToggleBtn');
             
             // Image Uploads
             const bgImageUpload = document.getElementById('bgImageUpload');
@@ -351,7 +349,6 @@
             let isMatchFrame = false;
             let isFrameOff = false;
             let isCircleShape = false;
-            let isFakePixels = false;
             
             let uploadedBgImage = null;
             let uploadedBgDataUrl = null;
@@ -453,14 +450,19 @@
             };
 
             const generateImageOfSize = (baseSize) => {
-                const qrSize = parseInt(baseSize);
-                const quietZone = qrSize * (isCircleShape ? 256 / 1024 : 128 / 1024);
-                const borderThickness = isFrameOff ? 0 : qrSize * (64 / 1024);
+                const totalSize = parseInt(baseSize);
+                
+                // Compute relative scale factors based on the standard proportion
+                const factorQZ = isCircleShape ? (256 / 1024) : (128 / 1024);
+                const factorBorder = isFrameOff ? 0 : (64 / 1024);
+                
+                // Mathematically derive the exact qrSize needed so the final result perfectly matches totalSize
+                const qrSize = totalSize / (1 + (factorQZ * 2) + (factorBorder * 2));
+                const quietZone = qrSize * factorQZ;
+                const borderThickness = qrSize * factorBorder;
                 
                 const baseOuterRadius = isFrameOff ? (qrSize * (64 / 1024)) : (qrSize * (128 / 1024));
                 const baseInnerRadius = qrSize * (64 / 1024);
-                const totalSize = qrSize + (quietZone * 2) + (borderThickness * 2);
-
                 const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
 
                 const tempCanvas = document.createElement('canvas');
@@ -474,7 +476,7 @@
                 
                 new QRious({
                     element: baseQrCanvas,
-                    size: qrSize,
+                    size: Math.round(qrSize), // Base rendered matrix
                     padding: 0,
                     level: 'H',
                     value: qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue),
@@ -486,8 +488,8 @@
                 let finalQrToDraw = baseQrCanvas;
                 if (isQrGradient) {
                     const qrGradCanvas = document.createElement('canvas');
-                    qrGradCanvas.width = qrSize;
-                    qrGradCanvas.height = qrSize;
+                    qrGradCanvas.width = Math.round(qrSize);
+                    qrGradCanvas.height = Math.round(qrSize);
                     const qCtx = qrGradCanvas.getContext('2d');
                     
                     const qGrad = qCtx.createLinearGradient(0, 0, qrSize, qrSize);
@@ -572,26 +574,21 @@
                 // Draw Fake Fill Pixels for Round Illusion
                 const offset = borderThickness + quietZone;
                 
-                if (isFakePixels) {
+                if (isCircleShape) {
                     ctx.save();
-                    const modSize = Math.max(2, Math.floor(qrSize / 33)); // Estimate module size
-                    const safeMargin = quietZone * 0.8;
-                    const safeX1 = offset - safeMargin;
-                    const safeY1 = offset - safeMargin;
-                    const safeX2 = offset + qrSize + safeMargin;
-                    const safeY2 = offset + qrSize + safeMargin;
-
-                    const r = isFrameOff ? outerRadius : (isCircleShape ? ((totalSize - (borderThickness*2)) / 2) : baseInnerRadius);
+                    const moduleCount = 33; 
+                    const modSize = qrSize / moduleCount;
+                    
+                    const r = isFrameOff ? outerRadius : ((totalSize - (borderThickness*2)) / 2);
                     const x = isFrameOff ? 0 : borderThickness;
                     const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
 
                     ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(x, x, size, size, r);
-                    else ctx.rect(x, x, size, size);
+                    ctx.arc(x + size/2, x + size/2, r, 0, Math.PI * 2);
                     ctx.clip();
 
                     if (isQrGradient) {
-                        const qGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
+                        const qGrad = ctx.createLinearGradient(offset, offset, offset + qrSize, offset + qrSize);
                         qGrad.addColorStop(0, qrGrad1ColorPicker.value || '#007bff');
                         qGrad.addColorStop(1, qrGrad2ColorPicker.value || '#8b5cf6');
                         ctx.fillStyle = qGrad;
@@ -599,11 +596,19 @@
                         ctx.fillStyle = qrColorPicker.value || '#000000';
                     }
 
-                    for (let fx = x; fx < x + size; fx += modSize) {
-                        for (let fy = x; fy < x + size; fy += modSize) {
+                    const gridStartX = offset % modSize;
+                    const gridStartY = offset % modSize;
+                    const safeMargin = modSize * 1.5; 
+                    const safeX1 = offset - safeMargin;
+                    const safeY1 = offset - safeMargin;
+                    const safeX2 = offset + qrSize + safeMargin;
+                    const safeY2 = offset + qrSize + safeMargin;
+
+                    for (let fx = gridStartX; fx < totalSize; fx += modSize) {
+                        for (let fy = gridStartY; fy < totalSize; fy += modSize) {
                             if (fx < safeX1 || fx + modSize > safeX2 || fy < safeY1 || fy + modSize > safeY2) {
-                                if (Math.random() > 0.5) { // 50% density
-                                    ctx.fillRect(fx, fy, modSize, modSize);
+                                if (Math.random() > 0.5) { 
+                                    ctx.fillRect(Math.floor(fx), Math.floor(fy), Math.ceil(modSize), Math.ceil(modSize));
                                 }
                             }
                         }
@@ -611,7 +616,7 @@
                     ctx.restore();
                 }
 
-                // Render Final Matrix Data
+                // Render Final Matrix Data (exact float drawing for precision)
                 ctx.drawImage(finalQrToDraw, offset, offset, qrSize, qrSize);
                 
                 // Draw Center Logo
@@ -658,7 +663,7 @@
                 const baseQrCanvas = document.createElement('canvas');
                 new QRious({
                     element: baseQrCanvas,
-                    size: qrSize,
+                    size: Math.round(qrSize),
                     padding: 0,
                     level: 'H',
                     value: qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue),
@@ -713,19 +718,22 @@
                     }
                 }
 
-                if (isFakePixels) {
-                    const modSize = Math.max(2, Math.floor(qrSize / 33));
-                    const safeMargin = quietZone * 0.8;
+                if (isCircleShape) {
+                    const moduleCount = 33;
+                    const modSize = qrSize / moduleCount;
+                    const gridStartX = offset % modSize;
+                    const gridStartY = offset % modSize;
+                    const safeMargin = modSize * 1.5;
                     const safeX1 = offset - safeMargin;
                     const safeY1 = offset - safeMargin;
                     const safeX2 = offset + qrSize + safeMargin;
                     const safeY2 = offset + qrSize + safeMargin;
                     
                     svgStr += `<g clip-path="url(#fakePixelsClip)" fill="${isQrGradient ? 'url(#qrGrad)' : (qrColorPicker.value || '#000000')}">`;
-                    svgStr += `<clipPath id="fakePixelsClip"><rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" /></clipPath>`;
+                    svgStr += `<clipPath id="fakePixelsClip"><circle cx="${x + size/2}" cy="${x + size/2}" r="${isFrameOff ? outerRadius : innerRadius}" /></clipPath>`;
                     
-                    for (let fx = x; fx < x + size; fx += modSize) {
-                        for (let fy = x; fy < x + size; fy += modSize) {
+                    for (let fx = gridStartX; fx < totalSize; fx += modSize) {
+                        for (let fy = gridStartY; fy < totalSize; fy += modSize) {
                             if (fx < safeX1 || fx + modSize > safeX2 || fy < safeY1 || fy + modSize > safeY2) {
                                 if (Math.random() > 0.5) {
                                     svgStr += `<rect x="${fx}" y="${fy}" width="${modSize}" height="${modSize}" />`;
@@ -855,17 +863,6 @@
                     isCircleShape = !isCircleShape;
                     qrShapeToggleBtn.classList.toggle('active');
                     qrShapeToggleBtn.classList.toggle('text-white');
-                    updateQr();
-                });
-
-                fakePixelsToggleBtn.addEventListener('click', () => {
-                    isFakePixels = !isFakePixels;
-                    fakePixelsToggleBtn.classList.toggle('active');
-                    fakePixelsToggleBtn.classList.toggle('text-white');
-                    if(isFakePixels && !isCircleShape) {
-                        isCircleShape = true;
-                        qrShapeToggleBtn.classList.add('active', 'text-white');
-                    }
                     updateQr();
                 });
 
