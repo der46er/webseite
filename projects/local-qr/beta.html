@@ -71,6 +71,7 @@
             border-color: rgba(255, 255, 255, 0.3) !important;
             background: rgba(255, 255, 255, 0.1) !important;
             color: #fff !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
         .quality-btn.active {
@@ -135,10 +136,6 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </button>
         
-        <button id="advancedToggleBtn" title="Advanced Mode" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
-            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"></path></svg>
-        </button>
-        
         <button onclick="toggleLanguage()" id="langToggleBtn" title="Switch to English" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 overflow-hidden p-2.5">
             <img id="langFlagImg" src="/assets/flags/united-kingdom-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
         </button>
@@ -157,7 +154,7 @@
             <ul class="text-zinc-300 text-sm space-y-3 font-medium">
                 <li><strong class="text-white">1.</strong> Type your desired text or URL in the input field.</li>
                 <li><strong class="text-white">2.</strong> Select a social preset for quick profile templates.</li>
-                <li><strong class="text-white">3.</strong> Toggle <strong class="text-white">Advanced Mode</strong> in the top right to unlock QR Gradients and Frame removals.</li>
+                <li><strong class="text-white">3.</strong> Customize your Code using the toggles to add gradients, turn off backgrounds, or add a Neon Glow.</li>
                 <li><strong class="text-white">4.</strong> Choose your file type, adjust quality, download the output, copy directly, or print.</li>
             </ul>
         </div>
@@ -188,53 +185,53 @@
                             <input type="color" id="qrColorPicker" value="#000000" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
                         </div>
                     </label>
+                    
+                    <label id="qrGrad1Wrapper" class="hidden flex-col items-center gap-2 cursor-pointer group">
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR G1</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="qrGrad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    <label id="qrGrad2Wrapper" class="hidden flex-col items-center gap-2 cursor-pointer group">
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR G2</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="qrGrad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+
                     <label id="bgZoneWrapper" class="flex flex-col items-center gap-2 cursor-pointer group transition-all">
                         <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Background</span>
                         <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform checker-bg">
                             <input type="color" id="bgZoneColorPicker" value="#ffffff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
                         </div>
                     </label>
-                    <button id="transparentBgBtn" class="flex flex-col items-center gap-2 group border-none bg-transparent cursor-pointer transition-all">
-                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Transparent</span>
-                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden shadow-lg group-hover:scale-110 transition-transform flex items-center justify-center bg-black/50 text-white/50">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path></svg>
-                        </div>
-                    </button>
+                    
                     <label class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Gradient 1</span>
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Frame 1</span>
                         <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
                             <input type="color" id="grad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
                         </div>
                     </label>
                     <label class="flex flex-col items-center gap-2 cursor-pointer group">
-                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Gradient 2</span>
+                        <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Frame 2</span>
                         <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
                             <input type="color" id="grad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
                         </div>
                     </label>
                 </div>
 
-                <div id="advancedControls" class="hidden flex-col items-center gap-4 w-full pt-4 border-t border-white/10 animate-in">
-                    <span class="text-[10px] font-black italic uppercase text-zinc-500 tracking-widest w-full text-center mb-1">Advanced Settings</span>
-                    
-                    <div class="flex flex-wrap justify-center gap-3 w-full">
-                        <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
-                        
-                        <label id="qrGrad1Wrapper" class="hidden flex-col items-center gap-2 cursor-pointer group">
-                            <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
-                                <input type="color" id="qrGrad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
-                            </div>
-                        </label>
-                        <label id="qrGrad2Wrapper" class="hidden flex-col items-center gap-2 cursor-pointer group">
-                            <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
-                                <input type="color" id="qrGrad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
-                            </div>
-                        </label>
-                    </div>
-                    
-                    <div class="flex flex-wrap justify-center gap-3 w-full">
-                        <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame Gradient</button>
-                        <button id="disableFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Turn off Frame</button>
+                <div class="flex flex-wrap justify-center gap-3 w-full">
+                    <button id="transparentBgBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
+                    <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
+                    <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
+                    <button id="disableFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Hide Frame</button>
+                    <button id="neonGlowToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md flex items-center gap-1">Neon Glow ✨</button>
+                </div>
+
+                <div class="flex justify-center w-full mt-1">
+                    <div class="relative group flex items-center">
+                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] font-bold text-zinc-500 uppercase tracking-widest px-1 rounded whitespace-nowrap">Center Emoji</span>
+                        <input type="text" id="centerEmoji" maxlength="2" placeholder="😎" class="w-16 h-10 rounded-xl bg-white/5 border border-white/10 text-center text-lg focus:border-white/30 focus:outline-none transition-all shadow-inner text-white">
                     </div>
                 </div>
 
@@ -294,6 +291,7 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const qrText = document.getElementById('qrText');
+            const centerEmoji = document.getElementById('centerEmoji');
             
             // Pickers
             const qrColorPicker = document.getElementById('qrColorPicker');
@@ -311,13 +309,12 @@
             
             // Action Buttons
             const copyQrCodeButton = document.getElementById('copyQrCodeButton');
-            const advancedToggleBtn = document.getElementById('advancedToggleBtn');
             const transparentBgBtn = document.getElementById('transparentBgBtn');
             const qrGradientToggleBtn = document.getElementById('qrGradientToggleBtn');
             const matchFrameToggleBtn = document.getElementById('matchFrameToggleBtn');
             const disableFrameToggleBtn = document.getElementById('disableFrameToggleBtn');
+            const neonGlowToggleBtn = document.getElementById('neonGlowToggleBtn');
             
-            const advancedControls = document.getElementById('advancedControls');
             const mainDomCanvas = document.getElementById('mainDomCanvas');
             const savePreviewOverlay = document.getElementById('save-preview-overlay');
             const savePreviewCanvas = document.getElementById('preview-canvas');
@@ -332,11 +329,11 @@
             let gradientParams = { angle: 135, color1: '#007bff', color2: '#8b5cf6' };
             
             // Advanced States
-            let isAdvancedMode = false;
             let isTransparentBg = false;
             let isQrGradient = false;
             let isMatchFrame = false;
             let isFrameOff = false;
+            let isNeonGlow = false;
 
             document.getElementById('year').innerText = new Date().getFullYear();
 
@@ -405,7 +402,6 @@
             };
 
             const updateQr = () => {
-                // Generate a visual DOM preview sized efficiently
                 const sizeData = generateImageOfSize(1024);
                 mainDomCanvas.width = sizeData.totalSize;
                 mainDomCanvas.height = sizeData.totalSize;
@@ -429,7 +425,7 @@
                 tempCanvas.height = totalSize;
                 const ctx = tempCanvas.getContext('2d');
                 
-                // Base QR Layer
+                // Base QR Layer (Set level to H to support Center Emoji)
                 const baseQrCanvas = document.createElement('canvas');
                 const qriousForeground = isQrGradient ? '#000000' : (qrColorPicker.value || '#000000');
                 
@@ -437,6 +433,7 @@
                     element: baseQrCanvas,
                     size: qrSize,
                     padding: 0,
+                    level: 'H',
                     value: qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue),
                     foreground: qriousForeground,
                     background: 'rgba(0,0,0,0)' 
@@ -467,10 +464,28 @@
                     frameGrad.addColorStop(0, gradientParams.color1);
                     frameGrad.addColorStop(1, gradientParams.color2);
                     ctx.fillStyle = frameGrad;
+
+                    if (isNeonGlow) {
+                        ctx.shadowColor = gradientParams.color1;
+                        ctx.shadowBlur = 20 * (baseSize / 1024);
+                    }
+
                     ctx.beginPath();
                     if (ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
                     else ctx.rect(0, 0, totalSize, totalSize);
                     ctx.fill();
+
+                    // Reset shadow for next draws
+                    ctx.shadowBlur = 0;
+
+                    // Punch physical hole to enable true transparency under the frame
+                    ctx.globalCompositeOperation = 'destination-out';
+                    ctx.beginPath();
+                    const size = totalSize - (borderThickness * 2);
+                    if (ctx.roundRect) ctx.roundRect(borderThickness, borderThickness, size, size, innerRadius);
+                    else ctx.rect(borderThickness, borderThickness, size, size);
+                    ctx.fill();
+                    ctx.globalCompositeOperation = 'source-over'; // Reset blend mode
                 }
 
                 // Draw Inner Background Zone
@@ -496,8 +511,34 @@
 
                 // Render Final Matrix Data
                 const offset = borderThickness + quietZone;
-                ctx.drawImage(finalQrToDraw, offset, offset, qrSize, qrSize);
+
+                if (isNeonGlow) {
+                    ctx.shadowColor = isQrGradient ? (qrGrad1ColorPicker.value || '#007bff') : (qrColorPicker.value || '#000000');
+                    ctx.shadowBlur = 15 * (baseSize / 1024);
+                }
                 
+                ctx.drawImage(finalQrToDraw, offset, offset, qrSize, qrSize);
+                ctx.shadowBlur = 0; // Reset
+                
+                // Draw Center Emoji
+                if (centerEmoji.value) {
+                    const emojiSize = qrSize * 0.25;
+                    const ex = offset + (qrSize / 2);
+                    const ey = offset + (qrSize / 2);
+
+                    // Cutout background for emoji
+                    ctx.fillStyle = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, emojiSize * 0.6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    // Render emoji
+                    ctx.font = `${emojiSize * 0.8}px Arial`;
+                    ctx.textAlign = 'center';
+                    ctx.textBaseline = 'middle';
+                    ctx.fillText(centerEmoji.value, ex, ey + (emojiSize * 0.05));
+                }
+
                 return { canvas: tempCanvas, totalSize, qrSize, quietZone, borderThickness, outerRadius, innerRadius };
             };
 
@@ -510,6 +551,7 @@
                     element: baseQrCanvas,
                     size: qrSize,
                     padding: 0,
+                    level: 'H',
                     value: qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue),
                     foreground: isQrGradient ? '#ffffff' : (qrColorPicker.value || '#000000'), 
                     background: 'rgba(0,0,0,0)'
@@ -523,6 +565,26 @@
                             <stop offset="100%" stop-color="${gradientParams.color2}" />
                         </linearGradient>`;
                 
+                if (isNeonGlow) {
+                    svgStr += `
+                        <filter id="neonFrame" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="${20 * (totalSize / 1024)}" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>
+                        <filter id="neonQr" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="${15 * (totalSize / 1024)}" result="blur" />
+                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                        </filter>`;
+                }
+
+                if (!isFrameOff) {
+                    svgStr += `
+                        <mask id="holeMask">
+                            <rect width="${totalSize}" height="${totalSize}" fill="white" />
+                            <rect x="${borderThickness}" y="${borderThickness}" width="${totalSize - (borderThickness*2)}" height="${totalSize - (borderThickness*2)}" rx="${innerRadius}" ry="${innerRadius}" fill="black" />
+                        </mask>`;
+                }
+
                 if (isQrGradient) {
                     svgStr += `
                         <linearGradient id="qrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -536,7 +598,7 @@
                 svgStr += `</defs>`;
 
                 if (!isFrameOff) {
-                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" />`;
+                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" mask="url(#holeMask)" ${isNeonGlow ? 'filter="url(#neonFrame)"' : ''} />`;
                 }
 
                 if (!isTransparentBg) {
@@ -551,9 +613,21 @@
                 }
 
                 if (isQrGradient) {
-                    svgStr += `<rect x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" />`;
+                    svgStr += `<rect x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" ${isNeonGlow ? 'filter="url(#neonQr)"' : ''} />`;
                 } else {
-                    svgStr += `<image href="${qrDataUrl}" x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" />`;
+                    svgStr += `<image href="${qrDataUrl}" x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" ${isNeonGlow ? 'filter="url(#neonQr)"' : ''} />`;
+                }
+
+                if (centerEmoji.value) {
+                    const emojiSize = qrSize * 0.25;
+                    const ex = offset + (qrSize / 2);
+                    const ey = offset + (qrSize / 2);
+                    const fillBg = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
+
+                    svgStr += `
+                        <circle cx="${ex}" cy="${ey}" r="${emojiSize * 0.6}" fill="${fillBg}" />
+                        <text x="${ex}" y="${ey + (emojiSize * 0.05)}" font-family="Arial" font-size="${emojiSize * 0.8}px" text-anchor="middle" dominant-baseline="middle">${centerEmoji.value}</text>
+                    `;
                 }
 
                 svgStr += `</svg>`;
@@ -635,6 +709,7 @@
 
             const setupEventListeners = () => {
                 if(qrText) qrText.addEventListener('input', updateQr);
+                if(centerEmoji) centerEmoji.addEventListener('input', updateQr);
                 
                 qrColorPicker.addEventListener('input', updateQr);
                 bgZoneColorPicker.addEventListener('input', updateQr);
@@ -642,20 +717,11 @@
                 grad2ColorPicker.addEventListener('input', applyGradientFromPickers);
                 qrGrad1ColorPicker.addEventListener('input', applyGradientFromPickers);
                 qrGrad2ColorPicker.addEventListener('input', applyGradientFromPickers);
-                
-                // Advanced Toggle Logic
-                advancedToggleBtn.addEventListener('click', () => {
-                    isAdvancedMode = !isAdvancedMode;
-                    advancedToggleBtn.classList.toggle('text-white');
-                    advancedToggleBtn.classList.toggle('active');
-                    if (isAdvancedMode) advancedControls.classList.replace('hidden', 'flex');
-                    else advancedControls.classList.replace('flex', 'hidden');
-                });
 
                 transparentBgBtn.addEventListener('click', () => {
                     isTransparentBg = !isTransparentBg;
-                    transparentBgBtn.querySelector('div').classList.toggle('bg-white/20');
-                    transparentBgBtn.querySelector('div').classList.toggle('text-white');
+                    transparentBgBtn.classList.toggle('active');
+                    transparentBgBtn.classList.toggle('text-white');
                     updateQr();
                 });
 
@@ -688,6 +754,13 @@
                     isFrameOff = !isFrameOff;
                     disableFrameToggleBtn.classList.toggle('active');
                     disableFrameToggleBtn.classList.toggle('text-white');
+                    updateQr();
+                });
+
+                neonGlowToggleBtn.addEventListener('click', () => {
+                    isNeonGlow = !isNeonGlow;
+                    neonGlowToggleBtn.classList.toggle('active');
+                    neonGlowToggleBtn.classList.toggle('text-white');
                     updateQr();
                 });
 
@@ -768,7 +841,6 @@
                     });
                 }
 
-                // Robust Safari/Chrome Promise-based Clipboard Copy
                 if (copyQrCodeButton) {
                     copyQrCodeButton.addEventListener('click', async () => {
                         try {
