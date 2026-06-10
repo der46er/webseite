@@ -451,6 +451,50 @@
                 }
             };
 
+            const getTrimmedQrCanvas = (text, foregroundColor) => {
+                const tempCanvas = document.createElement('canvas');
+                // Use fixed internal resolution for clear mathematical trimming
+                new QRious({
+                    element: tempCanvas,
+                    size: 1024,
+                    padding: 0,
+                    level: 'H',
+                    value: text,
+                    foreground: foregroundColor,
+                    background: 'rgba(0,0,0,0)'
+                });
+                
+                const ctx = tempCanvas.getContext('2d', { willReadFrequently: true });
+                const pixels = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const l = pixels.data.length;
+                let bound = { top: null, left: null, right: null, bottom: null };
+                
+                for (let i = 0; i < l; i += 4) {
+                    if (pixels.data[i + 3] !== 0) {
+                        const x = (i / 4) % tempCanvas.width;
+                        const y = ~~((i / 4) / tempCanvas.width);
+                        
+                        if (bound.top === null) bound.top = y;
+                        if (bound.left === null) bound.left = x;
+                        else if (x < bound.left) bound.left = x;
+                        if (bound.right === null) bound.right = x;
+                        else if (bound.right < x) bound.right = x;
+                        if (bound.bottom === null) bound.bottom = y;
+                        else if (bound.bottom < y) bound.bottom = y;
+                    }
+                }
+                
+                if (bound.top === null) return tempCanvas; 
+                
+                const trimHeight = bound.bottom - bound.top + 1;
+                const trimWidth = bound.right - bound.left + 1;
+                const trimmed = document.createElement('canvas');
+                trimmed.width = trimWidth;
+                trimmed.height = trimHeight;
+                trimmed.getContext('2d').drawImage(tempCanvas, bound.left, bound.top, trimWidth, trimHeight, 0, 0, trimWidth, trimHeight);
+                return trimmed;
+            };
+
             let renderTimeout;
             const updateQr = () => {
                 if (renderTimeout) cancelAnimationFrame(renderTimeout);
@@ -470,12 +514,12 @@
                 const factorQZ = isCircleShape ? (256 / 1024) : (128 / 1024);
                 const factorBorder = isFrameOff ? 0 : (64 / 1024);
                 
-                const qrSize = totalSize / (1 + (factorQZ * 2) + (factorBorder * 2));
-                const quietZone = qrSize * factorQZ;
-                const borderThickness = qrSize * factorBorder;
+                const maxQrSize = totalSize / (1 + (factorQZ * 2) + (factorBorder * 2));
+                const quietZone = maxQrSize * factorQZ;
+                const borderThickness = maxQrSize * factorBorder;
                 
-                const baseOuterRadius = isFrameOff ? (qrSize * (64 / 1024)) : (qrSize * (128 / 1024));
-                const baseInnerRadius = qrSize * (64 / 1024);
+                const baseOuterRadius = isFrameOff ? (maxQrSize * (64 / 1024)) : (maxQrSize * (128 / 1024));
+                const baseInnerRadius = maxQrSize * (64 / 1024);
                 const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
 
                 const tempCanvas = document.createElement('canvas');
@@ -483,34 +527,26 @@
                 tempCanvas.height = totalSize;
                 const ctx = tempCanvas.getContext('2d');
                 
-                const baseQrCanvas = document.createElement('canvas');
+                const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
                 const qriousForeground = isQrGradient ? '#000000' : (qrColorPicker.value || '#000000');
-                
-                new QRious({
-                    element: baseQrCanvas,
-                    size: Math.round(qrSize),
-                    padding: 0,
-                    level: 'H',
-                    value: qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue),
-                    foreground: qriousForeground,
-                    background: 'rgba(0,0,0,0)' 
-                });
+                const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
 
-                let finalQrToDraw = baseQrCanvas;
+                let finalQrToDraw = trimmedQr;
                 if (isQrGradient) {
                     const qrGradCanvas = document.createElement('canvas');
-                    qrGradCanvas.width = Math.round(qrSize);
-                    qrGradCanvas.height = Math.round(qrSize);
+                    qrGradCanvas.width = trimmedQr.width;
+                    qrGradCanvas.height = trimmedQr.height;
                     const qCtx = qrGradCanvas.getContext('2d');
                     
-                    const qGrad = qCtx.createLinearGradient(0, 0, qrSize, qrSize);
+                    const qGrad = qCtx.createLinearGradient(0, 0, trimmedQr.width, trimmedQr.height);
                     qGrad.addColorStop(0, qrGrad1ColorPicker.value || '#007bff');
                     qGrad.addColorStop(1, qrGrad2ColorPicker.value || '#8b5cf6');
                     qCtx.fillStyle = qGrad;
-                    qCtx.fillRect(0, 0, qrSize, qrSize);
+                    qCtx.fillRect(0, 0, trimmedQr.width, trimmedQr.height);
                     
                     qCtx.globalCompositeOperation = 'destination-in';
-                    qCtx.drawImage(baseQrCanvas, 0, 0);
+                    qCtx.imageSmoothingEnabled = false;
+                    qCtx.drawImage(trimmedQr, 0, 0);
                     finalQrToDraw = qrGradCanvas;
                 }
 
@@ -577,57 +613,57 @@
                 }
 
                 const offset = borderThickness + quietZone;
-                ctx.drawImage(finalQrToDraw, offset, offset, qrSize, qrSize);
+                const scale = Math.min(maxQrSize / trimmedQr.width, maxQrSize / trimmedQr.height);
+                const drawW = trimmedQr.width * scale;
+                const drawH = trimmedQr.height * scale;
+                const drawX = offset + (maxQrSize - drawW) / 2;
+                const drawY = offset + (maxQrSize - drawH) / 2;
+
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(finalQrToDraw, drawX, drawY, drawW, drawH);
+                ctx.imageSmoothingEnabled = true;
                 
                 if (uploadedCenterLogo) {
-                    const logoSize = qrSize * 0.25;
-                    const ex = offset + (qrSize / 2);
-                    const ey = offset + (qrSize / 2);
+                    const logoSize = maxQrSize * 0.25;
+                    const cx = totalSize / 2;
+                    const cy = totalSize / 2;
 
                     ctx.fillStyle = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
                     ctx.beginPath();
-                    ctx.arc(ex, ey, logoSize * 0.6, 0, Math.PI * 2);
+                    ctx.arc(cx, cy, logoSize * 0.6, 0, Math.PI * 2);
                     ctx.fill();
 
                     ctx.save();
                     ctx.beginPath();
-                    ctx.arc(ex, ey, logoSize * 0.55, 0, Math.PI * 2);
+                    ctx.arc(cx, cy, logoSize * 0.55, 0, Math.PI * 2);
                     ctx.clip();
                     
                     const imgAspect = uploadedCenterLogo.width / uploadedCenterLogo.height;
                     const dSize = logoSize * 1.1;
-                    let drawW = dSize;
-                    let drawH = dSize;
-                    if (imgAspect > 1) drawW = dSize * imgAspect;
-                    else drawH = dSize / imgAspect;
+                    let drawImgW = dSize;
+                    let drawImgH = dSize;
+                    if (imgAspect > 1) drawImgW = dSize * imgAspect;
+                    else drawImgH = dSize / imgAspect;
                     
-                    ctx.drawImage(uploadedCenterLogo, ex - drawW/2, ey - drawH/2, drawW, drawH);
+                    ctx.drawImage(uploadedCenterLogo, cx - drawImgW/2, cy - drawImgH/2, drawImgW, drawImgH);
                     ctx.restore();
                 }
 
-                return { canvas: tempCanvas, totalSize, qrSize, quietZone, borderThickness, outerRadius, baseOuterRadius, baseInnerRadius };
+                return { canvas: tempCanvas, totalSize, maxQrSize, quietZone, borderThickness, outerRadius, baseOuterRadius, baseInnerRadius, drawX, drawY, drawW, drawH };
             };
 
             const generateSVGString = (sizeData) => {
-                const { totalSize, qrSize, quietZone, borderThickness, baseOuterRadius, baseInnerRadius } = sizeData;
-                const offset = borderThickness + quietZone;
+                const { totalSize, maxQrSize, quietZone, borderThickness, baseOuterRadius, baseInnerRadius, drawX, drawY, drawW, drawH } = sizeData;
                 const x = isFrameOff ? 0 : borderThickness;
                 const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
                 
                 const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
                 const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
 
-                const baseQrCanvas = document.createElement('canvas');
-                new QRious({
-                    element: baseQrCanvas,
-                    size: Math.round(qrSize),
-                    padding: 0,
-                    level: 'H',
-                    value: qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue),
-                    foreground: isQrGradient ? '#ffffff' : (qrColorPicker.value || '#000000'), 
-                    background: 'rgba(0,0,0,0)'
-                });
-                const qrDataUrl = baseQrCanvas.toDataURL("image/png");
+                const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
+                const qriousForeground = isQrGradient ? '#ffffff' : (qrColorPicker.value || '#000000');
+                const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
+                const qrDataUrl = trimmedQr.toDataURL("image/png");
 
                 let svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
                     <defs>
@@ -653,7 +689,7 @@
                             <stop offset="100%" stop-color="${qrGrad2ColorPicker.value || '#8b5cf6'}" />
                         </linearGradient>
                         <mask id="qrMaskLuminance">
-                            <image href="${qrDataUrl}" x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" />
+                            <image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />
                         </mask>`;
                 }
                 svgStr += `</defs>`;
@@ -677,23 +713,23 @@
                 }
 
                 if (isQrGradient) {
-                    svgStr += `<rect x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" />`;
+                    svgStr += `<rect x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" />`;
                 } else {
-                    svgStr += `<image href="${qrDataUrl}" x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" />`;
+                    svgStr += `<image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />`;
                 }
 
                 if (uploadedCenterLogoDataUrl) {
-                    const logoSize = qrSize * 0.25;
-                    const ex = offset + (qrSize / 2);
-                    const ey = offset + (qrSize / 2);
+                    const logoSize = maxQrSize * 0.25;
+                    const cx = totalSize / 2;
+                    const cy = totalSize / 2;
                     const fillBg = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
 
                     svgStr += `
-                        <circle cx="${ex}" cy="${ey}" r="${logoSize * 0.6}" fill="${fillBg}" />
+                        <circle cx="${cx}" cy="${cy}" r="${logoSize * 0.6}" fill="${fillBg}" />
                         <clipPath id="logoClip">
-                            <circle cx="${ex}" cy="${ey}" r="${logoSize * 0.55}" />
+                            <circle cx="${cx}" cy="${cy}" r="${logoSize * 0.55}" />
                         </clipPath>
-                        <image href="${uploadedCenterLogoDataUrl}" x="${ex - logoSize*0.55}" y="${ey - logoSize*0.55}" width="${logoSize*1.1}" height="${logoSize*1.1}" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)" />
+                        <image href="${uploadedCenterLogoDataUrl}" x="${cx - logoSize*0.55}" y="${cy - logoSize*0.55}" width="${logoSize*1.1}" height="${logoSize*1.1}" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)" />
                     `;
                 }
 
@@ -774,7 +810,6 @@
                 if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.classList.add('hidden');
             };
 
-            // Quality Selectors UI
             qualityBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     qualityBtns.forEach(b => b.classList.remove('active'));
@@ -947,7 +982,11 @@
                         if(savePreviewCanvas) {
                             savePreviewCanvas.width = previewData.totalSize;
                             savePreviewCanvas.height = previewData.totalSize;
-                            savePreviewCanvas.getContext('2d').drawImage(previewData.canvas, 0, 0);
+                            
+                            const pCtx = savePreviewCanvas.getContext('2d');
+                            pCtx.clearRect(0, 0, previewData.totalSize, previewData.totalSize);
+                            pCtx.imageSmoothingEnabled = false;
+                            pCtx.drawImage(previewData.canvas, 0, 0);
                         }
                         if(savePreviewOverlay) savePreviewOverlay.classList.remove('hidden');
                     });
