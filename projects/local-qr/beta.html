@@ -154,7 +154,7 @@
             <ul class="text-zinc-300 text-sm space-y-3 font-medium">
                 <li><strong class="text-white">1.</strong> Type your desired text or URL in the input field.</li>
                 <li><strong class="text-white">2.</strong> Select a social preset for quick profile templates.</li>
-                <li><strong class="text-white">3.</strong> Customize your Code using the toggles to add gradients, turn off backgrounds, or add a Neon Glow.</li>
+                <li><strong class="text-white">3.</strong> Customize your Code using the toggles to add images, change shapes, or adjust gradients.</li>
                 <li><strong class="text-white">4.</strong> Choose your file type, adjust quality, download the output, copy directly, or print.</li>
             </ul>
         </div>
@@ -222,17 +222,26 @@
 
                 <div class="flex flex-wrap justify-center gap-3 w-full">
                     <button id="transparentBgBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
+                    <button id="qrShapeToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Circle Shape</button>
                     <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
                     <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
                     <button id="disableFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Hide Frame</button>
-                    <button id="neonGlowToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md flex items-center gap-1">Neon Glow ✨</button>
                 </div>
 
-                <div class="flex justify-center w-full mt-1">
-                    <div class="relative group flex items-center">
-                        <span class="absolute -top-4 left-1/2 -translate-x-1/2 text-[8px] font-bold text-zinc-500 uppercase tracking-widest px-1 rounded whitespace-nowrap">Center Emoji</span>
-                        <input type="text" id="centerEmoji" maxlength="2" placeholder="😎" class="w-16 h-10 rounded-xl bg-white/5 border border-white/10 text-center text-lg focus:border-white/30 focus:outline-none transition-all shadow-inner text-white">
-                    </div>
+                <div class="flex flex-wrap justify-center gap-3 w-full mt-1">
+                    <label class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md cursor-pointer flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Upload BG
+                        <input type="file" id="bgImageUpload" accept="image/*" class="hidden">
+                    </label>
+                    <button id="clearBgImageBtn" class="hidden adv-toggle px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all shadow-md" title="Clear Background">✕</button>
+
+                    <label class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md cursor-pointer flex items-center gap-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                        Center Logo
+                        <input type="file" id="centerLogoUpload" accept="image/*" class="hidden">
+                    </label>
+                    <button id="clearCenterLogoBtn" class="hidden adv-toggle px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all shadow-md" title="Clear Logo">✕</button>
                 </div>
 
                 <div class="format-control flex w-full max-w-[320px] p-1 bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] shadow-lg mt-2">
@@ -291,7 +300,6 @@
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const qrText = document.getElementById('qrText');
-            const centerEmoji = document.getElementById('centerEmoji');
             
             // Pickers
             const qrColorPicker = document.getElementById('qrColorPicker');
@@ -313,7 +321,13 @@
             const qrGradientToggleBtn = document.getElementById('qrGradientToggleBtn');
             const matchFrameToggleBtn = document.getElementById('matchFrameToggleBtn');
             const disableFrameToggleBtn = document.getElementById('disableFrameToggleBtn');
-            const neonGlowToggleBtn = document.getElementById('neonGlowToggleBtn');
+            const qrShapeToggleBtn = document.getElementById('qrShapeToggleBtn');
+            
+            // Image Uploads
+            const bgImageUpload = document.getElementById('bgImageUpload');
+            const clearBgImageBtn = document.getElementById('clearBgImageBtn');
+            const centerLogoUpload = document.getElementById('centerLogoUpload');
+            const clearCenterLogoBtn = document.getElementById('clearCenterLogoBtn');
             
             const mainDomCanvas = document.getElementById('mainDomCanvas');
             const savePreviewOverlay = document.getElementById('save-preview-overlay');
@@ -333,7 +347,12 @@
             let isQrGradient = false;
             let isMatchFrame = false;
             let isFrameOff = false;
-            let isNeonGlow = false;
+            let isCircleShape = false;
+            
+            let uploadedBgImage = null;
+            let uploadedBgDataUrl = null;
+            let uploadedCenterLogo = null;
+            let uploadedCenterLogoDataUrl = null;
 
             document.getElementById('year').innerText = new Date().getFullYear();
 
@@ -401,6 +420,17 @@
                 applyGradientFromPickers();
             };
 
+            const handleImageUpload = (file, callback) => {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => callback(img, e.target.result);
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+
             const updateQr = () => {
                 const sizeData = generateImageOfSize(1024);
                 mainDomCanvas.width = sizeData.totalSize;
@@ -415,17 +445,18 @@
                 const quietZone = qrSize * (128 / 1024);
                 const borderThickness = isFrameOff ? 0 : qrSize * (64 / 1024);
                 
-                const outerRadius = isFrameOff ? (qrSize * (64 / 1024)) : (qrSize * (128 / 1024));
-                const innerRadius = qrSize * (64 / 1024);
-                
+                const baseOuterRadius = isFrameOff ? (qrSize * (64 / 1024)) : (qrSize * (128 / 1024));
+                const baseInnerRadius = qrSize * (64 / 1024);
                 const totalSize = qrSize + (quietZone * 2) + (borderThickness * 2);
+
+                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
 
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = totalSize;
                 tempCanvas.height = totalSize;
                 const ctx = tempCanvas.getContext('2d');
                 
-                // Base QR Layer (Set level to H to support Center Emoji)
+                // Base QR Layer
                 const baseQrCanvas = document.createElement('canvas');
                 const qriousForeground = isQrGradient ? '#000000' : (qrColorPicker.value || '#000000');
                 
@@ -465,86 +496,111 @@
                     frameGrad.addColorStop(1, gradientParams.color2);
                     ctx.fillStyle = frameGrad;
 
-                    if (isNeonGlow) {
-                        ctx.shadowColor = gradientParams.color1;
-                        ctx.shadowBlur = 20 * (baseSize / 1024);
-                    }
-
                     ctx.beginPath();
                     if (ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
                     else ctx.rect(0, 0, totalSize, totalSize);
                     ctx.fill();
 
-                    // Reset shadow for next draws
-                    ctx.shadowBlur = 0;
-
                     // Punch physical hole to enable true transparency under the frame
+                    const x = borderThickness;
+                    const size = totalSize - (borderThickness * 2);
+                    const innerRadius = isCircleShape ? (size / 2) : baseInnerRadius;
+
                     ctx.globalCompositeOperation = 'destination-out';
                     ctx.beginPath();
-                    const size = totalSize - (borderThickness * 2);
-                    if (ctx.roundRect) ctx.roundRect(borderThickness, borderThickness, size, size, innerRadius);
-                    else ctx.rect(borderThickness, borderThickness, size, size);
+                    if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                    else ctx.rect(x, x, size, size);
                     ctx.fill();
                     ctx.globalCompositeOperation = 'source-over'; // Reset blend mode
                 }
 
                 // Draw Inner Background Zone
                 if (!isTransparentBg) {
-                    if (isMatchFrame && !isFrameOff) {
-                        const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
-                        frameGrad.addColorStop(0, gradientParams.color1);
-                        frameGrad.addColorStop(1, gradientParams.color2);
-                        ctx.fillStyle = frameGrad;
-                    } else {
-                        ctx.fillStyle = bgZoneColorPicker.value || '#ffffff'; 
-                    }
-                    
-                    ctx.beginPath();
-                    const r = isFrameOff ? outerRadius : innerRadius;
                     const x = isFrameOff ? 0 : borderThickness;
                     const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
+                    const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
 
-                    if (ctx.roundRect) ctx.roundRect(x, x, size, size, r);
-                    else ctx.rect(x, x, size, size);
-                    ctx.fill();
+                    if (uploadedBgImage) {
+                        ctx.save();
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        else ctx.rect(x, x, size, size);
+                        ctx.clip();
+
+                        const imgAspect = uploadedBgImage.width / uploadedBgImage.height;
+                        let drawW = size;
+                        let drawH = size;
+                        let drawX = x;
+                        let drawY = x;
+                        if (imgAspect > 1) { // Wider
+                            drawW = size * imgAspect;
+                            drawX = x - (drawW - size) / 2;
+                        } else { // Taller
+                            drawH = size / imgAspect;
+                            drawY = x - (drawH - size) / 2;
+                        }
+                        ctx.drawImage(uploadedBgImage, drawX, drawY, drawW, drawH);
+                        ctx.restore();
+                    } else {
+                        if (isMatchFrame && !isFrameOff) {
+                            const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
+                            frameGrad.addColorStop(0, gradientParams.color1);
+                            frameGrad.addColorStop(1, gradientParams.color2);
+                            ctx.fillStyle = frameGrad;
+                        } else {
+                            ctx.fillStyle = bgZoneColorPicker.value || '#ffffff'; 
+                        }
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        else ctx.rect(x, x, size, size);
+                        ctx.fill();
+                    }
                 }
 
                 // Render Final Matrix Data
                 const offset = borderThickness + quietZone;
-
-                if (isNeonGlow) {
-                    ctx.shadowColor = isQrGradient ? (qrGrad1ColorPicker.value || '#007bff') : (qrColorPicker.value || '#000000');
-                    ctx.shadowBlur = 15 * (baseSize / 1024);
-                }
-                
                 ctx.drawImage(finalQrToDraw, offset, offset, qrSize, qrSize);
-                ctx.shadowBlur = 0; // Reset
                 
-                // Draw Center Emoji
-                if (centerEmoji.value) {
-                    const emojiSize = qrSize * 0.25;
+                // Draw Center Logo
+                if (uploadedCenterLogo) {
+                    const logoSize = qrSize * 0.25;
                     const ex = offset + (qrSize / 2);
                     const ey = offset + (qrSize / 2);
 
-                    // Cutout background for emoji
+                    // Cutout background for logo border
                     ctx.fillStyle = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
                     ctx.beginPath();
-                    ctx.arc(ex, ey, emojiSize * 0.6, 0, Math.PI * 2);
+                    ctx.arc(ex, ey, logoSize * 0.6, 0, Math.PI * 2);
                     ctx.fill();
 
-                    // Render emoji
-                    ctx.font = `${emojiSize * 0.8}px Arial`;
-                    ctx.textAlign = 'center';
-                    ctx.textBaseline = 'middle';
-                    ctx.fillText(centerEmoji.value, ex, ey + (emojiSize * 0.05));
+                    // Render circular image
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(ex, ey, logoSize * 0.55, 0, Math.PI * 2);
+                    ctx.clip();
+                    
+                    const imgAspect = uploadedCenterLogo.width / uploadedCenterLogo.height;
+                    const dSize = logoSize * 1.1; // diameter
+                    let drawW = dSize;
+                    let drawH = dSize;
+                    if (imgAspect > 1) drawW = dSize * imgAspect;
+                    else drawH = dSize / imgAspect;
+                    
+                    ctx.drawImage(uploadedCenterLogo, ex - drawW/2, ey - drawH/2, drawW, drawH);
+                    ctx.restore();
                 }
 
-                return { canvas: tempCanvas, totalSize, qrSize, quietZone, borderThickness, outerRadius, innerRadius };
+                return { canvas: tempCanvas, totalSize, qrSize, quietZone, borderThickness, outerRadius, baseOuterRadius, baseInnerRadius };
             };
 
             const generateSVGString = (sizeData) => {
-                const { totalSize, qrSize, quietZone, borderThickness, outerRadius, innerRadius } = sizeData;
+                const { totalSize, qrSize, quietZone, borderThickness, baseOuterRadius, baseInnerRadius } = sizeData;
                 const offset = borderThickness + quietZone;
+                const x = isFrameOff ? 0 : borderThickness;
+                const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
+                
+                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
+                const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
 
                 const baseQrCanvas = document.createElement('canvas');
                 new QRious({
@@ -565,23 +621,11 @@
                             <stop offset="100%" stop-color="${gradientParams.color2}" />
                         </linearGradient>`;
                 
-                if (isNeonGlow) {
-                    svgStr += `
-                        <filter id="neonFrame" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="${20 * (totalSize / 1024)}" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>
-                        <filter id="neonQr" x="-20%" y="-20%" width="140%" height="140%">
-                            <feGaussianBlur stdDeviation="${15 * (totalSize / 1024)}" result="blur" />
-                            <feComposite in="SourceGraphic" in2="blur" operator="over" />
-                        </filter>`;
-                }
-
                 if (!isFrameOff) {
                     svgStr += `
                         <mask id="holeMask">
                             <rect width="${totalSize}" height="${totalSize}" fill="white" />
-                            <rect x="${borderThickness}" y="${borderThickness}" width="${totalSize - (borderThickness*2)}" height="${totalSize - (borderThickness*2)}" rx="${innerRadius}" ry="${innerRadius}" fill="black" />
+                            <rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="black" />
                         </mask>`;
                 }
 
@@ -598,35 +642,42 @@
                 svgStr += `</defs>`;
 
                 if (!isFrameOff) {
-                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" mask="url(#holeMask)" ${isNeonGlow ? 'filter="url(#neonFrame)"' : ''} />`;
+                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" mask="url(#holeMask)" />`;
                 }
 
                 if (!isTransparentBg) {
-                    let fill = bgZoneColorPicker.value || '#ffffff';
-                    if (isMatchFrame && !isFrameOff) fill = "url(#bgGrad)";
-                    
-                    const r = isFrameOff ? outerRadius : innerRadius;
-                    const x = isFrameOff ? 0 : borderThickness;
-                    const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
-                    
-                    svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${r}" ry="${r}" fill="${fill}" />`;
+                    if (uploadedBgDataUrl) {
+                        svgStr += `
+                            <clipPath id="bgClip">
+                                <rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" />
+                            </clipPath>
+                            <image href="${uploadedBgDataUrl}" x="${x}" y="${x}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#bgClip)" />
+                        `;
+                    } else {
+                        let fill = bgZoneColorPicker.value || '#ffffff';
+                        if (isMatchFrame && !isFrameOff) fill = "url(#bgGrad)";
+                        svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="${fill}" />`;
+                    }
                 }
 
                 if (isQrGradient) {
-                    svgStr += `<rect x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" ${isNeonGlow ? 'filter="url(#neonQr)"' : ''} />`;
+                    svgStr += `<rect x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" />`;
                 } else {
-                    svgStr += `<image href="${qrDataUrl}" x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" ${isNeonGlow ? 'filter="url(#neonQr)"' : ''} />`;
+                    svgStr += `<image href="${qrDataUrl}" x="${offset}" y="${offset}" width="${qrSize}" height="${qrSize}" />`;
                 }
 
-                if (centerEmoji.value) {
-                    const emojiSize = qrSize * 0.25;
+                if (uploadedCenterLogoDataUrl) {
+                    const logoSize = qrSize * 0.25;
                     const ex = offset + (qrSize / 2);
                     const ey = offset + (qrSize / 2);
                     const fillBg = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
 
                     svgStr += `
-                        <circle cx="${ex}" cy="${ey}" r="${emojiSize * 0.6}" fill="${fillBg}" />
-                        <text x="${ex}" y="${ey + (emojiSize * 0.05)}" font-family="Arial" font-size="${emojiSize * 0.8}px" text-anchor="middle" dominant-baseline="middle">${centerEmoji.value}</text>
+                        <circle cx="${ex}" cy="${ey}" r="${logoSize * 0.6}" fill="${fillBg}" />
+                        <clipPath id="logoClip">
+                            <circle cx="${ex}" cy="${ey}" r="${logoSize * 0.55}" />
+                        </clipPath>
+                        <image href="${uploadedCenterLogoDataUrl}" x="${ex - logoSize*0.55}" y="${ey - logoSize*0.55}" width="${logoSize*1.1}" height="${logoSize*1.1}" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)" />
                     `;
                 }
 
@@ -709,7 +760,6 @@
 
             const setupEventListeners = () => {
                 if(qrText) qrText.addEventListener('input', updateQr);
-                if(centerEmoji) centerEmoji.addEventListener('input', updateQr);
                 
                 qrColorPicker.addEventListener('input', updateQr);
                 bgZoneColorPicker.addEventListener('input', updateQr);
@@ -722,6 +772,13 @@
                     isTransparentBg = !isTransparentBg;
                     transparentBgBtn.classList.toggle('active');
                     transparentBgBtn.classList.toggle('text-white');
+                    updateQr();
+                });
+
+                qrShapeToggleBtn.addEventListener('click', () => {
+                    isCircleShape = !isCircleShape;
+                    qrShapeToggleBtn.classList.toggle('active');
+                    qrShapeToggleBtn.classList.toggle('text-white');
                     updateQr();
                 });
 
@@ -757,10 +814,36 @@
                     updateQr();
                 });
 
-                neonGlowToggleBtn.addEventListener('click', () => {
-                    isNeonGlow = !isNeonGlow;
-                    neonGlowToggleBtn.classList.toggle('active');
-                    neonGlowToggleBtn.classList.toggle('text-white');
+                // Image Upload Event Listeners
+                bgImageUpload.addEventListener('change', (e) => {
+                    handleImageUpload(e.target.files[0], (img, dataUrl) => {
+                        uploadedBgImage = img;
+                        uploadedBgDataUrl = dataUrl;
+                        clearBgImageBtn.classList.remove('hidden');
+                        updateQr();
+                    });
+                });
+                clearBgImageBtn.addEventListener('click', () => {
+                    uploadedBgImage = null;
+                    uploadedBgDataUrl = null;
+                    bgImageUpload.value = '';
+                    clearBgImageBtn.classList.add('hidden');
+                    updateQr();
+                });
+
+                centerLogoUpload.addEventListener('change', (e) => {
+                    handleImageUpload(e.target.files[0], (img, dataUrl) => {
+                        uploadedCenterLogo = img;
+                        uploadedCenterLogoDataUrl = dataUrl;
+                        clearCenterLogoBtn.classList.remove('hidden');
+                        updateQr();
+                    });
+                });
+                clearCenterLogoBtn.addEventListener('click', () => {
+                    uploadedCenterLogo = null;
+                    uploadedCenterLogoDataUrl = null;
+                    centerLogoUpload.value = '';
+                    clearCenterLogoBtn.classList.add('hidden');
                     updateQr();
                 });
 
