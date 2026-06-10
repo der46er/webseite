@@ -199,7 +199,7 @@
                         </div>
                     </label>
 
-                    <label id="bgZoneWrapper" class="flex flex-col items-center gap-2 cursor-pointer group transition-all">
+                    <label id="bgZoneWrapper" class="flex flex-col items-center gap-2 cursor-pointer group transition-all duration-300">
                         <span class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Background</span>
                         <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform checker-bg">
                             <input type="color" id="bgZoneColorPicker" value="#ffffff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
@@ -224,6 +224,7 @@
                     <div class="flex flex-wrap justify-center gap-2">
                         <button id="transparentBgBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
                         <button id="qrShapeToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Circle Shape</button>
+                        <button id="fakePixelsToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Fill Circle</button>
                         <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
                         <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
                     </div>
@@ -323,6 +324,7 @@
             const matchFrameToggleBtn = document.getElementById('matchFrameToggleBtn');
             const disableFrameToggleBtn = document.getElementById('disableFrameToggleBtn');
             const qrShapeToggleBtn = document.getElementById('qrShapeToggleBtn');
+            const fakePixelsToggleBtn = document.getElementById('fakePixelsToggleBtn');
             
             // Image Uploads
             const bgImageUpload = document.getElementById('bgImageUpload');
@@ -349,6 +351,7 @@
             let isMatchFrame = false;
             let isFrameOff = false;
             let isCircleShape = false;
+            let isFakePixels = false;
             
             let uploadedBgImage = null;
             let uploadedBgDataUrl = null;
@@ -432,6 +435,14 @@
                 reader.readAsDataURL(file);
             };
 
+            const updateBgZoneState = () => {
+                if (isMatchFrame && !isFrameOff) {
+                    bgZoneWrapper.classList.add('opacity-30', 'pointer-events-none');
+                } else {
+                    bgZoneWrapper.classList.remove('opacity-30', 'pointer-events-none');
+                }
+            };
+
             const updateQr = () => {
                 const sizeData = generateImageOfSize(1024);
                 mainDomCanvas.width = sizeData.totalSize;
@@ -443,7 +454,6 @@
 
             const generateImageOfSize = (baseSize) => {
                 const qrSize = parseInt(baseSize);
-                // Adjust quiet zone for circles so the QR corners don't clip out of bounds
                 const quietZone = qrSize * (isCircleShape ? 256 / 1024 : 128 / 1024);
                 const borderThickness = isFrameOff ? 0 : qrSize * (64 / 1024);
                 
@@ -559,8 +569,49 @@
                     }
                 }
 
-                // Render Final Matrix Data
+                // Draw Fake Fill Pixels for Round Illusion
                 const offset = borderThickness + quietZone;
+                
+                if (isFakePixels) {
+                    ctx.save();
+                    const modSize = Math.max(2, Math.floor(qrSize / 33)); // Estimate module size
+                    const safeMargin = quietZone * 0.8;
+                    const safeX1 = offset - safeMargin;
+                    const safeY1 = offset - safeMargin;
+                    const safeX2 = offset + qrSize + safeMargin;
+                    const safeY2 = offset + qrSize + safeMargin;
+
+                    const r = isFrameOff ? outerRadius : (isCircleShape ? ((totalSize - (borderThickness*2)) / 2) : baseInnerRadius);
+                    const x = isFrameOff ? 0 : borderThickness;
+                    const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
+
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(x, x, size, size, r);
+                    else ctx.rect(x, x, size, size);
+                    ctx.clip();
+
+                    if (isQrGradient) {
+                        const qGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
+                        qGrad.addColorStop(0, qrGrad1ColorPicker.value || '#007bff');
+                        qGrad.addColorStop(1, qrGrad2ColorPicker.value || '#8b5cf6');
+                        ctx.fillStyle = qGrad;
+                    } else {
+                        ctx.fillStyle = qrColorPicker.value || '#000000';
+                    }
+
+                    for (let fx = x; fx < x + size; fx += modSize) {
+                        for (let fy = x; fy < x + size; fy += modSize) {
+                            if (fx < safeX1 || fx + modSize > safeX2 || fy < safeY1 || fy + modSize > safeY2) {
+                                if (Math.random() > 0.5) { // 50% density
+                                    ctx.fillRect(fx, fy, modSize, modSize);
+                                }
+                            }
+                        }
+                    }
+                    ctx.restore();
+                }
+
+                // Render Final Matrix Data
                 ctx.drawImage(finalQrToDraw, offset, offset, qrSize, qrSize);
                 
                 // Draw Center Logo
@@ -660,6 +711,29 @@
                         if (isMatchFrame && !isFrameOff) fill = "url(#bgGrad)";
                         svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="${fill}" />`;
                     }
+                }
+
+                if (isFakePixels) {
+                    const modSize = Math.max(2, Math.floor(qrSize / 33));
+                    const safeMargin = quietZone * 0.8;
+                    const safeX1 = offset - safeMargin;
+                    const safeY1 = offset - safeMargin;
+                    const safeX2 = offset + qrSize + safeMargin;
+                    const safeY2 = offset + qrSize + safeMargin;
+                    
+                    svgStr += `<g clip-path="url(#fakePixelsClip)" fill="${isQrGradient ? 'url(#qrGrad)' : (qrColorPicker.value || '#000000')}">`;
+                    svgStr += `<clipPath id="fakePixelsClip"><rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" /></clipPath>`;
+                    
+                    for (let fx = x; fx < x + size; fx += modSize) {
+                        for (let fy = x; fy < x + size; fy += modSize) {
+                            if (fx < safeX1 || fx + modSize > safeX2 || fy < safeY1 || fy + modSize > safeY2) {
+                                if (Math.random() > 0.5) {
+                                    svgStr += `<rect x="${fx}" y="${fy}" width="${modSize}" height="${modSize}" />`;
+                                }
+                            }
+                        }
+                    }
+                    svgStr += `</g>`;
                 }
 
                 if (isQrGradient) {
@@ -784,6 +858,17 @@
                     updateQr();
                 });
 
+                fakePixelsToggleBtn.addEventListener('click', () => {
+                    isFakePixels = !isFakePixels;
+                    fakePixelsToggleBtn.classList.toggle('active');
+                    fakePixelsToggleBtn.classList.toggle('text-white');
+                    if(isFakePixels && !isCircleShape) {
+                        isCircleShape = true;
+                        qrShapeToggleBtn.classList.add('active', 'text-white');
+                    }
+                    updateQr();
+                });
+
                 qrGradientToggleBtn.addEventListener('click', () => {
                     isQrGradient = !isQrGradient;
                     qrGradientToggleBtn.classList.toggle('active');
@@ -804,8 +889,7 @@
                     isMatchFrame = !isMatchFrame;
                     matchFrameToggleBtn.classList.toggle('active');
                     matchFrameToggleBtn.classList.toggle('text-white');
-                    if(isMatchFrame) bgZoneWrapper.classList.add('opacity-30', 'pointer-events-none');
-                    else bgZoneWrapper.classList.remove('opacity-30', 'pointer-events-none');
+                    updateBgZoneState();
                     updateQr();
                 });
 
@@ -813,6 +897,7 @@
                     isFrameOff = !isFrameOff;
                     disableFrameToggleBtn.classList.toggle('active');
                     disableFrameToggleBtn.classList.toggle('text-white');
+                    updateBgZoneState();
                     updateQr();
                 });
 
