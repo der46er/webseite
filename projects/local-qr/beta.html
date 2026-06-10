@@ -220,28 +220,28 @@
                     </label>
                 </div>
 
-                <div class="flex flex-wrap justify-center gap-3 w-full">
-                    <button id="transparentBgBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
-                    <button id="qrShapeToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Circle Shape</button>
-                    <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
-                    <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
-                    <button id="disableFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Hide Frame</button>
-                </div>
-
-                <div class="flex flex-wrap justify-center gap-3 w-full mt-1">
-                    <label class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md cursor-pointer flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        Upload BG
+                <div class="flex flex-col gap-2 w-full mt-1">
+                    <div class="flex flex-wrap justify-center gap-2">
+                        <button id="transparentBgBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
+                        <button id="qrShapeToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Circle Shape</button>
+                        <button id="qrGradientToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
+                        <button id="matchFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
+                        <button id="disableFrameToggleBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Hide Frame</button>
+                    </div>
+                    
+                    <div class="flex flex-wrap justify-center gap-2">
                         <input type="file" id="bgImageUpload" accept="image/*" class="hidden">
-                    </label>
-                    <button id="clearBgImageBtn" class="hidden adv-toggle px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all shadow-md" title="Clear Background">✕</button>
+                        <button id="bgUploadBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md flex items-center gap-1">
+                            <svg id="bgUploadIcon" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <span id="bgUploadText">Upload BG</span>
+                        </button>
 
-                    <label class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md cursor-pointer flex items-center gap-1">
-                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                        Center Logo
                         <input type="file" id="centerLogoUpload" accept="image/*" class="hidden">
-                    </label>
-                    <button id="clearCenterLogoBtn" class="hidden adv-toggle px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-red-500/30 bg-red-500/10 hover:bg-red-500/20 text-red-400 transition-all shadow-md" title="Clear Logo">✕</button>
+                        <button id="centerLogoBtn" class="adv-toggle px-3 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md flex items-center gap-1">
+                            <svg id="logoUploadIcon" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <span id="centerLogoText">Center Logo</span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="format-control flex w-full max-w-[320px] p-1 bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] shadow-lg mt-2">
@@ -325,9 +325,9 @@
             
             // Image Uploads
             const bgImageUpload = document.getElementById('bgImageUpload');
-            const clearBgImageBtn = document.getElementById('clearBgImageBtn');
+            const bgUploadBtn = document.getElementById('bgUploadBtn');
             const centerLogoUpload = document.getElementById('centerLogoUpload');
-            const clearCenterLogoBtn = document.getElementById('clearCenterLogoBtn');
+            const centerLogoBtn = document.getElementById('centerLogoBtn');
             
             const mainDomCanvas = document.getElementById('mainDomCanvas');
             const savePreviewOverlay = document.getElementById('save-preview-overlay');
@@ -370,8 +370,8 @@
                 { name: "Instagram", prefix: "https://www.instagram.com/" },
                 { name: "TikTok", prefix: "https://www.tiktok.com/" },
                 { name: "YouTube", prefix: "https://www.youtube.com/" },
-                { name: "X", prefix: "https://twitter.com/" },
-                { name: "LinkedIn", prefix: "https://www.linkedin.com/in/" },
+                { name: "X", prefix: "https://x.com/" },
+                { name: "Telegram", prefix: "https://t.me/" },
                 { name: "WhatsApp", prefix: "https://wa.me/" },
                 { name: "GitHub", prefix: "https://github.com/" },
                 { name: "Discord", prefix: "https://discord.com/" }
@@ -442,7 +442,8 @@
 
             const generateImageOfSize = (baseSize) => {
                 const qrSize = parseInt(baseSize);
-                const quietZone = qrSize * (128 / 1024);
+                // Adjust quiet zone for circles so the QR corners don't clip out of bounds
+                const quietZone = qrSize * (isCircleShape ? 256 / 1024 : 128 / 1024);
                 const borderThickness = isFrameOff ? 0 : qrSize * (64 / 1024);
                 
                 const baseOuterRadius = isFrameOff ? (qrSize * (64 / 1024)) : (qrSize * (128 / 1024));
@@ -814,37 +815,60 @@
                     updateQr();
                 });
 
-                // Image Upload Event Listeners
+                // Toggle Logic for Background Upload
+                bgUploadBtn.addEventListener('click', () => {
+                    if (uploadedBgImage) {
+                        uploadedBgImage = null;
+                        uploadedBgDataUrl = null;
+                        bgImageUpload.value = '';
+                        bgUploadBtn.classList.remove('border-red-500/30', 'bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20');
+                        bgUploadBtn.classList.add('border-white/10', 'bg-white/5', 'text-zinc-400', 'hover:bg-white/10');
+                        document.getElementById('bgUploadText').textContent = 'Upload BG';
+                        document.getElementById('bgUploadIcon').classList.remove('hidden');
+                        updateQr();
+                    } else {
+                        bgImageUpload.click();
+                    }
+                });
+
                 bgImageUpload.addEventListener('change', (e) => {
                     handleImageUpload(e.target.files[0], (img, dataUrl) => {
                         uploadedBgImage = img;
                         uploadedBgDataUrl = dataUrl;
-                        clearBgImageBtn.classList.remove('hidden');
+                        bgUploadBtn.classList.add('border-red-500/30', 'bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20');
+                        bgUploadBtn.classList.remove('border-white/10', 'bg-white/5', 'text-zinc-400', 'hover:bg-white/10');
+                        document.getElementById('bgUploadText').textContent = 'Remove BG ✕';
+                        document.getElementById('bgUploadIcon').classList.add('hidden');
                         updateQr();
                     });
                 });
-                clearBgImageBtn.addEventListener('click', () => {
-                    uploadedBgImage = null;
-                    uploadedBgDataUrl = null;
-                    bgImageUpload.value = '';
-                    clearBgImageBtn.classList.add('hidden');
-                    updateQr();
+
+                // Toggle Logic for Center Logo Upload
+                centerLogoBtn.addEventListener('click', () => {
+                    if (uploadedCenterLogo) {
+                        uploadedCenterLogo = null;
+                        uploadedCenterLogoDataUrl = null;
+                        centerLogoUpload.value = '';
+                        centerLogoBtn.classList.remove('border-red-500/30', 'bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20');
+                        centerLogoBtn.classList.add('border-white/10', 'bg-white/5', 'text-zinc-400', 'hover:bg-white/10');
+                        document.getElementById('centerLogoText').textContent = 'Center Logo';
+                        document.getElementById('logoUploadIcon').classList.remove('hidden');
+                        updateQr();
+                    } else {
+                        centerLogoUpload.click();
+                    }
                 });
 
                 centerLogoUpload.addEventListener('change', (e) => {
                     handleImageUpload(e.target.files[0], (img, dataUrl) => {
                         uploadedCenterLogo = img;
                         uploadedCenterLogoDataUrl = dataUrl;
-                        clearCenterLogoBtn.classList.remove('hidden');
+                        centerLogoBtn.classList.add('border-red-500/30', 'bg-red-500/10', 'text-red-400', 'hover:bg-red-500/20');
+                        centerLogoBtn.classList.remove('border-white/10', 'bg-white/5', 'text-zinc-400', 'hover:bg-white/10');
+                        document.getElementById('centerLogoText').textContent = 'Remove Logo ✕';
+                        document.getElementById('logoUploadIcon').classList.add('hidden');
                         updateQr();
                     });
-                });
-                clearCenterLogoBtn.addEventListener('click', () => {
-                    uploadedCenterLogo = null;
-                    uploadedCenterLogoDataUrl = null;
-                    centerLogoUpload.value = '';
-                    clearCenterLogoBtn.classList.add('hidden');
-                    updateQr();
                 });
 
                 const refreshBtn = document.getElementById('refreshGradientButton');
