@@ -367,8 +367,8 @@
                 { name: "X", prefix: "https://x.com/" },
                 { name: "Telegram", prefix: "https://t.me/" },
                 { name: "WhatsApp", prefix: "https://wa.me/" },
-                { name: "GitHub", prefix: "https://github.com/" },
-                { name: "Discord", prefix: "https://discord.com/" }
+                { name: "Pinterest", prefix: "https://www.pinterest.com/" },
+                { name: "Kick", prefix: "https://kick.com/" }
             ];
 
             const translations = {
@@ -451,13 +451,17 @@
                 }
             };
 
+            let renderTimeout;
             const updateQr = () => {
-                const sizeData = generateImageOfSize(1024);
-                mainDomCanvas.width = sizeData.totalSize;
-                mainDomCanvas.height = sizeData.totalSize;
-                const ctx = mainDomCanvas.getContext('2d');
-                ctx.clearRect(0, 0, sizeData.totalSize, sizeData.totalSize);
-                ctx.drawImage(sizeData.canvas, 0, 0);
+                if (renderTimeout) cancelAnimationFrame(renderTimeout);
+                renderTimeout = requestAnimationFrame(() => {
+                    const sizeData = generateImageOfSize(512); 
+                    mainDomCanvas.width = sizeData.totalSize;
+                    mainDomCanvas.height = sizeData.totalSize;
+                    const ctx = mainDomCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, sizeData.totalSize, sizeData.totalSize);
+                    ctx.drawImage(sizeData.canvas, 0, 0);
+                });
             };
 
             const generateImageOfSize = (baseSize) => {
@@ -510,6 +514,8 @@
                     finalQrToDraw = qrGradCanvas;
                 }
 
+                const shouldPunchHole = !isFrameOff && (!isMatchFrame || uploadedBgImage || isTransparentBg);
+
                 if (!isFrameOff) {
                     const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
                     frameGrad.addColorStop(0, gradientParams.color1);
@@ -521,16 +527,18 @@
                     else ctx.rect(0, 0, totalSize, totalSize);
                     ctx.fill();
 
-                    const x = borderThickness;
-                    const size = totalSize - (borderThickness * 2);
-                    const innerRadius = isCircleShape ? (size / 2) : baseInnerRadius;
+                    if (shouldPunchHole) {
+                        const x = borderThickness;
+                        const size = totalSize - (borderThickness * 2);
+                        const innerRadius = isCircleShape ? (size / 2) : baseInnerRadius;
 
-                    ctx.globalCompositeOperation = 'destination-out';
-                    ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
-                    else ctx.rect(x, x, size, size);
-                    ctx.fill();
-                    ctx.globalCompositeOperation = 'source-over';
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        else ctx.rect(x, x, size, size);
+                        ctx.fill();
+                        ctx.globalCompositeOperation = 'source-over'; 
+                    }
                 }
 
                 if (!isTransparentBg) {
@@ -559,15 +567,8 @@
                         }
                         ctx.drawImage(uploadedBgImage, drawX, drawY, drawW, drawH);
                         ctx.restore();
-                    } else {
-                        if (isMatchFrame && !isFrameOff) {
-                            const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
-                            frameGrad.addColorStop(0, gradientParams.color1);
-                            frameGrad.addColorStop(1, gradientParams.color2);
-                            ctx.fillStyle = frameGrad;
-                        } else {
-                            ctx.fillStyle = bgZoneColorPicker.value || '#ffffff'; 
-                        }
+                    } else if (!isMatchFrame || isFrameOff) {
+                        ctx.fillStyle = bgZoneColorPicker.value || '#ffffff';
                         ctx.beginPath();
                         if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
@@ -635,7 +636,9 @@
                             <stop offset="100%" stop-color="${gradientParams.color2}" />
                         </linearGradient>`;
                 
-                if (!isFrameOff) {
+                const shouldPunchHole = !isFrameOff && (!isMatchFrame || uploadedBgDataUrl || isTransparentBg);
+
+                if (shouldPunchHole) {
                     svgStr += `
                         <mask id="holeMask">
                             <rect width="${totalSize}" height="${totalSize}" fill="white" />
@@ -656,7 +659,7 @@
                 svgStr += `</defs>`;
 
                 if (!isFrameOff) {
-                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" mask="url(#holeMask)" />`;
+                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" ${shouldPunchHole ? 'mask="url(#holeMask)"' : ''} />`;
                 }
 
                 if (!isTransparentBg) {
@@ -667,9 +670,8 @@
                             </clipPath>
                             <image href="${uploadedBgDataUrl}" x="${x}" y="${x}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#bgClip)" />
                         `;
-                    } else {
+                    } else if (!isMatchFrame || isFrameOff) {
                         let fill = bgZoneColorPicker.value || '#ffffff';
-                        if (isMatchFrame && !isFrameOff) fill = "url(#bgGrad)";
                         svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="${fill}" />`;
                     }
                 }
@@ -726,24 +728,21 @@
                     }
                 }
 
-                // General Text Replacements
                 document.querySelectorAll('[data-i18n]').forEach(el => {
                     const key = el.getAttribute('data-i18n');
                     if (t[key]) el.textContent = t[key];
                 });
 
-                // HTML text replacements
                 document.querySelectorAll('[data-i18n-html]').forEach(el => {
                     const key = el.getAttribute('data-i18n-html');
                     if (t[key]) el.innerHTML = t[key];
                 });
 
-                // Placeholder replacements
                 if (qrText) qrText.placeholder = t.qrPlaceholder;
                 if (customResInput) customResInput.placeholder = t.custom;
 
-                // Tooltitles
                 const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
+                
                 safeSetTitle('tutOpenBtn', t.tutBtn);
                 safeSetTitle('resetTextButton', t.resetButtonTitle);
                 safeSetTitle('printQrCodeButton', t.printButtonTitle);
@@ -751,7 +750,6 @@
                 safeSetTitle('copyQrCodeButton', t.copyButtonTitle);
                 safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
 
-                // Update dynamic button texts based on state
                 document.getElementById('bgUploadText').textContent = uploadedBgImage ? t.rmBg : t.upBg;
                 document.getElementById('centerLogoText').textContent = uploadedCenterLogo ? t.rmLogo : t.upLogo;
 
@@ -796,7 +794,7 @@
                     currentQuality = val;
                 } else if (!val && e.target.value === '') {
                     customResInput.classList.remove('active');
-                    qualityBtns[1].click(); // Reset to Med
+                    qualityBtns[1].click(); 
                 }
             });
 
@@ -851,7 +849,6 @@
                     updateQr();
                 });
 
-                // Toggle Logic for Background Upload
                 bgUploadBtn.addEventListener('click', () => {
                     if (uploadedBgImage) {
                         uploadedBgImage = null;
@@ -877,7 +874,6 @@
                     });
                 });
 
-                // Toggle Logic for Center Logo Upload
                 centerLogoBtn.addEventListener('click', () => {
                     if (uploadedCenterLogo) {
                         uploadedCenterLogo = null;
