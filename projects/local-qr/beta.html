@@ -76,10 +76,23 @@
             background-size: 20px 20px;
             background-position: 0 0, 10px 10px;
         }
-        
-        /* Hide scrollbars for horizontal scroll containers */
-        .hide-scrollbar::-webkit-scrollbar { display: none; }
-        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+        /* Custom Scrollbar for horizontal containers */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+        }
 
         canvas { 
             display: block; 
@@ -114,7 +127,7 @@
         input[type="number"] { -moz-appearance: textfield; }
 
         @media (max-width: 768px) {
-            body { padding: 1rem 1rem 0 1rem; align-items: flex-start; overflow-y: auto; }
+            body { padding: 4.5rem 1rem 0 1rem; align-items: flex-start; overflow-y: auto; }
             canvas { max-width: 200px !important; }
         }
     </style>
@@ -165,7 +178,7 @@
                  </button>
             </div>
 
-            <div class="template-buttons flex flex-nowrap sm:flex-wrap overflow-x-auto sm:overflow-visible justify-start sm:justify-center gap-2 mb-6 w-full pb-2 sm:pb-0 hide-scrollbar px-1 sm:px-0 snap-x"></div>
+            <div class="template-buttons flex flex-nowrap sm:flex-wrap overflow-x-auto sm:overflow-visible justify-start sm:justify-center gap-2 mb-6 w-full pb-3 sm:pb-0 custom-scrollbar px-1 sm:px-0 snap-x"></div>
 
             <div class="relative w-full flex justify-center mb-6">
                 <canvas id="mainDomCanvas" class="checker-bg w-full max-w-[240px] aspect-square rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.6)]" style="image-rendering: pixelated;"></canvas>
