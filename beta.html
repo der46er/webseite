@@ -16,14 +16,39 @@
         
         :root { --theme-color: #22c55e; --theme-rgb: 34, 197, 94; }
         
-        /* Smooth background matching the exact SVG grain noise overlay */
+        /* Updated layout to support a clean, blurred WebP background under the SVG grain noise */
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #0b0d11; 
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
             color: white; 
             margin: 0; 
             padding: 0; 
+            position: relative;
+        }
+
+        /* Blurred WebP background layer underneath everything */
+        body::before {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("./assets/backgounds/waves.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px); /* Adjust the pixels here to get your perfect amount of blur */
+            transform: scale(1.05); /* Prevents white edges from appearing due to the blur filter */
+            opacity: 0.4; /* Lowers the opacity so your grid text stays perfectly readable */
+            z-index: -2;
+        }
+
+        /* Seamless SVG grain noise overlay positioned on top of the image */
+        body::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
         }
         
         .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
