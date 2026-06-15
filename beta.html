@@ -10,9 +10,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Local Fonts */
-        @font-face { font-family: 'Inter'; src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
-        @font-face { font-family: 'Inter'; src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+        /* Local Fonts routed through a CDN to fix mobile CORS blocking and MIME type errors */
+        @font-face { font-family: 'Inter'; src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
         
         :root { --theme-color: #22c55e; --theme-rgb: 34, 197, 94; }
         
@@ -26,7 +26,6 @@
         }
 
         /* 
-           FIX APPLIED: 
            Using 100vw and 100lvh (Large Viewport Height). 
            This locks the image to the maximum screen size and prevents Android/iOS browsers 
            from recalculating the background height when the address bar hides during scrolling. 
@@ -39,7 +38,7 @@
             width: 100vw;
             height: 100vh; /* Fallback for older browsers */
             height: 100lvh; /* Modern locked viewport height */
-            background-image: url("https://raw.githubusercontent.com/der46er/webseite/main/assets/backgounds/waves.webp");
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -189,7 +188,7 @@
 
         const translations = {
             de: {
-                flag: "https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/austria-flag.webp",
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
                 alt: "Austria Flag",
                 heroTitle: "Willkommen<span class='theme-text'>.</span>",
                 heroDesc: "Entdecke meine Hardware, Software-Projekte, Socials und mehr",
@@ -205,7 +204,7 @@
                 }
             },
             en: {
-                flag: "https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/united-kingdom-flag.webp",
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
                 alt: "UK Flag",
                 heroTitle: "Welcome<span class='theme-text'>.</span>",
                 heroDesc: "Explore my hardware listings, software projects, socials, and more",
