@@ -10,7 +10,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
-        /* Fonts - Swapped to raw GitHub links to ensure they load on mobile testing environments */
+        /* Local Fonts */
         @font-face { font-family: 'Inter'; src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
         @font-face { font-family: 'Inter'; src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
         
@@ -25,31 +25,39 @@
             position: relative;
         }
 
-        /* Overscan Bleed technique: expanding the boundaries to prevent background jumping on scroll */
+        /* 
+           FIX APPLIED: 
+           Using 100vw and 100lvh (Large Viewport Height). 
+           This locks the image to the maximum screen size and prevents Android/iOS browsers 
+           from recalculating the background height when the address bar hides during scrolling. 
+        */
         body::before {
             content: "";
             position: fixed;
-            top: -150px;
-            bottom: -150px;
-            left: -150px;
-            right: -150px;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh; /* Fallback for older browsers */
+            height: 100lvh; /* Modern locked viewport height */
             background-image: url("https://raw.githubusercontent.com/der46er/webseite/main/assets/backgounds/waves.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             filter: blur(8px);
+            transform: scale(1.05); /* Just enough to hide the blurred edges, no extreme zoom */
             opacity: 0.4;
             z-index: -2;
         }
 
-        /* Seamless SVG grain noise overlay positioned on top of the image */
+        /* Seamless SVG grain noise overlay positioned identically */
         body::after {
             content: "";
             position: fixed;
-            top: -150px;
-            bottom: -150px;
-            left: -150px;
-            right: -150px;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
             pointer-events: none;
             z-index: -1;
@@ -63,15 +71,15 @@
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.12); filter: blur(180px); }
     </style>
 </head>
-<!-- Replaced strict viewport heights with Dynamic Viewport Height (dvh) to stabilize mobile UI -->
-<body class="flex flex-col min-h-[100dvh] md:h-[100dvh] w-full overflow-x-hidden overflow-y-auto md:overflow-hidden selection:bg-white/10 relative">
+
+<!-- Dual-Layout approach: Scrollable on Mobile, strictly locked full-screen on Desktop -->
+<body class="flex flex-col min-h-[100dvh] md:h-screen w-full overflow-x-hidden overflow-y-auto md:overflow-hidden selection:bg-white/10 relative">
     
     <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div class="absolute -top-[25%] -left-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
         <div class="absolute -bottom-[25%] -right-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
     </div>
 
-    <!-- Responsive vertical padding: relaxed on mobile to accommodate scrolling, strict on desktop for pure centering -->
     <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-10 md:py-6 h-full min-h-0">
         
         <div class="w-full text-center shrink-0 mb-8 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
@@ -81,7 +89,7 @@
                 </p>
         </div>
 
-        <!-- Responsive Grid: Stacks into 1 column on phones, 2 on tablets, and locks into the exact 4x3 ratio on PC -->
+        <!-- Strict Grid for Desktop, flowing column for mobile -->
         <div id="bento-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-3 gap-3 sm:gap-4 flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
             </div>
     </main>
@@ -109,7 +117,7 @@
 
         const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
 
-        // Updated Data Map to include deep ambient hover shadow glow and responsive mobile stacking instructions
+        // Maintained dynamic color outer glows exactly matched to your UI references
         const cardData = [
             { 
                 id: 'projects', 
