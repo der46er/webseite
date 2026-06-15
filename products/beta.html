@@ -79,7 +79,6 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // Updated API paths to point to the assets/products folder
         const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/assets/products";
         const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/assets/products";
 
@@ -151,7 +150,6 @@
                 return () => document.removeEventListener("mousedown", handleClickOutside);
             }, []);
 
-            // Fetch individual JSON files from GitHub directory
             useEffect(() => {
                 const fetchGearFiles = async () => {
                     try {
@@ -159,15 +157,21 @@
                         if (!response.ok) throw new Error("Failed to fetch directory");
                         const files = await response.json();
                         
-                        // Filter for .json files
                         const jsonFiles = files.filter(file => file.name.endsWith('.json'));
 
-                        // Fetch each individual JSON file
                         const productPromises = jsonFiles.map(async (file) => {
                             const rawUrl = `${GITHUB_RAW_BASE}/${file.name}`;
                             const res = await fetch(rawUrl);
                             if (res.ok) {
-                                return await res.json();
+                                const data = await res.json();
+                                
+                                // Randomly select one link if an array of URLs is provided
+                                if (data.urls && Array.isArray(data.urls) && data.urls.length > 0) {
+                                    const randomIndex = Math.floor(Math.random() * data.urls.length);
+                                    data.url = data.urls[randomIndex];
+                                }
+                                
+                                return data;
                             }
                             return null;
                         });
@@ -175,7 +179,6 @@
                         const resolvedProducts = (await Promise.all(productPromises)).filter(p => p !== null);
                         setProducts(resolvedProducts);
                         
-                        // Extract unique categories dynamically based on available items
                         const uniqueCats = new Set();
                         resolvedProducts.forEach(item => {
                             if (item.category && item.category.en) uniqueCats.add(item.category.en.toUpperCase());
