@@ -16,7 +16,6 @@
         
         :root { --theme-color: #22c55e; --theme-rgb: 34, 197, 94; }
         
-        /* Smooth background matching the exact SVG grain noise overlay with blurred waves.webp underneath */
         body { 
             font-family: 'Inter', sans-serif; 
             background-color: #0b0d11; 
@@ -26,11 +25,12 @@
             position: relative;
         }
 
+        /* Fixed blurred WebP background layer using direct raw asset streaming url endpoints */
         body::before {
             content: "";
             position: absolute;
             inset: 0;
-            background-image: url("assets/backgrounds/waves.webp");
+            background-image: url("https://raw.githubusercontent.com/der46er/webseite/main/assets/backgounds/waves.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -40,6 +40,7 @@
             z-index: -2;
         }
 
+        /* Seamless SVG grain noise overlay positioned on top of the image */
         body::after {
             content: "";
             position: absolute;
@@ -99,8 +100,7 @@
     <script>
         document.getElementById('year').innerText = new Date().getFullYear();
 
-        // --- BENTO DATA ---
-        const arrowRight = '<polyline points="9 18 15 12 9 6"></polyline>';
+        // Standardized upward redirection arrow pointing up-right across every layout block element
         const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
 
         const cardData = [
@@ -124,7 +124,7 @@
                 hoverBorder: "hover:border-orange-500/50",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.35)]",
                 icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
-                arrowIcon: arrowRight
+                arrowIcon: arrowUpRight
             },
             { 
                 id: 'products', 
@@ -168,14 +168,14 @@
                 hoverBorder: "theme-border-hover",
                 hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
                 icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
-                arrowIcon: arrowRight
+                arrowIcon: arrowUpRight
             }
         ];
 
         // --- TRANSLATIONS ---
         const translations = {
             de: {
-                flag: "assets/flags/austria-flag.webp",
+                flag: "https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/austria-flag.webp",
                 alt: "Austria Flag",
                 heroTitle: "Willkommen<span class='theme-text'>.</span>",
                 heroDesc: "Entdecke meine Hardware, Software-Projekte, Socials und mehr",
@@ -191,7 +191,7 @@
                 }
             },
             en: {
-                flag: "assets/flags/united-kingdom-flag.webp",
+                flag: "https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/united-kingdom-flag.webp",
                 alt: "UK Flag",
                 heroTitle: "Welcome<span class='theme-text'>.</span>",
                 heroDesc: "Explore my hardware listings, software projects, socials, and more",
@@ -217,63 +217,45 @@
             document.getElementById('hero-title').innerHTML = t.heroTitle;
             document.getElementById('hero-desc').innerText = t.heroDesc;
             
-            // Fixed image flag loader block
             document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
             
-            // Cookies
             document.getElementById('cookie-text').innerText = t.cookieText;
             document.getElementById('cookie-decline').innerText = t.cookieDecline;
             document.getElementById('cookie-accept').innerText = t.cookieAccept;
 
-            // Render Grid dynamically
             const grid = document.getElementById('bento-grid');
             grid.innerHTML = cardData.map(c => {
                 const text = t.content[c.id];
-                const isSquare = ['products', 'about'].includes(c.id);
                 
-                const titleClass = ['projects', 'shop', 'services'].includes(c.id) ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg';
-                const descClass = ['projects', 'shop', 'services'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
-                
-                const wideTitleClass = 'text-lg sm:text-xl md:text-2xl';
-                const wideDescClass = 'text-[10px] sm:text-xs md:text-sm';
+                // Unified card typographic header size allocations
+                const titleClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg';
+                const descClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
 
-                if (isSquare) {
-                    return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
-                        
+                // Unified structure layout logic across all cards:
+                // - Icon wrapped and kept on top-left
+                // - Typography details shifted down to the bottom-left edge boundary
+                // - Interaction navigation icon aligned inside the bottom-right corner zone
+                return `
+                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+                    
+                    <div class="flex items-start justify-start w-full">
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                         </div>
-                        
-                        <div class="z-10 mt-auto pt-4 flex flex-col justify-end">
+                    </div>
+                    
+                    <div class="z-10 mt-auto pt-4 flex items-end justify-between w-full">
+                        <div class="flex flex-col justify-end min-w-0 pr-8">
                             <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
                             <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
                         </div>
-
-                        <div class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10 hidden md:block">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
-                        </div>
-                    </a>
-                    `;
-                } else {
-                    return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
                         
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                        <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
                         </div>
-                        
-                        <div class="flex-grow min-w-0 z-10">
-                            <h2 class="${wideTitleClass} font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
-                            <p class="text-zinc-500 ${wideDescClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
-                        </div>
-                        
-                        <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0 z-10">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
-                        </div>
-                    </a>
-                    `;
-                }
+                    </div>
+                </a>
+                `;
             }).join('');
         }
 
@@ -283,7 +265,6 @@
             render();
         };
 
-        // --- GOOGLE ANALYTICS & COOKIES LOGIC ---
         const cookieBanner = document.getElementById('cookie-banner');
         const cookieConsent = localStorage.getItem('siteCookieConsent');
 
