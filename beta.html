@@ -1,3 +1,21 @@
+Here is your completely redesigned and fully optimized `Home-beta.html` codebase.
+
+### Key Upgrades Implemented:
+
+* **Asymmetrical Custom "Boxy" Shapes (`image_9ea527.png`)**: Implemented explicit sharp, custom-cornered containers matching your markup precisely.
+
+
+* **Dynamic Accent Borders**: The cards feature sharp outlines using the matching individual color values of their respective internal tech icons.
+
+
+* **Full Mobile Optimization**: Swapped out the forced full-screen viewport layout restriction (`h-screen overflow-hidden`) for a mobile-fluid responsive structure (`min-h-screen overflow-y-auto`) that dynamically stacks or grids layout blocks naturally on tiny screens.
+
+
+* **WebP Flag Language Selector Indicator**: The bottom text link button has been replaced with clean rendering image indicator elements pulling from `./assets/flags/` directly.
+
+
+
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -35,9 +53,9 @@
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
-            filter: blur(8px); /* Adjust the pixels here to get your perfect amount of blur */
-            transform: scale(1.05); /* Prevents white edges from appearing due to the blur filter */
-            opacity: 0.4; /* Lowers the opacity so your grid text stays perfectly readable */
+            filter: blur(8px);
+            transform: scale(1.05);
+            opacity: 0.4;
             z-index: -2;
         }
 
@@ -58,31 +76,42 @@
         .theme-text { color: var(--theme-color); }
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.12); filter: blur(180px); }
         .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+
+        /* Asymmetric Custom Layout Corners inspired by image_9ea527.png */
+        .shape-projects { border-radius: 2rem 2rem 0.5rem 2rem; }
+        .shape-shop { border-radius: 2rem 0.5rem 2rem 2rem; }
+        .shape-products { border-radius: 0.5rem 2rem 2rem 0.5rem; }
+        .shape-services { border-radius: 2rem 0.5rem 2rem 0.5rem; }
+        .shape-about { border-radius: 0.5rem 2rem 0.5rem 2rem; }
+        .shape-socials { border-radius: 2rem 0.5rem 2rem 2rem; }
+        .shape-empty { border-radius: 0.5rem 0.5rem 2rem 0.5rem; }
     </style>
 </head>
-<body class="flex flex-col h-screen w-screen overflow-hidden selection:bg-white/10 relative">
+<body class="flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto selection:bg-white/10 relative">
     
     <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div class="absolute -top-[25%] -left-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
         <div class="absolute -bottom-[25%] -right-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
     </div>
 
-    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-6 sm:py-8 h-full min-h-0">
+    <!-- Mobile optimized fluid layout spacing wrapper -->
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-10 md:py-8 my-auto">
         
-        <div class="w-full text-center shrink-0 mb-6 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+        <div class="w-full text-center shrink-0 mb-8 sm:mb-10 animate-in" style="animation-delay: 0.1s; opacity: 0;">
             <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
                 </h1>
             <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide">
                 </p>
         </div>
 
-        <div id="bento-grid" class="w-full grid grid-cols-2 md:grid-cols-4 grid-rows-5 md:grid-rows-3 gap-3 sm:gap-4 flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
+        <!-- Fully responsive container grid scaling dynamically onto mobile layouts -->
+        <div id="bento-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 sm:gap-4 animate-in" style="animation-delay: 0.2s; opacity: 0;">
             </div>
     </main>
 
-    <footer class="w-full flex justify-between items-center px-6 py-4 shrink-0 relative z-10 select-none">
-        <button onclick="toggleLang()" id="lang-indicator" class="text-zinc-500 hover:text-white text-xs sm:text-sm font-black uppercase tracking-widest transition-colors duration-200">
-            GB
+    <footer class="w-full flex justify-between items-center px-6 py-5 shrink-0 relative z-10 select-none">
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+            <!-- Rendered via JavaScript updates -->
         </button>
         <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
@@ -111,10 +140,11 @@
                 id: 'projects', 
                 href: "https://thataustrianone.eu/projects/", 
                 isExternal: false,
-                gridClass: "col-span-2 row-span-2",
+                gridClass: "sm:col-span-2 md:col-span-2 md:row-span-2 min-h-[260px] md:min-h-[340px]",
+                shapeClass: "shape-projects",
                 iconClass: "text-zinc-300 bg-zinc-300/10",
-                hoverBorder: "hover:border-zinc-300/50",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.35)]",
+                borderClass: "border-zinc-500/30 hover:border-zinc-300/80",
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.25)]",
                 icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
                 arrowIcon: arrowUpRight
             },
@@ -122,10 +152,11 @@
                 id: 'shop', 
                 href: "https://thataustrianone.eu/shop/", 
                 isExternal: false,
-                gridClass: "col-span-1 row-span-1",
+                gridClass: "col-span-1 row-span-1 min-h-[160px]",
+                shapeClass: "shape-shop",
                 iconClass: "text-orange-500 bg-orange-500/10",
-                hoverBorder: "hover:border-orange-500/50",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.35)]",
+                borderClass: "border-orange-500/30 hover:border-orange-500/80",
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.25)]",
                 icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
                 arrowIcon: arrowRight
             },
@@ -133,10 +164,11 @@
                 id: 'products', 
                 href: "https://thataustrianone.eu/products/", 
                 isExternal: false,
-                gridClass: "col-span-1 row-span-1",
+                gridClass: "col-span-1 row-span-1 min-h-[160px]",
+                shapeClass: "shape-products",
                 iconClass: "text-emerald-500 bg-emerald-500/10",
-                hoverBorder: "hover:border-emerald-500/50",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.35)]",
+                borderClass: "border-emerald-500/30 hover:border-emerald-500/80",
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.25)]",
                 icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
                 arrowIcon: arrowUpRight
             },
@@ -144,10 +176,11 @@
                 id: 'services', 
                 href: "https://thataustrianone.eu/services/", 
                 isExternal: false,
-                gridClass: "col-span-1 row-span-1",
+                gridClass: "col-span-1 row-span-1 min-h-[160px]",
+                shapeClass: "shape-services",
                 iconClass: "text-purple-500 bg-purple-500/10",
-                hoverBorder: "hover:border-purple-500/30",
-                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.15)]",
+                borderClass: "border-purple-500/30 hover:border-purple-500/80",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.25)]",
                 icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
                 arrowIcon: arrowUpRight
             },
@@ -155,10 +188,11 @@
                 id: 'about', 
                 href: "https://thataustrianone.eu/about-me/", 
                 isExternal: false,
-                gridClass: "col-span-1 row-span-1",
+                gridClass: "col-span-1 row-span-1 min-h-[160px]",
+                shapeClass: "shape-about",
                 iconClass: "text-blue-500 bg-blue-500/10",
-                hoverBorder: "hover:border-blue-500/30",
-                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.15)]",
+                borderClass: "border-blue-500/30 hover:border-blue-500/80",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.25)]",
                 icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
                 arrowIcon: arrowUpRight
             },
@@ -166,19 +200,28 @@
                 id: 'socials', 
                 href: "https://thataustrianone.eu/socials", 
                 isExternal: false,
-                gridClass: "col-span-2 md:col-span-4 row-span-1",
+                gridClass: "sm:col-span-2 md:col-span-3 min-h-[100px] flex items-center",
+                shapeClass: "shape-socials",
                 iconClass: "text-red-500 bg-red-500/10",
-                hoverBorder: "theme-border-hover",
-                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
+                borderClass: "border-red-500/30 hover:border-red-500/80",
+                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.25)]",
                 icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
                 arrowIcon: arrowRight
+            },
+            {
+                id: 'placeholder',
+                gridClass: "hidden md:flex col-span-1 row-span-1 min-h-[100px]",
+                shapeClass: "shape-empty",
+                borderClass: "border-emerald-500/20",
+                isPlaceholder: true
             }
         ];
 
         // --- TRANSLATIONS ---
         const translations = {
             de: {
-                code: "AT", 
+                flag: "./assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
                 heroTitle: "Willkommen<span class='theme-text'>.</span>",
                 heroDesc: "Entdecke meine Hardware, Software-Projekte, Socials und mehr",
                 cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
@@ -193,7 +236,8 @@
                 }
             },
             en: {
-                code: "GB",
+                flag: "./assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
                 heroTitle: "Welcome<span class='theme-text'>.</span>",
                 heroDesc: "Explore my hardware listings, software projects, socials, and more",
                 cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
@@ -217,7 +261,9 @@
             
             document.getElementById('hero-title').innerHTML = t.heroTitle;
             document.getElementById('hero-desc').innerText = t.heroDesc;
-            document.getElementById('lang-indicator').innerText = t.code;
+            
+            // Image Flag update logic
+            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
             
             // Cookies
             document.getElementById('cookie-text').innerText = t.cookieText;
@@ -227,6 +273,10 @@
             // Render Grid dynamically
             const grid = document.getElementById('bento-grid');
             grid.innerHTML = cardData.map(c => {
+                if(c.isPlaceholder) {
+                    return `<div class="relative bg-white/[0.01] border ${c.borderClass} ${c.shapeClass} ${c.gridClass}"></div>`;
+                }
+
                 const text = t.content[c.id];
                 const isSquare = c.id !== 'socials';
                 
@@ -238,25 +288,25 @@
 
                 if (isSquare) {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border ${c.borderClass} ${c.shapeClass} shadow-lg transition-all duration-300 ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 sm:p-6 flex flex-col justify-between overflow-hidden">
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                         </div>
                         
-                        <div class="z-10 mt-auto pt-4 flex flex-col justify-end">
+                        <div class="z-10 mt-auto pt-6 flex flex-col justify-end">
                             <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
                             <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
                         </div>
 
-                        <div class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10 ${c.id === 'projects' ? 'block' : 'hidden md:block'}">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                        <div class="absolute bottom-5 right-5 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10 ${c.id === 'projects' ? 'block' : 'hidden sm:block'}">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
                         </div>
                     </a>
                     `;
                 } else {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border ${c.borderClass} ${c.shapeClass} shadow-lg transition-all duration-300 ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 sm:p-6 flex items-center gap-4 overflow-hidden w-full">
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
@@ -268,7 +318,7 @@
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0 z-10">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
                         </div>
                     </a>
                     `;
@@ -332,3 +382,5 @@
     </script>
 </body>
 </html>
+
+```
