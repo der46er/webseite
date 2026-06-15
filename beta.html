@@ -56,31 +56,33 @@
         /* Dynamic Theme Classes */
         .theme-text { color: var(--theme-color); }
         .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.12); filter: blur(180px); }
-        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
     </style>
 </head>
-<body class="flex flex-col h-screen w-screen overflow-hidden selection:bg-white/10 relative">
+<body class="flex flex-col min-h-screen w-full overflow-x-hidden overflow-y-auto selection:bg-white/10 relative">
     
     <div class="absolute inset-0 pointer-events-none z-0 overflow-hidden">
         <div class="absolute -top-[25%] -left-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
         <div class="absolute -bottom-[25%] -right-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
     </div>
 
-    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-6 sm:py-8 h-full min-h-0">
+    <!-- Mobile optimized fluid layout spacing wrapper -->
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-10 md:py-8 my-auto">
         
-        <div class="w-full text-center shrink-0 mb-6 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+        <div class="w-full text-center shrink-0 mb-8 sm:mb-10 animate-in" style="animation-delay: 0.1s; opacity: 0;">
             <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
                 </h1>
             <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide">
                 </p>
         </div>
 
-        <div id="bento-grid" class="w-full grid grid-cols-2 md:grid-cols-4 grid-rows-5 md:grid-rows-3 gap-3 sm:gap-4 flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
+        <!-- Fully explicit explicit CSS grid layout for Desktop, flex/stacking for Mobile -->
+        <div id="bento-grid" class="w-full flex flex-col md:grid md:grid-cols-4 md:grid-rows-3 gap-4 sm:gap-4 animate-in" style="animation-delay: 0.2s; opacity: 0;">
             </div>
     </main>
 
-    <footer class="w-full flex justify-between items-center px-6 py-4 shrink-0 relative z-10 select-none">
+    <footer class="w-full flex justify-between items-center px-6 py-5 shrink-0 relative z-10 select-none">
         <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+            <!-- Rendered via JavaScript updates -->
         </button>
         <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
@@ -103,87 +105,55 @@
         const arrowRight = '<polyline points="9 18 15 12 9 6"></polyline>';
         const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
 
+        // Explicit Layout Map matching the precise rows and columns requested
         const cardData = [
             { 
                 id: 'projects', 
                 href: "https://thataustrianone.eu/projects/", 
-                isExternal: false,
-                gridClass: "col-span-2 row-span-2",
-                shapeClass: "rounded-[2rem_2rem_0.5rem_2rem]",
+                isLShaped: true, // Custom flag to parse the double-box layout
                 iconClass: "text-zinc-300 bg-zinc-300/10",
-                borderClass: "border-2 border-zinc-300/60 hover:border-zinc-300",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.35)]",
                 icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
                 arrowIcon: arrowUpRight
             },
             { 
                 id: 'shop', 
                 href: "https://thataustrianone.eu/shop/", 
-                isExternal: false,
-                gridClass: "col-span-1 row-span-1",
-                shapeClass: "rounded-[2rem_0.5rem_0.5rem_0.5rem]",
+                gridClass: "md:col-start-3 md:col-span-2 md:row-start-1", // 2 blocks wide top right
                 iconClass: "text-orange-500 bg-orange-500/10",
-                borderClass: "border-2 border-orange-500/60 hover:border-orange-500",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.35)]",
                 icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
-                arrowIcon: arrowRight
-            },
-            { 
-                id: 'products', 
-                href: "https://thataustrianone.eu/products/", 
-                isExternal: false,
-                gridClass: "col-span-1 row-span-1",
-                shapeClass: "rounded-[0.5rem_2rem_0.5rem_0.5rem]",
-                iconClass: "text-emerald-500 bg-emerald-500/10",
-                borderClass: "border-2 border-emerald-500/60 hover:border-emerald-500",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.35)]",
-                icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
                 arrowIcon: arrowUpRight
             },
             { 
                 id: 'services', 
                 href: "https://thataustrianone.eu/services/", 
-                isExternal: false,
-                gridClass: "col-span-1 row-span-1",
-                shapeClass: "rounded-[0.5rem_0.5rem_0.5rem_2rem]",
+                gridClass: "md:col-start-2 md:col-span-2 md:row-start-2", // 2 blocks wide center
                 iconClass: "text-purple-500 bg-purple-500/10",
-                borderClass: "border-2 border-purple-500/60 hover:border-purple-500",
-                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(168,85,247,0.15)]",
                 icon: '<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>',
                 arrowIcon: arrowUpRight
             },
             { 
                 id: 'about', 
                 href: "https://thataustrianone.eu/about-me/", 
-                isExternal: false,
-                gridClass: "col-span-1 row-span-1",
-                shapeClass: "rounded-[0.5rem_0.5rem_2rem_0.5rem]",
+                gridClass: "md:col-start-4 md:col-span-1 md:row-start-2", // 1 block center right
                 iconClass: "text-blue-500 bg-blue-500/10",
-                borderClass: "border-2 border-blue-500/60 hover:border-blue-500",
-                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(59,130,246,0.15)]",
                 icon: '<path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>',
                 arrowIcon: arrowUpRight
             },
             { 
                 id: 'socials', 
                 href: "https://thataustrianone.eu/socials", 
-                isExternal: false,
-                gridClass: "col-span-2 md:col-span-3 row-span-1",
-                shapeClass: "rounded-[2rem_0.5rem_0.5rem_2rem]",
+                gridClass: "md:col-start-1 md:col-span-3 md:row-start-3", // 3 blocks wide bottom left
                 iconClass: "text-red-500 bg-red-500/10",
-                borderClass: "border-2 border-red-500/60 hover:border-red-500",
-                hoverShadow: "hover:shadow-[0_0_40px_-10px_rgba(239,68,68,0.2)]",
                 icon: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>',
                 arrowIcon: arrowRight
             },
-            {
-                id: 'empty',
-                href: "#",
-                isExternal: false,
-                gridClass: "hidden md:flex col-span-1 row-span-1 pointer-events-none",
-                shapeClass: "rounded-[0.5rem_0.5rem_2rem_0.5rem]",
-                borderClass: "border-2 border-emerald-500/60",
-                isEmpty: true
+            { 
+                id: 'products', 
+                href: "https://thataustrianone.eu/products/", 
+                gridClass: "md:col-start-4 md:col-span-1 md:row-start-3", // 1 block bottom right
+                iconClass: "text-emerald-500 bg-emerald-500/10",
+                icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+                arrowIcon: arrowUpRight
             }
         ];
 
@@ -230,6 +200,7 @@
             document.getElementById('hero-title').innerHTML = t.heroTitle;
             document.getElementById('hero-desc').innerText = t.heroDesc;
             
+            // Image Flag update logic
             document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
             
             document.getElementById('cookie-text').innerText = t.cookieText;
@@ -238,56 +209,85 @@
 
             const grid = document.getElementById('bento-grid');
             grid.innerHTML = cardData.map(c => {
-                if(c.isEmpty) {
-                    return `<div class="relative bg-white/[0.01] ${c.borderClass} ${c.shapeClass} ${c.gridClass} shadow-lg opacity-40"></div>`;
-                }
-
                 const text = t.content[c.id];
-                const isSquare = c.id !== 'socials';
-                
-                const titleClass = c.id === 'projects' ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-base sm:text-lg';
-                const descClass = c.id === 'projects' ? 'text-[10px] sm:text-xs' : 'text-[9px] sm:text-[10px]';
-                
-                const wideTitleClass = 'text-lg sm:text-xl md:text-2xl';
-                const wideDescClass = 'text-[10px] sm:text-xs md:text-sm';
 
-                if (isSquare) {
+                // The L-shape link spans 2 explicit separate grid elements (display: contents trick)
+                // This creates the visual L-shape using standard rectangles but hooks up identical hover & links across both
+                if (c.isLShaped) {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] ${c.borderClass} ${c.shapeClass} shadow-lg transition-all duration-300 ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
-                        
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                    <!-- Mobile Standard Fallback Card -->
+                    <a href="${c.href}" class="md:hidden group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-300 w-full min-h-[160px] p-5 flex flex-col justify-between overflow-hidden">
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
                         </div>
-                        
                         <div class="z-10 mt-auto pt-4 flex flex-col justify-end">
-                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
-                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
+                            <h2 class="text-xl font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                            <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest truncate">${text.desc}</p>
                         </div>
-
-                        <div class="absolute bottom-4 right-4 sm:bottom-5 sm:right-5 md:bottom-6 md:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10 ${c.id === 'projects' ? 'block' : 'hidden md:block'}">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                        <div class="absolute bottom-5 right-5 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
                         </div>
                     </a>
-                    `;
-                } else {
-                    return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] ${c.borderClass} ${c.shapeClass} shadow-lg transition-all duration-300 ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden w-full">
-                        
-                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
-                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+
+                    <!-- Desktop Visual L-Shape constructed out of 2 coordinated boxes -->
+                    <a href="${c.href}" class="hidden md:contents group">
+                        <!-- Top Wide Section (2x1 Block) -->
+                        <div class="relative bg-white/[0.03] group-hover:bg-white/[0.07] border border-white/[0.05] group-hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-300 w-full md:col-start-1 md:col-span-2 md:row-start-1 min-h-[160px] p-6 flex flex-col justify-start overflow-hidden">
+                            <div class="w-14 h-14 rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
+                                <svg class="w-7 h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                            </div>
                         </div>
                         
-                        <div class="flex-grow min-w-0 z-10">
-                            <h2 class="${wideTitleClass} font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
-                            <p class="text-zinc-500 ${wideDescClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
-                        </div>
-                        
-                        <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0 z-10">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                        <!-- Bottom Left Section (1x1 Block) -->
+                        <div class="relative bg-white/[0.03] group-hover:bg-white/[0.07] border border-white/[0.05] group-hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-300 w-full md:col-start-1 md:col-span-1 md:row-start-2 min-h-[160px] p-6 flex flex-col justify-end overflow-hidden">
+                            <div class="z-10 mt-auto flex flex-col justify-end">
+                                <h2 class="text-2xl font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                                <p class="text-zinc-500 text-[10px] font-bold uppercase tracking-widest truncate">${text.desc}</p>
+                            </div>
+                            <div class="absolute bottom-6 right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                            </div>
                         </div>
                     </a>
                     `;
                 }
+
+                // Social Links spans 3 columns horizontally and aligns text to the side
+                if (c.id === 'socials') {
+                    return `
+                    <a href="${c.href}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-300 w-full ${c.gridClass} min-h-[120px] p-5 sm:p-6 flex items-center gap-4 overflow-hidden">
+                        <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
+                            <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                        </div>
+                        <div class="flex-grow min-w-0 z-10">
+                            <h2 class="text-xl md:text-2xl font-black text-white tracking-wide italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                            <p class="text-zinc-500 text-xs md:text-sm font-bold uppercase tracking-widest truncate">${text.desc}</p>
+                        </div>
+                        <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0 z-10">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                        </div>
+                    </a>
+                    `;
+                } 
+
+                // Everything else forms standard vertically stacked grid boxes spanning 1 to 2 cols
+                const titleClass = c.gridClass.includes('col-span-2') ? 'text-xl md:text-2xl' : 'text-lg md:text-xl';
+                const descClass = c.gridClass.includes('col-span-2') ? 'text-xs md:text-sm' : 'text-[10px] md:text-xs';
+
+                return `
+                <a href="${c.href}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-300 w-full ${c.gridClass} min-h-[160px] p-5 md:p-6 flex flex-col justify-between overflow-hidden">
+                    <div class="w-10 h-10 md:w-12 md:h-12 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
+                        <svg class="w-5 h-5 md:w-6 md:h-6" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
+                    </div>
+                    <div class="z-10 mt-auto pt-4 flex flex-col justify-end">
+                        <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
+                        <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
+                    </div>
+                    <div class="absolute bottom-5 right-5 md:bottom-6 md:right-6 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 z-10">
+                        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${c.arrowIcon}</svg>
+                    </div>
+                </a>
+                `;
             }).join('');
         }
 
