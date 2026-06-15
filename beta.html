@@ -89,7 +89,7 @@
                 gridClass: "col-span-2 row-span-2",
                 iconClass: "text-zinc-300 bg-zinc-300/10",
                 hoverBorder: "hover:border-zinc-300/50",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.35)]", // Increased hover glow intensity
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.35)]",
                 icon: '<polyline points="16 18 22 12 16 6"/><polyline points="8 6 2 12 8 18"/>',
                 arrowIcon: arrowUpRight
             },
@@ -97,12 +97,23 @@
                 id: 'shop', 
                 href: "https://thataustrianone.eu/shop/", 
                 isExternal: false,
-                gridClass: "col-span-2 row-span-1",
+                gridClass: "col-span-1 row-span-1",
                 iconClass: "text-orange-500 bg-orange-500/10",
                 hoverBorder: "hover:border-orange-500/50",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.35)]", // Increased hover glow intensity
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.35)]",
                 icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
                 arrowIcon: arrowRight
+            },
+            { 
+                id: 'products', 
+                href: "https://thataustrianone.eu/products/", 
+                isExternal: false,
+                gridClass: "col-span-1 row-span-1",
+                iconClass: "text-emerald-500 bg-emerald-500/10",
+                hoverBorder: "hover:border-emerald-500/50",
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.35)]",
+                icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
+                arrowIcon: arrowUpRight
             },
             { 
                 id: 'services', 
@@ -129,7 +140,7 @@
             { 
                 id: 'socials', 
                 href: "https://thataustrianone.eu/socials", 
-                isExternal: false, // Opens in same tab smoothly
+                isExternal: false,
                 gridClass: "col-span-2 md:col-span-4 row-span-1",
                 iconClass: "text-red-500 bg-red-500/10",
                 hoverBorder: "theme-border-hover",
@@ -150,6 +161,7 @@
                 content: {
                     projects: { title: "Meine Projekte", desc: "Software, Webseiten & Experimente" },
                     shop: { title: "Hardware Market", desc: "Check meine aktuellen Inserate" },
+                    products: { title: "Meine Produkte", desc: "Entdecke meine Kreationen" },
                     services: { title: "Tech Support", desc: "Zusammenbau & Reinigung" },
                     about: { title: "Meine Story", desc: "Wer steckt dahinter?" },
                     socials: { title: "Social Links", desc: "Folge mir auf meinen Kanälen" }
@@ -164,6 +176,7 @@
                 content: {
                     projects: { title: "My Projects", desc: "Software, websites & experiments" },
                     shop: { title: "Hardware Market", desc: "Browse my latest listings" },
+                    products: { title: "My Products", desc: "Explore my creations" },
                     services: { title: "Tech Support", desc: "Assembly & cleaning" },
                     about: { title: "My Story", desc: "Who is thataustrianone?" },
                     socials: { title: "Social Links", desc: "Follow me on my channels" }
@@ -190,7 +203,7 @@
             const grid = document.getElementById('bento-grid');
             grid.innerHTML = cardData.map(c => {
                 const text = t.content[c.id];
-                const isSquare = ['projects', 'services', 'about'].includes(c.id);
+                const isSquare = c.id !== 'socials';
                 
                 const titleClass = c.id === 'projects' ? 'text-2xl sm:text-3xl md:text-4xl' : 'text-base sm:text-lg';
                 const descClass = c.id === 'projects' ? 'text-[10px] sm:text-xs' : 'text-[9px] sm:text-[10px]';
@@ -198,11 +211,9 @@
                 const wideTitleClass = 'text-lg sm:text-xl md:text-2xl';
                 const wideDescClass = 'text-[10px] sm:text-xs md:text-sm';
 
-                // Adjusted container parameters to use the exact matching translucent layouts
                 if (isSquare) {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-3xl transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
@@ -220,8 +231,7 @@
                     `;
                 } else {
                     return `
-                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-3xl transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
-                        <div class="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-700 bg-gradient-to-br from-white/[0.02] to-transparent pointer-events-none z-0"></div>
+                    <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex items-center gap-3 sm:gap-4 overflow-hidden">
                         
                         <div class="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
                             <svg class="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
