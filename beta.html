@@ -123,7 +123,7 @@
                 iconClass: "text-orange-500 bg-orange-500/10",
                 hoverBorder: "hover:border-orange-500/50",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.35)]",
-                icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
+                icon: '<path d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4(5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/>',
                 arrowIcon: arrowUpRight
             },
             { 
@@ -227,14 +227,10 @@
             grid.innerHTML = cardData.map(c => {
                 const text = t.content[c.id];
                 
-                // Unified card typographic header size allocations
                 const titleClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-lg sm:text-xl md:text-2xl' : 'text-base sm:text-lg';
                 const descClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
 
-                // Unified structure layout logic across all cards:
-                // - Icon wrapped and kept on top-left
-                // - Typography details shifted down to the bottom-left edge boundary
-                // - Interaction navigation icon aligned inside the bottom-right corner zone
+                // Adjusted tracking layout elements: Added 'pr-2' onto h2 and p strings to eliminate side clipping artifacts from italic rendering fonts
                 return `
                 <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] shadow-lg transition-all duration-200 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-4 sm:p-5 md:p-6 flex flex-col justify-between overflow-hidden">
                     
@@ -246,8 +242,8 @@
                     
                     <div class="z-10 mt-auto pt-4 flex items-end justify-between w-full">
                         <div class="flex flex-col justify-end min-w-0 pr-8">
-                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate">${text.title}</h2>
-                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate">${text.desc}</p>
+                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2">${text.title}</h2>
+                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate pr-2">${text.desc}</p>
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
