@@ -30,7 +30,7 @@
             content: "";
             position: absolute;
             inset: 0;
-            background-image: url(".assets/backgounds/waves.webp");
+            background-image: url("assets/backgrounds/waves.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -79,8 +79,7 @@
     </main>
 
     <footer class="w-full flex justify-between items-center px-6 py-4 shrink-0 relative z-10 select-none">
-        <button onclick="toggleLang()" id="lang-indicator" class="text-zinc-500 hover:text-white text-xs sm:text-sm font-black uppercase tracking-widest transition-colors duration-200">
-            GB
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
         </button>
         <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
@@ -176,7 +175,8 @@
         // --- TRANSLATIONS ---
         const translations = {
             de: {
-                code: "AT", 
+                flag: "assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
                 heroTitle: "Willkommen<span class='theme-text'>.</span>",
                 heroDesc: "Entdecke meine Hardware, Software-Projekte, Socials und mehr",
                 cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
@@ -191,7 +191,8 @@
                 }
             },
             en: {
-                code: "GB",
+                flag: "assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
                 heroTitle: "Welcome<span class='theme-text'>.</span>",
                 heroDesc: "Explore my hardware listings, software projects, socials, and more",
                 cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
@@ -215,7 +216,9 @@
             
             document.getElementById('hero-title').innerHTML = t.heroTitle;
             document.getElementById('hero-desc').innerText = t.heroDesc;
-            document.getElementById('lang-indicator').innerText = t.code;
+            
+            // Fixed image flag loader block
+            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
             
             // Cookies
             document.getElementById('cookie-text').innerText = t.cookieText;
