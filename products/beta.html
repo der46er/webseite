@@ -13,6 +13,23 @@
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
     
     <style>
+        /* LOKALE SCHRIFTARTEN */
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
+            font-weight: 400;
+            font-style: normal;
+            font-display: swap;
+        }
+        @font-face {
+            font-family: 'Inter';
+            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2');
+            font-weight: 900;
+            font-style: normal;
+            font-display: swap;
+        }
+
+        /* Fallback */
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         
         body { 
@@ -62,8 +79,9 @@
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/gear";
-        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/gear";
+        // Updated API paths to point to the assets/products folder
+        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/assets/products";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/assets/products";
 
         // --- Icons ---
         const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
