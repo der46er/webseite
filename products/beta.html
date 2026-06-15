@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gear | thataustrianone</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #0b0d11; 
+            margin: 0; 
+            padding: 0; 
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .header-logo-text {
+            font-weight: 900;
+            font-style: normal;
+            text-transform: lowercase;
+            letter-spacing: -0.06em;
+        }
+
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes rotate {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .group:hover .animate-rotate-slow {
+            animation: rotate 4s linear infinite;
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+
+        .logo-themed {
+            filter: sepia(100%) saturate(300%) hue-rotate(80deg) brightness(100%) drop-shadow(0 0 5px rgba(34, 197, 94, 0.5));
+            transition: all 0.3s ease;
+        }
+
+        .green-glow {
+            box-shadow: 0 0 40px -10px rgba(34, 197, 94, 0.15);
+        }
+    </style>
+</head>
+<body>
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/gear";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/gear";
+
+        // --- Icons ---
+        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+        const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
+        const ExternalLink = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>;
+
+        const translations = {
+            de: {
+                flag: "🇦🇹", name: "Deutsch", back: "Zurück", badge: "EMPFEHLUNGEN", title: "Tech & Gear",
+                description: "Hier ist eine Übersicht von Hardware, Kabeln und Werkzeugen, die ich selbst täglich im Einsatz habe.",
+                all: "ALLE", viewProduct: "Produkt ansehen", loading: "Produkte werden geladen..."
+            },
+            en: {
+                flag: "🇬🇧", name: "English", back: "Back", badge: "RECOMMENDATIONS", title: "Tech & Gear",
+                description: "A curated collection of hardware, components, and tools that I personally use on a daily basis.",
+                all: "ALL", viewProduct: "View Product", loading: "Loading products..."
+            }
+        };
+
+        const ProductCard = ({ title, category, description, image, url, lang, t }) => (
+            <div className="relative group block p-0.5 rounded-[2rem] overflow-hidden transition-all duration-300 transform active:scale-[0.99] text-zinc-100 green-glow">
+                <div className="absolute inset-0 bg-gradient-to-r from-green-500 via-emerald-600 to-teal-500 opacity-20 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(transparent,transparent,transparent,#22c55e,#059669,#14b8a6)] animate-rotate-slow opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+                
+                <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.9rem] p-4 z-10 m-[1px] flex flex-col h-full text-left">
+                    <div className="aspect-square rounded-[1.5rem] overflow-hidden bg-[#0f1115] mb-5 border border-white/5 relative shadow-inner">
+                        <img src={image} alt={title[lang]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'} />
+                        <span className="absolute top-3 left-3 bg-black/60 backdrop-blur-md border border-white/10 px-3 py-1 rounded-full text-[9px] font-black uppercase tracking-widest text-zinc-300">
+                            {category[lang]}
+                        </span>
+                    </div>
+
+                    <div className="flex-grow px-2 pb-4">
+                        <h3 className="text-xl font-black text-white tracking-tight leading-tight uppercase italic mb-2">{title[lang]}</h3>
+                        <p className="text-zinc-500 text-sm leading-relaxed font-medium">{description[lang]}</p>
+                    </div>
+                    
+                    <div className="mt-auto">
+                        <a 
+                            href={url} 
+                            target="_blank" 
+                            className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-green-600 border border-white/5 hover:border-green-500 text-white rounded-[1rem] text-sm font-black transition-all duration-300 shadow-xl uppercase tracking-wider italic"
+                        >
+                            {t.viewProduct}
+                            <ExternalLink size={14} />
+                        </a>
+                    </div>
+                </div>
+            </div>
+        );
+
+        const App = () => {
+            const [lang, setLang] = useState(() => localStorage.getItem('siteLang') || 'en');
+            const [showLangMenu, setShowLangMenu] = useState(false);
+            const [products, setProducts] = useState([]);
+            const [categories, setCategories] = useState([]);
+            const [selectedCategory, setSelectedCategory] = useState("ALL");
+            const [loading, setLoading] = useState(true);
+            const menuRef = useRef(null);
+            const t = translations[lang];
+
+            useEffect(() => {
+                const handleClickOutside = (event) => {
+                    if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
+                };
+                document.addEventListener("mousedown", handleClickOutside);
+                return () => document.removeEventListener("mousedown", handleClickOutside);
+            }, []);
+
+            // Fetch individual JSON files from GitHub directory
+            useEffect(() => {
+                const fetchGearFiles = async () => {
+                    try {
+                        const response = await fetch(GITHUB_API_URL);
+                        if (!response.ok) throw new Error("Failed to fetch directory");
+                        const files = await response.json();
+                        
+                        // Filter for .json files
+                        const jsonFiles = files.filter(file => file.name.endsWith('.json'));
+
+                        // Fetch each individual JSON file
+                        const productPromises = jsonFiles.map(async (file) => {
+                            const rawUrl = `${GITHUB_RAW_BASE}/${file.name}`;
+                            const res = await fetch(rawUrl);
+                            if (res.ok) {
+                                return await res.json();
+                            }
+                            return null;
+                        });
+
+                        const resolvedProducts = (await Promise.all(productPromises)).filter(p => p !== null);
+                        setProducts(resolvedProducts);
+                        
+                        // Extract unique categories dynamically based on available items
+                        const uniqueCats = new Set();
+                        resolvedProducts.forEach(item => {
+                            if (item.category && item.category.en) uniqueCats.add(item.category.en.toUpperCase());
+                        });
+                        setCategories(["ALL", ...Array.from(uniqueCats)]);
+
+                    } catch (err) {
+                        console.error("Error reading JSON files:", err);
+                    } finally {
+                        setLoading(false);
+                    }
+                };
+
+                fetchGearFiles();
+            }, []);
+
+            const filteredProducts = selectedCategory === "ALL" 
+                ? products 
+                : products.filter(p => p.category.en.toUpperCase() === selectedCategory);
+
+            return (
+                <div className="min-h-screen bg-[#0b0d11] text-white selection:bg-green-500/30 overflow-x-hidden relative flex flex-col pb-12">
+                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none z-0">
+                        <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-emerald-600/10 blur-[100px] rounded-full" />
+                        <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-green-600/5 blur-[100px] rounded-full" />
+                    </div>
+
+                    <nav className="fixed top-0 w-full z-50 h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
+                        <div className="flex-1 text-left">
+                            <a href="../" className="text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all inline-flex items-center gap-2 uppercase italic">
+                                <ChevronLeft size={14} /> {t.back}
+                            </a>
+                        </div>
+                        
+                        <div className="flex items-center gap-3">
+                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-10 h-10 object-contain logo-themed" />
+                             <span className="header-logo-text text-2xl text-white">that<span className="text-green-500">austrianone.</span></span>
+                        </div>
+                        
+                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
+                            <button 
+                                onClick={() => setShowLangMenu(!showLangMenu)} 
+                                className="flex items-center gap-3 px-6 sm:px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg"
+                            >
+                                <span>{t.flag}</span> <span className="hidden sm:inline">{t.name}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
+                            </button>
+                            {showLangMenu && (
+                                <div className="absolute right-0 top-16 w-48 bg-[#11141a] border border-white/10 rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
+                                    {Object.keys(translations).map((key) => (
+                                        <button key={key} onClick={() => { setLang(key); localStorage.setItem('siteLang', key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-6 py-5 text-left text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-green-500 bg-green-500/5' : 'text-zinc-400'}`}>
+                                            <span>{translations[key].flag}</span> <span className="font-semibold">{translations[key].name}</span>
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </div>
+                    </nav>
+
+                    <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 pt-48 pb-20 animate-in w-full flex-grow">
+                        <header className="mb-12 text-center md:text-left text-zinc-100">
+                            <div className="inline-block px-4 py-1.5 bg-green-500/10 text-green-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-8 border border-green-500/20">{t.badge}</div>
+                            <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-tight mb-6">
+                                {t.title}
+                            </h1>
+                            <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12 italic">"{t.description}"</p>
+                            
+                            {!loading && categories.length > 2 && (
+                                <div className="flex flex-wrap gap-2 justify-center md:justify-start mb-6">
+                                    {categories.map((cat, i) => {
+                                        const displayLabel = cat === "ALL" ? t.all : products.find(p => p.category.en.toUpperCase() === cat)?.category[lang].toUpperCase();
+                                        return (
+                                            <button 
+                                                key={i}
+                                                onClick={() => setSelectedCategory(cat)}
+                                                className={`px-5 py-2.5 rounded-full text-[10px] font-black tracking-widest transition-all uppercase ${selectedCategory === cat ? 'bg-green-500 text-black shadow-lg shadow-green-500/20' : 'bg-white/5 text-zinc-400 hover:bg-white/10 hover:text-white border border-white/5'}`}
+                                            >
+                                                {displayLabel}
+                                            </button>
+                                        );
+                                    })}
+                                </div>
+                            )}
+                        </header>
+
+                        {loading ? (
+                            <div className="py-20 text-center text-zinc-600 font-bold uppercase tracking-widest animate-pulse">
+                                {t.loading}
+                            </div>
+                        ) : (
+                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8 mt-12">
+                                {filteredProducts.map((item, index) => (
+                                    <ProductCard key={index} {...item} lang={lang} t={t} />
+                                ))}
+                            </div>
+                        )}
+                    </div>
+
+                    <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none relative z-10">
+                        <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
+                            © 2026 — @der_46er
+                        </p>
+                    </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
