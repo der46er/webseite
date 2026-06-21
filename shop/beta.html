@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shop | thataustrianone</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    
+    <script type="importmap">
+      {
+        "imports": {
+          "react": "https://esm.sh/react@18.3.1",
+          "react-dom": "https://esm.sh/react-dom@18.3.1",
+          "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime"
+        }
+      }
+    </script>
+
+    <style>
+        @font-face { font-family: 'Inter'; src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+        
+        :root { --theme-color: #f97316; --theme-rgb: 249, 115, 22; }
+
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background-color: #0b0d11; 
+            color: white; 
+            margin: 0; 
+            padding: 0; 
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            transform: scale(1.05);
+            opacity: 0.4;
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.12); filter: blur(180px); }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+
+        .glass-modal {
+            background: rgba(11, 13, 17, 0.98);
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-[100dvh] w-full overflow-x-hidden selection:bg-orange-500/30 relative">
+    <div id="root" class="flex flex-col w-full min-h-[100dvh]"></div>
+
+    <script type="text/babel" data-type="module">
+        const { useState, useEffect } = React;
+
+        const ChevronLeft = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
+        const ChevronRight = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
+        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+        const arrowUpRight = <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>;
+
+        const translations = {
+            de: {
+                name: "Deutsch", flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp", alt: "Austria Flag",
+                back: "Zurück", offer: "Angebot", title: "Shop",
+                description: "Hier findest du Hardware und Ersatzteile aus meinem Bestand. Die Abwicklung erfolgt sicher über die verlinkten Plattformen.",
+                viewOn: "Auf {platform} ansehen", comingSoon: "Bald neue Artikel...", legal: "Impressum & Rechtliches",
+                legalTitle: "Rechtliche Informationen", imprintLabel: "Impressum / Offenlegung", addressLabel: "Anschrift",
+                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
+                contactLabel: "Kontakt", trademarkLabel: "Hinweis zu Marken & Logos",
+                trademarkText: "Alle verwendeten Logos (Willhaben, Vinted, eBay, HP, Intel, Corsair) sind Eigentum der jeweiligen Inhaber und dienen ausschließlich der Identifikation der Profile und Hardware.",
+                liabilityLabel: "Haftung für Links", liabilityText: "Ich übernehme keine Haftung für externe Links. Für den Inhalt sind ausschließlich deren Betreiber verantwortlich.",
+                viewProfile: "Profil besuchen", willhabenProfile: "Willhaben Profil", vintedProfile: "Vinted Profil", ebayProfile: "eBay Profil",
+                sold: "Verkauft", unavailable: "Nicht mehr verfügbar"
+            },
+            en: {
+                name: "English", flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp", alt: "UK Flag",
+                back: "Back", offer: "Offer", title: "Shop",
+                description: "Explore hardware and spare parts from my personal inventory. Secure checkout via the linked platforms.",
+                viewOn: "View on {platform}", comingSoon: "More items coming soon...", legal: "Legal Notice",
+                legalTitle: "Legal Information", imprintLabel: "Imprint / Disclosure", addressLabel: "Address",
+                addressRequest: "Full address available upon justified request via email for privacy reasons.",
+                contactLabel: "Contact", trademarkLabel: "Trademark & Logo Notice",
+                trademarkText: "All logos used (Willhaben, Vinted, eBay, HP, Intel, Corsair) are property of their respective owners and are used for identification purposes only.",
+                liabilityLabel: "Liability for Links", liabilityText: "I assume no liability for external links. Operators of linked pages are solely responsible.",
+                viewProfile: "Visit profile", willhabenProfile: "Willhaben Profile", vintedProfile: "Vinted Profile", ebayProfile: "eBay Profile",
+                sold: "Sold", unavailable: "No longer available"
+            }
+        };
+
+        const ProfileCard = ({ platform, url, userImage, logoImage, lang, labelKey }) => (
+            <a href={url} target="_blank" className="group relative bg-white/[0.03] border border-white/[0.05] hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] rounded-[1.2rem] shadow-lg transition-all duration-300 active:scale-[0.99] p-5 flex items-center gap-5 w-full text-zinc-100 overflow-hidden">
+                <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-lg bg-white/5">
+                    <img src={userImage} alt="User" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
+                </div>
+                <div className="flex flex-col gap-1 text-left min-w-0">
+                    <div className="h-6 flex items-center">
+                        <img src={logoImage} alt={platform} className="h-full w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
+                    </div>
+                    <h4 className="text-white font-black text-sm tracking-tight truncate uppercase italic">
+                        {translations[lang][labelKey]}
+                    </h4>
+                    <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-orange-400 transition-colors">
+                        {translations[lang].viewProfile} <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    </div>
+                </div>
+                <div className="absolute right-5 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1">
+                    {arrowUpRight}
+                </div>
+            </a>
+        );
+
+        const ProductCard = ({ title, price, description, images, links, isSold, lang }) => {
+            const [imgIdx, setImgIdx] = useState(0);
+            const currentImage = (images && images.length > 0) ? images[imgIdx] : 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920';
+
+            const nextImg = (e) => { e.preventDefault(); setImgIdx((prev) => (prev + 1) % images.length); };
+            const prevImg = (e) => { e.preventDefault(); setImgIdx((prev) => (prev - 1 + images.length) % images.length); };
+
+            return (
+                <div className={`group relative bg-white/[0.03] border border-white/[0.05] hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] rounded-[1.2rem] shadow-lg transition-all duration-300 ${isSold ? 'opacity-60 grayscale-[0.5]' : 'active:scale-[0.99]'} p-5 flex flex-col h-full text-left`}>
+                    
+                    <div className="aspect-square rounded-[1rem] overflow-hidden bg-black/20 mb-5 relative group/slider">
+                        <img src={currentImage} alt={title[lang]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'} />
+                        
+                        {images && images.length > 1 && (
+                            <div className="absolute inset-0 flex items-center justify-between px-2 opacity-0 group-hover/slider:opacity-100 transition-opacity z-20">
+                                <button onClick={prevImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md"><ChevronLeft size={16} /></button>
+                                <button onClick={nextImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md"><ChevronRight size={16} /></button>
+                            </div>
+                        )}
+
+                        {images && images.length > 1 && (
+                            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
+                                {images.map((_, idx) => (
+                                    <div key={idx} className={`h-1.5 rounded-full transition-all ${idx === imgIdx ? 'w-4 bg-orange-500' : 'w-1.5 bg-white/50'}`} />
+                                ))}
+                            </div>
+                        )}
+
+                        {isSold && (
+                            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center z-30">
+                                <span className="px-6 py-2 bg-orange-600 text-white font-black uppercase tracking-[0.2em] rounded-full text-sm shadow-2xl rotate-[-5deg]">{translations[lang].sold}</span>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="flex-grow pb-4">
+                        <div className="flex justify-between items-start mb-2">
+                            <h3 className="text-xl font-black text-white tracking-tight italic uppercase leading-none truncate pr-2">{title[lang]}</h3>
+                            <span className={`text-orange-500 font-extrabold text-lg shrink-0 ${isSold ? 'line-through opacity-50' : ''}`}>{price}€</span>
+                        </div>
+                        <p className="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest line-clamp-3 leading-relaxed">{description[lang]}</p>
+                    </div>
+                    
+                    <div className="flex flex-col gap-2 mt-auto">
+                        {isSold ? (
+                            <div className="w-full py-3 bg-white/5 text-zinc-600 rounded-xl text-xs font-black text-center italic cursor-not-allowed uppercase tracking-widest">
+                                {translations[lang].unavailable}
+                            </div>
+                        ) : (
+                            links.map((link, idx) => (
+                                <a key={idx} href={link.url} target="_blank" className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-orange-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300">
+                                    {translations[lang].viewOn.replace('{platform}', link.platform)}
+                                </a>
+                            ))
+                        )}
+                    </div>
+                </div>
+            );
+        };
+
+        const App = () => {
+            const [lang, setLang] = useState(localStorage.getItem('siteLang') || 'en');
+            const [showLegal, setShowLegal] = useState(false);
+            const [products, setProducts] = useState([]);
+            const t = translations[lang];
+
+            useEffect(() => {
+                localStorage.setItem('siteLang', lang);
+            }, [lang]);
+
+            useEffect(() => {
+                const detectPlatform = (url) => {
+                    const lowerUrl = url.toLowerCase();
+                    if (lowerUrl.includes('willhaben.')) return 'Willhaben';
+                    if (lowerUrl.includes('vinted.')) return 'Vinted';
+                    if (lowerUrl.includes('ebay.')) return 'eBay';
+                    return 'Shop';
+                };
+
+                fetch('https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/shop/products.json')
+                    .then(res => res.json())
+                    .then(data => {
+                        const parsedProducts = data.map(item => ({
+                            ...item,
+                            links: item.urls ? item.urls.map(url => ({ platform: detectPlatform(url), url: url })) : []
+                        }));
+                        setProducts(parsedProducts);
+                    })
+                    .catch(error => console.error("Error loading listings:", error));
+            }, []);
+
+            const profiles = {
+                willhaben: { url: "https://www.willhaben.at/iad/kaufen-und-verkaufen/verkaeuferprofil/31926735", userImage: "https://cache.willhaben.at/mmo/userProfile/31926735_8ba50daac3161ab9f45061e2408c4c70.jpg", logo: "https://www.willhaben.at/bbx-search/_next/static/assets/logo.f8cb483ef68cd335.svg", labelKey: "willhabenProfile" },
+                vinted: { url: "https://www.vinted.at/member/207532481", userImage: "https://images1.vinted.net/t/04_0104b_ughXXR9SsCv9pvoU69kXnLKB/f800/1757955583.webp?s=e9d9f4a64580b0d1ce07706d85d955ccb3380b2a", logo: "https://marketplace-web-assets.vinted.com/_next/static/media/logo.5398230b.svg", labelKey: "vintedProfile" },
+                ebay: { url: "https://www.ebay.at/usr/der_46er", userImage: "https://i.ebayimg.com/00/s/MzAwWDMwMA==/z/QmkAAeSwfxlph5~G/$_57.JPG?set_id=8800004005", logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EBay_logo.svg/1280px-EBay_logo.svg.png", labelKey: "ebayProfile" }
+            };
+
+            return (
+                <>
+                    <div className="absolute inset-0 pointer-events-none z-0 overflow-hidden">
+                        <div className="absolute -top-[25%] -left-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
+                        <div className="absolute -bottom-[25%] -right-[25%] w-[80%] h-[80%] rounded-full theme-bg-glow transition-all duration-1000 opacity-50"></div>
+                    </div>
+
+                    <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col py-10">
+                        
+                        <a href="../" className="text-zinc-500 hover:text-white text-[10px] sm:text-xs font-black uppercase tracking-widest italic flex items-center gap-2 mb-8 transition-colors w-fit group">
+                            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> {t.back}
+                        </a>
+
+                        <div className="w-full text-center shrink-0 mb-10 animate-in" style={{animationDelay: "0.1s", opacity: 0}}>
+                            <div className="inline-block px-4 py-1.5 bg-orange-500/10 text-orange-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-4 border border-orange-500/20">{t.offer}</div>
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+                                {t.title}<span className="text-orange-500">.</span>
+                            </h1>
+                            <p className="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide mb-8">
+                                {t.description}
+                            </p>
+                            
+                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-4xl mx-auto">
+                                <ProfileCard platform="Willhaben" url={profiles.willhaben.url} userImage={profiles.willhaben.userImage} logoImage={profiles.willhaben.logo} lang={lang} labelKey="willhabenProfile" />
+                                <ProfileCard platform="Vinted" url={profiles.vinted.url} userImage={profiles.vinted.userImage} logoImage={profiles.vinted.logo} lang={lang} labelKey="vintedProfile" />
+                                <ProfileCard platform="eBay" url={profiles.ebay.url} userImage={profiles.ebay.userImage} logoImage={profiles.ebay.logo} lang={lang} labelKey="ebayProfile" />
+                            </div>
+                        </div>
+
+                        <div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 flex-grow min-h-0 animate-in" style={{animationDelay: "0.2s", opacity: 0}}>
+                            {products.map((item, index) => (
+                                <ProductCard key={index} {...item} lang={lang} />
+                            ))}
+                            <div className="bg-white/[0.01] border border-dashed border-white/[0.05] rounded-[1.2rem] flex flex-col items-center justify-center p-8 text-center opacity-40 group">
+                                <div className="w-8 h-8 mb-3 text-zinc-700 transition-transform group-hover:scale-110">
+                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
+                                </div>
+                                <p className="text-zinc-600 font-bold text-[10px] uppercase tracking-widest leading-relaxed">{t.comingSoon}</p>
+                            </div>
+                        </div>
+                    </main>
+
+                    <footer className="w-full flex justify-between items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
+                        <button onClick={() => setLang(lang === 'en' ? 'de' : 'en')} className="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+                            <img src={t.flag} alt={t.alt} className="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200" />
+                        </button>
+                        <p onClick={() => setShowLegal(true)} className="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+                            © {new Date().getFullYear()} — @der_46er
+                        </p>
+                    </footer>
+
+                    {showLegal && (
+                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
+                            <div className="glass-modal rounded-[1.2rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl border border-white/10">
+                                <div className="p-6 border-b border-white/5 flex justify-between items-center text-zinc-100">
+                                    <h2 className="text-xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
+                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
+                                        <X size={20} />
+                                    </button>
+                                </div>
+                                <div className="p-6 overflow-y-auto custom-scroll space-y-8 text-left text-zinc-400 text-sm leading-relaxed">
+                                    <section>
+                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-3 italic">{t.imprintLabel}</h3>
+                                        <div className="space-y-2 font-bold text-zinc-100 uppercase">
+                                            <p className="text-lg font-black tracking-tight italic">Niklas Ausserwoeger</p>
+                                            <p className="text-zinc-500 text-[9px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
+                                            <p className="text-[10px] tracking-widest italic">4040 Linz, Österreich</p>
+                                            <div className="pt-3">
+                                                <p className="text-zinc-600 text-[9px] mb-0.5 tracking-[0.3em] uppercase">{t.contactLabel}</p>
+                                                <p className="text-orange-400 text-xs font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
+                                            </div>
+                                        </div>
+                                    </section>
+                                    <section>
+                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-2 italic">{t.trademarkLabel}</h3>
+                                        <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.trademarkText}</p>
+                                    </section>
+                                    <section>
+                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-2 italic">{t.liabilityLabel}</h3>
+                                        <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.liabilityText}</p>
+                                    </section>
+                                </div>
+                            </div>
+                        </div>
+                    )}
+                </>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
