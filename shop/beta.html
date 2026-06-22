@@ -23,18 +23,18 @@
     </script>
 
     <style>
+        /* Updated to match the v20 filenames in your repository to fix 404s */
         @font-face { 
             font-family: 'Inter'; 
             src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2'); 
             font-weight: 400; 
             font-display: swap; 
         }
-        
         @font-face { 
             font-family: 'Inter'; 
             src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2'); 
             font-weight: 900; 
-            font-display: swap;
+            font-display: swap; 
         }
         
         :root { --theme-color: #f97316; --theme-rgb: 249, 115, 22; }
@@ -56,6 +56,7 @@
             width: 100vw;
             height: 100vh;
             height: 100lvh;
+            /* Updated background to waves-orange.webp */
             background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-orange.webp");
             background-size: cover;
             background-position: center;
@@ -136,23 +137,27 @@
         };
 
         const ProfileCard = ({ platform, url, userImage, logoImage, lang, labelKey }) => (
-            <a href={url} target="_blank" className="group relative bg-white/[0.03] border border-white/[0.05] hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] rounded-[1.2rem] shadow-lg transition-all duration-300 active:scale-[0.99] p-5 flex items-center gap-5 w-full text-zinc-100 overflow-hidden">
-                <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-lg bg-white/5">
-                    <img src={userImage} alt="User" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
-                </div>
-                <div className="flex flex-col gap-1 text-left min-w-0">
-                    <div className="h-6 flex items-center">
-                        <img src={logoImage} alt={platform} className="h-full w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
+            <a href={url} target="_blank" className="relative group block p-[1.5px] rounded-[1.2rem] overflow-hidden transition-all duration-300 active:scale-[0.99] w-full text-zinc-100 shadow-lg">
+                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/30 via-purple-500/30 to-orange-500/30 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-orange-500 transition-all duration-500"></div>
+                
+                <div className="relative bg-[#0b0d11]/95 backdrop-blur-xl rounded-[1.1rem] p-5 z-10 flex items-center gap-5 w-full h-full">
+                    <div className="w-12 h-12 rounded-full overflow-hidden shrink-0 shadow-lg bg-white/5">
+                        <img src={userImage} alt="User" className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" />
                     </div>
-                    <h4 className="text-white font-black text-sm tracking-tight truncate uppercase italic">
-                        {translations[lang][labelKey]}
-                    </h4>
-                    <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-orange-400 transition-colors">
-                        {translations[lang].viewProfile} <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                    <div className="flex flex-col gap-1 text-left min-w-0">
+                        <div className="h-6 flex items-center">
+                            <img src={logoImage} alt={platform} className="h-full w-auto object-contain opacity-80 group-hover:opacity-100 transition-opacity" />
+                        </div>
+                        <h4 className="text-white font-black text-sm tracking-tight truncate uppercase italic">
+                            {translations[lang][labelKey]}
+                        </h4>
+                        <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-orange-400 transition-colors">
+                            {translations[lang].viewProfile} <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
+                        </div>
                     </div>
-                </div>
-                <div className="absolute right-5 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1">
-                    {arrowUpRight}
+                    <div className="absolute right-5 text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1">
+                        {arrowUpRight}
+                    </div>
                 </div>
             </a>
         );
@@ -165,53 +170,56 @@
             const prevImg = (e) => { e.preventDefault(); setImgIdx((prev) => (prev - 1 + images.length) % images.length); };
 
             return (
-                <div className={`group relative bg-white/[0.03] border border-white/[0.05] hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] rounded-[1.2rem] shadow-lg transition-all duration-300 ${isSold ? 'opacity-60 grayscale-[0.5]' : 'active:scale-[0.99]'} p-5 flex flex-col h-full text-left`}>
+                <div className={`relative group block p-[1.5px] rounded-[1.2rem] overflow-hidden transition-all duration-300 ${isSold ? 'opacity-60 grayscale-[0.5]' : 'active:scale-[0.99]'} text-zinc-100 shadow-lg flex flex-col h-full text-left`}>
+                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 opacity-30 group-hover:opacity-100 transition-opacity duration-500"></div>
                     
-                    <div className="aspect-square rounded-[1rem] overflow-hidden bg-black/20 mb-5 relative group/slider">
-                        <img src={currentImage} alt={title[lang]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'} />
-                        
-                        {images && images.length > 1 && (
-                            <div className="absolute inset-0 flex items-center justify-between px-2 opacity-0 group-hover/slider:opacity-100 transition-opacity z-20">
-                                <button onClick={prevImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md"><ChevronLeft size={16} /></button>
-                                <button onClick={nextImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md"><ChevronRight size={16} /></button>
-                            </div>
-                        )}
+                    <div className="relative bg-[#0b0d11]/95 backdrop-blur-xl rounded-[1.1rem] p-5 z-10 flex flex-col h-full w-full">
+                        <div className="aspect-square rounded-[1rem] overflow-hidden bg-black/20 mb-5 relative group/slider">
+                            <img src={currentImage} alt={title[lang]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105" onError={(e) => e.target.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'} />
+                            
+                            {images && images.length > 1 && (
+                                <div className="absolute inset-0 flex items-center justify-between px-2 opacity-0 group-hover/slider:opacity-100 transition-opacity z-20">
+                                    <button onClick={prevImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md"><ChevronLeft size={16} /></button>
+                                    <button onClick={nextImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md"><ChevronRight size={16} /></button>
+                                </div>
+                            )}
 
-                        {images && images.length > 1 && (
-                            <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
-                                {images.map((_, idx) => (
-                                    <div key={idx} className={`h-1.5 rounded-full transition-all ${idx === imgIdx ? 'w-4 bg-orange-500' : 'w-1.5 bg-white/50'}`} />
-                                ))}
-                            </div>
-                        )}
+                            {images && images.length > 1 && (
+                                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
+                                    {images.map((_, idx) => (
+                                        <div key={idx} className={`h-1.5 rounded-full transition-all ${idx === imgIdx ? 'w-4 bg-orange-500' : 'w-1.5 bg-white/50'}`} />
+                                    ))}
+                                </div>
+                            )}
 
-                        {isSold && (
-                            <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center z-30">
-                                <span className="px-6 py-2 bg-orange-600 text-white font-black uppercase tracking-[0.2em] rounded-full text-sm shadow-2xl rotate-[-5deg]">{translations[lang].sold}</span>
-                            </div>
-                        )}
-                    </div>
-
-                    <div className="flex-grow pb-4">
-                        <div className="flex justify-between items-start mb-2">
-                            <h3 className="text-xl font-black text-white tracking-tight italic uppercase leading-none truncate pr-2">{title[lang]}</h3>
-                            <span className={`text-orange-500 font-extrabold text-lg shrink-0 ${isSold ? 'line-through opacity-50' : ''}`}>{price}€</span>
+                            {isSold && (
+                                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center z-30">
+                                    <span className="px-6 py-2 bg-orange-600 text-white font-black uppercase tracking-[0.2em] rounded-full text-sm shadow-2xl rotate-[-5deg]">{translations[lang].sold}</span>
+                                </div>
+                            )}
                         </div>
-                        <p className="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest line-clamp-3 leading-relaxed">{description[lang]}</p>
-                    </div>
-                    
-                    <div className="flex flex-col gap-2 mt-auto">
-                        {isSold ? (
-                            <div className="w-full py-3 bg-white/5 text-zinc-600 rounded-xl text-xs font-black text-center italic cursor-not-allowed uppercase tracking-widest">
-                                {translations[lang].unavailable}
+
+                        <div className="flex-grow pb-4">
+                            <div className="flex justify-between items-start mb-2">
+                                <h3 className="text-xl font-black text-white tracking-tight italic uppercase leading-none truncate pr-2">{title[lang]}</h3>
+                                <span className={`text-orange-500 font-extrabold text-lg shrink-0 ${isSold ? 'line-through opacity-50' : ''}`}>{price}€</span>
                             </div>
-                        ) : (
-                            links.map((link, idx) => (
-                                <a key={idx} href={link.url} target="_blank" className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-orange-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300">
-                                    {translations[lang].viewOn.replace('{platform}', link.platform)}
-                                </a>
-                            ))
-                        )}
+                            <p className="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest line-clamp-3 leading-relaxed">{description[lang]}</p>
+                        </div>
+                        
+                        <div className="flex flex-col gap-2 mt-auto">
+                            {isSold ? (
+                                <div className="w-full py-3 bg-white/5 text-zinc-600 rounded-xl text-xs font-black text-center italic cursor-not-allowed uppercase tracking-widest">
+                                    {translations[lang].unavailable}
+                                </div>
+                            ) : (
+                                links.map((link, idx) => (
+                                    <a key={idx} href={link.url} target="_blank" className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-orange-500 text-white rounded-xl text-xs font-black uppercase tracking-widest transition-all duration-300">
+                                        {translations[lang].viewOn.replace('{platform}', link.platform)}
+                                    </a>
+                                ))
+                            )}
+                        </div>
                     </div>
                 </div>
             );
@@ -263,9 +271,15 @@
 
                     <main className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col py-10">
                         
-                        <a href="../" className="text-zinc-500 hover:text-white text-[10px] sm:text-xs font-black uppercase tracking-widest italic flex items-center gap-2 mb-8 transition-colors w-fit group">
-                            <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> {t.back}
-                        </a>
+                        <div className="w-full flex items-center gap-4 mb-8">
+                            <button onClick={() => setLang(lang === 'en' ? 'de' : 'en')} className="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200 shrink-0">
+                                <img src={t.flag} alt={t.alt} className="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200" />
+                            </button>
+
+                            <a href="../" className="hover:scale-105 active:scale-95 transition-all duration-200 shrink-0">
+                                <img src="./assets/back.webp" alt="Back" className="h-8 w-auto object-contain" onError={(e) => e.target.style.display='none'} />
+                            </a>
+                        </div>
 
                         <div className="w-full text-center shrink-0 mb-10 animate-in" style={{animationDelay: "0.1s", opacity: 0}}>
                             <div className="inline-block px-4 py-1.5 bg-orange-500/10 text-orange-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-4 border border-orange-500/20">{t.offer}</div>
@@ -296,10 +310,7 @@
                         </div>
                     </main>
 
-                    <footer className="w-full flex justify-between items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
-                        <button onClick={() => setLang(lang === 'en' ? 'de' : 'en')} className="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
-                            <img src={t.flag} alt={t.alt} className="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200" />
-                        </button>
+                    <footer className="w-full flex justify-center items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
                         <p onClick={() => setShowLegal(true)} className="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
                             © {new Date().getFullYear()} — @der_46er
                         </p>
