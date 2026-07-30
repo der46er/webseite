@@ -1,0 +1,17 @@
+{
+  "project": {
+    "id": "color-palette",
+    "title": "Farbpaletten Generator",
+    "title_en": "Color Palette Maker",
+    "description": "Erstellen sie Personalisierte Farbpaletten. Kostenlos und ohne Werbung.",
+    "description_en": "Create custom color palettes. For free and without ADS",
+    "version": "0.1",
+    "date": "2026-07-30",
+    "status": "Live",
+    "technologies": [
+      "HTML5",
+      "JavaScript",
+      "GitHub Fonts (Static)"
+    ]
+  }
+}
