@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Color Tools</title>
+  <title>Color Tools — Main Menu</title>
   <style>
     /* Inter Font Definition */
     @font-face {
@@ -48,8 +48,8 @@
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       grid-template-rows: repeat(2, 1fr);
-      gap: 16px;
-      padding: 24px;
+      gap: 12px;
+      padding: 16px;
       width: min(96vw, 170.66vh);
       height: min(54vw, 96vh);
       background-color: #0F0F0F;
@@ -57,55 +57,55 @@
       border-radius: 12px;
     }
 
-    /* Menu Item Cards */
+    /* Menu Item Cards — Zero Borders / Glitch-Free */
     .menu-card {
       position: relative;
-      border-radius: 12px;
+      border-radius: 8px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 20px;
+      padding: 12px;
       text-decoration: none;
-      transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-      border: 1px solid rgba(255, 255, 255, 0.12);
+      transition: transform 0.2s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      border: none;
+      outline: none;
       overflow: hidden;
       cursor: pointer;
     }
 
     .menu-card:hover {
-      transform: translateY(-4px);
-      border-color: rgba(255, 255, 255, 0.35);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
     }
 
     body.light-theme .menu-card {
-      border: 1px solid rgba(0, 0, 0, 0.1);
-      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
     }
 
     body.light-theme .menu-card:hover {
-      border-color: rgba(0, 0, 0, 0.25);
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
     }
 
-    /* Icon Area */
+    /* Top Left Small Icon */
     .card-icon {
-      width: 44px;
-      height: 44px;
+      width: 38px;
+      height: 38px;
       background: rgba(0, 0, 0, 0.45);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
+      border-radius: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       color: #fff;
+      z-index: 3;
     }
 
     .card-icon svg {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       fill: none;
       stroke: currentColor;
       stroke-width: 2;
@@ -113,39 +113,131 @@
       stroke-linejoin: round;
     }
 
+    /* Prominent Centered Pipette Symbol */
+    .pipette-overlay {
+      position: absolute;
+      top: 45%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.75));
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .pipette-overlay svg {
+      width: 90px;
+      height: 90px;
+      fill: none;
+      stroke: #ffffff;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
     /* Label Pill (Bottom Bar) */
     .card-label {
-      background: rgba(0, 0, 0, 0.55);
+      background: rgba(0, 0, 0, 0.45);
       backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
       border: 1px solid rgba(255, 255, 255, 0.2);
-      border-radius: 8px;
-      padding: 10px 14px;
+      border-radius: 6px;
+      padding: 8px 12px;
       color: #ffffff;
-      font-size: clamp(0.9rem, 1.2vw, 1.1rem);
-      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: space-between;
+      z-index: 3;
+    }
+
+    .card-title {
+      font-size: clamp(0.85rem, 1.1vw, 1.05rem);
+      font-weight: 700;
+      color: #ffffff;
     }
 
     .card-label span.arrow {
-      font-size: 1rem;
+      font-size: 0.95rem;
       opacity: 0.6;
       transition: transform 0.2s ease, opacity 0.2s ease;
     }
 
     .menu-card:hover .card-label span.arrow {
       opacity: 1;
-      transform: translateX(4px);
+      transform: translateX(3px);
     }
 
-    /* Custom Unique Card Gradients */
-    .card-1 { background: linear-gradient(135deg, #12100E 0%, #2b1f1d 50%, #4a2c28 100%); }
-    .card-2 { background: linear-gradient(135deg, #0d1b2a 0%, #1b263b 50%, #415a77 100%); }
-    .card-3 { background: linear-gradient(135deg, #1a0933 0%, #2b1055 50%, #591a73 100%); }
-    .card-4 { background: linear-gradient(135deg, #081c15 0%, #1b4332 50%, #2d6a4f 100%); }
-    .card-5 { background: linear-gradient(135deg, #2b0b14 0%, #501321 50%, #801a2d 100%); }
-    .card-6 { background: linear-gradient(135deg, #281a03 0%, #4d3308 50%, #7c520c 100%); }
+    /* Card Background Styles */
+
+    /* 1. Color Palette: Vertical Swatch Bars */
+    .card-1 { 
+      background: linear-gradient(90deg, 
+        #ff4b4b 0%, #ff4b4b 20%, 
+        #ff9f43 20%, #ff9f43 40%, 
+        #feca57 40%, #feca57 60%, 
+        #1dd1a1 60%, #1dd1a1 80%, 
+        #54a0ff 80%, #54a0ff 100%); 
+    }
+
+    /* 2. Gradient Generator: Vibrant Smooth Rainbow Blend */
+    .card-2 { 
+      background: linear-gradient(135deg, 
+        hsl(0, 100%, 60%), 
+        hsl(45, 100%, 55%), 
+        hsl(90, 100%, 50%), 
+        hsl(180, 100%, 50%), 
+        hsl(240, 100%, 65%), 
+        hsl(280, 100%, 60%), 
+        hsl(330, 100%, 60%)); 
+    }
+
+    /* 3. Color Wheel: Exact Centered Conic Gradient */
+    .card-3 { 
+      background: conic-gradient(from 0deg at 50% 50%, 
+        hsl(0, 100%, 50%), 
+        hsl(60, 100%, 50%), 
+        hsl(120, 100%, 50%), 
+        hsl(180, 100%, 50%), 
+        hsl(240, 100%, 50%), 
+        hsl(300, 100%, 50%), 
+        hsl(360, 100%, 50%)); 
+    }
+
+    /* 4. Extract Palette: Identical Color Palette to Card 1 */
+    .card-4 { 
+      background: linear-gradient(90deg, 
+        #ff4b4b 0%, #ff4b4b 20%, 
+        #ff9f43 20%, #ff9f43 40%, 
+        #feca57 40%, #feca57 60%, 
+        #1dd1a1 60%, #1dd1a1 80%, 
+        #54a0ff 80%, #54a0ff 100%); 
+    }
+
+    /* 5. Extract Color Gradient: Rainbow Blend + Pipette */
+    .card-5 { 
+      background: linear-gradient(135deg, 
+        hsl(0, 100%, 60%), 
+        hsl(45, 100%, 55%), 
+        hsl(90, 100%, 50%), 
+        hsl(180, 100%, 50%), 
+        hsl(240, 100%, 65%), 
+        hsl(280, 100%, 60%), 
+        hsl(330, 100%, 60%)); 
+    }
+
+    /* 6. Color Contrast Checker: 50/50 Split */
+    .card-6 { 
+      background: linear-gradient(90deg, #111111 0%, #111111 50%, #FFFFFF 50%, #FFFFFF 100%); 
+    }
+
+    .card-6 .card-icon {
+      background: rgba(0, 0, 0, 0.7);
+    }
 
     /* Floating Arrow Button & Slide-Out Action Panel */
     .action-panel-wrapper {
@@ -162,6 +254,7 @@
       height: 42px;
       background: rgba(128, 128, 128, 0.3);
       backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
       border: 1px solid rgba(255, 255, 255, 0.3);
       border-radius: 50%;
       color: #fff;
@@ -203,6 +296,7 @@
       gap: 8px;
       background: rgba(18, 18, 18, 0.88);
       backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
       padding: 12px;
       border-radius: 8px;
       border: 1px solid rgba(255, 255, 255, 0.2);
@@ -270,7 +364,7 @@
       }
 
       .menu-card {
-        height: 160px;
+        height: 150px;
       }
     }
 
@@ -280,7 +374,7 @@
       }
 
       .menu-card {
-        height: 130px;
+        height: 120px;
       }
     }
   </style>
@@ -301,7 +395,7 @@
         </svg>
       </div>
       <div class="card-label">
-        <span>Color Palette</span>
+        <span class="card-title">Color Palette</span>
         <span class="arrow">➔</span>
       </div>
     </a>
@@ -318,7 +412,7 @@
         </svg>
       </div>
       <div class="card-label">
-        <span>Gradient generator</span>
+        <span class="card-title">Gradient generator</span>
         <span class="arrow">➔</span>
       </div>
     </a>
@@ -335,28 +429,13 @@
         </svg>
       </div>
       <div class="card-label">
-        <span>Color Wheel</span>
+        <span class="card-title">Color Wheel</span>
         <span class="arrow">➔</span>
       </div>
     </a>
 
-    <!-- 4. Extract Color Gradient -->
-    <a href="extract-gradient.html" class="menu-card card-4">
-      <div class="card-icon">
-        <svg viewBox="0 0 24 24">
-          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
-          <circle cx="8.5" cy="8.5" r="1.5"></circle>
-          <polyline points="21 15 16 10 5 21"></polyline>
-        </svg>
-      </div>
-      <div class="card-label">
-        <span>Extract color gradient</span>
-        <span class="arrow">➔</span>
-      </div>
-    </a>
-
-    <!-- 5. Extract Palette -->
-    <a href="extract-palette.html" class="menu-card card-5">
+    <!-- 4. Extract Palette (Under Color Palette) -->
+    <a href="extract-palette.html" class="menu-card card-4">
       <div class="card-icon">
         <svg viewBox="0 0 24 24">
           <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10c.83 0 1.5-.67 1.5-1.5 0-.39-.15-.74-.39-1.01-.23-.26-.38-.61-.38-.99 0-.83.67-1.5 1.5-1.5H16c3.31 0 6-2.69 6-6 0-4.96-4.49-9-10-9z"></path>
@@ -366,8 +445,39 @@
           <circle cx="17.5" cy="11.5" r="1.5" fill="currentColor"></circle>
         </svg>
       </div>
+      <div class="pipette-overlay">
+        <!-- Vector Eyedropper Icon -->
+        <svg viewBox="0 0 24 24">
+          <path d="M19 3a2.121 2.121 0 0 1 3 3l-2.5 2.5-3-3L19 3z"></path>
+          <path d="m14 6.5 3 3L8 18H5v-3L14 6.5z"></path>
+          <path d="m3 21 2-2"></path>
+        </svg>
+      </div>
       <div class="card-label">
-        <span>Extract palette</span>
+        <span class="card-title">Extract palette</span>
+        <span class="arrow">➔</span>
+      </div>
+    </a>
+
+    <!-- 5. Extract Color Gradient (Under Gradient Generator) -->
+    <a href="extract-gradient.html" class="menu-card card-5">
+      <div class="card-icon">
+        <svg viewBox="0 0 24 24">
+          <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+          <circle cx="8.5" cy="8.5" r="1.5"></circle>
+          <polyline points="21 15 16 10 5 21"></polyline>
+        </svg>
+      </div>
+      <div class="pipette-overlay">
+        <!-- Vector Eyedropper Icon -->
+        <svg viewBox="0 0 24 24">
+          <path d="M19 3a2.121 2.121 0 0 1 3 3l-2.5 2.5-3-3L19 3z"></path>
+          <path d="m14 6.5 3 3L8 18H5v-3L14 6.5z"></path>
+          <path d="m3 21 2-2"></path>
+        </svg>
+      </div>
+      <div class="card-label">
+        <span class="card-title">Extract color gradient</span>
         <span class="arrow">➔</span>
       </div>
     </a>
@@ -381,7 +491,7 @@
         </svg>
       </div>
       <div class="card-label">
-        <span>Color contrast checker</span>
+        <span class="card-title">Color contrast checker</span>
         <span class="arrow">➔</span>
       </div>
     </a>
@@ -402,8 +512,36 @@
   </div>
 
   <script>
-    const THEME_KEY = 'grid_theme_mode';
-    let currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+    const THEME_KEY = 'color_tools_theme';
+
+    // Save theme to both LocalStorage and Path Cookie (/color/)
+    function saveThemeMode(theme) {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (e) {}
+
+      // Set cookie scoped to /color/ path for 1 year
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/color/; SameSite=Strict`;
+    }
+
+    // Read theme from LocalStorage or Fallback to Cookie
+    function getSavedThemeMode() {
+      try {
+        const localTheme = localStorage.getItem(THEME_KEY);
+        if (localTheme) return localTheme;
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${THEME_KEY}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+      }
+
+      return 'dark'; // Default
+    }
+
+    let currentTheme = getSavedThemeMode();
     const toggleThemeBtn = document.getElementById('btn-toggle-theme');
 
     function applyTheme() {
@@ -418,7 +556,7 @@
 
     toggleThemeBtn.addEventListener('click', () => {
       currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem(THEME_KEY, currentTheme);
+      saveThemeMode(currentTheme);
       applyTheme();
     });
 
