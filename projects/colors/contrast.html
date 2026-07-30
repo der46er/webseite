@@ -1,1 +1,1015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Contrast Checker</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+  <!-- jsPDF Library for client-side PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Inter Font Definition */
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400 700 800;
+      font-display: swap;
+      src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #0F0F0F;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Light Theme Styling */
+    body.light-theme {
+      background-color: #F0F0F0;
+    }
+
+    body.light-theme .app-container {
+      background-color: #F0F0F0;
+    }
+
+    /* Base 16:9 Desktop Container Grid Mode */
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      padding: 16px;
+      width: min(96vw, 170.66vh);
+      height: min(54vw, 96vh);
+      background-color: #0F0F0F;
+      transition: background-color 0.3s ease, all 0.3s ease;
+      border-radius: 12px;
+    }
+
+    /* Workspace Display Cards */
+    .workspace-split {
+      display: grid;
+      grid-template-rows: 1fr 140px;
+      gap: 12px;
+      height: 100%;
+    }
+
+    /* Contrast Preview Card (Two Columns: Text Left, Shapes/UI Right) */
+    .preview-card {
+      position: relative;
+      border-radius: 12px;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      padding: 32px;
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: 24px;
+      align-items: center;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      overflow: hidden;
+    }
+
+    .preview-left {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      z-index: 2;
+    }
+
+    .preview-title {
+      font-size: 2.2rem;
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: -0.02em;
+    }
+
+    .preview-text {
+      font-size: 0.95rem;
+      font-weight: 400;
+      line-height: 1.5;
+      opacity: 0.9;
+    }
+
+    /* Right Side Decorative Shapes & UI Objects */
+    .preview-right {
+      position: relative;
+      width: 100%;
+      height: 100%;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 12px;
+      z-index: 2;
+    }
+
+    .shape-card-box {
+      border: 2px solid currentColor;
+      border-radius: 12px;
+      padding: 16px 20px;
+      width: 80%;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+      background: transparent;
+    }
+
+    .shape-card-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+    }
+
+    .shape-card-sub {
+      font-size: 0.75rem;
+      opacity: 0.8;
+    }
+
+    .preview-object-btn {
+      padding: 12px 24px;
+      border-radius: 24px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+      transition: background-color 0.15s ease, color 0.15s ease;
+      cursor: default;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+    .preview-object-pill {
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      border: 1.5px solid currentColor;
+      background: transparent;
+      color: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Scattered Background Shapes */
+    .bg-shape-circle {
+      position: absolute;
+      top: -20px;
+      right: -20px;
+      width: 160px;
+      height: 160px;
+      border-radius: 50%;
+      border: 2px dashed currentColor;
+      opacity: 0.25;
+      pointer-events: none;
+    }
+
+    .bg-shape-square {
+      position: absolute;
+      bottom: -10px;
+      right: 40px;
+      width: 90px;
+      height: 90px;
+      border-radius: 16px;
+      border: 2px solid currentColor;
+      transform: rotate(15deg);
+      opacity: 0.2;
+      pointer-events: none;
+    }
+
+    /* Score Card Bar */
+    .score-card {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 8px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    body.light-theme .score-card {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    .ratio-display {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .ratio-number {
+      font-size: 1.8rem;
+      font-weight: 700;
+      color: #fff;
+      font-family: monospace;
+    }
+
+    body.light-theme .ratio-number {
+      color: #000;
+    }
+
+    .ratio-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #888;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .badges-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+
+    .badge {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      background: rgba(255, 255, 255, 0.06);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #aaa;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    body.light-theme .badge {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+      color: #555;
+    }
+
+    .badge-status {
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-status.pass {
+      background: rgba(46, 213, 115, 0.2);
+      color: #2ed573;
+      border: 1px solid rgba(46, 213, 115, 0.4);
+    }
+
+    .badge-status.fail {
+      background: rgba(255, 71, 87, 0.2);
+      color: #ff4757;
+      border: 1px solid rgba(255, 71, 87, 0.4);
+    }
+
+    /* Minimal Control Panel (Right Side) */
+    .controls-card {
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    body.light-theme .section-title {
+      color: #888;
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #aaa;
+    }
+
+    body.light-theme label {
+      color: #444;
+    }
+
+    /* Color Stops List Container */
+    .stops-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    /* Clickable Swatch Item */
+    .stop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: border-color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .stop-item:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    body.light-theme .stop-item {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-theme .stop-item:hover {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .stop-color-picker {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .stop-color-picker::-webkit-color-swatch-wrapper { padding: 0; }
+    .stop-color-picker::-webkit-color-swatch { border: none; border-radius: 4px; }
+
+    .hex-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 4px;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    body.light-theme .hex-input { color: #000; }
+
+    .action-icon-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      width: 42px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .stop-item:hover .action-icon-btn {
+      color: #fff;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.2s, transform 0.15s ease;
+      width: 100%;
+    }
+
+    body.light-theme .btn-primary {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #000;
+    }
+
+    .btn-primary:hover { background: rgba(255, 255, 255, 0.25); }
+    body.light-theme .btn-primary:hover { background: rgba(0, 0, 0, 0.12); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .export-grid {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Floating Arrow Button & Slide-Out Action Panel */
+    .action-panel-wrapper {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+
+    .arrow-trigger {
+      width: 42px;
+      height: 42px;
+      background: rgba(128, 128, 128, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: background 0.2s, transform 0.2s;
+      user-select: none;
+    }
+
+    .arrow-trigger svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    body.light-theme .arrow-trigger {
+      color: #000;
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow-trigger:hover {
+      background: rgba(128, 128, 128, 0.5);
+      transform: scale(1.05);
+    }
+
+    .action-bar {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(18, 18, 18, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(20px) scale(0.95);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s;
+      pointer-events: none;
+    }
+
+    .action-panel-wrapper.open .action-bar {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .action-panel-wrapper.open .arrow-trigger {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 5px;
+      color: #eee;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      display: block;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 900px) {
+      body {
+        align-items: flex-start;
+        padding: 16px 0 80px 0;
+      }
+
+      .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        width: 92vw;
+      }
+
+      .preview-card {
+        grid-template-columns: 1fr;
+      }
+
+      .workspace-split {
+        height: 580px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Container -->
+  <main class="app-container">
+    
+    <!-- Left Side Workspace -->
+    <div class="workspace-split">
+      <!-- Live Contrast Preview Card -->
+      <div class="preview-card" id="preview-card">
+        <!-- Scattered Background Shapes -->
+        <div class="bg-shape-circle"></div>
+        <div class="bg-shape-square"></div>
+
+        <!-- Left Column Text -->
+        <div class="preview-left">
+          <h1 class="preview-title" id="preview-title">Contrast Test Heading</h1>
+          <p class="preview-text" id="preview-text">
+            Good typography and accessible color contrast ensure that your web design is readable, legible, and comfortable for all users across all screens.
+          </p>
+        </div>
+
+        <!-- Right Column UI Components & Shapes -->
+        <div class="preview-right">
+          <button class="preview-object-btn" id="preview-object-btn">Primary Action</button>
+          
+          <div class="shape-card-box">
+            <span class="shape-card-title">Card Component</span>
+            <span class="shape-card-sub">Ui element contrast test</span>
+          </div>
+
+          <span class="preview-object-pill">Badge Tag</span>
+        </div>
+      </div>
+
+      <!-- WCAG Score Card -->
+      <div class="score-card">
+        <div class="ratio-display">
+          <div class="ratio-number" id="ratio-number">18.1:1</div>
+          <div class="ratio-label">Contrast Ratio</div>
+        </div>
+
+        <div class="badges-grid">
+          <div class="badge">
+            <span>AA Large</span>
+            <span class="badge-status pass" id="b-aa-lg">Pass</span>
+          </div>
+          <div class="badge">
+            <span>AA Normal</span>
+            <span class="badge-status pass" id="b-aa-norm">Pass</span>
+          </div>
+          <div class="badge">
+            <span>AAA Large</span>
+            <span class="badge-status pass" id="b-aaa-lg">Pass</span>
+          </div>
+          <div class="badge">
+            <span>AAA Normal</span>
+            <span class="badge-status pass" id="b-aaa-norm">Pass</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side: Clean Control Center -->
+    <div class="controls-card">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="section-title">Color Controls</div>
+
+        <div class="stops-list">
+          <!-- Text Color Stop -->
+          <div class="control-group">
+            <label>Text & Object Color</label>
+            <div class="stop-item">
+              <input type="color" class="stop-color-picker" id="text-picker">
+              <input type="text" class="hex-input" id="text-hex" maxlength="7">
+              <button class="action-icon-btn" id="copy-text-btn" title="Copy Text HEX">Copy</button>
+            </div>
+          </div>
+
+          <!-- Background Color Stop -->
+          <div class="control-group">
+            <label>Background Color</label>
+            <div class="stop-item">
+              <input type="color" class="stop-color-picker" id="bg-picker">
+              <input type="text" class="hex-input" id="bg-hex" maxlength="7">
+              <button class="action-icon-btn" id="copy-bg-btn" title="Copy Background HEX">Copy</button>
+            </div>
+          </div>
+        </div>
+
+        <button class="btn-primary" id="swap-btn" style="margin-top: 4px;">⇅ Swap Colors</button>
+      </div>
+
+      <!-- Export Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="section-title">Export Options</div>
+        <div class="export-grid">
+          <button class="btn-primary" id="export-png-btn">Export PNG</button>
+          <button class="btn-primary" id="export-pdf-btn">Export PDF</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Side Control Menu -->
+  <div class="action-panel-wrapper" id="panel-wrapper">
+    <div class="arrow-trigger" id="arrow-trigger">
+      <svg viewBox="0 0 24 24">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </div>
+    <div class="action-bar" id="action-bar">
+      <button class="action-btn" id="btn-toggle-theme">Theme: Dark</button>
+      <a class="action-btn" href="index.html">Main Menu</a>
+      <a class="action-btn" href="https://thataustrianone.eu/legal" target="_blank" rel="noopener noreferrer">© 2026 — der_46er</a>
+    </div>
+  </div>
+
+  <script>
+    // Shared Path-Scoped Theme Storage Key
+    const THEME_KEY = 'color_tools_theme';
+
+    const COLOR_DARK_THEME_BG = '#0F0F0F';
+    const COLOR_LIGHT_THEME_BG = '#F0F0F0';
+
+    function saveThemeMode(theme) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/color/; SameSite=Strict`;
+    }
+
+    function getSavedThemeMode() {
+      try {
+        const localTheme = localStorage.getItem(THEME_KEY) || localStorage.getItem('grid_theme_mode');
+        if (localTheme) return localTheme;
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${THEME_KEY}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return 'dark';
+    }
+
+    let currentTheme = getSavedThemeMode();
+    const toggleThemeBtn = document.getElementById('btn-toggle-theme');
+
+    let textColor = currentTheme === 'light' ? COLOR_LIGHT_THEME_BG : COLOR_DARK_THEME_BG;
+    let bgColor = currentTheme === 'light' ? COLOR_DARK_THEME_BG : COLOR_LIGHT_THEME_BG;
+
+    function applyTheme(isInitial = false) {
+      if (currentTheme === 'light') {
+        document.body.classList.add('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Light';
+      } else {
+        document.body.classList.remove('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Dark';
+      }
+
+      if (!isInitial) {
+        textColor = currentTheme === 'light' ? COLOR_LIGHT_THEME_BG : COLOR_DARK_THEME_BG;
+        bgColor = currentTheme === 'light' ? COLOR_DARK_THEME_BG : COLOR_LIGHT_THEME_BG;
+        updateContrastView();
+      }
+    }
+
+    toggleThemeBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      saveThemeMode(currentTheme);
+      applyTheme(false);
+    });
+
+    // WCAG 2.1 Contrast Math Engine
+    function hexToRgb(hex) {
+      hex = hex.replace(/^#/, '');
+      if (hex.length === 3) {
+        hex = hex.split('').map(c => c + c).join('');
+      }
+      const num = parseInt(hex, 16);
+      return {
+        r: (num >> 16) & 255,
+        g: (num >> 8) & 255,
+        b: num & 255
+      };
+    }
+
+    function getLuminance(r, g, b) {
+      const a = [r, g, b].map(v => {
+        v /= 255;
+        return v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4);
+      });
+      return a[0] * 0.2126 + a[1] * 0.7152 + a[2] * 0.0722;
+    }
+
+    function calculateContrast(hex1, hex2) {
+      const rgb1 = hexToRgb(hex1);
+      const rgb2 = hexToRgb(hex2);
+
+      const lum1 = getLuminance(rgb1.r, rgb1.g, rgb1.b);
+      const lum2 = getLuminance(rgb2.r, rgb2.g, rgb2.b);
+
+      const brightest = Math.max(lum1, lum2);
+      const darkest = Math.min(lum1, lum2);
+
+      return (brightest + 0.05) / (darkest + 0.05);
+    }
+
+    // DOM Elements
+    const previewCard = document.getElementById('preview-card');
+    const previewObjectBtn = document.getElementById('preview-object-btn');
+    const ratioNumber = document.getElementById('ratio-number');
+
+    const textPicker = document.getElementById('text-picker');
+    const textHex = document.getElementById('text-hex');
+    const copyTextBtn = document.getElementById('copy-text-btn');
+
+    const bgPicker = document.getElementById('bg-picker');
+    const bgHex = document.getElementById('bg-hex');
+    const copyBgBtn = document.getElementById('copy-bg-btn');
+
+    const swapBtn = document.getElementById('swap-btn');
+
+    const bAaLg = document.getElementById('b-aa-lg');
+    const bAaNorm = document.getElementById('b-aa-norm');
+    const bAaaLg = document.getElementById('b-aaa-lg');
+    const bAaaNorm = document.getElementById('b-aaa-norm');
+
+    const exportPngBtn = document.getElementById('export-png-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+    function updateBadge(el, pass) {
+      if (pass) {
+        el.innerText = 'Pass';
+        el.className = 'badge-status pass';
+      } else {
+        el.innerText = 'Fail';
+        el.className = 'badge-status fail';
+      }
+    }
+
+    function updateContrastView() {
+      previewCard.style.color = textColor;
+      previewCard.style.backgroundColor = bgColor;
+
+      // Primary Button Fill Inverted Colors
+      previewObjectBtn.style.backgroundColor = textColor;
+      previewObjectBtn.style.color = bgColor;
+
+      textPicker.value = textColor;
+      textHex.value = textColor;
+
+      bgPicker.value = bgColor;
+      bgHex.value = bgColor;
+
+      const ratio = calculateContrast(textColor, bgColor);
+      ratioNumber.innerText = `${ratio.toFixed(1)}:1`;
+
+      // WCAG 2.1 Pass / Fail Thresholds
+      updateBadge(bAaLg, ratio >= 3.0);
+      updateBadge(bAaNorm, ratio >= 4.5);
+      updateBadge(bAaaLg, ratio >= 4.5);
+      updateBadge(bAaaNorm, ratio >= 7.0);
+    }
+
+    function bindColorInput(picker, input, callback) {
+      picker.addEventListener('input', (e) => {
+        callback(e.target.value.toUpperCase());
+      });
+
+      input.addEventListener('input', (e) => {
+        let val = e.target.value.trim();
+        if (!val.startsWith('#')) val = '#' + val;
+        if (/^#[0-9A-Fa-f]{6}$/.test(val)) {
+          callback(val.toUpperCase());
+        }
+      });
+    }
+
+    bindColorInput(textPicker, textHex, (val) => {
+      textColor = val;
+      updateContrastView();
+    });
+
+    bindColorInput(bgPicker, bgHex, (val) => {
+      bgColor = val;
+      updateContrastView();
+    });
+
+    copyTextBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(textColor);
+      copyTextBtn.innerText = '✓';
+      setTimeout(() => copyTextBtn.innerText = 'Copy', 1000);
+    });
+
+    copyBgBtn.addEventListener('click', () => {
+      navigator.clipboard.writeText(bgColor);
+      copyBgBtn.innerText = '✓';
+      setTimeout(() => copyBgBtn.innerText = 'Copy', 1000);
+    });
+
+    swapBtn.addEventListener('click', () => {
+      const temp = textColor;
+      textColor = bgColor;
+      bgColor = temp;
+      updateContrastView();
+    });
+
+    // High-Res Export Canvas Engine
+    function generateContrastCanvas(width = 2560, height = 1440) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      // Draw Card Background
+      ctx.fillStyle = bgColor;
+      ctx.fillRect(0, 0, width, height);
+
+      // Left Column Text
+      ctx.fillStyle = textColor;
+      ctx.font = '800 96px Inter, sans-serif';
+      ctx.fillText('Contrast Test Heading', 120, 380);
+
+      ctx.font = '400 42px Inter, sans-serif';
+      const text = 'Good typography and accessible color contrast ensure that your web design is readable, legible, and comfortable for all users across all screens.';
+      
+      const words = text.split(' ');
+      let line = '';
+      let y = 500;
+      for (let n = 0; n < words.length; n++) {
+        const testLine = line + words[n] + ' ';
+        const metrics = ctx.measureText(testLine);
+        if (metrics.width > 1100 && n > 0) {
+          ctx.fillText(line, 120, y);
+          line = words[n] + ' ';
+          y += 64;
+        } else {
+          line = testLine;
+        }
+      }
+      ctx.fillText(line, 120, y);
+
+      // Right Column Shapes & UI Objects
+      // 1. Primary Action Button
+      ctx.beginPath();
+      ctx.roundRect(1450, 320, 360, 90, 45);
+      ctx.fillStyle = textColor;
+      ctx.fill();
+
+      ctx.fillStyle = bgColor;
+      ctx.font = 'bold 36px Inter, sans-serif';
+      ctx.fillText('Primary Action', 1495, 378);
+
+      // 2. Card Object Box
+      ctx.beginPath();
+      ctx.roundRect(1450, 460, 460, 160, 16);
+      ctx.strokeStyle = textColor;
+      ctx.lineWidth = 4;
+      ctx.stroke();
+
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 36px Inter, sans-serif';
+      ctx.fillText('Card Component', 1490, 525);
+      ctx.font = '400 28px Inter, sans-serif';
+      ctx.fillText('Ui element contrast test', 1490, 575);
+
+      // 3. Pill Tag
+      ctx.beginPath();
+      ctx.roundRect(1450, 660, 240, 60, 30);
+      ctx.stroke();
+      ctx.font = 'bold 24px Inter, sans-serif';
+      ctx.fillText('BADGE TAG', 1488, 700);
+
+      // Score Ratio at Bottom
+      const ratio = calculateContrast(textColor, bgColor).toFixed(1);
+      ctx.font = 'bold 54px Monospace, monospace';
+      ctx.fillText(`Ratio: ${ratio}:1`, 120, height - 160);
+
+      return canvas;
+    }
+
+    exportPngBtn.addEventListener('click', () => {
+      exportPngBtn.innerText = 'Exporting...';
+      setTimeout(() => {
+        const canvas = generateContrastCanvas();
+        const link = document.createElement('a');
+        link.download = 'color-contrast-check.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        exportPngBtn.innerText = 'Export PNG';
+      }, 50);
+    });
+
+    exportPdfBtn.addEventListener('click', () => {
+      exportPdfBtn.innerText = 'Exporting...';
+      setTimeout(() => {
+        const { jsPDF } = window.jspdf;
+        const canvas = generateContrastCanvas();
+
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: [400, 225]
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        pdf.addImage(imgData, 'JPEG', 0, 0, 400, 225);
+        pdf.save('color-contrast-check.pdf');
+
+        exportPdfBtn.innerText = 'Export PDF';
+      }, 50);
+    });
+
+    // Action Panel Hover Logic
+    const wrapper = document.getElementById('panel-wrapper');
+    const arrowTrigger = document.getElementById('arrow-trigger');
+    let autoCloseTimer = null;
+
+    function openPanel() {
+      wrapper.classList.add('open');
+      resetAutoCloseTimer();
+    }
+
+    function closePanel() {
+      wrapper.classList.remove('open');
+      if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+        autoCloseTimer = null;
+      }
+    }
+
+    function resetAutoCloseTimer() {
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(() => {
+        closePanel();
+      }, 5000);
+    }
+
+    arrowTrigger.addEventListener('mouseenter', openPanel);
+    arrowTrigger.addEventListener('click', openPanel);
+    wrapper.addEventListener('mouseenter', resetAutoCloseTimer);
+    wrapper.addEventListener('mousemove', resetAutoCloseTimer);
+    wrapper.addEventListener('mouseleave', resetAutoCloseTimer);
+
+    // Initial render
+    applyTheme(true);
+    updateContrastView();
+  </script>
+</body>
+</html>
