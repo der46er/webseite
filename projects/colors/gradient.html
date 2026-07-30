@@ -1,1 +1,838 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gradient Generator</title>
+  <!-- jsPDF Library for client-side PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Inter Font Definition */
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #0F0F0F;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Light Theme Styling */
+    body.light-theme {
+      background-color: #F0F0F0;
+    }
+
+    body.light-theme .app-container {
+      background-color: #F0F0F0;
+    }
+
+    /* Base 16:9 Desktop Container Grid Mode */
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      padding: 16px;
+      width: min(96vw, 170.66vh);
+      height: min(54vw, 96vh);
+      background-color: #0F0F0F;
+      transition: background-color 0.3s ease, all 0.3s ease;
+      border-radius: 12px;
+    }
+
+    /* Live Gradient Preview Card */
+    .preview-card {
+      position: relative;
+      border-radius: 8px;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      transition: background 0.15s ease;
+    }
+
+    /* Control Panel (Right Side) */
+    .controls-card {
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    body.light-theme .section-title {
+      color: #888;
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #aaa;
+    }
+
+    body.light-theme label {
+      color: #444;
+    }
+
+    /* Inputs & Select Elements */
+    select {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      color: #fff;
+      padding: 8px 10px;
+      font-size: 0.85rem;
+      outline: none;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+    }
+
+    select:hover, select:focus {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    body.light-theme select {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #000;
+    }
+
+    select option {
+      background: #151515;
+      color: #fff;
+    }
+
+    /* Fixed Angle Preset Buttons Grid */
+    .angle-presets-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+
+    .angle-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      color: #aaa;
+      padding: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    body.light-theme .angle-btn {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #555;
+    }
+
+    .angle-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    body.light-theme .angle-btn:hover {
+      background: rgba(0, 0, 0, 0.12);
+      color: #000;
+    }
+
+    .angle-btn.active {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    body.light-theme .angle-btn.active {
+      background: rgba(0, 0, 0, 0.2);
+      border-color: rgba(0, 0, 0, 0.4);
+      color: #000000;
+    }
+
+    /* Color Stops List Container */
+    .stops-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: calc(100vh - 420px);
+      min-height: 100px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* Styled Scrollbars */
+    .stops-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .stops-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+    .stops-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    body.light-theme .stops-list::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    body.light-theme .stops-list::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .stop-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+      padding: 6px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: border-color 0.2s;
+      flex-shrink: 0;
+    }
+
+    .stop-item:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    body.light-theme .stop-item {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    .stop-color-picker {
+      width: 28px;
+      height: 28px;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      background: none;
+      padding: 0;
+      flex-shrink: 0;
+    }
+
+    .stop-color-picker::-webkit-color-swatch-wrapper {
+      padding: 0;
+    }
+
+    .stop-color-picker::-webkit-color-swatch {
+      border: none;
+      border-radius: 4px;
+    }
+
+    .hex-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 4px;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    body.light-theme .hex-input {
+      color: #000;
+    }
+
+    .action-icon-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      width: 26px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+      flex-shrink: 0;
+    }
+
+    .action-icon-btn:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .action-icon-btn.delete-btn:hover {
+      color: #ff4b4b;
+      background: rgba(255, 75, 75, 0.15);
+    }
+
+    body.light-theme .action-icon-btn {
+      color: rgba(0, 0, 0, 0.4);
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.2s, transform 0.15s ease;
+      width: 100%;
+    }
+
+    body.light-theme .btn-primary {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #000;
+    }
+
+    .btn-primary:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    body.light-theme .btn-primary:hover {
+      background: rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-primary:active {
+      transform: scale(0.97);
+    }
+
+    .export-grid {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Floating Arrow Button & Slide-Out Action Panel */
+    .action-panel-wrapper {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+
+    .arrow-trigger {
+      width: 42px;
+      height: 42px;
+      background: rgba(128, 128, 128, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: background 0.2s, transform 0.2s;
+      user-select: none;
+    }
+
+    .arrow-trigger svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    body.light-theme .arrow-trigger {
+      color: #000;
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow-trigger:hover {
+      background: rgba(128, 128, 128, 0.5);
+      transform: scale(1.05);
+    }
+
+    .action-bar {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(18, 18, 18, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(20px) scale(0.95);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s;
+      pointer-events: none;
+    }
+
+    .action-panel-wrapper.open .action-bar {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .action-panel-wrapper.open .arrow-trigger {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 5px;
+      color: #eee;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      display: block;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 900px) {
+      body {
+        align-items: flex-start;
+        padding: 16px 0 80px 0;
+      }
+
+      .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        width: 92vw;
+      }
+
+      .preview-card {
+        height: 280px;
+      }
+
+      .stops-list {
+        max-height: 220px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Container -->
+  <main class="app-container">
+    
+    <!-- Left Side: Live Preview -->
+    <div class="preview-card" id="gradient-preview"></div>
+
+    <!-- Right Side: Clean Control Center -->
+    <div class="controls-card">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="section-title">Gradient Settings</div>
+
+        <!-- Style & Fixed Angle Buttons -->
+        <div class="control-row">
+          <div class="control-group">
+            <label for="type-select">Style</label>
+            <select id="type-select">
+              <option value="linear">Linear</option>
+              <option value="radial">Radial</option>
+            </select>
+          </div>
+
+          <div class="control-group" id="angle-container">
+            <label>Angle</label>
+            <div class="angle-presets-grid" id="angle-presets-grid">
+              <button class="angle-btn" data-angle="0">0°</button>
+              <button class="angle-btn" data-angle="45">45°</button>
+              <button class="angle-btn" data-angle="90">90°</button>
+              <button class="angle-btn active" data-angle="135">135°</button>
+              <button class="angle-btn" data-angle="180">180°</button>
+              <button class="angle-btn" data-angle="225">225°</button>
+              <button class="angle-btn" data-angle="270">270°</button>
+              <button class="angle-btn" data-angle="315">315°</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 4px;">Color Stops</div>
+
+        <!-- Dynamic Color Stops -->
+        <div class="stops-list" id="stops-container"></div>
+
+        <button class="btn-primary" id="add-stop-btn">＋ Add Color Stop</button>
+      </div>
+
+      <!-- Export Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="section-title">Export Options</div>
+        <div class="export-grid">
+          <button class="btn-primary" id="export-png-btn">Export PNG</button>
+          <button class="btn-primary" id="export-pdf-btn">Export PDF</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Side Control Menu -->
+  <div class="action-panel-wrapper" id="panel-wrapper">
+    <div class="arrow-trigger" id="arrow-trigger">
+      <svg viewBox="0 0 24 24">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </div>
+    <div class="action-bar" id="action-bar">
+      <button class="action-btn" id="btn-toggle-theme">Theme: Dark</button>
+      <a class="action-btn" href="index.html">Main Menu</a>
+      <a class="action-btn" href="https://thataustrianone.eu/legal" target="_blank" rel="noopener noreferrer">© 2026 — der_46er</a>
+    </div>
+  </div>
+
+  <script>
+    // Shared Path-Scoped Theme Storage Key
+    const THEME_KEY = 'color_tools_theme';
+
+    function saveThemeMode(theme) {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (e) {}
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/color/; SameSite=Strict`;
+    }
+
+    function getSavedThemeMode() {
+      try {
+        const localTheme = localStorage.getItem(THEME_KEY) || localStorage.getItem('grid_theme_mode');
+        if (localTheme) return localTheme;
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${THEME_KEY}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+      }
+      return 'dark';
+    }
+
+    let currentTheme = getSavedThemeMode();
+    const toggleThemeBtn = document.getElementById('btn-toggle-theme');
+
+    function applyTheme() {
+      if (currentTheme === 'light') {
+        document.body.classList.add('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Light';
+      } else {
+        document.body.classList.remove('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Dark';
+      }
+    }
+
+    toggleThemeBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      saveThemeMode(currentTheme);
+      applyTheme();
+    });
+
+    // Default rainbow spectrum gradient matching the cover card
+    let colorStops = [
+      '#FF3333', // HSL 0°
+      '#FF9933', // HSL 45°
+      '#33FF33', // HSL 90°
+      '#33FFFF', // HSL 180°
+      '#4D4DFF', // HSL 240°
+      '#B333FF', // HSL 280°
+      '#FF33B3'  // HSL 330°
+    ];
+    let gradientType = 'linear';
+    let gradientAngle = 135;
+
+    const previewEl = document.getElementById('gradient-preview');
+    const typeSelect = document.getElementById('type-select');
+    const angleContainer = document.getElementById('angle-container');
+    const angleButtons = document.querySelectorAll('.angle-btn');
+    const stopsContainer = document.getElementById('stops-container');
+    const addStopBtn = document.getElementById('add-stop-btn');
+    const exportPngBtn = document.getElementById('export-png-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+    function updateGradient() {
+      let gradientCss = '';
+      const stopsStr = colorStops.join(', ');
+
+      if (gradientType === 'linear') {
+        gradientCss = `linear-gradient(${gradientAngle}deg, ${stopsStr})`;
+        angleContainer.style.display = 'flex';
+      } else {
+        gradientCss = `radial-gradient(circle at center, ${stopsStr})`;
+        angleContainer.style.display = 'none';
+      }
+
+      previewEl.style.background = gradientCss;
+    }
+
+    function renderStops() {
+      stopsContainer.innerHTML = '';
+      colorStops.forEach((color, index) => {
+        const item = document.createElement('div');
+        item.className = 'stop-item';
+
+        const colorPicker = document.createElement('input');
+        colorPicker.type = 'color';
+        colorPicker.className = 'stop-color-picker';
+        colorPicker.value = color;
+
+        const hexInput = document.createElement('input');
+        hexInput.type = 'text';
+        hexInput.className = 'hex-input';
+        hexInput.value = color;
+        hexInput.maxLength = 7;
+
+        // Copy Button per Stop
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'action-icon-btn';
+        copyBtn.innerText = 'Copy';
+        copyBtn.title = 'Copy HEX';
+
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(hexInput.value);
+          copyBtn.innerText = '✓';
+          setTimeout(() => copyBtn.innerText = 'Copy', 1000);
+        });
+
+        const updateColor = (val) => {
+          let hex = val.trim();
+          if (!hex.startsWith('#')) hex = '#' + hex;
+          if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+            colorStops[index] = hex.toUpperCase();
+            colorPicker.value = hex;
+            updateGradient();
+          }
+        };
+
+        colorPicker.addEventListener('input', (e) => {
+          const val = e.target.value.toUpperCase();
+          colorStops[index] = val;
+          hexInput.value = val;
+          updateGradient();
+        });
+
+        hexInput.addEventListener('input', (e) => updateColor(e.target.value));
+
+        item.appendChild(colorPicker);
+        item.appendChild(hexInput);
+        item.appendChild(copyBtn);
+
+        if (colorStops.length > 2) {
+          const removeBtn = document.createElement('button');
+          removeBtn.className = 'action-icon-btn delete-btn';
+          removeBtn.innerText = '✕';
+          removeBtn.title = 'Remove Stop';
+          removeBtn.addEventListener('click', () => {
+            colorStops.splice(index, 1);
+            renderStops();
+            updateGradient();
+          });
+          item.appendChild(removeBtn);
+        }
+
+        stopsContainer.appendChild(item);
+      });
+    }
+
+    typeSelect.addEventListener('change', (e) => {
+      gradientType = e.target.value;
+      updateGradient();
+    });
+
+    angleButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        angleButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        gradientAngle = parseInt(btn.getAttribute('data-angle'), 10);
+        updateGradient();
+      });
+    });
+
+    addStopBtn.addEventListener('click', () => {
+      const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase();
+      colorStops.push(randomColor);
+      renderStops();
+      updateGradient();
+    });
+
+    // Helper Engine: Generate High-Res 1440p Canvas
+    function generateGradientCanvas(width = 2560, height = 1440) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      let canvasGradient;
+
+      if (gradientType === 'linear') {
+        const rad = (gradientAngle - 90) * (Math.PI / 180);
+        const cx = width / 2;
+        const cy = height / 2;
+        const r = Math.sqrt(cx * cx + cy * cy);
+
+        const x0 = cx - Math.cos(rad) * r;
+        const y0 = cy - Math.sin(rad) * r;
+        const x1 = cx + Math.cos(rad) * r;
+        const y1 = cy + Math.sin(rad) * r;
+
+        canvasGradient = ctx.createLinearGradient(x0, y0, x1, y1);
+      } else {
+        canvasGradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, Math.max(width, height) / 2);
+      }
+
+      colorStops.forEach((color, i) => {
+        const stopPosition = i / (colorStops.length - 1);
+        canvasGradient.addColorStop(stopPosition, color);
+      });
+
+      ctx.fillStyle = canvasGradient;
+      ctx.fillRect(0, 0, width, height);
+
+      return canvas;
+    }
+
+    // Export PNG Logic
+    exportPngBtn.addEventListener('click', () => {
+      exportPngBtn.innerText = 'Exporting...';
+      setTimeout(() => {
+        const canvas = generateGradientCanvas();
+        const link = document.createElement('a');
+        link.download = 'gradient.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        exportPngBtn.innerText = 'Export PNG';
+      }, 50);
+    });
+
+    // Export PDF Logic
+    exportPdfBtn.addEventListener('click', () => {
+      exportPdfBtn.innerText = 'Exporting...';
+      setTimeout(() => {
+        const { jsPDF } = window.jspdf;
+        const canvas = generateGradientCanvas();
+
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: [400, 225]
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        pdf.addImage(imgData, 'JPEG', 0, 0, 400, 225);
+        pdf.save('gradient.pdf');
+
+        exportPdfBtn.innerText = 'Export PDF';
+      }, 50);
+    });
+
+    // Action Panel Hover Logic
+    const wrapper = document.getElementById('panel-wrapper');
+    const arrowTrigger = document.getElementById('arrow-trigger');
+    let autoCloseTimer = null;
+
+    function openPanel() {
+      wrapper.classList.add('open');
+      resetAutoCloseTimer();
+    }
+
+    function closePanel() {
+      wrapper.classList.remove('open');
+      if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+        autoCloseTimer = null;
+      }
+    }
+
+    function resetAutoCloseTimer() {
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(() => {
+        closePanel();
+      }, 5000);
+    }
+
+    arrowTrigger.addEventListener('mouseenter', openPanel);
+    arrowTrigger.addEventListener('click', openPanel);
+    wrapper.addEventListener('mouseenter', resetAutoCloseTimer);
+    wrapper.addEventListener('mousemove', resetAutoCloseTimer);
+    wrapper.addEventListener('mouseleave', resetAutoCloseTimer);
+
+    // Initial render
+    applyTheme();
+    renderStops();
+    updateGradient();
+  </script>
+</body>
+</html>
