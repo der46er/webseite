@@ -400,7 +400,9 @@
     const STORAGE_KEY = 'grid_colors';
     const VIEW_KEY = 'grid_view_mode';
     const ADVANCED_KEY = 'grid_advanced_mode';
-    const THEME_KEY = 'grid_theme_mode';
+    
+    // Shared Theme Storage Key
+    const THEME_KEY = 'color_tools_theme';
     
     const DARK_HEX = '#0F0F0F';
     const LIGHT_HEX = '#F0F0F0';
@@ -449,10 +451,36 @@
       return [...defaultColors];
     }
 
+    // Save Theme both to LocalStorage and path Cookie
+    function saveThemeMode(theme) {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (e) {}
+
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/color/; SameSite=Strict`;
+    }
+
+    // Read Theme from LocalStorage or Fallback to Cookie / Old Key
+    function getSavedThemeMode() {
+      try {
+        const localTheme = localStorage.getItem(THEME_KEY) || localStorage.getItem('grid_theme_mode');
+        if (localTheme) return localTheme;
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${THEME_KEY}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+      }
+
+      return 'dark';
+    }
+
     let currentColors = loadSavedColors();
     let isListView = localStorage.getItem(VIEW_KEY) === 'list';
     let isAdvancedView = localStorage.getItem(ADVANCED_KEY) === 'true';
-    let currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+    let currentTheme = getSavedThemeMode();
 
     const gridEl = document.getElementById('grid');
     const toggleViewBtn = document.getElementById('btn-toggle-view');
@@ -604,7 +632,7 @@
 
     toggleThemeBtn.addEventListener('click', () => {
       currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
-      localStorage.setItem(THEME_KEY, currentTheme);
+      saveThemeMode(currentTheme);
       renderGrid();
     });
 
