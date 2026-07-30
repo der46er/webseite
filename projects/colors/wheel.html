@@ -1,1 +1,933 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Wheel</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+  <!-- jsPDF Library for client-side PDF export -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Inter Font Definition */
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+    }
 
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #0F0F0F;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Light Theme Styling */
+    body.light-theme {
+      background-color: #F0F0F0;
+    }
+
+    body.light-theme .app-container {
+      background-color: #F0F0F0;
+    }
+
+    /* Base 16:9 Desktop Container Grid Mode */
+    .app-container {
+      display: grid;
+      grid-template-columns: 1fr 340px;
+      gap: 16px;
+      padding: 16px;
+      width: min(96vw, 170.66vh);
+      height: min(54vw, 96vh);
+      background-color: #0F0F0F;
+      transition: background-color 0.3s ease, all 0.3s ease;
+      border-radius: 12px;
+    }
+
+    /* Workspace Display Cards */
+    .workspace-split {
+      display: grid;
+      grid-template-rows: 1fr 100px;
+      gap: 12px;
+      height: 100%;
+    }
+
+    .wheel-card {
+      position: relative;
+      border-radius: 8px;
+      width: 100%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.04);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      padding: 16px;
+    }
+
+    body.light-theme .wheel-card {
+      background: rgba(0, 0, 0, 0.03);
+    }
+
+    /* Large Canvas Wheel Container */
+    .wheel-wrapper {
+      position: relative;
+      width: min(90%, 55vh);
+      height: min(90%, 55vh);
+      aspect-ratio: 1 / 1;
+      border-radius: 50%;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
+      cursor: crosshair;
+    }
+
+    .wheel-canvas {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      display: block;
+    }
+
+    /* Overlay for Pins */
+    .pins-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+    }
+
+    /* Wheel Selector Point */
+    .wheel-pin {
+      position: absolute;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 8px rgba(0, 0, 0, 0.6);
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      z-index: 10;
+      transition: transform 0.1s ease;
+    }
+
+    .wheel-pin.harmony-pin {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.85);
+      box-shadow: 0 0 6px rgba(0, 0, 0, 0.5);
+      z-index: 9;
+    }
+
+    /* Harmony Preview Display Bar */
+    .preview-card {
+      position: relative;
+      border-radius: 8px;
+      width: 100%;
+      height: 100%;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      display: flex;
+    }
+
+    .swatch-bar {
+      flex: 1;
+      height: 100%;
+      transition: background-color 0.15s ease;
+    }
+
+    /* Minimal Control Panel (Right Side) */
+    .controls-card {
+      background: transparent;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 16px;
+      overflow-y: auto;
+      padding: 4px;
+    }
+
+    .section-title {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #666;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 8px;
+    }
+
+    body.light-theme .section-title {
+      color: #888;
+    }
+
+    .control-row {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      width: 100%;
+    }
+
+    label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #aaa;
+    }
+
+    body.light-theme label {
+      color: #444;
+    }
+
+    /* Harmony Selector Grid */
+    .harmony-selector-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+    }
+
+    .harmony-btn {
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 6px;
+      color: #aaa;
+      padding: 8px 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    body.light-theme .harmony-btn {
+      background: rgba(0, 0, 0, 0.05);
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #555;
+    }
+
+    .harmony-btn:hover {
+      background: rgba(255, 255, 255, 0.18);
+      color: #fff;
+    }
+
+    body.light-theme .harmony-btn:hover {
+      background: rgba(0, 0, 0, 0.12);
+      color: #000;
+    }
+
+    .harmony-btn.active {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: rgba(255, 255, 255, 0.4);
+      color: #ffffff;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    body.light-theme .harmony-btn.active {
+      background: rgba(0, 0, 0, 0.2);
+      border-color: rgba(0, 0, 0, 0.4);
+      color: #000000;
+    }
+
+    /* Color Stops List Container */
+    .stops-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-height: calc(100vh - 460px);
+      min-height: 100px;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    .stops-list::-webkit-scrollbar {
+      width: 6px;
+    }
+    .stops-list::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 3px;
+    }
+    .stops-list::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 3px;
+    }
+
+    /* Clickable Swatch Item */
+    .stop-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: border-color 0.2s, background 0.2s;
+      flex-shrink: 0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .stop-item:hover {
+      border-color: rgba(255, 255, 255, 0.3);
+      background: rgba(255, 255, 255, 0.12);
+    }
+
+    body.light-theme .stop-item {
+      background: rgba(0, 0, 0, 0.04);
+      border-color: rgba(0, 0, 0, 0.1);
+    }
+
+    body.light-theme .stop-item:hover {
+      background: rgba(0, 0, 0, 0.08);
+      border-color: rgba(0, 0, 0, 0.25);
+    }
+
+    .stop-color-preview {
+      width: 28px;
+      height: 28px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+    }
+
+    .hex-input {
+      flex: 1;
+      min-width: 0;
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-family: monospace;
+      font-size: 0.85rem;
+      padding: 4px;
+      text-transform: uppercase;
+      outline: none;
+      cursor: pointer;
+      pointer-events: none;
+    }
+
+    body.light-theme .hex-input { color: #000; }
+
+    .action-icon-btn {
+      background: transparent;
+      border: none;
+      color: rgba(255, 255, 255, 0.4);
+      cursor: pointer;
+      width: 42px;
+      height: 26px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 4px;
+      transition: color 0.2s, background 0.2s;
+      flex-shrink: 0;
+      pointer-events: none;
+    }
+
+    .stop-item:hover .action-icon-btn {
+      color: #fff;
+    }
+
+    /* Buttons */
+    .btn-primary {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 6px;
+      color: #fff;
+      cursor: pointer;
+      padding: 9px 12px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-align: center;
+      transition: background 0.2s, transform 0.15s ease;
+      width: 100%;
+    }
+
+    body.light-theme .btn-primary {
+      background: rgba(0, 0, 0, 0.06);
+      border-color: rgba(0, 0, 0, 0.15);
+      color: #000;
+    }
+
+    .btn-primary:hover { background: rgba(255, 255, 255, 0.25); }
+    body.light-theme .btn-primary:hover { background: rgba(0, 0, 0, 0.12); }
+    .btn-primary:active { transform: scale(0.97); }
+
+    .export-grid {
+      display: flex;
+      gap: 8px;
+    }
+
+    /* Floating Arrow Button & Slide-Out Action Panel */
+    .action-panel-wrapper {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+
+    .arrow-trigger {
+      width: 42px;
+      height: 42px;
+      background: rgba(128, 128, 128, 0.3);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: background 0.2s, transform 0.2s;
+      user-select: none;
+    }
+
+    .arrow-trigger svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    body.light-theme .arrow-trigger {
+      color: #000;
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow-trigger:hover {
+      background: rgba(128, 128, 128, 0.5);
+      transform: scale(1.05);
+    }
+
+    .action-bar {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(18, 18, 18, 0.88);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(20px) scale(0.95);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s;
+      pointer-events: none;
+    }
+
+    .action-panel-wrapper.open .action-bar {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .action-panel-wrapper.open .arrow-trigger {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 5px;
+      color: #eee;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      display: block;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    /* Responsive Layout */
+    @media (max-width: 900px) {
+      body {
+        align-items: flex-start;
+        padding: 16px 0 80px 0;
+      }
+
+      .app-container {
+        grid-template-columns: 1fr;
+        height: auto;
+        width: 92vw;
+      }
+
+      .workspace-split {
+        height: 520px;
+      }
+
+      .wheel-wrapper {
+        width: 280px;
+        height: 280px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Main Container -->
+  <main class="app-container">
+    
+    <!-- Left Side Workspace -->
+    <div class="workspace-split">
+      <!-- Interactive Color Wheel Card -->
+      <div class="wheel-card">
+        <div class="wheel-wrapper" id="wheel-wrapper">
+          <canvas class="wheel-canvas" id="wheel-canvas" width="800" height="800"></canvas>
+          <div class="pins-overlay" id="pins-overlay"></div>
+        </div>
+      </div>
+
+      <!-- Live Harmony Swatches Bar -->
+      <div class="preview-card" id="palette-preview"></div>
+    </div>
+
+    <!-- Right Side: Clean Control Center -->
+    <div class="controls-card">
+      <div style="display: flex; flex-direction: column; gap: 12px;">
+        <div class="section-title">Color Harmony</div>
+
+        <div class="control-row">
+          <div class="control-group">
+            <div class="harmony-selector-grid" id="harmony-selector-grid">
+              <button class="harmony-btn active" data-mode="complementary">Complementary</button>
+              <button class="harmony-btn" data-mode="analogous">Analogous</button>
+              <button class="harmony-btn" data-mode="triadic">Triadic</button>
+              <button class="harmony-btn" data-mode="tetradic">Tetradic</button>
+              <button class="harmony-btn" data-mode="monochromatic" style="grid-column: span 2;">Monochromatic</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-title" style="margin-top: 4px;">Harmony Swatches</div>
+
+        <!-- Generated Swatches List -->
+        <div class="stops-list" id="stops-container"></div>
+      </div>
+
+      <!-- Export Buttons -->
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <div class="section-title">Export Options</div>
+        <div class="export-grid">
+          <button class="btn-primary" id="export-png-btn">Export PNG</button>
+          <button class="btn-primary" id="export-pdf-btn">Export PDF</button>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- Side Control Menu -->
+  <div class="action-panel-wrapper" id="panel-wrapper">
+    <div class="arrow-trigger" id="arrow-trigger">
+      <svg viewBox="0 0 24 24">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </div>
+    <div class="action-bar" id="action-bar">
+      <button class="action-btn" id="btn-toggle-theme">Theme: Dark</button>
+      <a class="action-btn" href="index.html">Main Menu</a>
+      <a class="action-btn" href="https://thataustrianone.eu/legal" target="_blank" rel="noopener noreferrer">© 2026 — der_46er</a>
+    </div>
+  </div>
+
+  <script>
+    // Shared Path-Scoped Theme Storage Key
+    const THEME_KEY = 'color_tools_theme';
+
+    function saveThemeMode(theme) {
+      try { localStorage.setItem(THEME_KEY, theme); } catch (e) {}
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/color/; SameSite=Strict`;
+    }
+
+    function getSavedThemeMode() {
+      try {
+        const localTheme = localStorage.getItem(THEME_KEY) || localStorage.getItem('grid_theme_mode');
+        if (localTheme) return localTheme;
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${THEME_KEY}=`);
+      if (parts.length === 2) return parts.pop().split(';').shift();
+      return 'dark';
+    }
+
+    let currentTheme = getSavedThemeMode();
+    const toggleThemeBtn = document.getElementById('btn-toggle-theme');
+
+    function applyTheme() {
+      if (currentTheme === 'light') {
+        document.body.classList.add('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Light';
+      } else {
+        document.body.classList.remove('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Dark';
+      }
+    }
+
+    toggleThemeBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      saveThemeMode(currentTheme);
+      applyTheme();
+    });
+
+    // Color Engine Utilities
+    function hslToHex(h, s, l) {
+      l /= 100;
+      const a = s * Math.min(l, 1 - l) / 100;
+      const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+      };
+      return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
+    }
+
+    // Wheel & Harmony State
+    let currentHue = 0;        // 0 to 360
+    let currentSat = 100;      // 0 to 100
+    let harmonyMode = 'complementary';
+    let currentSwatches = [];  // Color Hex Strings
+    let currentPoints = [];    // Angles and Saturations [{h, s, l}, ...]
+
+    const canvas = document.getElementById('wheel-canvas');
+    const ctx = canvas.getContext('2d');
+    const wheelWrapper = document.getElementById('wheel-wrapper');
+    const pinsOverlay = document.getElementById('pins-overlay');
+    const previewEl = document.getElementById('palette-preview');
+    const stopsContainer = document.getElementById('stops-container');
+    const harmonyButtons = document.querySelectorAll('.harmony-btn');
+    const exportPngBtn = document.getElementById('export-png-btn');
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+
+    // Draw High-Res Canvas Color Wheel
+    function drawColorWheel() {
+      const width = canvas.width;
+      const height = canvas.height;
+      const radius = width / 2;
+      const imageData = ctx.createImageData(width, height);
+      const data = imageData.data;
+
+      for (let y = -radius; y < radius; y++) {
+        for (let x = -radius; x < radius; x++) {
+          const distance = Math.sqrt(x * x + y * y);
+          if (distance <= radius) {
+            let angle = Math.atan2(y, x) * (180 / Math.PI);
+            if (angle < 0) angle += 360;
+
+            const sat = (distance / radius) * 100;
+            const hex = hslToHex(angle, sat, 50);
+
+            const r = parseInt(hex.substring(1, 3), 16);
+            const g = parseInt(hex.substring(3, 5), 16);
+            const b = parseInt(hex.substring(5, 7), 16);
+
+            const pxX = Math.floor(x + radius);
+            const pxY = Math.floor(y + radius);
+            const index = (pxY * width + pxX) * 4;
+
+            data[index] = r;
+            data[index + 1] = g;
+            data[index + 2] = b;
+            data[index + 3] = 255;
+          }
+        }
+      }
+
+      ctx.putImageData(imageData, 0, 0);
+    }
+
+    function calculateHarmonySwatches() {
+      const swatches = [];
+      const points = [];
+      const h = currentHue;
+      const s = currentSat;
+
+      if (harmonyMode === 'complementary') {
+        points.push({ h: h, s: s, l: 50 });
+        points.push({ h: (h + 180) % 360, s: s, l: 50 });
+      } else if (harmonyMode === 'analogous') {
+        points.push({ h: (h - 30 + 360) % 360, s: s, l: 50 });
+        points.push({ h: h, s: s, l: 50 });
+        points.push({ h: (h + 30) % 360, s: s, l: 50 });
+      } else if (harmonyMode === 'triadic') {
+        points.push({ h: h, s: s, l: 50 });
+        points.push({ h: (h + 120) % 360, s: s, l: 50 });
+        points.push({ h: (h + 240) % 360, s: s, l: 50 });
+      } else if (harmonyMode === 'tetradic') {
+        points.push({ h: h, s: s, l: 50 });
+        points.push({ h: (h + 90) % 360, s: s, l: 50 });
+        points.push({ h: (h + 180) % 360, s: s, l: 50 });
+        points.push({ h: (h + 270) % 360, s: s, l: 50 });
+      } else if (harmonyMode === 'monochromatic') {
+        // Points share hue and saturation but vary lightness
+        points.push({ h: h, s: s, l: 25 });
+        points.push({ h: h, s: s, l: 40 });
+        points.push({ h: h, s: s, l: 55 });
+        points.push({ h: h, s: s, l: 70 });
+        points.push({ h: h, s: s, l: 85 });
+      }
+
+      points.forEach(p => {
+        swatches.push(hslToHex(p.h, p.s, p.l));
+      });
+
+      currentSwatches = swatches;
+      currentPoints = points;
+
+      renderPins();
+      renderSwatches();
+      updatePaletteDisplay();
+    }
+
+    function renderPins() {
+      pinsOverlay.innerHTML = '';
+      const rect = wheelWrapper.getBoundingClientRect();
+      const radius = rect.width / 2;
+
+      currentPoints.forEach((p, idx) => {
+        const pin = document.createElement('div');
+        const isPrimary = (harmonyMode === 'monochromatic' && idx === 2) || (harmonyMode !== 'monochromatic' && p.h === currentHue && p.s === currentSat);
+
+        pin.className = isPrimary ? 'wheel-pin' : 'wheel-pin harmony-pin';
+
+        const rad = p.h * (Math.PI / 180);
+        // Vary radial offset slightly for monochromatic visualization
+        const distRatio = harmonyMode === 'monochromatic' ? (p.l / 100) : (p.s / 100);
+        const dist = distRatio * radius;
+
+        const px = radius + Math.cos(rad) * dist;
+        const py = radius + Math.sin(rad) * dist;
+
+        pin.style.left = `${px}px`;
+        pin.style.top = `${py}px`;
+        pin.style.backgroundColor = hslToHex(p.h, p.s, p.l);
+
+        pinsOverlay.appendChild(pin);
+      });
+    }
+
+    function updatePaletteDisplay() {
+      previewEl.innerHTML = '';
+      currentSwatches.forEach(color => {
+        const bar = document.createElement('div');
+        bar.className = 'swatch-bar';
+        bar.style.backgroundColor = color;
+        previewEl.appendChild(bar);
+      });
+    }
+
+    function renderSwatches() {
+      stopsContainer.innerHTML = '';
+      currentSwatches.forEach((color) => {
+        const item = document.createElement('div');
+        item.className = 'stop-item';
+
+        const colorPreview = document.createElement('div');
+        colorPreview.className = 'stop-color-preview';
+        colorPreview.style.backgroundColor = color;
+
+        const hexInput = document.createElement('input');
+        hexInput.type = 'text';
+        hexInput.className = 'hex-input';
+        hexInput.value = color;
+        hexInput.readOnly = true;
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'action-icon-btn';
+        copyBtn.innerText = 'Copy';
+
+        item.addEventListener('click', () => {
+          navigator.clipboard.writeText(color);
+          copyBtn.innerText = '✓';
+          setTimeout(() => copyBtn.innerText = 'Copy', 1000);
+        });
+
+        item.appendChild(colorPreview);
+        item.appendChild(hexInput);
+        item.appendChild(copyBtn);
+
+        stopsContainer.appendChild(item);
+      });
+    }
+
+    // Wheel Drag Event Listeners
+    let isDragging = false;
+
+    function sampleWheelPointer(e) {
+      const rect = wheelWrapper.getBoundingClientRect();
+      const radius = rect.width / 2;
+      const x = e.clientX - rect.left - radius;
+      const y = e.clientY - rect.top - radius;
+
+      let angle = Math.atan2(y, x) * (180 / Math.PI);
+      if (angle < 0) angle += 360;
+
+      const dist = Math.min(Math.sqrt(x * x + y * y), radius);
+      const sat = (dist / radius) * 100;
+
+      currentHue = angle;
+      currentSat = sat;
+
+      calculateHarmonySwatches();
+    }
+
+    wheelWrapper.addEventListener('pointerdown', (e) => {
+      isDragging = true;
+      sampleWheelPointer(e);
+      window.addEventListener('pointermove', onPointerMove);
+      window.addEventListener('pointerup', onPointerUp);
+    });
+
+    function onPointerMove(e) {
+      if (isDragging) sampleWheelPointer(e);
+    }
+
+    function onPointerUp() {
+      isDragging = false;
+      window.removeEventListener('pointermove', onPointerMove);
+      window.removeEventListener('pointerup', onPointerUp);
+    }
+
+    harmonyButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        harmonyButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        harmonyMode = btn.getAttribute('data-mode');
+        calculateHarmonySwatches();
+      });
+    });
+
+    window.addEventListener('resize', renderPins);
+
+    // Export Canvas Generator
+    function generatePaletteCanvas(width = 2560, height = 1440) {
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+
+      const barWidth = width / currentSwatches.length;
+
+      currentSwatches.forEach((color, i) => {
+        ctx.fillStyle = color;
+        ctx.fillRect(i * barWidth, 0, barWidth, height);
+      });
+
+      return canvas;
+    }
+
+    exportPngBtn.addEventListener('click', () => {
+      exportPngBtn.innerText = 'Exporting...';
+      setTimeout(() => {
+        const canvas = generatePaletteCanvas();
+        const link = document.createElement('a');
+        link.download = 'color-wheel-harmony.png';
+        link.href = canvas.toDataURL('image/png');
+        link.click();
+        exportPngBtn.innerText = 'Export PNG';
+      }, 50);
+    });
+
+    exportPdfBtn.addEventListener('click', () => {
+      exportPdfBtn.innerText = 'Exporting...';
+      setTimeout(() => {
+        const { jsPDF } = window.jspdf;
+        const canvas = generatePaletteCanvas();
+
+        const pdf = new jsPDF({
+          orientation: 'landscape',
+          unit: 'mm',
+          format: [400, 225]
+        });
+
+        const imgData = canvas.toDataURL('image/jpeg', 0.92);
+        pdf.addImage(imgData, 'JPEG', 0, 0, 400, 225);
+        pdf.save('color-wheel-harmony.pdf');
+
+        exportPdfBtn.innerText = 'Export PDF';
+      }, 50);
+    });
+
+    // Action Panel Hover Logic
+    const wrapper = document.getElementById('panel-wrapper');
+    const arrowTrigger = document.getElementById('arrow-trigger');
+    let autoCloseTimer = null;
+
+    function openPanel() {
+      wrapper.classList.add('open');
+      resetAutoCloseTimer();
+    }
+
+    function closePanel() {
+      wrapper.classList.remove('open');
+      if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+        autoCloseTimer = null;
+      }
+    }
+
+    function resetAutoCloseTimer() {
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(() => {
+        closePanel();
+      }, 5000);
+    }
+
+    arrowTrigger.addEventListener('mouseenter', openPanel);
+    arrowTrigger.addEventListener('click', openPanel);
+    wrapper.addEventListener('mouseenter', resetAutoCloseTimer);
+    wrapper.addEventListener('mousemove', resetAutoCloseTimer);
+    wrapper.addEventListener('mouseleave', resetAutoCloseTimer);
+
+    // Initial render
+    applyTheme();
+    drawColorWheel();
+    calculateHarmonySwatches();
+  </script>
+</body>
+</html>
