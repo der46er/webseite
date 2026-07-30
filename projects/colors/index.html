@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Color Grid</title>
+  <!-- jsPDF Library for robust client-side PDF generation -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <style>
+    /* Inter Font Definition */
+    @font-face {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 400 700;
+      font-display: swap;
+      src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    }
+
+    body {
+      background-color: #0F0F0F;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      width: 100vw;
+      overflow-x: hidden;
+      overflow-y: auto;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    /* Light Theme Styling */
+    body.light-theme {
+      background-color: #F0F0F0;
+    }
+
+    body.light-theme .grid-container {
+      background-color: #F0F0F0;
+    }
+
+    /* Base 16:9 Desktop Container Grid Mode */
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(6, 1fr);
+      grid-auto-rows: calc((min(54vw, 96vh) - 32px - 48px) / 5);
+      gap: 12px;
+      padding: 16px;
+      width: min(96vw, 170.66vh);
+      height: min(54vw, 96vh);
+      background-color: #0F0F0F;
+      transition: background-color 0.3s ease, all 0.3s ease;
+      overflow-y: auto;
+      overflow-x: hidden;
+      border-radius: 12px;
+    }
+
+    /* List Layout Mode Override - Full Width & Thicker Bars */
+    .grid-container.list-mode {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      width: min(96vw, 170.66vh);
+      height: auto;
+      max-height: 88vh;
+      aspect-ratio: auto;
+      overflow-y: auto;
+      padding: 16px;
+      border-radius: 12px;
+      grid-auto-rows: unset;
+    }
+
+    /* Custom Scrollbars */
+    .grid-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .grid-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 4px;
+    }
+    .grid-container::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+    }
+
+    body.light-theme .grid-container::-webkit-scrollbar-track {
+      background: rgba(0, 0, 0, 0.05);
+    }
+    body.light-theme .grid-container::-webkit-scrollbar-thumb {
+      background: rgba(0, 0, 0, 0.2);
+    }
+
+    .color-card {
+      position: relative;
+      border-radius: 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 8px;
+      transition: background-color 0.2s ease, transform 0.15s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-height: 0;
+    }
+
+    /* List Card Adjustments */
+    .list-mode .color-card {
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      height: 80px;
+      min-height: 80px;
+      padding: 12px 20px;
+      border-radius: 10px;
+    }
+
+    /* Add Card Style (Advanced Mode) */
+    .add-card {
+      background: rgba(128, 128, 128, 0.1) !important;
+      border: 2px dashed rgba(128, 128, 128, 0.4) !important;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .list-mode .add-card {
+      height: 80px;
+      min-height: 80px;
+    }
+
+    .add-card:hover {
+      background: rgba(128, 128, 128, 0.2) !important;
+      border-color: rgba(128, 128, 128, 0.7) !important;
+    }
+
+    .add-card-btn {
+      color: #888;
+      font-size: 0.9rem;
+      font-weight: 600;
+      pointer-events: none;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    body.light-theme .add-card-btn {
+      color: #444;
+    }
+
+    .controls {
+      display: flex;
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.45);
+      backdrop-filter: blur(8px);
+      padding: 4px;
+      border-radius: 6px;
+      align-items: center;
+    }
+
+    .list-mode .controls {
+      width: auto;
+      min-width: 260px;
+      padding: 8px;
+    }
+
+    .hex-input {
+      width: 100%;
+      min-width: 0;
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 4px;
+      color: #fff;
+      font-family: monospace;
+      font-size: clamp(0.65rem, 0.9vw, 0.85rem);
+      padding: 4px 6px;
+      text-transform: uppercase;
+      outline: none;
+    }
+
+    .list-mode .hex-input {
+      font-size: 1rem;
+      padding: 6px 12px;
+    }
+
+    .hex-input:focus {
+      border-color: rgba(255, 255, 255, 0.6);
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .copy-btn, .delete-btn {
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 4px;
+      color: #fff;
+      cursor: pointer;
+      padding: 4px 6px;
+      font-size: clamp(0.65rem, 0.8vw, 0.75rem);
+      font-weight: 600;
+      transition: background 0.2s;
+      white-space: nowrap;
+    }
+
+    .list-mode .copy-btn, .list-mode .delete-btn {
+      font-size: 0.85rem;
+      padding: 6px 14px;
+    }
+
+    .delete-btn {
+      background: rgba(235, 64, 52, 0.4);
+      border-color: rgba(235, 64, 52, 0.6);
+    }
+
+    .delete-btn:hover {
+      background: rgba(235, 64, 52, 0.7);
+    }
+
+    .copy-btn:hover {
+      background: rgba(255, 255, 255, 0.4);
+    }
+
+    .copy-btn:active, .delete-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Floating Arrow Button & Slide-Out Action Panel */
+    .action-panel-wrapper {
+      position: fixed;
+      right: 16px;
+      bottom: 16px;
+      display: flex;
+      align-items: flex-end;
+      z-index: 1000;
+    }
+
+    .arrow-trigger {
+      width: 42px;
+      height: 42px;
+      background: rgba(128, 128, 128, 0.3);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      border-radius: 50%;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+      transition: background 0.2s, transform 0.2s;
+      user-select: none;
+    }
+
+    .arrow-trigger svg {
+      width: 18px;
+      height: 18px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    body.light-theme .arrow-trigger {
+      color: #000;
+      border-color: rgba(0, 0, 0, 0.2);
+    }
+
+    .arrow-trigger:hover {
+      background: rgba(128, 128, 128, 0.5);
+      transform: scale(1.05);
+    }
+
+    .action-bar {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      background: rgba(18, 18, 18, 0.88);
+      backdrop-filter: blur(12px);
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateX(20px) scale(0.95);
+      transition: opacity 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
+                  visibility 0.5s;
+      pointer-events: none;
+    }
+
+    .action-panel-wrapper.open .action-bar {
+      opacity: 1;
+      visibility: visible;
+      transform: translateX(0) scale(1);
+      pointer-events: auto;
+    }
+
+    .action-panel-wrapper.open .arrow-trigger {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .action-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      border-radius: 5px;
+      color: #eee;
+      cursor: pointer;
+      padding: 8px 12px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-align: center;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+      text-decoration: none;
+      display: block;
+    }
+
+    .action-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      color: #fff;
+    }
+
+    .action-btn:active {
+      transform: scale(0.95);
+    }
+
+    /* Responsive Adaptations */
+    @media (max-aspect-ratio: 15/9) and (min-width: 768px) {
+      body {
+        padding: 24px 0;
+      }
+      .grid-container:not(.list-mode) {
+        width: 94vw;
+        height: auto;
+        max-height: 88vh;
+        gap: 8px;
+        padding: 10px;
+        grid-auto-rows: 120px;
+      }
+    }
+
+    @media (max-width: 767px) {
+      body {
+        align-items: flex-start;
+        padding: 16px 0 80px 0;
+      }
+
+      .grid-container:not(.list-mode) {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr) !important;
+        grid-auto-rows: 110px !important;
+        width: 92vw;
+        height: auto;
+        gap: 10px;
+        padding: 10px;
+      }
+
+      .grid-container:not(.list-mode) .color-card {
+        height: 110px;
+        padding: 8px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="grid-container" id="grid"></div>
+
+  <div class="action-panel-wrapper" id="panel-wrapper">
+    <div class="arrow-trigger" id="arrow-trigger">
+      <svg viewBox="0 0 24 24">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </div>
+    <div class="action-bar" id="action-bar">
+      <button class="action-btn" id="btn-toggle-theme">Theme: Light</button>
+      <button class="action-btn" id="btn-toggle-advanced">Advanced Mode: OFF</button>
+      <button class="action-btn" id="btn-toggle-view">Switch to List</button>
+      <button class="action-btn" id="btn-default">Reset Default</button>
+      <button class="action-btn" id="btn-clear">Clear All</button>
+      <button class="action-btn" id="btn-export">Export PDF</button>
+      <a class="action-btn" href="https://thataustrianone.eu/legal" target="_blank" rel="noopener noreferrer">© 2026 — der_46er</a>
+    </div>
+  </div>
+
+  <script>
+    const GRID_SIZE = 30;
+    const STORAGE_KEY = 'grid_colors';
+    const VIEW_KEY = 'grid_view_mode';
+    const ADVANCED_KEY = 'grid_advanced_mode';
+    const THEME_KEY = 'grid_theme_mode';
+    
+    const DARK_HEX = '#0F0F0F';
+    const LIGHT_HEX = '#F0F0F0';
+    const GRAY_HEX = '#808080';
+
+    const defaultColors = Array.from({ length: GRID_SIZE }, (_, i) => {
+      const hue = Math.floor((i / GRID_SIZE) * 360);
+      return hslToHex(hue, 60, 50);
+    });
+
+    function hslToHex(h, s, l) {
+      l /= 100;
+      const a = s * Math.min(l, 1 - l) / 100;
+      const f = n => {
+        const k = (n + h / 30) % 12;
+        const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+        return Math.round(255 * color).toString(16).padStart(2, '0');
+      };
+      return `#${f(0)}${f(8)}${f(4)}`;
+    }
+
+    function saveColors(colors) {
+      const data = JSON.stringify(colors);
+      try {
+        localStorage.setItem(STORAGE_KEY, data);
+      } catch (e) {
+        const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+        document.cookie = `${STORAGE_KEY}=${encodeURIComponent(data)}; expires=${expires}; path=/; SameSite=Strict`;
+      }
+    }
+
+    function loadSavedColors() {
+      try {
+        const localData = localStorage.getItem(STORAGE_KEY);
+        if (localData) return JSON.parse(localData);
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${STORAGE_KEY}=`);
+      if (parts.length === 2) {
+        try {
+          return JSON.parse(decodeURIComponent(parts.pop().split(';').shift()));
+        } catch (e) {}
+      }
+
+      return [...defaultColors];
+    }
+
+    let currentColors = loadSavedColors();
+    let isListView = localStorage.getItem(VIEW_KEY) === 'list';
+    let isAdvancedView = localStorage.getItem(ADVANCED_KEY) === 'true';
+    let currentTheme = localStorage.getItem(THEME_KEY) || 'dark';
+
+    const gridEl = document.getElementById('grid');
+    const toggleViewBtn = document.getElementById('btn-toggle-view');
+    const toggleAdvancedBtn = document.getElementById('btn-toggle-advanced');
+    const toggleThemeBtn = document.getElementById('btn-toggle-theme');
+
+    function updateUIState() {
+      if (isListView) {
+        gridEl.classList.add('list-mode');
+        toggleViewBtn.innerText = 'Switch to Grid';
+      } else {
+        gridEl.classList.remove('list-mode');
+        toggleViewBtn.innerText = 'Switch to List';
+      }
+
+      toggleAdvancedBtn.innerText = `Advanced Mode: ${isAdvancedView ? 'ON' : 'OFF'}`;
+
+      if (currentTheme === 'light') {
+        document.body.classList.add('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Light';
+      } else {
+        document.body.classList.remove('light-theme');
+        toggleThemeBtn.innerText = 'Theme: Dark';
+      }
+    }
+
+    function renderGrid() {
+      gridEl.innerHTML = '';
+      updateUIState();
+
+      currentColors.forEach((color, index) => {
+        const card = document.createElement('div');
+        card.className = 'color-card';
+        card.style.backgroundColor = color;
+
+        const controls = document.createElement('div');
+        controls.className = 'controls';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'hex-input';
+        input.value = color;
+        input.maxLength = 7;
+
+        const copyBtn = document.createElement('button');
+        copyBtn.className = 'copy-btn';
+        copyBtn.innerText = 'Copy';
+
+        const updateColor = (val) => {
+          let hex = val.trim();
+          if (!hex.startsWith('#')) hex = '#' + hex;
+          if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
+            card.style.backgroundColor = hex;
+            currentColors[index] = hex;
+            saveColors(currentColors);
+          }
+        };
+
+        input.addEventListener('input', (e) => updateColor(e.target.value));
+        input.addEventListener('paste', () => {
+          setTimeout(() => updateColor(input.value), 10);
+        });
+
+        copyBtn.addEventListener('click', () => {
+          navigator.clipboard.writeText(input.value);
+          const originalText = copyBtn.innerText;
+          copyBtn.innerText = '✓';
+          setTimeout(() => copyBtn.innerText = originalText, 1000);
+        });
+
+        controls.appendChild(input);
+        controls.appendChild(copyBtn);
+
+        if (isAdvancedView) {
+          const deleteBtn = document.createElement('button');
+          deleteBtn.className = 'delete-btn';
+          deleteBtn.innerText = '✕';
+          deleteBtn.title = 'Remove Box';
+          deleteBtn.addEventListener('click', () => {
+            if (currentColors.length > 1) {
+              currentColors.splice(index, 1);
+              saveColors(currentColors);
+              renderGrid();
+            }
+          });
+          controls.appendChild(deleteBtn);
+        }
+
+        card.appendChild(controls);
+        gridEl.appendChild(card);
+      });
+
+      if (isAdvancedView) {
+        const addCard = document.createElement('div');
+        addCard.className = 'color-card add-card';
+        addCard.innerHTML = `<div class="add-card-btn"><span>＋</span> Add Box</div>`;
+        addCard.addEventListener('click', () => {
+          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase();
+          currentColors.push(randomColor);
+          saveColors(currentColors);
+          renderGrid();
+        });
+        gridEl.appendChild(addCard);
+      }
+    }
+
+    // Timer & Panel Interaction Logic
+    const wrapper = document.getElementById('panel-wrapper');
+    const arrowTrigger = document.getElementById('arrow-trigger');
+    let autoCloseTimer = null;
+
+    function openPanel() {
+      wrapper.classList.add('open');
+      resetAutoCloseTimer();
+    }
+
+    function closePanel() {
+      wrapper.classList.remove('open');
+      if (autoCloseTimer) {
+        clearTimeout(autoCloseTimer);
+        autoCloseTimer = null;
+      }
+    }
+
+    function resetAutoCloseTimer() {
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+      autoCloseTimer = setTimeout(() => {
+        closePanel();
+      }, 5000);
+    }
+
+    arrowTrigger.addEventListener('mouseenter', openPanel);
+    arrowTrigger.addEventListener('click', openPanel);
+    wrapper.addEventListener('mouseenter', resetAutoCloseTimer);
+    wrapper.addEventListener('mousemove', resetAutoCloseTimer);
+    wrapper.addEventListener('mouseleave', resetAutoCloseTimer);
+
+    toggleViewBtn.addEventListener('click', () => {
+      isListView = !isListView;
+      localStorage.setItem(VIEW_KEY, isListView ? 'list' : 'grid');
+      renderGrid();
+    });
+
+    toggleAdvancedBtn.addEventListener('click', () => {
+      isAdvancedView = !isAdvancedView;
+      localStorage.setItem(ADVANCED_KEY, isAdvancedView ? 'true' : 'false');
+      renderGrid();
+    });
+
+    toggleThemeBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      localStorage.setItem(THEME_KEY, currentTheme);
+      renderGrid();
+    });
+
+    document.getElementById('btn-default').addEventListener('click', () => {
+      currentColors = [...defaultColors];
+      saveColors(currentColors);
+      renderGrid();
+    });
+
+    document.getElementById('btn-clear').addEventListener('click', () => {
+      currentColors = Array(currentColors.length).fill(GRAY_HEX);
+      saveColors(currentColors);
+      renderGrid();
+    });
+
+    // Integrated Multi-Format PDF Export Engine (Optimized 1440p)
+    document.getElementById('btn-export').addEventListener('click', () => {
+      const exportBtn = document.getElementById('btn-export');
+      exportBtn.innerText = 'Exporting...';
+
+      setTimeout(() => {
+        const { jsPDF } = window.jspdf;
+        const bgHex = currentTheme === 'light' ? LIGHT_HEX : DARK_HEX;
+
+        if (isListView) {
+          // --- CANVAS-BASED VERTICAL A4 LIST EXPORT ---
+          const pdf = new jsPDF({
+            orientation: 'portrait',
+            unit: 'mm',
+            format: 'a4'
+          });
+
+          const itemsPerPage = 12;
+          const totalPages = Math.ceil(currentColors.length / itemsPerPage);
+
+          for (let p = 0; p < totalPages; p++) {
+            if (p > 0) pdf.addPage('a4', 'portrait');
+
+            const pageColors = currentColors.slice(p * itemsPerPage, (p + 1) * itemsPerPage);
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 1440;
+            canvas.height = 2036;
+
+            ctx.fillStyle = bgHex;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const paddingX = 80;
+            const paddingY = 90;
+            const barGap = 30;
+            const barHeight = 120;
+            const barWidth = canvas.width - (paddingX * 2);
+
+            pageColors.forEach((color, i) => {
+              const y = paddingY + i * (barHeight + barGap);
+
+              // Color Bar Fill
+              ctx.fillStyle = color;
+              ctx.beginPath();
+              ctx.roundRect(paddingX, y, barWidth, barHeight, 16);
+              ctx.fill();
+
+              // Outer Glow Border
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
+              ctx.lineWidth = 3;
+              ctx.stroke();
+
+              // Hex Tag Pill
+              const pillWidth = 320;
+              const pillHeight = 72;
+              const pillX = paddingX + 24;
+              const pillY = y + (barHeight - pillHeight) / 2;
+
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.65)';
+              ctx.beginPath();
+              ctx.roundRect(pillX, pillY, pillWidth, pillHeight, 12);
+              ctx.fill();
+
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+              ctx.lineWidth = 2;
+              ctx.stroke();
+
+              // Monospace Text
+              ctx.fillStyle = '#ffffff';
+              ctx.font = 'bold 34px monospace';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(color.toUpperCase(), pillX + (pillWidth / 2), pillY + (pillHeight / 2));
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.88);
+            pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
+          }
+
+          pdf.save('color-list.pdf');
+
+        } else {
+          // --- CANVAS-BASED 16:9 GRID EXPORT (Max 30/Page) ---
+          const pdf = new jsPDF({
+            orientation: 'landscape',
+            unit: 'mm',
+            format: [400, 225]
+          });
+
+          const pageSize = 30;
+          const totalPages = Math.ceil(currentColors.length / pageSize);
+
+          for (let p = 0; p < totalPages; p++) {
+            if (p > 0) pdf.addPage([400, 225], 'landscape');
+
+            const pageColors = currentColors.slice(p * pageSize, (p + 1) * pageSize);
+
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
+
+            canvas.width = 2560;
+            canvas.height = 1440;
+
+            ctx.fillStyle = bgHex;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            const cols = 6;
+            const rows = 5;
+            const gap = 20;
+            const padding = 32;
+
+            const totalGapX = gap * (cols - 1) + (padding * 2);
+            const totalGapY = gap * (rows - 1) + (padding * 2);
+
+            const cardWidth = (canvas.width - totalGapX) / cols;
+            const cardHeight = (canvas.height - totalGapY) / rows;
+
+            pageColors.forEach((color, i) => {
+              const col = i % cols;
+              const row = Math.floor(i / cols);
+
+              const x = padding + col * (cardWidth + gap);
+              const y = padding + row * (cardHeight + gap);
+
+              ctx.fillStyle = color;
+              ctx.beginPath();
+              ctx.roundRect(x, y, cardWidth, cardHeight, 16);
+              ctx.fill();
+
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+              ctx.lineWidth = 3;
+              ctx.stroke();
+
+              const pillWidth = cardWidth - 32;
+              const pillHeight = 56;
+              const pillX = x + 16;
+              const pillY = y + cardHeight - pillHeight - 16;
+
+              ctx.fillStyle = 'rgba(0, 0, 0, 0.55)';
+              ctx.beginPath();
+              ctx.roundRect(pillX, pillY, pillWidth, pillHeight, 10);
+              ctx.fill();
+
+              ctx.strokeStyle = 'rgba(255, 255, 255, 0.25)';
+              ctx.lineWidth = 1.5;
+              ctx.stroke();
+
+              ctx.fillStyle = '#ffffff';
+              ctx.font = 'bold 26px monospace';
+              ctx.textAlign = 'center';
+              ctx.textBaseline = 'middle';
+              ctx.fillText(color.toUpperCase(), pillX + (pillWidth / 2), pillY + (pillHeight / 2));
+            });
+
+            const imgData = canvas.toDataURL('image/jpeg', 0.88);
+            pdf.addImage(imgData, 'JPEG', 0, 0, 400, 225);
+          }
+
+          pdf.save('color-grid.pdf');
+        }
+
+        exportBtn.innerText = 'Export PDF';
+      }, 50);
+    });
+
+    renderGrid();
+  </script>
+</body>
+</html>
