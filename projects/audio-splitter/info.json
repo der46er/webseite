@@ -1,6 +1,7 @@
 {
   "project": {
     "id": "audio-splitter",
+    "icon": "web",
     "title": "Audio Splitter",
     "title_en": "Audio Splitter",
     "description": "Zerteilen sie Audiodateien. Kostenlos und ohne Werbung.",
