@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Projects | Nick</title>
+    
+    <link rel="icon" type="image/png" href="../assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        /* Local Fonts routed through a CDN to fix mobile CORS blocking and MIME type errors */
+        @font-face { font-family: 'Inter'; src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); font-weight: 400; font-display: swap; }
+        @font-face { font-family: 'Inter'; src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); font-weight: 900; font-display: swap; }
+        
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background-color: #0b0d11; 
+            color: white; 
+            margin: 0; 
+            padding: 0; 
+            position: relative;
+        }
+
+        /* Fixed locked blurred wallpaper background */
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-grey-black.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            transform: scale(1.05);
+            opacity: 1;
+            z-index: -2;
+        }
+
+        /* Seamless SVG grain noise overlay */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Matched directly to the backdrop glass style */
+        .glass-box {
+            background: rgba(18, 18, 18, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-[100dvh] md:h-screen w-full overflow-x-hidden overflow-y-auto md:overflow-hidden selection:bg-white/10 relative">
+
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-10 md:py-6 h-full min-h-0">
+        
+        <div class="w-full text-center shrink-0 mb-8 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+                Projects
+            </h1>
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide">
+            </p>
+        </div>
+
+        <!-- Updated grid to 2 wider/longer columns per row -->
+        <div id="projects-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 flex-grow min-h-0 overflow-y-auto animate-in pr-1" style="animation-delay: 0.2s; opacity: 0;">
+            <div id="loading-spinner" class="col-span-full text-center py-12 text-zinc-400 font-bold uppercase tracking-widest text-xs animate-pulse">
+                Loading Projects...
+            </div>
+        </div>
+    </main>
+
+    <footer class="w-full flex justify-between items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+        </button>
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-xl border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+        <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
+            <p id="cookie-text"></p>
+        </div>
+        <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
+            <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"></button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/projects";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/projects";
+        const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
+
+        const translations = {
+            de: {
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
+                heroDesc: "Eine Sammlung meiner digitalen Arbeiten und Experimente",
+                cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
+                cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
+                noProjects: "Momentan sind keine Projekte verfügbar."
+            },
+            en: {
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
+                heroDesc: "A collection of my digital works and experiments",
+                cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
+                cookieDecline: "Decline", cookieAccept: "Accept",
+                noProjects: "No projects available at the moment."
+            }
+        };
+
+        let currentLang = localStorage.getItem('siteLang') || 'en';
+        let fetchedProjects = [];
+
+        async function fetchProjects() {
+            try {
+                const response = await fetch(GITHUB_API_URL);
+                if (!response.ok) throw new Error("Failed to fetch");
+                const data = await response.json();
+                
+                const filteredFiles = data.filter(file => 
+                    (file.name.endsWith('.html') && file.name.toLowerCase() !== 'index.html') || 
+                    file.type === 'dir'
+                );
+
+                const projectPromises = filteredFiles.map(async (file) => {
+                    let titleDe = file.name.replace('.html', '').replace(/_/g, ' ');
+                    let titleEn = titleDe;
+                    let descriptionDe = "Website / Projekt"; 
+                    let descriptionEn = "Website / Project";
+                    
+                    const url = file.type === 'dir' 
+                        ? `https://thataustrianone.eu/projects/${file.name}/` 
+                        : `https://thataustrianone.eu/projects/${file.name}`;
+
+                    if (file.type === 'dir') {
+                        try {
+                            const infoUrl = `${GITHUB_RAW_BASE}/${file.name}/info.json`;
+                            const infoRes = await fetch(infoUrl);
+                            if (infoRes.ok) {
+                                const info = await infoRes.json();
+                                const p = info.project || info;
+                                if (p.title) {
+                                    titleDe = p.title;
+                                    titleEn = p.title_en || p.title;
+                                }
+                                if (p.description) {
+                                    descriptionDe = p.description;
+                                    descriptionEn = p.description_en || p.description;
+                                }
+                            }
+                        } catch (err) {}
+                    }
+
+                    return {
+                        name: { de: titleDe, en: titleEn },
+                        description: { de: descriptionDe, en: descriptionEn },
+                        url: url
+                    };
+                });
+
+                fetchedProjects = await Promise.all(projectPromises);
+                render();
+            } catch (e) {
+                console.error("Fetch error:", e);
+                render();
+            }
+        }
+
+        function render() {
+            const t = translations[currentLang];
+            
+            document.getElementById('hero-desc').innerText = t.heroDesc;
+            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
+            
+            document.getElementById('cookie-text').innerText = t.cookieText;
+            document.getElementById('cookie-decline').innerText = t.cookieDecline;
+            document.getElementById('cookie-accept').innerText = t.cookieAccept;
+
+            const grid = document.getElementById('projects-grid');
+
+            if (fetchedProjects.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500 font-bold uppercase tracking-widest text-xs">${t.noProjects}</div>`;
+                return;
+            }
+
+            grid.innerHTML = fetchedProjects.map(p => {
+                const title = currentLang === 'en' ? p.name.en : p.name.de;
+                const desc = currentLang === 'en' ? p.description.en : p.description.de;
+
+                return `
+                <a href="${p.url}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-zinc-300/80 hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.4)] active:scale-[0.99] p-5 md:p-6 flex flex-col justify-between overflow-hidden min-h-[160px] h-full">
+                    
+                    <div class="flex items-start justify-start w-full">
+                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 text-zinc-300 bg-zinc-300/10 z-10">
+                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                            </svg>
+                        </div>
+                    </div>
+                    
+                    <div class="z-10 mt-auto pt-6 flex items-end justify-between w-full">
+                        <div class="flex flex-col justify-end min-w-0 pr-6">
+                            <h2 class="text-xl sm:text-2xl md:text-2xl font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2">${title}</h2>
+                            <p class="text-zinc-500 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest truncate pr-2">${desc}</p>
+                        </div>
+                        
+                        <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
+                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${arrowUpRight}</svg>
+                        </div>
+                    </div>
+                </a>
+                `;
+            }).join('');
+        }
+
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            localStorage.setItem('siteLang', currentLang);
+            render();
+        };
+
+        const cookieBanner = document.getElementById('cookie-banner');
+        const cookieConsent = localStorage.getItem('siteCookieConsent');
+
+        function injectGA() {
+            if (document.getElementById('ga-script')) return;
+            const script1 = document.createElement('script');
+            script1.id = 'ga-script';
+            script1.async = true;
+            script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
+            document.head.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-0WHX0WMFTC');
+            `;
+            document.head.appendChild(script2);
+        }
+
+        if (!cookieConsent) {
+            cookieBanner.classList.remove('hidden');
+        } else if (cookieConsent === 'granted') {
+            injectGA();
+        }
+
+        window.handleCookie = (status) => {
+            localStorage.setItem('siteCookieConsent', status);
+            cookieBanner.classList.add('opacity-0', 'translate-y-full');
+            setTimeout(() => cookieBanner.classList.add('hidden'), 400);
+            if (status === 'granted') injectGA();
+        };
+
+        fetchProjects();
+    </script>
+</body>
+</html>
