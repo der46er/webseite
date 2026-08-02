@@ -1,20 +1,13 @@
 {
   "project": {
-    "id": "local-qr-pro-v8",
+    "id": "qr-v8",
     "icon": "theme",
-    "title": "Local QR pro",
-    "title_en": "Local QR pro",
-    "description": "QR-Code-Generator im Glassmorphismus-Design mit dynamischen Verläufen. Unterstützt Multilingualität und lokale Offline-Nutzung.",
-    "description_en": "Glassmorphism-style QR generator with dynamic gradients. Supports multiple languages and local offline functionality.",
+    "title": "QR Code Generator",
+    "title_en": "QR Code Generator",
+    "description": "Anpassbarer QR-Code Generator ",
+    "description_en": "Custom QR Code generator",
     "version": "8.0",
-    "date": "2026-02-21",
-    "status": "Live",
-    "technologies": [
-      "HTML5",
-      "CSS3 (Glassmorphism)",
-      "JavaScript",
-      "QRious JS Library",
-      "GitHub Fonts (Static)"
+    "date": "2026-08-02",
     ]
   }
 }
