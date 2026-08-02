@@ -72,7 +72,7 @@
 
 <body class="flex flex-col min-h-[100dvh] md:h-screen w-full overflow-x-hidden overflow-y-auto md:overflow-hidden selection:bg-white/10 relative">
 
-    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-10 md:py-6 h-full min-h-0">
+    <main class="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-start py-10 md:py-6 h-full min-h-0">
         
         <div class="w-full text-center shrink-0 mb-8 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
             <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
@@ -82,8 +82,7 @@
             </p>
         </div>
 
-        <!-- Updated grid to 2 wider/longer columns per row -->
-        <div id="projects-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 flex-grow min-h-0 overflow-y-auto animate-in pr-1" style="animation-delay: 0.2s; opacity: 0;">
+        <div id="projects-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4 auto-rows-max overflow-y-auto animate-in pr-1 flex-grow-0" style="animation-delay: 0.2s; opacity: 0;">
             <div id="loading-spinner" class="col-span-full text-center py-12 text-zinc-400 font-bold uppercase tracking-widest text-xs animate-pulse">
                 Loading Projects...
             </div>
@@ -107,13 +106,21 @@
             <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
         </div>
     </div>
-
-    <script>
+    
+<script>
         document.getElementById('year').innerText = new Date().getFullYear();
 
         const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/projects";
         const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/projects";
         const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
+
+        // SVG Icon Library for dynamic rendering based on info.json
+        const iconsMap = {
+            web: `<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
+            theme: `<path d="M18.37 2.63a2.12 2.12 0 0 1 3 3L13.5 13.5l-4 1 1-4Z"/><path d="M9 14.5 4 19.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0s.83-2.17 0-3L6 11.5"/>`,
+            hardware: `<rect x="4" y="4" width="16" height="16" rx="2"/><rect x="9" y="9" width="6" height="6"/><path d="M15 2v2M15 20v2M2 15h2M2 9h2M20 15h2M20 9h2M9 2v2M9 20v2"/>`,
+            energy: `<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>`
+        };
 
         const translations = {
             de: {
@@ -143,48 +150,46 @@
                 if (!response.ok) throw new Error("Failed to fetch");
                 const data = await response.json();
                 
-                const filteredFiles = data.filter(file => 
-                    (file.name.endsWith('.html') && file.name.toLowerCase() !== 'index.html') || 
-                    file.type === 'dir'
-                );
+                // STAGE 1: Strictly filter ONLY subdirectories (type === 'dir')
+                const directories = data.filter(file => file.type === 'dir');
 
-                const projectPromises = filteredFiles.map(async (file) => {
-                    let titleDe = file.name.replace('.html', '').replace(/_/g, ' ');
-                    let titleEn = titleDe;
-                    let descriptionDe = "Website / Projekt"; 
-                    let descriptionEn = "Website / Project";
-                    
-                    const url = file.type === 'dir' 
-                        ? `https://thataustrianone.eu/projects/${file.name}/` 
-                        : `https://thataustrianone.eu/projects/${file.name}`;
+                // STAGE 2: Fetch info.json inside each directory; require strict structure
+                const projectPromises = directories.map(async (folder) => {
+                    const infoUrl = `${GITHUB_RAW_BASE}/${folder.name}/info.json`;
+                    try {
+                        const infoRes = await fetch(infoUrl);
+                        if (!infoRes.ok) return null;
 
-                    if (file.type === 'dir') {
-                        try {
-                            const infoUrl = `${GITHUB_RAW_BASE}/${file.name}/info.json`;
-                            const infoRes = await fetch(infoUrl);
-                            if (infoRes.ok) {
-                                const info = await infoRes.json();
-                                const p = info.project || info;
-                                if (p.title) {
-                                    titleDe = p.title;
-                                    titleEn = p.title_en || p.title;
-                                }
-                                if (p.description) {
-                                    descriptionDe = p.description;
-                                    descriptionEn = p.description_en || p.description;
-                                }
-                            }
-                        } catch (err) {}
+                        const info = await infoRes.json();
+                        
+                        // Strict Structure Check: Only accept JSON files containing a root "project" object
+                        if (!info || typeof info !== 'object' || !info.project || typeof info.project !== 'object') {
+                            return null;
+                        }
+
+                        const p = info.project;
+
+                        let titleDe = p.title || folder.name.replace(/_/g, ' ');
+                        let titleEn = p.title_en || titleDe;
+                        let descriptionDe = p.description || "Website / Projekt";
+                        let descriptionEn = p.description_en || descriptionDe;
+                        let iconType = (p.icon && iconsMap[p.icon.toLowerCase()]) ? p.icon.toLowerCase() : 'web';
+
+                        return {
+                            name: { de: titleDe, en: titleEn },
+                            description: { de: descriptionDe, en: descriptionEn },
+                            icon: iconType,
+                            url: `https://thataustrianone.eu/projects/${folder.name}/`
+                        };
+                    } catch (err) {
+                        return null; // Excludes folder if JSON parsing or validation fails
                     }
-
-                    return {
-                        name: { de: titleDe, en: titleEn },
-                        description: { de: descriptionDe, en: descriptionEn },
-                        url: url
-                    };
                 });
 
-                fetchedProjects = await Promise.all(projectPromises);
+                const resolved = await Promise.all(projectPromises);
+                // Filter out any folder that returned null
+                fetchedProjects = resolved.filter(p => p !== null);
+                
                 render();
             } catch (e) {
                 console.error("Fetch error:", e);
@@ -212,26 +217,27 @@
             grid.innerHTML = fetchedProjects.map(p => {
                 const title = currentLang === 'en' ? p.name.en : p.name.de;
                 const desc = currentLang === 'en' ? p.description.en : p.description.de;
+                const iconSvg = iconsMap[p.icon] || iconsMap['web'];
 
                 return `
-                <a href="${p.url}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-zinc-300/80 hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.4)] active:scale-[0.99] p-5 md:p-6 flex flex-col justify-between overflow-hidden min-h-[160px] h-full">
+                <a href="${p.url}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-zinc-300/80 hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.4)] active:scale-[0.99] p-5 md:p-6 flex flex-col justify-between overflow-hidden h-[160px] w-full">
                     
                     <div class="flex items-start justify-start w-full">
-                        <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 text-zinc-300 bg-zinc-300/10 z-10">
-                            <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
-                                <circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        <div class="w-11 h-11 rounded-xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 text-zinc-300 bg-zinc-300/10 z-10">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">
+                                ${iconSvg}
                             </svg>
                         </div>
                     </div>
                     
-                    <div class="z-10 mt-auto pt-6 flex items-end justify-between w-full">
-                        <div class="flex flex-col justify-end min-w-0 pr-6">
-                            <h2 class="text-xl sm:text-2xl md:text-2xl font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2">${title}</h2>
-                            <p class="text-zinc-500 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest truncate pr-2">${desc}</p>
+                    <div class="z-10 mt-auto flex items-end justify-between w-full">
+                        <div class="flex flex-col justify-end min-w-0 pr-4">
+                            <h2 class="text-lg sm:text-xl md:text-xl font-black text-white tracking-tight italic uppercase leading-tight mb-1 group-hover:text-white transition-colors truncate pr-1">${title}</h2>
+                            <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate pr-1">${desc}</p>
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
-                            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${arrowUpRight}</svg>
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${arrowUpRight}</svg>
                         </div>
                     </div>
                 </a>
