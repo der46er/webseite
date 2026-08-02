@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TAO | Local QR</title>
+    
+    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <style>
+        @font-face {
+            font-family: 'Inter';
+            src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/Inter-VariableFont_slnt,wght.ttf') format('truetype');
+            font-weight: 100 900;
+            font-display: swap;
+            font-style: normal;
+        }
+
+        :root {
+            --theme-color: #007bff;
+            --theme-rgb: 0, 123, 255;
+            --app-font: 'Inter', sans-serif;
+        }
+
+        body {
+            font-family: var(--app-font);
+            background-color: #0b0d11;
+            color: white;
+            overflow-x: hidden;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: space-between;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+            padding: 1.5rem 1.5rem 0 1.5rem;
+        }
+
+        .animate-in { animation: fadeIn 0.4s ease-out forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .theme-text { color: var(--theme-color); }
+        .theme-bg-glow { background-color: rgba(var(--theme-rgb), 0.15); }
+        .theme-border-hover:hover { border-color: rgba(var(--theme-rgb), 0.5) !important; }
+        .theme-drop-shadow { filter: drop-shadow(0 0 8px var(--theme-color)); }
+
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            isolation: isolate;
+        }
+
+        .format-control { padding: 4px; display: flex; }
+        .format-control button { color: rgba(255,255,255,0.5); border-radius: 1rem; transition: all 0.3s; flex: 1; border: 1px solid transparent; }
+        
+        /* Unified Button Active State */
+        .adv-toggle.active, .quality-btn.active, .format-control button.active, .custom-res-input.active {
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            background: rgba(255, 255, 255, 0.1) !important;
+            color: #fff !important;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        /* Checkerboard for Transparent Preview */
+        .checker-bg {
+            background-color: transparent;
+            background-image: linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05)),
+                              linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05));
+            background-size: 20px 20px;
+            background-position: 0 0, 10px 10px;
+        }
+
+        /* Custom Scrollbar for horizontal containers */
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+        .custom-scrollbar {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
+        }
+
+        canvas { 
+            display: block; 
+            width: 100%; 
+            height: auto;
+            max-width: 240px;
+            aspect-ratio: 1/1;
+            object-fit: contain;
+            margin: 0; padding: 0;
+            image-rendering: pixelated; 
+        }
+
+        #qrText {
+            background: rgba(255,255,255,0.03);
+            border: 1px solid rgba(255,255,255,0.05);
+            color: #fff;
+        }
+        #qrText:focus {
+            border-color: var(--theme-color);
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(var(--theme-rgb), 0.2);
+        }
+
+        .template-buttons button.active {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.3) !important;
+            color: #fff;
+        }
+
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type="number"] { -moz-appearance: textfield; }
+
+        @media (max-width: 768px) {
+            body { padding: 4.5rem 1rem 0 1rem; align-items: flex-start; overflow-y: auto; }
+            canvas { max-width: 200px !important; }
+        }
+    </style>
+</head>
+<body class="selection:bg-emerald-500/30">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+        <div class="absolute -bottom-[5%] -right-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
+    </div>
+
+    <div class="fixed top-4 right-4 z-50 flex items-center p-1 gap-2 glass-panel rounded-full shadow-lg scale-90 sm:scale-100 origin-top-right">
+        <button onclick="openTutorial()" id="tutOpenBtn" title="How to use" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+        </button>
+        
+        <button onclick="toggleLanguage()" id="langToggleBtn" title="Switch to English" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 overflow-hidden p-2.5">
+            <img id="langFlagImg" src="/assets/flags/united-kingdom-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
+        </button>
+        
+        <a href="https://thataustrianone.eu/socials/" target="_self" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"></path></svg>
+        </a>
+    </div>
+
+    <div id="tutorialModal" class="hidden fixed inset-0 z-[100] items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in" onclick="closeTutorialModal(event)">
+        <div class="bg-[#161920] border border-white/10 rounded-[1.5rem] p-6 max-w-sm w-full shadow-2xl relative" onclick="event.stopPropagation()">
+            <button onclick="closeTutorialModal(true)" class="absolute top-4 right-4 text-zinc-500 hover:text-white transition-colors">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <h2 data-i18n="tutorialTitle" class="font-black italic text-xl uppercase tracking-wide text-white mb-4">How to use</h2>
+            <ul class="text-zinc-300 text-sm space-y-3 font-medium">
+                <li data-i18n-html="tut1"><strong class="text-white">1.</strong> Type your desired text or URL in the input field.</li>
+                <li data-i18n-html="tut2"><strong class="text-white">2.</strong> Select a social preset for quick profile templates.</li>
+                <li data-i18n-html="tut3"><strong class="text-white">3.</strong> Customize your Code using the toggles to add images, change shapes, or adjust gradients.</li>
+                <li data-i18n-html="tut4"><strong class="text-white">4.</strong> Choose your file type, adjust quality, download the output, copy directly, or print.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="flex-grow flex flex-col relative z-10 max-w-xl mx-auto px-4 w-full pb-8 justify-center items-center h-full min-h-0 animate-in">
+        <div class="bg-white/[0.03] border border-white/[0.05] shadow-2xl rounded-[2.5rem] p-5 sm:p-8 w-full flex flex-col items-center">
+            
+            <div class="relative w-full mb-6">
+                 <input type="text" id="qrText" placeholder="Enter text or URL" class="w-full rounded-[1.2rem] px-6 py-4 pr-12 text-center font-bold tracking-wider text-sm transition-colors shadow-lg">
+                 <button id="resetTextButton" title="Clear input" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-red-400 transition-colors">
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                 </button>
+            </div>
+
+            <div class="template-buttons flex flex-nowrap sm:flex-wrap overflow-x-auto sm:overflow-visible justify-start sm:justify-center gap-2 mb-6 w-full pb-3 sm:pb-0 custom-scrollbar px-1 sm:px-0 snap-x"></div>
+
+            <div class="relative w-full flex justify-center mb-6">
+                <canvas id="mainDomCanvas" class="checker-bg w-full max-w-[240px] aspect-square rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.6)]" style="image-rendering: pixelated;"></canvas>
+            </div>
+
+            <div class="w-full flex flex-col items-center gap-5 mt-2">
+                
+                <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full mb-2">
+                    <label id="qrColorWrapper" class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span data-i18n="qrCode" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR Code</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="qrColorPicker" value="#000000" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    
+                    <label id="qrGrad1Wrapper" class="hidden flex-col items-center gap-2 cursor-pointer group">
+                        <span data-i18n="qrG1" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR G1</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="qrGrad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    <label id="qrGrad2Wrapper" class="hidden flex-col items-center gap-2 cursor-pointer group">
+                        <span data-i18n="qrG2" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR G2</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="qrGrad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+
+                    <label id="bgZoneWrapper" class="flex flex-col items-center gap-2 cursor-pointer group transition-all duration-300">
+                        <span data-i18n="bg" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Background</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform checker-bg">
+                            <input type="color" id="bgZoneColorPicker" value="#ffffff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    
+                    <label class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span data-i18n="frame1" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Frame 1</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="grad1ColorPicker" value="#007bff" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                    <label class="flex flex-col items-center gap-2 cursor-pointer group">
+                        <span data-i18n="frame2" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">Frame 2</span>
+                        <div class="w-8 h-8 rounded-full border-2 border-white/10 overflow-hidden relative shadow-lg group-hover:scale-110 transition-transform">
+                            <input type="color" id="grad2ColorPicker" value="#8b5cf6" class="absolute -top-2 -left-2 w-16 h-16 cursor-pointer">
+                        </div>
+                    </label>
+                </div>
+
+                <div class="flex flex-col gap-2 w-full mt-1">
+                    <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 w-full">
+                        <button id="transparentBgBtn" data-i18n="transBg" class="adv-toggle flex items-center justify-center text-center px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Transparent BG</button>
+                        <button id="qrShapeToggleBtn" data-i18n="circleShape" class="adv-toggle flex items-center justify-center text-center px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Circle Shape</button>
+                        <button id="qrGradientToggleBtn" data-i18n="qrGrad" class="adv-toggle flex items-center justify-center text-center px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">QR Gradient</button>
+                        <button id="matchFrameToggleBtn" data-i18n="matchFrame" class="adv-toggle flex items-center justify-center text-center px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Match Frame</button>
+                    </div>
+                    
+                    <div class="grid grid-cols-2 sm:flex sm:flex-wrap sm:justify-center gap-2 w-full">
+                        <button id="disableFrameToggleBtn" data-i18n="hideFrame" class="col-span-2 sm:col-span-1 adv-toggle flex items-center justify-center text-center px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md">Hide Frame</button>
+                        
+                        <input type="file" id="bgImageUpload" accept="image/*" class="hidden">
+                        <button id="bgUploadBtn" class="adv-toggle px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md flex items-center justify-center gap-1">
+                            <svg id="bgUploadIcon" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <span id="bgUploadText">Upload BG</span>
+                        </button>
+
+                        <input type="file" id="centerLogoUpload" accept="image/*" class="hidden">
+                        <button id="centerLogoBtn" class="adv-toggle px-2 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 text-zinc-400 transition-all shadow-md flex items-center justify-center gap-1">
+                            <svg id="logoUploadIcon" class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            <span id="centerLogoText">Center Logo</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="format-control flex w-full max-w-[320px] p-1 bg-white/[0.03] border border-white/[0.05] rounded-[1.2rem] shadow-lg mt-2">
+                    <button data-format="jpeg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">JPG</button>
+                    <button data-format="png" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase active">PNG</button>
+                    <button data-format="webp" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">WEBP</button>
+                    <button data-format="svg" class="flex-1 py-2 text-[11px] font-bold tracking-widest uppercase">SVG</button>
+                </div>
+                
+                <div class="flex gap-2 sm:gap-3 justify-center w-full">
+                    <button id="printQrCodeButton" title="Print" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M19,8H5C3.34,8,2,9.34,2,11v6h4v4h12v-4h4v-6C22,9.34,20.66,8,19,8z M16,19H8v-5h8V19z M19,12c-0.55,0-1-0.45-1-1 s0.45-1,1-1s1,0.45,1,1S19.55,12,19,12z M18,3H6v4h12V3z"/></svg>
+                    </button>
+                    <button id="saveQrCodeButton" title="Save" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></svg>
+                    </button>
+                    <button id="copyQrCodeButton" title="Copy Image" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
+                        <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                    </button>
+                    <button id="refreshGradientButton" title="Randomize Colors" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
+                         <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="save-preview-overlay" class="hidden fixed inset-0 flex items-center justify-center p-4 sm:p-6 animate-in text-zinc-100 z-[9999] bg-[#0b0d11]/90 backdrop-blur-md" onclick="closePreview(event)">
+        <div class="rounded-[2.5rem] w-full max-w-sm overflow-hidden flex flex-col shadow-2xl border border-white/10 bg-[#0b0d11] p-8 md:p-10 text-center relative" onclick="event.stopPropagation()">
+            <button onclick="closePreview(true)" class="absolute top-6 right-6 p-2 text-zinc-500 hover:text-white transition-all">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+            </button>
+            <h3 data-i18n="previewTitle" class="text-xl md:text-2xl font-black italic uppercase tracking-tighter text-white mb-6">Preview</h3>
+            <canvas id="preview-canvas" class="checker-bg mx-auto rounded-xl shadow-2xl mb-6 border border-white/10 w-full" style="max-width: 240px; image-rendering: pixelated;"></canvas>
+            
+            <div class="mb-6 flex flex-col gap-2 w-full text-left">
+                <label data-i18n="quality" class="text-[10px] font-bold text-zinc-400 uppercase tracking-widest">Quality</label>
+                <div class="flex flex-wrap sm:flex-nowrap gap-1.5 w-full" id="quality-selector">
+                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400" data-size="512" data-i18n="low">Low</button>
+                    <button class="quality-btn active flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400" data-size="1024" data-i18n="med">Med</button>
+                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400" data-size="2048" data-i18n="high">High</button>
+                    <button class="quality-btn flex-1 py-2 text-[10px] font-bold uppercase rounded-lg border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-zinc-400" data-size="4096" data-i18n="ultra">Ultra</button>
+                    <input type="number" id="customResInput" data-placeholder-i18n="custom" class="custom-res-input w-full sm:w-[4.5rem] py-2 text-[10px] font-bold text-center rounded-lg border border-white/10 bg-white/5 text-zinc-400 focus:outline-none transition-all shadow-md placeholder:text-zinc-600" placeholder="Custom">
+                </div>
+            </div>
+
+            <a href="#" data-i18n="download" id="preview-download-button" class="block w-full bg-white text-black hover:bg-gray-200 py-4 rounded-[1.2rem] font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] shadow-lg">Download</a>
+        </div>
+    </div>
+
+    <footer class="w-full flex justify-center items-center px-6 py-4 shrink-0 relative z-10 select-none mt-auto">
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const qrText = document.getElementById('qrText');
+            
+            // Pickers
+            const qrColorPicker = document.getElementById('qrColorPicker');
+            const bgZoneColorPicker = document.getElementById('bgZoneColorPicker');
+            const grad1ColorPicker = document.getElementById('grad1ColorPicker');
+            const grad2ColorPicker = document.getElementById('grad2ColorPicker');
+            const qrGrad1ColorPicker = document.getElementById('qrGrad1ColorPicker');
+            const qrGrad2ColorPicker = document.getElementById('qrGrad2ColorPicker');
+            
+            // Wrappers
+            const qrColorWrapper = document.getElementById('qrColorWrapper');
+            const qrGrad1Wrapper = document.getElementById('qrGrad1Wrapper');
+            const qrGrad2Wrapper = document.getElementById('qrGrad2Wrapper');
+            const bgZoneWrapper = document.getElementById('bgZoneWrapper');
+            
+            // Action Buttons
+            const copyQrCodeButton = document.getElementById('copyQrCodeButton');
+            const transparentBgBtn = document.getElementById('transparentBgBtn');
+            const qrGradientToggleBtn = document.getElementById('qrGradientToggleBtn');
+            const matchFrameToggleBtn = document.getElementById('matchFrameToggleBtn');
+            const disableFrameToggleBtn = document.getElementById('disableFrameToggleBtn');
+            const qrShapeToggleBtn = document.getElementById('qrShapeToggleBtn');
+            
+            // Image Uploads
+            const bgImageUpload = document.getElementById('bgImageUpload');
+            const bgUploadBtn = document.getElementById('bgUploadBtn');
+            const centerLogoUpload = document.getElementById('centerLogoUpload');
+            const centerLogoBtn = document.getElementById('centerLogoBtn');
+            
+            const mainDomCanvas = document.getElementById('mainDomCanvas');
+            const savePreviewOverlay = document.getElementById('save-preview-overlay');
+            const savePreviewCanvas = document.getElementById('preview-canvas');
+            const formatControl = document.querySelector('.format-control');
+            const tutorialModal = document.getElementById('tutorialModal');
+            const qualityBtns = document.querySelectorAll('.quality-btn');
+            const customResInput = document.getElementById('customResInput');
+            
+            // Core States
+            let currentSaveFormat = 'png';
+            let currentLang = 'en';
+            let currentQuality = 1024;
+            let gradientParams = { angle: 135, color1: '#007bff', color2: '#8b5cf6' };
+            
+            // Advanced States
+            let isTransparentBg = false;
+            let isQrGradient = false;
+            let isMatchFrame = false;
+            let isFrameOff = false;
+            let isCircleShape = false;
+            
+            let uploadedBgImage = null;
+            let uploadedBgDataUrl = null;
+            let uploadedCenterLogo = null;
+            let uploadedCenterLogoDataUrl = null;
+
+            document.getElementById('year').innerText = new Date().getFullYear();
+
+            const hexToRgbString = (hex) => {
+                let cleanHex = hex.replace('#', '');
+                if (cleanHex.length === 3) cleanHex = cleanHex.split('').map(x => x + x).join('');
+                const r = parseInt(cleanHex.substr(0, 2), 16);
+                const g = parseInt(cleanHex.substr(2, 2), 16);
+                const b = parseInt(cleanHex.substr(4, 2), 16);
+                return `${r}, ${g}, ${b}`;
+            };
+
+            const socialTemplates = [
+                { name: "Facebook", prefix: "https://www.facebook.com/" },
+                { name: "Instagram", prefix: "https://www.instagram.com/" },
+                { name: "TikTok", prefix: "https://www.tiktok.com/" },
+                { name: "YouTube", prefix: "https://www.youtube.com/" },
+                { name: "X", prefix: "https://x.com/" },
+                { name: "Telegram", prefix: "https://t.me/" },
+                { name: "WhatsApp", prefix: "https://wa.me/" },
+                { name: "Pinterest", prefix: "https://www.pinterest.com/" },
+                { name: "Kick", prefix: "https://kick.com/" }
+            ];
+
+            const translations = {
+                en: { 
+                    qrPlaceholder: "Text or URL", 
+                    saveButton: "Save", printButtonTitle: "Print", resetButtonTitle: "Clear input", refreshGradientButtonText: "Randomize Colors", copyButtonTitle: "Copy Image",
+                    initialQrValue: "Hello World!", fileName: "local_qr_pro", previewTitle: "Preview", download: "Download",
+                    quality: "Quality", low: "Low", med: "Med", high: "High", ultra: "Ultra", custom: "Custom",
+                    tutorialTitle: "How to use", tutBtn: "How to use",
+                    tut1: "<strong class='text-white'>1.</strong> Type your desired text or URL in the input field.",
+                    tut2: "<strong class='text-white'>2.</strong> Select a social preset for quick profile templates.",
+                    tut3: "<strong class='text-white'>3.</strong> Customize your Code using the toggles to add images, change shapes, or adjust gradients.",
+                    tut4: "<strong class='text-white'>4.</strong> Choose your file type, adjust quality, download the output, copy directly, or print.",
+                    qrCode: "QR Code", bg: "Background", frame1: "Frame 1", frame2: "Frame 2", qrG1: "QR G1", qrG2: "QR G2",
+                    transBg: "Transparent BG", circleShape: "Circle Shape", qrGrad: "QR Gradient", matchFrame: "Match Frame", hideFrame: "Hide Frame",
+                    upBg: "Upload BG", rmBg: "Remove BG ✕", upLogo: "Center Logo", rmLogo: "Remove Logo ✕"
+                },
+                de: { 
+                    qrPlaceholder: "Text oder URL", 
+                    saveButton: "Speichern", printButtonTitle: "Drucken", resetButtonTitle: "Eingabe löschen", refreshGradientButtonText: "Farben mischen", copyButtonTitle: "Bild kopieren",
+                    initialQrValue: "Hallo Welt!", fileName: "local_qr_pro", previewTitle: "Vorschau", download: "Herunterladen",
+                    quality: "Qualität", low: "Niedrig", med: "Mittel", high: "Hoch", ultra: "Ultra", custom: "Eigene",
+                    tutorialTitle: "Bedienungsanleitung", tutBtn: "Anleitung",
+                    tut1: "<strong class='text-white'>1.</strong> Gewünschten Text oder URL in das Eingabefeld eintippen.",
+                    tut2: "<strong class='text-white'>2.</strong> Eine Social-Media-Vorlage für schnelle Links wählen.",
+                    tut3: "<strong class='text-white'>3.</strong> Den Code mit den Schaltern anpassen, um Bilder hinzuzufügen, Formen zu ändern oder Verläufe anzupassen.",
+                    tut4: "<strong class='text-white'>4.</strong> Dateityp wählen, Qualität anpassen, herunterladen, direkt kopieren oder drucken.",
+                    qrCode: "QR Code", bg: "Hintergrund", frame1: "Rahmen 1", frame2: "Rahmen 2", qrG1: "QR G1", qrG2: "QR G2",
+                    transBg: "Transparenter HG", circleShape: "Kreisform", qrGrad: "QR Verlauf", matchFrame: "Rahmen angleichen", hideFrame: "Rahmen aus",
+                    upBg: "HG Hochladen", rmBg: "HG entfernen ✕", upLogo: "Logo zentrieren", rmLogo: "Logo entfernen ✕"
+                }
+            };
+
+            const applyGradientFromPickers = () => {
+                const color1 = grad1ColorPicker.value;
+                const color2 = grad2ColorPicker.value;
+                gradientParams.angle = 135; 
+                
+                document.documentElement.style.setProperty('--theme-color', color1);
+                document.documentElement.style.setProperty('--theme-rgb', hexToRgbString(color1));
+                
+                gradientParams.color1 = color1;
+                gradientParams.color2 = color2;
+                updateQr();
+            };
+
+            const applyRandomGradient = () => {
+                const colors = ['#dc2626', '#007bff', '#8b5cf6', '#ec4899', '#06b6d4', '#3b82f6', '#1DB954', '#FF6600', '#FFD700', '#ff2d55', '#4ade80'];
+                const color1 = colors[Math.floor(Math.random() * colors.length)];
+                let color2 = colors[Math.floor(Math.random() * colors.length)];
+                while(color1 === color2) color2 = colors[Math.floor(Math.random() * colors.length)];
+                
+                grad1ColorPicker.value = color1;
+                grad2ColorPicker.value = color2;
+                
+                if (isQrGradient) {
+                    qrGrad1ColorPicker.value = colors[Math.floor(Math.random() * colors.length)];
+                    qrGrad2ColorPicker.value = colors[Math.floor(Math.random() * colors.length)];
+                }
+                
+                applyGradientFromPickers();
+            };
+
+            const handleImageUpload = (file, callback) => {
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    const img = new Image();
+                    img.onload = () => callback(img, e.target.result);
+                    img.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            };
+
+            const updateBgZoneState = () => {
+                if (isMatchFrame && !isFrameOff) {
+                    bgZoneWrapper.classList.add('opacity-30', 'pointer-events-none');
+                } else {
+                    bgZoneWrapper.classList.remove('opacity-30', 'pointer-events-none');
+                }
+            };
+
+            const getTrimmedQrCanvas = (text, foregroundColor) => {
+                const tempCanvas = document.createElement('canvas');
+                new QRious({
+                    element: tempCanvas,
+                    size: 1024,
+                    padding: 0,
+                    level: 'H',
+                    value: text,
+                    foreground: foregroundColor,
+                    background: 'rgba(0,0,0,0)'
+                });
+                
+                const ctx = tempCanvas.getContext('2d', { willReadFrequently: true });
+                const pixels = ctx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+                const l = pixels.data.length;
+                let bound = { top: null, left: null, right: null, bottom: null };
+                
+                for (let i = 0; i < l; i += 4) {
+                    if (pixels.data[i + 3] !== 0) {
+                        const x = (i / 4) % tempCanvas.width;
+                        const y = ~~((i / 4) / tempCanvas.width);
+                        
+                        if (bound.top === null) bound.top = y;
+                        if (bound.left === null) bound.left = x;
+                        else if (x < bound.left) bound.left = x;
+                        if (bound.right === null) bound.right = x;
+                        else if (bound.right < x) bound.right = x;
+                        if (bound.bottom === null) bound.bottom = y;
+                        else if (bound.bottom < y) bound.bottom = y;
+                    }
+                }
+                
+                if (bound.top === null) return tempCanvas; 
+                
+                const trimHeight = bound.bottom - bound.top + 1;
+                const trimWidth = bound.right - bound.left + 1;
+                const trimmed = document.createElement('canvas');
+                trimmed.width = trimWidth;
+                trimmed.height = trimHeight;
+                trimmed.getContext('2d').drawImage(tempCanvas, bound.left, bound.top, trimWidth, trimHeight, 0, 0, trimWidth, trimHeight);
+                return trimmed;
+            };
+
+            let renderTimeout;
+            const updateQr = () => {
+                if (renderTimeout) cancelAnimationFrame(renderTimeout);
+                renderTimeout = requestAnimationFrame(() => {
+                    const sizeData = generateImageOfSize(512); 
+                    mainDomCanvas.width = sizeData.totalSize;
+                    mainDomCanvas.height = sizeData.totalSize;
+                    const ctx = mainDomCanvas.getContext('2d');
+                    ctx.clearRect(0, 0, sizeData.totalSize, sizeData.totalSize);
+                    ctx.drawImage(sizeData.canvas, 0, 0);
+                });
+            };
+
+            const generateImageOfSize = (baseSize) => {
+                const totalSize = parseInt(baseSize);
+                
+                const factorQZ = isCircleShape ? (256 / 1024) : (128 / 1024);
+                const factorBorder = isFrameOff ? 0 : (64 / 1024);
+                
+                const maxQrSize = totalSize / (1 + (factorQZ * 2) + (factorBorder * 2));
+                const quietZone = maxQrSize * factorQZ;
+                const borderThickness = maxQrSize * factorBorder;
+                
+                const baseOuterRadius = isFrameOff ? (maxQrSize * (64 / 1024)) : (maxQrSize * (128 / 1024));
+                const baseInnerRadius = maxQrSize * (64 / 1024);
+                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
+
+                const tempCanvas = document.createElement('canvas');
+                tempCanvas.width = totalSize;
+                tempCanvas.height = totalSize;
+                const ctx = tempCanvas.getContext('2d');
+                
+                const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
+                const qriousForeground = isQrGradient ? '#000000' : (qrColorPicker.value || '#000000');
+                const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
+
+                let finalQrToDraw = trimmedQr;
+                if (isQrGradient) {
+                    const qrGradCanvas = document.createElement('canvas');
+                    qrGradCanvas.width = trimmedQr.width;
+                    qrGradCanvas.height = trimmedQr.height;
+                    const qCtx = qrGradCanvas.getContext('2d');
+                    
+                    const qGrad = qCtx.createLinearGradient(0, 0, trimmedQr.width, trimmedQr.height);
+                    qGrad.addColorStop(0, qrGrad1ColorPicker.value || '#007bff');
+                    qGrad.addColorStop(1, qrGrad2ColorPicker.value || '#8b5cf6');
+                    qCtx.fillStyle = qGrad;
+                    qCtx.fillRect(0, 0, trimmedQr.width, trimmedQr.height);
+                    
+                    qCtx.globalCompositeOperation = 'destination-in';
+                    qCtx.imageSmoothingEnabled = false;
+                    qCtx.drawImage(trimmedQr, 0, 0);
+                    finalQrToDraw = qrGradCanvas;
+                }
+
+                const shouldPunchHole = !isFrameOff && (!isMatchFrame || uploadedBgImage || isTransparentBg);
+
+                if (!isFrameOff) {
+                    const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
+                    frameGrad.addColorStop(0, gradientParams.color1);
+                    frameGrad.addColorStop(1, gradientParams.color2);
+                    ctx.fillStyle = frameGrad;
+
+                    ctx.beginPath();
+                    if (ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
+                    else ctx.rect(0, 0, totalSize, totalSize);
+                    ctx.fill();
+
+                    if (shouldPunchHole) {
+                        const x = borderThickness;
+                        const size = totalSize - (borderThickness * 2);
+                        const innerRadius = isCircleShape ? (size / 2) : baseInnerRadius;
+
+                        ctx.globalCompositeOperation = 'destination-out';
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        else ctx.rect(x, x, size, size);
+                        ctx.fill();
+                        ctx.globalCompositeOperation = 'source-over'; 
+                    }
+                }
+
+                if (!isTransparentBg) {
+                    const x = isFrameOff ? 0 : borderThickness;
+                    const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
+                    const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
+
+                    if (uploadedBgImage) {
+                        ctx.save();
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        else ctx.rect(x, x, size, size);
+                        ctx.clip();
+
+                        const imgAspect = uploadedBgImage.width / uploadedBgImage.height;
+                        let drawW = size;
+                        let drawH = size;
+                        let drawX = x;
+                        let drawY = x;
+                        if (imgAspect > 1) { 
+                            drawW = size * imgAspect;
+                            drawX = x - (drawW - size) / 2;
+                        } else { 
+                            drawH = size / imgAspect;
+                            drawY = x - (drawH - size) / 2;
+                        }
+                        ctx.drawImage(uploadedBgImage, drawX, drawY, drawW, drawH);
+                        ctx.restore();
+                    } else if (!isMatchFrame || isFrameOff) {
+                        ctx.fillStyle = bgZoneColorPicker.value || '#ffffff';
+                        ctx.beginPath();
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        else ctx.rect(x, x, size, size);
+                        ctx.fill();
+                    }
+                }
+
+                const offset = borderThickness + quietZone;
+                const scale = Math.min(maxQrSize / trimmedQr.width, maxQrSize / trimmedQr.height);
+                const drawW = trimmedQr.width * scale;
+                const drawH = trimmedQr.height * scale;
+                const drawX = offset + (maxQrSize - drawW) / 2;
+                const drawY = offset + (maxQrSize - drawH) / 2;
+
+                ctx.imageSmoothingEnabled = false;
+                ctx.drawImage(finalQrToDraw, drawX, drawY, drawW, drawH);
+                ctx.imageSmoothingEnabled = true;
+                
+                if (uploadedCenterLogo) {
+                    const logoSize = maxQrSize * 0.25;
+                    const cx = totalSize / 2;
+                    const cy = totalSize / 2;
+
+                    ctx.fillStyle = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, logoSize * 0.6, 0, Math.PI * 2);
+                    ctx.fill();
+
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.arc(cx, cy, logoSize * 0.55, 0, Math.PI * 2);
+                    ctx.clip();
+                    
+                    const imgAspect = uploadedCenterLogo.width / uploadedCenterLogo.height;
+                    const dSize = logoSize * 1.1;
+                    let drawImgW = dSize;
+                    let drawImgH = dSize;
+                    if (imgAspect > 1) drawImgW = dSize * imgAspect;
+                    else drawImgH = dSize / imgAspect;
+                    
+                    ctx.drawImage(uploadedCenterLogo, cx - drawImgW/2, cy - drawImgH/2, drawImgW, drawImgH);
+                    ctx.restore();
+                }
+
+                return { canvas: tempCanvas, totalSize, maxQrSize, quietZone, borderThickness, outerRadius, baseOuterRadius, baseInnerRadius, drawX, drawY, drawW, drawH };
+            };
+
+            const generateSVGString = (sizeData) => {
+                const { totalSize, maxQrSize, quietZone, borderThickness, baseOuterRadius, baseInnerRadius, drawX, drawY, drawW, drawH } = sizeData;
+                const x = isFrameOff ? 0 : borderThickness;
+                const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
+                
+                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
+                const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
+
+                const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
+                const qriousForeground = isQrGradient ? '#ffffff' : (qrColorPicker.value || '#000000');
+                const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
+                const qrDataUrl = trimmedQr.toDataURL("image/png");
+
+                let svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
+                    <defs>
+                        <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="${gradientParams.color1}" />
+                            <stop offset="100%" stop-color="${gradientParams.color2}" />
+                        </linearGradient>`;
+                
+                const shouldPunchHole = !isFrameOff && (!isMatchFrame || uploadedBgDataUrl || isTransparentBg);
+
+                if (shouldPunchHole) {
+                    svgStr += `
+                        <mask id="holeMask">
+                            <rect width="${totalSize}" height="${totalSize}" fill="white" />
+                            <rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="black" />
+                        </mask>`;
+                }
+
+                if (isQrGradient) {
+                    svgStr += `
+                        <linearGradient id="qrGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="${qrGrad1ColorPicker.value || '#007bff'}" />
+                            <stop offset="100%" stop-color="${qrGrad2ColorPicker.value || '#8b5cf6'}" />
+                        </linearGradient>
+                        <mask id="qrMaskLuminance">
+                            <image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />
+                        </mask>`;
+                }
+                svgStr += `</defs>`;
+
+                if (!isFrameOff) {
+                    svgStr += `<rect width="${totalSize}" height="${totalSize}" rx="${outerRadius}" ry="${outerRadius}" fill="url(#bgGrad)" ${shouldPunchHole ? 'mask="url(#holeMask)"' : ''} />`;
+                }
+
+                if (!isTransparentBg) {
+                    if (uploadedBgDataUrl) {
+                        svgStr += `
+                            <clipPath id="bgClip">
+                                <rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" />
+                            </clipPath>
+                            <image href="${uploadedBgDataUrl}" x="${x}" y="${x}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#bgClip)" />
+                        `;
+                    } else if (!isMatchFrame || isFrameOff) {
+                        let fill = bgZoneColorPicker.value || '#ffffff';
+                        svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="${fill}" />`;
+                    }
+                }
+
+                if (isQrGradient) {
+                    svgStr += `<rect x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" />`;
+                } else {
+                    svgStr += `<image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />`;
+                }
+
+                if (uploadedCenterLogoDataUrl) {
+                    const logoSize = maxQrSize * 0.25;
+                    const cx = totalSize / 2;
+                    const cy = totalSize / 2;
+                    const fillBg = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
+
+                    svgStr += `
+                        <circle cx="${cx}" cy="${cy}" r="${logoSize * 0.6}" fill="${fillBg}" />
+                        <clipPath id="logoClip">
+                            <circle cx="${cx}" cy="${cy}" r="${logoSize * 0.55}" />
+                        </clipPath>
+                        <image href="${uploadedCenterLogoDataUrl}" x="${cx - logoSize*0.55}" y="${cy - logoSize*0.55}" width="${logoSize*1.1}" height="${logoSize*1.1}" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)" />
+                    `;
+                }
+
+                svgStr += `</svg>`;
+                return svgStr;
+            };
+
+            const safeSetText = (id, text) => {
+                const el = document.getElementById(id);
+                if (el && text) el.textContent = text;
+            };
+
+            window.toggleLanguage = () => {
+                const nextLang = currentLang === 'en' ? 'de' : 'en';
+                setLanguage(nextLang);
+            };
+
+            const setLanguage = (lang) => {
+                const t = translations[lang] || translations['en'];
+                currentLang = translations[lang] ? lang : 'en';
+
+                const flagImg = document.getElementById('langFlagImg');
+                const toggleBtn = document.getElementById('langToggleBtn');
+                
+                if (flagImg && toggleBtn) {
+                    if (currentLang === 'en') {
+                        flagImg.src = "/assets/flags/austria-flag.webp";
+                        toggleBtn.title = "Wechseln zu Deutsch";
+                    } else {
+                        flagImg.src = "/assets/flags/united-kingdom-flag.webp";
+                        toggleBtn.title = "Switch to English";
+                    }
+                }
+
+                document.querySelectorAll('[data-i18n]').forEach(el => {
+                    const key = el.getAttribute('data-i18n');
+                    if (t[key]) el.textContent = t[key];
+                });
+
+                document.querySelectorAll('[data-i18n-html]').forEach(el => {
+                    const key = el.getAttribute('data-i18n-html');
+                    if (t[key]) el.innerHTML = t[key];
+                });
+
+                if (qrText) qrText.placeholder = t.qrPlaceholder;
+                if (customResInput) customResInput.placeholder = t.custom;
+
+                const safeSetTitle = (id, title) => { const el = document.getElementById(id); if (el) el.title = title; };
+                
+                safeSetTitle('tutOpenBtn', t.tutBtn);
+                safeSetTitle('resetTextButton', t.resetButtonTitle);
+                safeSetTitle('printQrCodeButton', t.printButtonTitle);
+                safeSetTitle('saveQrCodeButton', t.saveButton);
+                safeSetTitle('copyQrCodeButton', t.copyButtonTitle);
+                safeSetTitle('refreshGradientButton', t.refreshGradientButtonText);
+
+                document.getElementById('bgUploadText').textContent = uploadedBgImage ? t.rmBg : t.upBg;
+                document.getElementById('centerLogoText').textContent = uploadedCenterLogo ? t.rmLogo : t.upLogo;
+
+                if (qrText && !qrText.value) updateQr();
+                localStorage.setItem('qrGeneratorLanguage', currentLang);
+            };
+
+            const populateStaticUI = () => {
+                const templateButtonsContainer = document.querySelector('.template-buttons');
+                if (templateButtonsContainer) {
+                    templateButtonsContainer.innerHTML = socialTemplates.map(template =>
+                        `<button data-prefix="${template.prefix}" class="snap-center shrink-0 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
+                    ).join('');
+                }
+            };
+
+            window.openTutorial = () => { if(tutorialModal) { tutorialModal.classList.remove('hidden'); tutorialModal.classList.add('flex'); } };
+            window.closeTutorialModal = (force) => {
+                if (tutorialModal && (force === true || event.target.id === 'tutorialModal')) { tutorialModal.classList.add('hidden'); tutorialModal.classList.remove('flex'); }
+            };
+            window.closePreview = (force) => {
+                if (savePreviewOverlay && (force === true || event.target.id === 'save-preview-overlay')) savePreviewOverlay.classList.add('hidden');
+            };
+
+            qualityBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    qualityBtns.forEach(b => b.classList.remove('active'));
+                    customResInput.classList.remove('active');
+                    customResInput.value = '';
+                    
+                    e.target.classList.add('active');
+                    currentQuality = parseInt(e.target.dataset.size);
+                });
+            });
+
+            customResInput.addEventListener('input', (e) => {
+                const val = parseInt(e.target.value);
+                if (val && val > 0) {
+                    qualityBtns.forEach(b => b.classList.remove('active'));
+                    customResInput.classList.add('active');
+                    currentQuality = val;
+                } else if (!val && e.target.value === '') {
+                    customResInput.classList.remove('active');
+                    qualityBtns[1].click(); 
+                }
+            });
+
+            const setupEventListeners = () => {
+                if(qrText) qrText.addEventListener('input', updateQr);
+                
+                qrColorPicker.addEventListener('input', updateQr);
+                bgZoneColorPicker.addEventListener('input', updateQr);
+                grad1ColorPicker.addEventListener('input', applyGradientFromPickers);
+                grad2ColorPicker.addEventListener('input', applyGradientFromPickers);
+                qrGrad1ColorPicker.addEventListener('input', applyGradientFromPickers);
+                qrGrad2ColorPicker.addEventListener('input', applyGradientFromPickers);
+
+                transparentBgBtn.addEventListener('click', () => {
+                    isTransparentBg = !isTransparentBg;
+                    transparentBgBtn.classList.toggle('active');
+                    updateQr();
+                });
+
+                qrShapeToggleBtn.addEventListener('click', () => {
+                    isCircleShape = !isCircleShape;
+                    qrShapeToggleBtn.classList.toggle('active');
+                    updateQr();
+                });
+
+                qrGradientToggleBtn.addEventListener('click', () => {
+                    isQrGradient = !isQrGradient;
+                    qrGradientToggleBtn.classList.toggle('active');
+                    if (isQrGradient) {
+                        qrColorWrapper.classList.add('hidden');
+                        qrGrad1Wrapper.classList.replace('hidden', 'flex');
+                        qrGrad2Wrapper.classList.replace('hidden', 'flex');
+                    } else {
+                        qrColorWrapper.classList.remove('hidden');
+                        qrGrad1Wrapper.classList.replace('flex', 'hidden');
+                        qrGrad2Wrapper.classList.replace('flex', 'hidden');
+                    }
+                    updateQr();
+                });
+
+                matchFrameToggleBtn.addEventListener('click', () => {
+                    isMatchFrame = !isMatchFrame;
+                    matchFrameToggleBtn.classList.toggle('active');
+                    updateBgZoneState();
+                    updateQr();
+                });
+
+                disableFrameToggleBtn.addEventListener('click', () => {
+                    isFrameOff = !isFrameOff;
+                    disableFrameToggleBtn.classList.toggle('active');
+                    updateBgZoneState();
+                    updateQr();
+                });
+
+                bgUploadBtn.addEventListener('click', () => {
+                    if (uploadedBgImage) {
+                        uploadedBgImage = null;
+                        uploadedBgDataUrl = null;
+                        bgImageUpload.value = '';
+                        bgUploadBtn.classList.remove('active');
+                        document.getElementById('bgUploadText').textContent = translations[currentLang].upBg;
+                        document.getElementById('bgUploadIcon').classList.remove('hidden');
+                        updateQr();
+                    } else {
+                        bgImageUpload.click();
+                    }
+                });
+
+                bgImageUpload.addEventListener('change', (e) => {
+                    handleImageUpload(e.target.files[0], (img, dataUrl) => {
+                        uploadedBgImage = img;
+                        uploadedBgDataUrl = dataUrl;
+                        bgUploadBtn.classList.add('active');
+                        document.getElementById('bgUploadText').textContent = translations[currentLang].rmBg;
+                        document.getElementById('bgUploadIcon').classList.add('hidden');
+                        updateQr();
+                    });
+                });
+
+                centerLogoBtn.addEventListener('click', () => {
+                    if (uploadedCenterLogo) {
+                        uploadedCenterLogo = null;
+                        uploadedCenterLogoDataUrl = null;
+                        centerLogoUpload.value = '';
+                        centerLogoBtn.classList.remove('active');
+                        document.getElementById('centerLogoText').textContent = translations[currentLang].upLogo;
+                        document.getElementById('logoUploadIcon').classList.remove('hidden');
+                        updateQr();
+                    } else {
+                        centerLogoUpload.click();
+                    }
+                });
+
+                centerLogoUpload.addEventListener('change', (e) => {
+                    handleImageUpload(e.target.files[0], (img, dataUrl) => {
+                        uploadedCenterLogo = img;
+                        uploadedCenterLogoDataUrl = dataUrl;
+                        centerLogoBtn.classList.add('active');
+                        document.getElementById('centerLogoText').textContent = translations[currentLang].rmLogo;
+                        document.getElementById('logoUploadIcon').classList.add('hidden');
+                        updateQr();
+                    });
+                });
+
+                const refreshBtn = document.getElementById('refreshGradientButton');
+                if(refreshBtn) refreshBtn.addEventListener('click', applyRandomGradient);
+                
+                const resetBtn = document.getElementById('resetTextButton');
+                if(resetBtn) {
+                    resetBtn.addEventListener('click', () => { 
+                        qrText.value = ''; 
+                        document.querySelectorAll('.template-buttons button').forEach(b => b.classList.remove('active'));
+                        updateQr(); 
+                        qrText.focus(); 
+                    });
+                }
+                
+                if(formatControl) {
+                    formatControl.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'BUTTON') {
+                            currentSaveFormat = e.target.dataset.format;
+                            formatControl.querySelectorAll('button').forEach(btn => btn.classList.remove('active'));
+                            e.target.classList.add('active');
+                            localStorage.setItem('qrGeneratorSaveFormat', currentSaveFormat);
+                        }
+                    });
+                }
+
+                const tbContainer = document.querySelector('.template-buttons');
+                if(tbContainer) {
+                    tbContainer.addEventListener('click', (e) => {
+                        if (e.target.tagName === 'BUTTON') {
+                            document.querySelectorAll('.template-buttons button').forEach(b => b.classList.remove('active'));
+                            e.target.classList.add('active');
+                            
+                            const prefix = e.target.dataset.prefix;
+                            if(qrText) {
+                                qrText.value = prefix;
+                                updateQr();
+                                qrText.focus();
+                            }
+                        }
+                    });
+                }
+
+                const saveBtn = document.getElementById('saveQrCodeButton');
+                if(saveBtn) {
+                    saveBtn.addEventListener('click', () => {
+                        const previewData = generateImageOfSize(512); 
+                        if(savePreviewCanvas) {
+                            savePreviewCanvas.width = previewData.totalSize;
+                            savePreviewCanvas.height = previewData.totalSize;
+                            
+                            const pCtx = savePreviewCanvas.getContext('2d');
+                            pCtx.clearRect(0, 0, previewData.totalSize, previewData.totalSize);
+                            pCtx.imageSmoothingEnabled = false;
+                            pCtx.drawImage(previewData.canvas, 0, 0);
+                        }
+                        if(savePreviewOverlay) savePreviewOverlay.classList.remove('hidden');
+                    });
+                }
+                
+                const pDwnBtn = document.getElementById('preview-download-button');
+                if(pDwnBtn) {
+                    pDwnBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        const link = document.createElement('a');
+                        
+                        const sizeData = generateImageOfSize(currentQuality);
+                        
+                        if (currentSaveFormat === 'svg') {
+                            const svgString = generateSVGString(sizeData);
+                            const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                            link.download = `${translations[currentLang].fileName}.svg`;
+                            link.href = URL.createObjectURL(blob);
+                        } else {
+                            link.download = `${translations[currentLang].fileName}.${currentSaveFormat === 'jpeg' ? 'jpg' : currentSaveFormat}`;
+                            link.href = sizeData.canvas.toDataURL(`image/${currentSaveFormat}`, 1.0);
+                        }
+                        
+                        link.click();
+                        if(savePreviewOverlay) savePreviewOverlay.classList.add('hidden');
+                    });
+                }
+
+                if (copyQrCodeButton) {
+                    copyQrCodeButton.addEventListener('click', async () => {
+                        try {
+                            const clipboardItem = new ClipboardItem({
+                                'image/png': new Promise(resolve => {
+                                    const sizeData = generateImageOfSize(1024);
+                                    sizeData.canvas.toBlob(resolve, 'image/png');
+                                })
+                            });
+                            await navigator.clipboard.write([clipboardItem]);
+                            
+                            const originalHTML = copyQrCodeButton.innerHTML;
+                            copyQrCodeButton.innerHTML = `<svg class="text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="width: 1.5rem; height: 1.5rem;"><polyline points="20 6 9 17 4 12"></polyline></svg>`;
+                            setTimeout(() => copyQrCodeButton.innerHTML = originalHTML, 2000);
+                        } catch (err) {
+                            console.error("Failed to copy image: ", err);
+                            alert("Clipboard access required. Ensure you are on a secure HTTPS connection.");
+                        }
+                    });
+                }
+
+                const printBtn = document.getElementById('printQrCodeButton');
+                if(printBtn) {
+                    printBtn.addEventListener('click', () => {
+                        const sizeData = generateImageOfSize(1024);
+                        const dataUrl = sizeData.canvas.toDataURL('image/png');
+                        const win = window.open('', '_blank');
+                        win.document.write(`<img src="${dataUrl}" style="max-width:100%; border-radius:16px;" onload="window.print(); setTimeout(()=>window.close(), 100)">`);
+                        win.document.close();
+                    });
+                }
+            };
+
+            const init = () => {
+                populateStaticUI();
+                setupEventListeners();
+                
+                currentSaveFormat = localStorage.getItem('qrGeneratorSaveFormat') || 'png';
+                if(formatControl) {
+                    formatControl.querySelectorAll('button').forEach(btn => {
+                        if(btn.dataset.format === currentSaveFormat) btn.classList.add('active');
+                        else btn.classList.remove('active');
+                    });
+                }
+
+                setLanguage(localStorage.getItem('qrGeneratorLanguage') || 'en');
+                applyGradientFromPickers(); 
+                updateQr();
+            };
+
+            init();
+        });
+    </script>
+</body>
+</html>
