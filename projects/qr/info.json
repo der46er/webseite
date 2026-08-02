@@ -1,12 +1,12 @@
 {
   "project": {
     "id": "qr-v8",
-    "icon": "theme",
     "title": "QR Code Generator",
     "title_en": "QR Code Generator",
-    "description": "Anpassbarer QR-Code Generator ",
+    "description": "Anpassbarer QR-Code Generator",
     "description_en": "Custom QR Code generator",
     "version": "8.0",
     "date": "2026-08-02",
+    "icon": "theme"
   }
 }
