@@ -153,30 +153,19 @@
             useEffect(() => {
                 const fetchGearFiles = async () => {
                     try {
-                        const response = await fetch(GITHUB_API_URL);
-                        if (!response.ok) throw new Error("Failed to fetch directory");
-                        const files = await response.json();
-                        
-                        const jsonFiles = files.filter(file => file.name.endsWith('.json'));
+                        const rawUrl = `../assets/products/products.json`;
+                        const res = await fetch(rawUrl);
+                        if (!res.ok) throw new Error("Failed to fetch products.json");
+                        const resolvedProducts = await res.json();
 
-                        const productPromises = jsonFiles.map(async (file) => {
-                            const rawUrl = `${GITHUB_RAW_BASE}/${file.name}`;
-                            const res = await fetch(rawUrl);
-                            if (res.ok) {
-                                const data = await res.json();
-                                
-                                // Randomly select one link if an array of URLs is provided
-                                if (data.urls && Array.isArray(data.urls) && data.urls.length > 0) {
-                                    const randomIndex = Math.floor(Math.random() * data.urls.length);
-                                    data.url = data.urls[randomIndex];
-                                }
-                                
-                                return data;
+                        // Randomly select one link if an array of URLs is provided for each product
+                        resolvedProducts.forEach(data => {
+                            if (data.urls && Array.isArray(data.urls) && data.urls.length > 0) {
+                                const randomIndex = Math.floor(Math.random() * data.urls.length);
+                                data.url = data.urls[randomIndex];
                             }
-                            return null;
                         });
 
-                        const resolvedProducts = (await Promise.all(productPromises)).filter(p => p !== null);
                         setProducts(resolvedProducts);
                         
                         const uniqueCats = new Set();
