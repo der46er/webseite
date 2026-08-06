@@ -250,7 +250,6 @@
         if (isFFmpegLoaded) return;
         try {
             ffmpeg = new FFmpeg();
-            ffmpeg.on('log', ({ message }) => console.log(message));
             
             const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.6/dist/umd';
             const wrapperURL = 'https://unpkg.com/@ffmpeg/ffmpeg@0.12.6/dist/umd';
