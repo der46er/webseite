@@ -219,15 +219,19 @@
             }
         };
 
+        function escapeHTML(str) {
+            return String(str).replace(/[&<>'"]/g, match => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' })[match] || match);
+        }
+
         let currentLang = localStorage.getItem('siteLang') || 'en';
 
         function render() {
             const t = translations[currentLang];
             
-            document.getElementById('hero-title').innerHTML = t.heroTitle;
+            document.getElementById('hero-title').innerText = t.heroTitle;
             document.getElementById('hero-desc').innerText = t.heroDesc;
             
-            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
+            document.getElementById('lang-indicator').innerHTML = `<img src="${escapeHTML(t.flag)}" alt="${escapeHTML(t.alt)}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
             
             document.getElementById('cookie-text').innerText = t.cookieText;
             document.getElementById('cookie-decline').innerText = t.cookieDecline;
@@ -241,7 +245,7 @@
                 const descClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
 
                 return `
-                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 md:p-6 flex flex-col justify-between overflow-hidden min-h-[150px] md:min-h-0 h-full">
+                <a href="${escapeHTML(c.href)}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 md:p-6 flex flex-col justify-between overflow-hidden min-h-[150px] md:min-h-0 h-full">
                     
                     <div class="flex items-start justify-start w-full">
                         <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
@@ -251,8 +255,8 @@
                     
                     <div class="z-10 mt-auto pt-6 flex items-end justify-between w-full">
                         <div class="flex flex-col justify-end min-w-0 pr-6">
-                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2">${text.title}</h2>
-                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate pr-2">${text.desc}</p>
+                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2">${escapeHTML(text.title)}</h2>
+                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate pr-2">${escapeHTML(text.desc)}</p>
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
