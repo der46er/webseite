@@ -112,19 +112,38 @@
                     { t: 'Steam', c: '', s: 'background: linear-gradient(135deg, #0b1a30 0%, #13466e 100%)', u: 'https://steamcommunity.com/id/thataustrianone', i: '<path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.004.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.03 4.524 4.524 0 2.495-2.03 4.524-4.524 4.524h-.105l-4.076 2.911c-.052 1.838-1.543 3.313-3.385 3.313-1.876 0-3.4-1.524-3.4-3.4 0-.276.037-.544.103-.8l-4.7-1.942C1.652 18.257 6.347 24 12 24c6.627 0 12-5.373 12-12S18.627 0 11.979 0zm-4.439 18.21a1.52 1.52 0 1 1 0-3.038 1.52 1.52 0 0 1 0 3.038zm8.963-7.234a2.072 2.072 0 1 1 0-4.144 2.072 2.072 0 0 1 0 4.144z"/>' },
                     { t: 'GitHub', c: 'bg-zinc-800', s: '', u: 'https://github.com/der46er', i: '<path d="M12 .297c-6.63 0-12 5.373-12 12 0 5.303 3.438 9.8 8.205 11.385.6.113.82-.258.82-.577 0-.285-.01-1.04-.015-2.04-3.338.724-4.042-1.61-4.042-1.61C4.422 18.07 3.633 17.7 3.633 17.7c-1.087-.744.084-.729.084-.729 1.205.084 1.838 1.236 1.838 1.236 1.07 1.835 2.809 1.305 3.495.998.108-.776.417-1.305.76-1.605-2.665-.3-5.466-1.332-5.466-5.93 0-1.31.465-2.38 1.235-3.22-.135-.303-.54-1.523.105-3.176 0 0 1.005-.322 3.3 1.23.96-.267 1.98-.399 3-.405 1.02.006 2.04.138 3 .405 2.28-1.552 3.285-1.23 3.285-1.23.645 1.653.24 2.873.12 3.176.765.84 1.23 1.91 1.23 3.22 0 4.61-2.805 5.625-5.475 5.92.42.36.81 1.096.81 2.22 0 1.606-.015 2.896-.015 3.286 0 .315.21.69.825.57C20.565 22.092 24 17.592 24 12.297c0-6.627-5.373-12-12-12"/>' }
                 ];
-                document.write(socials.map(l => `
-                    <a href="${l.u}" target="_blank" class="group flex items-center p-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99]">
-                        <div class="shrink-0 w-12 h-12 rounded-xl ${l.c} flex items-center justify-center shadow-lg transition-transform group-hover:scale-105" style="${l.s}">
+                const escapeHTML = str => str.replace(/[&<>'"]/g, tag => ({
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+                }[tag]));
+
+                const sanitizeURL = url => {
+                    try {
+                        const parsed = new URL(url, window.location.origin);
+                        if (['http:', 'https:', 'mailto:', 'tel:'].includes(parsed.protocol)) {
+                            return parsed.href;
+                        }
+                    } catch (e) {
+                        // ignore invalid URLs
+                    }
+                    return 'about:blank';
+                };
+
+                const container = document.createElement('div');
+                container.style.display = 'contents';
+                container.innerHTML = socials.map(l => `
+                    <a href="${escapeHTML(sanitizeURL(l.u))}" target="_blank" class="group flex items-center p-3 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99]">
+                        <div class="shrink-0 w-12 h-12 rounded-xl ${escapeHTML(l.c)} flex items-center justify-center shadow-lg transition-transform group-hover:scale-105" style="${escapeHTML(l.s)}">
                             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24">${l.i}</svg>
                         </div>
                         <div class="ml-5 flex-grow text-left">
-                            <h3 class="text-base sm:text-lg font-black italic tracking-wide text-zinc-100 group-hover:text-white transition-colors leading-none">${l.t}</h3>
+                            <h3 class="text-base sm:text-lg font-black italic tracking-wide text-zinc-100 group-hover:text-white transition-colors leading-none">${escapeHTML(l.t)}</h3>
                         </div>
                         <div class="text-zinc-700 group-hover:text-white transition-all mr-2">
                             <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                         </div>
                     </a>
-                `).join(''));
+                `).join('');
+                document.currentScript.parentNode.insertBefore(container, document.currentScript);
             </script>
         </main>
 
