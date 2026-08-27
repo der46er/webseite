@@ -1,55 +1,79 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>About Me | thataustrianone</title>
+    <title>About Me | Nick</title>
     
-    <!-- Favicon -->
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
-    <!-- Externe Scripts -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* LOKALE SCHRIFTARTEN */
-        @font-face {
-            font-family: 'Inter';
-            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
-            font-weight: 400;
-            font-style: normal;
-            font-display: swap;
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); 
+            font-weight: 400; 
+            font-display: swap; 
         }
-        @font-face {
-            font-family: 'Inter';
-            src: url('../assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2');
-            font-weight: 900;
-            font-style: normal;
-            font-display: swap;
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); 
+            font-weight: 900; 
+            font-display: swap; 
         }
-
+        
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Inter', system-ui, sans-serif; 
             background-color: #0b0d11; 
+            color: white; 
             margin: 0; 
             padding: 0; 
-            color: white;
-            overflow-x: hidden;
+            position: relative;
         }
 
-        .header-logo-text {
-            font-weight: 900;
-            font-style: normal;
-            text-transform: lowercase;
-            letter-spacing: -0.04em;
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-blue-black.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            transform: scale(1.05);
+            opacity: 1;
+            z-index: -2;
         }
 
-        .animate-in { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
         
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-box {
+            background: rgba(18, 18, 18, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
         @keyframes vinyl-spin {
             from { transform: rotate(0deg); }
             to { transform: rotate(360deg); }
@@ -60,472 +84,429 @@
 
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        .logo-themed {
-            filter: sepia(100%) saturate(300%) hue-rotate(180deg) brightness(100%) drop-shadow(0 0 5px rgba(6, 182, 212, 0.5));
-            transition: all 0.3s ease;
-        }
-
-        .glass-card {
-            background: rgba(22, 25, 32, 0.6);
-            backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-            transition: all 0.3s ease;
-        }
-        .glass-card:hover {
-            border-color: rgba(6, 182, 212, 0.3);
-            background: rgba(22, 25, 32, 0.8);
-        }
-
-        .glass-modal {
-            background: rgba(11, 13, 17, 0.98);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
-
-        .cyan-glow {
-            box-shadow: 0 0 40px -10px rgba(6, 182, 212, 0.2);
-        }
-
-        .setup-tab-active {
-            background: rgba(6, 182, 212, 0.1);
-            color: #06b6d4;
-            border-color: rgba(6, 182, 212, 0.3);
-        }
-
-        .responsive-title {
-            font-size: clamp(2.2rem, 7vw, 6rem);
-            line-height: 1.1;
-        }
-        
-        /* Animierte Rotation für Profilbild */
-        @keyframes rotate-slow {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
-        }
-        .animate-rotate-slow {
-            animation: rotate-slow 12s linear infinite;
-        }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
 
-    <script type="text/babel">
-        const { useState, useEffect, useRef } = React;
+<body class="flex flex-col min-h-screen w-full overflow-x-hidden selection:bg-blue-500/20 relative">
+
+    <main class="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-start pt-10 md:pt-8 pb-12">
+        
+        <!-- Hero Header -->
+        <div class="w-full text-center shrink-0 mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+                About Me
+            </h1>
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-3xl mx-auto tracking-wide mb-8">
+            </p>
+
+            <!-- Decluttered Profile Summary Glass Card -->
+            <div class="w-full glass-box rounded-[1.2rem] p-6 sm:p-7 flex flex-col sm:flex-row items-center gap-5 sm:gap-7 text-left transition-all duration-300 hover:border-blue-500/80 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.3)]">
+                <div class="w-20 h-20 sm:w-24 sm:h-24 rounded-full overflow-hidden shrink-0 border border-white/10 bg-black/40 shadow-inner">
+                    <img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/pfps/thataustrianone-pfp.webp" alt="Profile" class="w-full h-full object-cover" onerror="this.src='https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png'" />
+                </div>
+                <div class="flex flex-col justify-center flex-grow min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5 flex-wrap">
+                        <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-blue-400">Linz, Austria</span>
+                        <span class="text-zinc-600 text-xs">•</span>
+                        <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-zinc-400">IT Technician & Creator</span>
+                    </div>
+                    <h2 class="text-2xl sm:text-3xl font-black italic uppercase text-white tracking-tight leading-none mb-2.5">Niklas Außerwöger</h2>
+                    <p id="profile-bio" class="text-zinc-300 text-xs sm:text-sm font-medium leading-relaxed max-w-4xl">
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bento Sections Wrapper -->
+        <div class="w-full flex flex-col gap-6 animate-in" style="animation-delay: 0.2s; opacity: 0;">
+            
+            <!-- Setup & Hardware Section -->
+            <div class="glass-box rounded-[1.2rem] p-6 sm:p-8 transition-all duration-300 hover:border-blue-500/80 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.3)]">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                    <div>
+                        <h3 id="setup-heading" class="text-xl sm:text-2xl font-black italic uppercase text-white tracking-tight">Workstation & Setup</h3>
+                        <p id="setup-subheading" class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-0.5">Primary computing hardware & Gear</p>
+                    </div>
+                    <div class="flex gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5 shrink-0" id="setup-tabs">
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3" id="setup-items-grid">
+                </div>
+            </div>
+
+            <!-- Live Spotify & Spotify Profile Link -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <!-- Live Lanyard Widget -->
+                <div class="glass-box rounded-[1.2rem] p-6 flex flex-col justify-between transition-all duration-300 hover:border-blue-500/80 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.3)]">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="text-[10px] font-black uppercase tracking-widest text-zinc-500 flex items-center gap-2">
+                            <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span> Live Activity
+                        </span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.308c-.216.354-.675.467-1.03.25-2.868-1.753-6.478-2.15-10.732-1.176-.404.093-.81-.157-.903-.562-.093-.404.157-.81.562-.903 4.654-1.066 8.653-.615 11.85 1.338.356.216.468.675.253 1.03zm1.463-3.26c-.272.44-.847.58-1.287.31-3.28-2.015-8.28-2.6-12.16-1.42-.494.15-1.018-.13-1.168-.624-.15-.494.13-1.018.624-1.168 4.417-1.34 9.93-.678 13.682 1.624.44.272.58.847.31 1.287zm.126-3.41c-3.933-2.336-10.433-2.55-14.214-1.402-.603.183-1.242-.163-1.425-.766-.183-.603.163-1.242.766-1.425 4.34-1.318 11.516-1.064 16.035 1.62.543.322.72.1.398 1.572-.322.544-1.023.72-1.56.398z"/></svg>
+                    </div>
+                    <div class="flex items-center gap-4">
+                        <div id="spotify-art-wrap" class="w-16 h-16 rounded-full overflow-hidden bg-black/50 border border-white/10 shrink-0 flex items-center justify-center">
+                            <img id="spotify-art" src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Cover" class="w-full h-full object-cover hidden" />
+                            <div id="spotify-placeholder" class="text-zinc-600 text-xs font-bold uppercase tracking-widest">Idle</div>
+                        </div>
+                        <div class="overflow-hidden min-w-0">
+                            <p id="spotify-status-text" class="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-0.5">Currently offline</p>
+                            <p id="spotify-title" class="text-sm font-black italic uppercase text-white truncate">Not playing</p>
+                            <p id="spotify-artist" class="text-zinc-500 text-xs font-bold uppercase tracking-widest truncate">Spotify</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Spotify Profile Card -->
+                <a href="https://open.spotify.com/user/31sgsrlrsi2k635blq2rkgrymqva" target="_blank" class="group glass-box rounded-[1.2rem] p-6 flex items-center justify-between transition-all duration-300 hover:border-emerald-500/80 hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.3)] active:scale-[0.99]">
+                    <div class="flex items-center gap-4 min-w-0">
+                        <div class="w-14 h-14 rounded-full bg-[#1DB954]/10 border border-[#1DB954]/30 flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform">
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.308c-.216.354-.675.467-1.03.25-2.868-1.753-6.478-2.15-10.732-1.176-.404.093-.81-.157-.903-.562-.093-.404.157-.81.562-.903 4.654-1.066 8.653-.615 11.85 1.338.356.216.468.675.253 1.03zm1.463-3.26c-.272.44-.847.58-1.287.31-3.28-2.015-8.28-2.6-12.16-1.42-.494.15-1.018-.13-1.168-.624-.15-.494.13-1.018.624-1.168 4.417-1.34 9.93-.678 13.682 1.624.44.272.58.847.31 1.287zm.126-3.41c-3.933-2.336-10.433-2.55-14.214-1.402-.603.183-1.242-.163-1.425-.766-.183-.603.163-1.242.766-1.425 4.34-1.318 11.516-1.064 16.035 1.62.543.322.72.1.398 1.572-.322.544-1.023.72-1.56.398z"/></svg>
+                        </div>
+                        <div class="overflow-hidden">
+                            <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-0.5 block">Spotify Profile</span>
+                            <h4 class="text-base font-black italic uppercase text-white truncate group-hover:text-emerald-400 transition-colors">@der_46er</h4>
+                            <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest truncate">Open in Spotify</p>
+                        </div>
+                    </div>
+                    <div class="text-zinc-600 group-hover:text-white transition-all transform group-hover:translate-x-1 shrink-0">
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Dynamic Gallery Section -->
+            <div class="glass-box rounded-[1.2rem] p-6 sm:p-8 transition-all duration-300 hover:border-blue-500/80 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.3)]">
+                <div class="mb-4">
+                    <h3 id="gallery-heading" class="text-xl sm:text-2xl font-black italic uppercase text-white tracking-tight">Gallery</h3>
+                </div>
+                
+                <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                    <div id="gallery-loading" class="col-span-full text-center py-8 text-zinc-500 font-bold uppercase tracking-widest text-xs animate-pulse">
+                        Loading Gallery...
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </main>
+
+    <!-- Unified Screen Edge Footer -->
+    <footer class="w-full flex justify-between items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+        </button>
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <!-- Image Lightbox Modal -->
+    <div id="lightbox-modal" onclick="closeLightbox()" class="hidden fixed inset-0 bg-black/90 backdrop-blur-xl z-[300] flex items-center justify-center p-4 cursor-pointer opacity-0 transition-opacity duration-300">
+        <img id="lightbox-img" src="" alt="Fullscreen view" class="max-w-full max-h-[90vh] rounded-xl object-contain border border-white/10 shadow-2xl scale-95 transition-transform duration-300" />
+    </div>
+
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-xl border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+        <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
+            <p id="cookie-text"></p>
+        </div>
+        <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
+            <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"></button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
 
         const DISCORD_ID = "964500222870945873";
         const LANYARD_URL = `https://api.lanyard.rest/v1/users/${DISCORD_ID}`;
-
-        // --- Icons ---
-        const ChevronLeft = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
-        const ChevronDown = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
-        const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
-        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
-        const Cpu = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="4" y="4" width="16" height="16" rx="2" ry="2"/><rect x="9" y="9" width="6" height="6"/><line x1="9" y1="1" x2="9" y2="4"/><line x1="15" y1="1" x2="15" y2="4"/><line x1="9" y1="20" x2="9" y2="23"/><line x1="15" y1="20" x2="15" y2="23"/><line x1="20" y1="9" x2="23" y2="9"/><line x1="20" y1="15" x2="23" y2="15"/><line x1="1" y1="9" x2="4" y2="9"/><line x1="1" y1="15" x2="4" y2="15"/></svg>;
-        const Monitor = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>;
-        const Zap = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>;
-        const MusicIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>;
-        const SpotifyIcon = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="#1DB954"><path d="M12 0C5.373 0 0 5.373 0 12s5.373 12 12 12 12-5.373 12-12S18.627 0 12 0zm5.494 17.308c-.216.354-.675.467-1.03.25-2.868-1.753-6.478-2.15-10.732-1.176-.404.093-.81-.157-.903-.562-.093-.404.157-.81.562-.903 4.654-1.066 8.653-.615 11.85 1.338.356.216.468.675.253 1.03zm1.463-3.26c-.272.44-.847.58-1.287.31-3.28-2.015-8.28-2.6-12.16-1.42-.494.15-1.018-.13-1.168-.624-.15-.494.13-1.018.624-1.168 4.417-1.34 9.93-.678 13.682 1.624.44.272.58.847.31 1.287zm.126-3.41c-3.933-2.336-10.433-2.55-14.214-1.402-.603.183-1.242-.163-1.425-.766-.183-.603.163-1.242.766-1.425 4.34-1.318 11.516-1.064 16.035 1.62.543.322.72.1.398 1.572-.322.544-1.023.72-1.56.398z"/></svg>;
+        const GITHUB_GALLERY_API = "https://api.github.com/repos/der46er/webseite/contents/assets/gallery";
+        const GITHUB_GALLERY_RAW = "https://raw.githubusercontent.com/der46er/webseite/main/assets/gallery";
 
         const translations = {
             de: {
-                flag: "🇦🇹", name: "Deutsch", back: "ZURÜCK",
-                badge: "STORY & SPECS",
-                title: "Behind thataustrianone.",
-                intro: "Servus! Ich bin Niklas. Schüler, Content Creator und Hardware-Experte.",
-                factsTitle: "CORE STATS",
-                bioTitle: "MEINE STORY",
-                bioText: "Schon als Kind war ich fasziniert von Technik. Was mit dem Auseinandernehmen von Spielzeug begann, entwickelte sich schnell zur Leidenschaft für High-End Hardware. Heute verbinde ich technisches Expertenwissen mit Content Creation, um meine Community bei ihren Setups zu unterstützen.",
-                facts: [
-                    { label: "Alter", value: "16" },
-                    { label: "Location", value: "Linz, AT" },
-                    { label: "Interessen", value: "Hardware" },
-                    { label: "Vibe", value: "Caring" }
-                ],
-                journeyTitle: "MEINE MILESTONES",
-                journey: [
-                    { year: "2026", title: "Webseite & Community", desc: "Erstellung dieser offiziellen Webseite & Meilenstein von 2000 Followern auf TikTok." },
-                    { year: "2025", title: "OLED Upgrade", desc: "Kauf von zwei ROG Swift OLED Monitoren für das ultimative Setup." },
-                    { year: "2023", title: "Gaming PC Build", desc: "Zusammenbau meines ersten dedizierten High-End Gaming PCs." },
-                    { year: "2022", title: "Erster Eigenbau", desc: "Den ersten PC komplett selbst geplant und zusammengebaut." },
-                    { year: "2021", title: "Social Media Start", desc: "Einstieg in die Social Media Welt." },
-                    { year: "2018", title: "Erstes Setup", desc: "Mein erstes eigenes Setup mit einem HP ProBook und Lenovo Monitor." },
-                    { year: "2010", title: "Geboren", desc: "Der Start von allem in Linz." }
-                ],
-                setupTitle: "Mein Setup",
-                setupCats: ["Gaming PC", "Equipment", "Software"],
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
+                heroTitle: "Über Mich",
+                heroDesc: "Systemtechnik, Hardware-Entwicklung & digitale Projekte aus Linz",
+                profileBio: "Fokussiert auf Hardware-Instandhaltung, Systemintegration und moderne Web-Anwendungen. Ich kombiniere technisches Detailwissen mit Content Creation und betreue eigene Open-Source-Projekte.",
+                setupHeading: "Workstation & Setup",
+                setupSubheading: "Hardware-Konfiguration und Gear",
+                setupCategories: ["Gaming PC", "Gear", "Software"],
                 setupData: {
                     "Gaming PC": [
-                        { item: "CPU", value: "AMD Ryzen 9 5900X" },
-                        { item: "GPU", value: "ROG RTX 3070 Ti OC" },
-                        { item: "RAM", value: "64GB Corsair DDR4" },
-                        { item: "Case", value: "be quiet! Light Base" },
-                        { item: "Fans", value: "10x AsiaHorse" },
-                        { item: "Storage", value: "2TB Samsung 990 PRO" }
+                        { label: "Prozessor", val: "AMD Ryzen 9 5900X" },
+                        { label: "Grafikkarte", val: "ROG RTX 3070 Ti OC" },
+                        { label: "Arbeitsspeicher", val: "Corsair Vengeance RGB PRO DDR4 64GB" },
+                        { label: "Speicher", val: "2TB Samsung 990 PRO" },
+                        { label: "Gehäuse", val: "be quiet! Light Base" },
+                        { label: "Kühlung", val: "10x AsiaHorse Cosmiq Fans" }
                     ],
-                    "Equipment": [
-                        { item: "Displays", value: "2x ROG OLED PG27UCDM" },
-                        { item: "Mic", value: "FIFINE AM8" },
-                        { item: "Keyboard", value: "RAZER BlackWidow V3" },
-                        { item: "Mouse", value: "RAZER Basilisk V3" }
+                    "Gear": [
+                        { label: "Monitore", val: "2x ROG Swift 240Hz OLED + Lenovo 24\" IPS" },
+                        { label: "Mikrofon", val: "FIFINE Dynamic AM8" },
+                        { label: "Tastatur", val: "Razer BlackWidow V3" },
+                        { label: "Maus", val: "Razer Basilisk V3" },
+                        { label: "Tablet", val: "iPad Air M2 13\"" },
+                        { label: "Smartphones", val: "Xiaomi 17 Ultra, Xiaomi 14T Pro & iPhone XR" }
                     ],
                     "Software": [
-                        { item: "OS", value: "Windows 11 Pro" },
-                        { item: "Video", value: "MAGIX Video deluxe" },
-                        { item: "Gaming", value: "Minecraft (Modrinth)" },
-                        { item: "Music", value: "Spotify" }
+                        { label: "Betriebssysteme", val: "Windows 11 Pro & Linux Mint" },
+                        { label: "Videoschnitt", val: "DaVinci Resolve 21" },
+                        { label: "Browser", val: "Vivaldi" },
+                        { label: "Sicherheit", val: "Proton Suite" },
+                        { label: "Streaming", val: "OBS Studio" },
+                        { label: "IDE", val: "Google Antigravity IDE" }
                     ]
                 },
-                vibingTitle: "CURRENTLY VIBING",
-                nowPlaying: "Höre gerade live:",
-                notPlaying: "Hört gerade nichts.",
-                skillsTitle: "TECH SKILLS",
-                legal: "RECHTLICHES & INFO",
-                legalTitle: "Rechtliche Informationen",
-                legalPrivacy: "Datenschutz & Dienste",
-                legalPrivacyText: "Diese Webseite ist eine private Präsenz. Um die Privatsphäre der Besucher zu schützen, werden Schriftarten lokal gehostet. IP-Adressen werden technisch bedingt an APIs übertragen.",
-                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf Anfrage verfügbar.",
-                trademarkLabel: "Urheberrecht & Marken",
-                trademarkText: "Alle verwendeten Markennamen sind Eigentum der jeweiligen Inhaber. Fotos sind Privataufnahmen von Niklas Ausserwoeger.",
-                liabilityText: "Ich übernehme keine Haftung für Schäden bei privater Hilfe. Backups sind Pflicht!",
+                galleryHeading: "Galerie",
+                noImages: "Keine Bilder verfügbar.",
+                nowPlaying: "Hört gerade live",
+                offline: "Offline",
+                notPlaying: "Keine Wiedergabe",
+                cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
+                cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren"
             },
             en: {
-                flag: "🇬🇧", name: "English", back: "BACK",
-                badge: "STORY & SPECS",
-                title: "Behind thataustrianone.",
-                intro: "Hi! I'm Niklas. Student, content creator and hardware expert.",
-                factsTitle: "CORE STATS",
-                bioTitle: "MY STORY",
-                bioText: "I've been fascinated by technology since I was a child. Today, I combine technical expertise with content creation to support my community.",
-                facts: [
-                    { label: "Age", value: "16" },
-                    { label: "Location", value: "Linz, AT" },
-                    { label: "Interests", value: "Hardware" },
-                    { label: "Vibe", value: "Caring" }
-                ],
-                journeyTitle: "MY MILESTONES",
-                journey: [
-                    { year: "2026", title: "Website & Community", desc: "Created this website & reached 2000 followers on TikTok." },
-                    { year: "2025", title: "OLED Upgrade", desc: "Purchased two ROG Swift OLED monitors." },
-                    { year: "2023", title: "Gaming PC Build", desc: "Built my first high-end gaming PC." },
-                    { year: "2022", title: "First Build", desc: "Planned and built my first PC." },
-                    { year: "2021", title: "Social Media Start", desc: "Began my content creation journey." },
-                    { year: "2018", title: "First Setup", desc: "Started with HP ProBook and Lenovo monitor." },
-                    { year: "2010", title: "Born", desc: "Where it all started in Linz." }
-                ],
-                setupTitle: "My Setup",
-                setupCats: ["Gaming PC", "Equipment", "Software"],
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
+                heroTitle: "About Me",
+                heroDesc: "Systems technology, hardware engineering & digital projects based in Linz",
+                profileBio: "Specializing in hardware repair, system optimization, and client-side web tools. Combining practical technical expertise with digital content creation and open-source development.",
+                setupHeading: "Workstation & Setup",
+                setupSubheading: "Core computing hardware and Gear",
+                setupCategories: ["Gaming PC", "Gear", "Software"],
                 setupData: {
                     "Gaming PC": [
-                        { item: "CPU", value: "AMD Ryzen 9 5900X" },
-                        { item: "GPU", value: "ROG RTX 3070 Ti OC" },
-                        { item: "RAM", value: "64GB Corsair DDR4" },
-                        { item: "Storage", value: "2TB Samsung 990 PRO" }
+                        { label: "Processor", val: "AMD Ryzen 9 5900X" },
+                        { label: "Graphics", val: "ROG RTX 3070 Ti OC" },
+                        { label: "Memory", val: "Corsair Vengeance RGB PRO DDR4 64GB" },
+                        { label: "Storage", val: "2TB Samsung 990 PRO" },
+                        { label: "Chassis", val: "be quiet! Light Base" },
+                        { label: "Airflow", val: "10x AsiaHorse Cosmiq Fans" }
                     ],
-                    "Equipment": [
-                        { item: "Displays", value: "2x ROG OLED" }
+                    "Gear": [
+                        { label: "Displays", val: "2x ROG Swift 240Hz OLED + Lenovo 24\" IPS" },
+                        { label: "Microphone", val: "FIFINE Dynamic AM8" },
+                        { label: "Keyboard", val: "Razer BlackWidow V3" },
+                        { label: "Mouse", val: "Razer Basilisk V3" },
+                        { label: "Tablet", val: "iPad Air M2 13\"" },
+                        { label: "Smartphones", val: "Xiaomi 17 Ultra, Xiaomi 14T Pro & iPhone XR" }
                     ],
                     "Software": [
-                        { item: "OS", value: "Windows 11 Pro" }
+                        { label: "Operating Systems", val: "Windows 11 Pro & Linux Mint" },
+                        { label: "Editing Suite", val: "DaVinci Resolve 21" },
+                        { label: "Primary Browser", val: "Vivaldi" },
+                        { label: "Security", val: "Proton Suite" },
+                        { label: "Broadcasting", val: "OBS Studio" },
+                        { label: "IDE", val: "Google Antigravity IDE" }
                     ]
                 },
-                vibingTitle: "CURRENTLY VIBING",
-                nowPlaying: "Listening live:",
-                notPlaying: "Isn't listening right now.",
-                skillsTitle: "TECH SKILLS",
-                legal: "LEGAL & INFO",
-                legalTitle: "Legal Information",
-                legalPrivacy: "Privacy & Services",
-                legalPrivacyText: "Private presence. Locally hosted fonts. IP addresses are transmitted for technical purposes.",
-                addressRequest: "Full address available upon request.",
-                trademarkLabel: "Copyright & Trademarks",
-                trademarkText: "All brands belong to their owners. Setup photos are private photography by Niklas Ausserwoeger.",
-                liabilityText: "No liability for hardware damage during private assistance. Backups are mandatory!",
+                galleryHeading: "Gallery",
+                noImages: "No images available.",
+                nowPlaying: "Listening Live",
+                offline: "Offline",
+                notPlaying: "Not playing",
+                cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
+                cookieDecline: "Decline", cookieAccept: "Accept"
             }
         };
 
-        const App = () => {
-            const [lang, setLang] = useState('de');
-            const [showLegal, setShowLegal] = useState(false);
-            const [showLangMenu, setShowLangMenu] = useState(false);
-            const [activeSetup, setActiveSetup] = useState("Gaming PC");
-            const [spotify, setSpotify] = useState(null);
-            const menuRef = useRef(null);
-            const t = translations[lang];
+        let currentLang = localStorage.getItem('siteLang') || 'en';
+        let activeSetupTab = 0;
+        let galleryImages = [];
 
-            useEffect(() => {
-                let isMounted = true;
-                const fetchSpotify = async () => {
-                    try {
-                        const response = await fetch(LANYARD_URL, { cache: 'no-cache' });
-                        if (!response.ok) return;
-                        const result = await response.json();
-                        if (isMounted && result.success && result.data) {
-                            if (result.data.listening_to_spotify && result.data.spotify) {
-                                setSpotify(result.data.spotify);
-                            } else {
-                                setSpotify(null);
-                            }
-                        }
-                    } catch (e) {
-                        if (isMounted) setSpotify(null);
-                    }
-                };
-                fetchSpotify();
-                const interval = setInterval(fetchSpotify, 10000); 
-                return () => { isMounted = false; clearInterval(interval); };
-            }, []);
+        function renderSetup() {
+            const t = translations[currentLang];
+            const tabContainer = document.getElementById('setup-tabs');
+            const itemsGrid = document.getElementById('setup-items-grid');
+            const currentCat = t.setupCategories[activeSetupTab];
 
-            useEffect(() => {
-                const handleClickOutside = (event) => { if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false); };
-                document.addEventListener("mousedown", handleClickOutside);
-                return () => document.removeEventListener("mousedown", handleClickOutside);
-            }, []);
+            tabContainer.innerHTML = t.setupCategories.map((cat, idx) => `
+                <button onclick="setSetupTab(${idx})" class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 ${idx === activeSetupTab ? 'bg-blue-500 text-white shadow-lg' : 'text-zinc-400 hover:text-white'}">
+                    ${cat}
+                </button>
+            `).join('');
 
-            const avatarUrl = "https://drive.google.com/thumbnail?id=1oVP0DjtKXgHs_I6pwuXDyxCQ1R5sTZXN&sz=w1000";
-
-            return (
-                <div className="min-h-screen bg-[#0b0d11] text-white selection:bg-cyan-500/30 overflow-x-hidden relative pb-12">
-                    {/* Background Glows */}
-                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
-                        <div className="absolute top-[-10%] left-[-10%] w-[60%] h-[60%] bg-cyan-600/10 blur-[120px] rounded-full" />
-                        <div className="absolute bottom-[-10%] right-[-10%] w-[60%] h-[60%] bg-blue-600/10 blur-[120px] rounded-full" />
-                    </div>
-
-                    <nav className="fixed top-0 w-full z-50 h-20 md:h-24 flex items-center px-4 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
-                        <div className="flex-1">
-                            <a href="../" className="text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-2 uppercase italic">
-                                <ChevronLeft size={14} /> {t.back}
-                            </a>
-                        </div>
-                        <div className="flex items-center gap-2 sm:gap-3 flex-1 justify-center md:flex-none">
-                             <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" alt="Logo" className="w-8 h-8 sm:w-10 sm:h-10 object-contain logo-themed" />
-                             <span className="header-logo-text text-lg sm:text-2xl">that<span className="text-cyan-500">austrianone.</span></span>
-                        </div>
-                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
-                            <button onClick={() => setShowLangMenu(!showLangMenu)} className="flex items-center gap-2 px-3 py-2 sm:px-8 sm:py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[10px] sm:text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg">
-                                <span>{t.flag}</span> <span className="hidden xs:inline">{t.name}</span> <ChevronDown size={14} className={showLangMenu ? 'rotate-180 transition-transform' : ''} />
-                            </button>
-                            {showLangMenu && (
-                                <div className="absolute right-0 top-14 sm:top-16 w-36 sm:w-48 glass-modal rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
-                                    {Object.keys(translations).map((key) => (
-                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-4 py-4 sm:px-6 sm:py-5 text-left text-[10px] sm:text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-cyan-500 bg-cyan-500/5' : 'text-zinc-400'}`}>
-                                            <span>{translations[key].flag}</span> <span>{translations[key].name}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </nav>
-
-                    <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 pt-32 sm:pt-48 animate-in">
-                        <header className="flex flex-col items-center text-center mb-16 sm:mb-24">
-                            <div className="relative mb-8 group">
-                                <div className="absolute -inset-4 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 opacity-20 blur-3xl group-hover:opacity-40 transition-opacity duration-1000"></div>
-                                <div className="absolute inset-0 bg-[conic-gradient(transparent,transparent,transparent,#06b6d4,#3b82f6)] animate-rotate-slow rounded-full opacity-40"></div>
-                                <div className="relative w-28 h-28 sm:w-48 sm:h-48 rounded-full border-4 border-[#0b0d11] overflow-hidden bg-[#161920] z-10 shadow-2xl">
-                                    <img src={avatarUrl} alt="Niklas" className="w-full h-full object-cover grayscale-[0.2] hover:grayscale-0 transition-all duration-700" />
-                                </div>
-                            </div>
-                            <div className="inline-block px-4 py-1.5 bg-cyan-500/10 text-cyan-500 rounded-full text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] mb-6 border border-cyan-500/20">{t.badge}</div>
-                            <h1 className="responsive-title font-black italic uppercase tracking-tighter text-white leading-none mb-6">{t.title}</h1>
-                            <p className="text-zinc-400 text-base sm:text-2xl font-medium italic max-w-2xl leading-relaxed">"{t.intro}"</p>
-                        </header>
-
-                        <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6 mb-16 sm:mb-24">
-                            {/* Facts Column */}
-                            <div className="lg:col-span-1 glass-card rounded-[2rem] p-6 sm:p-10">
-                                <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-6 italic text-center sm:text-left">{t.factsTitle}</h3>
-                                <div className="grid grid-cols-2 lg:grid-cols-1 gap-6 sm:gap-8">
-                                    {t.facts.map((f, i) => (
-                                        <div key={i} className="flex flex-col text-center sm:text-left">
-                                            <span className="text-zinc-600 text-[9px] sm:text-[10px] font-black uppercase tracking-widest mb-1">{f.label}</span>
-                                            <span className="text-white font-black italic uppercase text-sm sm:text-lg">{f.value}</span>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                            
-                            {/* Bio Column */}
-                            <div className="lg:col-span-3 glass-card rounded-[2rem] p-6 sm:p-14 cyan-glow relative overflow-hidden">
-                                <div className="absolute top-0 right-0 p-8 opacity-5 text-cyan-500 rotate-12 pointer-events-none hidden sm:block"><Zap size={200} /></div>
-                                <div className="text-center sm:text-left">
-                                    <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-8 italic">{t.bioTitle}</h3>
-                                    <p className="text-zinc-300 text-base sm:text-xl font-medium leading-relaxed italic mb-10">"{t.bioText}"</p>
-                                    
-                                    <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-8 italic">{t.skillsTitle}</h3>
-                                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 sm:gap-10">
-                                        {[
-                                            { name: "Hardware Specialist", level: "100%" },
-                                            { name: "Smartphone Repair", level: "95%" },
-                                            { name: "System Optimizing", level: "92%" },
-                                            { name: "C++ (Basics)", level: "40%" }
-                                        ].map((skill, i) => (
-                                            <div key={i} className="space-y-2">
-                                                <div className="flex justify-between items-end">
-                                                    <span className="text-[10px] font-black uppercase tracking-widest text-zinc-100">{skill.name}</span>
-                                                    <span className="text-[9px] font-black text-cyan-500">{skill.level}</span>
-                                                </div>
-                                                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
-                                                    <div className="h-full bg-cyan-600 rounded-full" style={{ width: skill.level }}></div>
-                                                </div>
-                                            </div>
-                                        ))}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        {/* Setup Section */}
-                        <section className="mb-16 sm:mb-24">
-                            <div className="flex flex-col sm:flex-row justify-between sm:items-end mb-8 sm:mb-12 gap-6">
-                                <div className="text-center sm:text-left">
-                                    <h2 className="text-3xl sm:text-6xl font-black italic uppercase tracking-tighter mb-2">{t.setupTitle}</h2>
-                                    <div className="h-1.5 w-16 bg-cyan-600 rounded-full mx-auto sm:mx-0"></div>
-                                </div>
-                                <div className="flex justify-center sm:justify-start gap-1 p-1 bg-white/5 rounded-xl border border-white/5 overflow-x-auto">
-                                    {t.setupCats.map(cat => (
-                                        <button key={cat} onClick={() => setActiveSetup(cat)} className={`px-4 sm:px-6 py-2 sm:py-3 rounded-lg text-[9px] sm:text-[10px] font-black uppercase tracking-widest transition-all whitespace-nowrap ${activeSetup === cat ? 'setup-tab-active shadow-lg' : 'text-zinc-500 hover:text-zinc-300'}`}>{cat}</button>
-                                    ))}
-                                </div>
-                            </div>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6">
-                                {t.setupData[activeSetup].map((item, i) => (
-                                    <div key={i} className="glass-card rounded-[1.5rem] sm:rounded-[2rem] p-5 sm:p-8 flex items-center gap-4">
-                                        <div className="w-12 h-12 rounded-xl bg-cyan-500/10 flex items-center justify-center text-cyan-500 shrink-0">
-                                            {activeSetup === "Gaming PC" ? <Cpu size={20} /> : activeSetup === "Equipment" ? <Monitor size={20} /> : <Zap size={20} />}
-                                        </div>
-                                        <div className="overflow-hidden">
-                                            <p className="text-[9px] sm:text-[10px] font-black text-zinc-600 uppercase tracking-widest mb-0.5">{item.item}</p>
-                                            <p className="text-xs sm:text-sm font-bold text-zinc-100 uppercase italic truncate">{item.value}</p>
-                                        </div>
-                                    </div>
-                                ))}
-                            </div>
-                        </section>
-
-                        {/* Spotify Section */}
-                        <section className="mb-20 sm:mb-24">
-                            <div className="flex items-center gap-4 mb-8 sm:mb-10 justify-center sm:justify-start">
-                                <h2 className="text-2xl sm:text-5xl font-black italic uppercase tracking-tighter">{t.vibingTitle}</h2>
-                                <SpotifyIcon size={28} />
-                            </div>
-                            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-                                <div className="glass-card rounded-[2rem] p-6 sm:p-8 flex flex-col justify-center relative overflow-hidden group">
-                                    <div className="absolute top-0 right-0 p-6 opacity-5 text-cyan-500 group-hover:scale-110 transition-transform duration-500"><MusicIcon size={60} /></div>
-                                    <div className="flex items-center gap-6 sm:gap-8">
-                                        <div className={`w-20 h-20 sm:w-28 sm:h-28 rounded-full bg-[#161920] flex items-center justify-center border-4 border-white/5 relative overflow-hidden shrink-0 shadow-2xl ${spotify ? 'animate-vinyl' : ''}`}>
-                                            {spotify && spotify.album_art_url ? (
-                                                <>
-                                                    <img src={spotify.album_art_url} className="w-full h-full object-cover rounded-full" alt="Cover" />
-                                                    <div className="absolute w-3 h-3 bg-[#0b0d11] rounded-full border border-white/20 z-10"></div>
-                                                </>
-                                            ) : (
-                                                <img src="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png" className="w-10 h-10 object-contain opacity-20 grayscale" alt="Logo" />
-                                            )}
-                                        </div>
-                                        <div className="overflow-hidden text-left">
-                                            <p className="text-[9px] font-black text-cyan-500 uppercase tracking-[0.3em] mb-1">{spotify ? t.nowPlaying : t.notPlaying}</p>
-                                            <p className="text-lg sm:text-2xl font-black italic uppercase text-white truncate">{spotify ? spotify.song : "Quiet Mode"}</p>
-                                            <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1 truncate">{spotify ? spotify.artist : "thataustrianone"}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="rounded-[1.5rem] overflow-hidden border border-white/5 shadow-2xl bg-black">
-                                    <iframe style={{borderRadius:'12px'}} src="https://open.spotify.com/embed/playlist/0XZQFKzgRWqT3Rm9E0YgwX?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-                                </div>
-                            </div>
-                        </section>
-
-                        {/* Journey/Milestones Section */}
-                        <section className="mb-20 sm:mb-32">
-                            <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-10 italic text-center">{t.journeyTitle}</h3>
-                            <div className="relative max-w-4xl mx-auto">
-                                {/* Desktop Timeline Line */}
-                                <div className="absolute left-1/2 -translate-x-1/2 top-0 bottom-0 w-px bg-white/10 hidden md:block" />
-                                {/* Mobile Timeline Line */}
-                                <div className="absolute left-4 top-0 bottom-0 w-px bg-white/10 md:hidden" />
-                                
-                                <div className="space-y-10 sm:space-y-12 relative">
-                                    {t.journey.map((m, i) => (
-                                        <div key={i} className={`flex flex-col md:flex-row items-start md:items-center gap-6 sm:gap-8 ${i % 2 === 0 ? 'md:flex-row-reverse' : ''}`}>
-                                            <div className="flex-1 w-full pl-10 md:pl-0">
-                                                <div className={`glass-card rounded-[1.5rem] sm:rounded-[2.5rem] p-6 sm:p-10 hover:translate-y-[-5px] transition-transform text-left ${i % 2 === 0 ? 'md:text-left' : 'md:text-right'}`}>
-                                                    <span className="text-cyan-500 font-black italic text-xl sm:text-3xl mb-2 sm:mb-4 block">{m.year}</span>
-                                                    <h4 className="text-base sm:text-xl font-black uppercase italic mb-2 text-white">{m.title}</h4>
-                                                    <p className="text-zinc-500 font-medium text-xs sm:text-sm leading-relaxed">{m.desc}</p>
-                                                </div>
-                                            </div>
-                                            {/* Dot */}
-                                            <div className="absolute left-4 md:left-1/2 -translate-x-1/2 w-8 h-8 rounded-full bg-[#0b0d11] border-4 border-cyan-600 z-10 flex items-center justify-center shadow-[0_0_15px_rgba(6,182,212,0.3)]">
-                                                <div className="w-2 h-2 rounded-full bg-cyan-400" />
-                                            </div>
-                                            <div className="flex-1 hidden md:block" />
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </section>
-
-                        <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none">
-    <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
-        © 2026 — @der_46er
-    </p>
-</footer>
-                    </div>
-
-                    {/* Legal Modal */}
-                    {showLegal && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 sm:p-6 bg-black/95 backdrop-blur-xl animate-in text-zinc-100">
-                            <div className="glass-modal rounded-[2rem] sm:rounded-[2.5rem] w-full max-w-xl max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-                                <div className="p-6 sm:p-8 border-b border-white/5 flex justify-between items-center text-left">
-                                    <h2 className="text-xl sm:text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
-                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
-                                        <X size={24} />
-                                    </button>
-                                </div>
-                                <div className="p-6 sm:p-8 overflow-y-auto custom-scroll space-y-8 sm:space-y-10 text-left">
-                                    <section>
-                                        <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">Impressum</h3>
-                                        <div className="space-y-4 font-bold uppercase">
-                                            <p className="text-xl sm:text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
-                                            <p className="text-zinc-500 text-[9px] sm:text-[10px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
-                                            <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
-                                            <div className="pt-2">
-                                                <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase font-bold">E-Mail Kontakt</p>
-                                                <p className="text-cyan-400 text-sm font-black italic lowercase">niklas.ausserwoeger@gmail.com</p>
-                                            </div>
-                                        </div>
-                                    </section>
-                                    <section className="space-y-6">
-                                        <div>
-                                            <h3 className="text-cyan-500 font-black uppercase text-[10px] tracking-[0.4em] mb-3 italic">{t.legalPrivacy}</h3>
-                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.legalPrivacyText}</p>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">{t.trademarkLabel}</h4>
-                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.trademarkText}</p>
-                                        </div>
-                                        <div>
-                                            <h4 className="text-white font-bold text-xs uppercase tracking-widest mb-1 italic">Haftungsausschluss</h4>
-                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed uppercase">{t.liabilityText}</p>
-                                        </div>
-                                    </section>
-                                    <div className="pt-8 border-t border-white/5 text-[9px] uppercase tracking-[0.4em] text-zinc-700 font-black text-center italic">
-                                        Privatprojekt • Linz (OÖ) • {new Date().getFullYear()}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
+            const items = t.setupData[currentCat] || [];
+            itemsGrid.innerHTML = items.map(item => `
+                <div class="glass-box rounded-xl p-3.5 flex flex-col justify-between border border-white/5">
+                    <span class="text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-1">${item.label}</span>
+                    <span class="text-xs font-black italic uppercase text-white truncate">${item.val}</span>
                 </div>
-            );
+            `).join('');
+        }
+
+        function setSetupTab(idx) {
+            activeSetupTab = idx;
+            renderSetup();
+        }
+
+        async function fetchGallery() {
+            try {
+                const res = await fetch(GITHUB_GALLERY_API);
+                if (!res.ok) throw new Error("Could not load gallery repository");
+                const files = await res.json();
+                
+                const validExtensions = ['.webp', '.jpg', '.jpeg', '.png', '.avif'];
+                galleryImages = files
+                    .filter(f => f.type === 'file' && validExtensions.some(ext => f.name.toLowerCase().endsWith(ext)))
+                    .map(f => f.download_url || `${GITHUB_GALLERY_RAW}/${f.name}`);
+                
+                renderGallery();
+            } catch (err) {
+                console.error("Gallery fetch failed:", err);
+                renderGallery();
+            }
+        }
+
+        function renderGallery() {
+            const t = translations[currentLang];
+            const grid = document.getElementById('gallery-grid');
+            
+            if (galleryImages.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-8 text-zinc-500 font-bold uppercase tracking-widest text-xs">${t.noImages}</div>`;
+                return;
+            }
+
+            grid.innerHTML = galleryImages.map(imgUrl => `
+                <div onclick="openLightbox('${imgUrl}')" class="aspect-square rounded-xl overflow-hidden bg-black/40 border border-white/5 cursor-pointer group relative">
+                    <img src="${imgUrl}" alt="Gallery capture" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110" loading="lazy" />
+                    <div class="absolute inset-0 bg-blue-500/10 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none"></div>
+                </div>
+            `).join('');
+        }
+
+        function openLightbox(src) {
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            img.src = src;
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0');
+                img.classList.remove('scale-95');
+                img.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeLightbox() {
+            const modal = document.getElementById('lightbox-modal');
+            const img = document.getElementById('lightbox-img');
+            modal.classList.add('opacity-0');
+            img.classList.remove('scale-100');
+            img.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+                img.src = '';
+            }, 300);
+        }
+
+        async function fetchLanyard() {
+            const t = translations[currentLang];
+            try {
+                const res = await fetch(LANYARD_URL, { cache: 'no-cache' });
+                if (!res.ok) return;
+                const data = await res.json();
+                
+                const art = document.getElementById('spotify-art');
+                const placeholder = document.getElementById('spotify-placeholder');
+                const artWrap = document.getElementById('spotify-art-wrap');
+                const statusText = document.getElementById('spotify-status-text');
+                const title = document.getElementById('spotify-title');
+                const artist = document.getElementById('spotify-artist');
+
+                if (data.success && data.data && data.data.listening_to_spotify && data.data.spotify) {
+                    const sp = data.data.spotify;
+                    art.src = sp.album_art_url;
+                    art.classList.remove('hidden');
+                    placeholder.classList.add('hidden');
+                    artWrap.classList.add('animate-vinyl');
+                    
+                    statusText.innerText = t.nowPlaying;
+                    statusText.className = "text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-0.5";
+                    title.innerText = sp.song;
+                    artist.innerText = sp.artist;
+                } else {
+                    art.classList.add('hidden');
+                    placeholder.classList.remove('hidden');
+                    artWrap.classList.remove('animate-vinyl');
+                    
+                    statusText.innerText = t.offline;
+                    statusText.className = "text-[9px] font-black uppercase tracking-widest text-zinc-500 mb-0.5";
+                    title.innerText = t.notPlaying;
+                    artist.innerText = "Spotify";
+                }
+            } catch (e) {
+                console.error("Lanyard error:", e);
+            }
+        }
+
+        function render() {
+            const t = translations[currentLang];
+            
+            document.getElementById('hero-title').innerText = t.heroTitle;
+            document.getElementById('hero-desc').innerText = t.heroDesc;
+            document.getElementById('profile-bio').innerText = t.profileBio;
+            document.getElementById('setup-heading').innerText = t.setupHeading;
+            document.getElementById('setup-subheading').innerText = t.setupSubheading;
+            document.getElementById('gallery-heading').innerText = t.galleryHeading;
+
+            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
+            
+            document.getElementById('cookie-text').innerText = t.cookieText;
+            document.getElementById('cookie-decline').innerText = t.cookieDecline;
+            document.getElementById('cookie-accept').innerText = t.cookieAccept;
+
+            renderSetup();
+            renderGallery();
+            fetchLanyard();
+        }
+
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            localStorage.setItem('siteLang', currentLang);
+            render();
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        const cookieBanner = document.getElementById('cookie-banner');
+        const cookieConsent = localStorage.getItem('siteCookieConsent');
+
+        function injectGA() {
+            if (document.getElementById('ga-script')) return;
+            const script1 = document.createElement('script');
+            script1.id = 'ga-script';
+            script1.async = true;
+            script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
+            document.head.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-0WHX0WMFTC');
+            `;
+            document.head.appendChild(script2);
+        }
+
+        if (!cookieConsent) {
+            cookieBanner.classList.remove('hidden');
+        } else if (cookieConsent === 'granted') {
+            injectGA();
+        }
+
+        window.handleCookie = (status) => {
+            localStorage.setItem('siteCookieConsent', status);
+            cookieBanner.classList.add('opacity-0', 'translate-y-full');
+            setTimeout(() => cookieBanner.classList.add('hidden'), 400);
+            if (status === 'granted') injectGA();
+        };
+
+        render();
+        fetchGallery();
+        setInterval(fetchLanyard, 10000);
     </script>
 </body>
 </html>
