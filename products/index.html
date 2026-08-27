@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Affiliate | Nick</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); 
+            font-weight: 400; 
+            font-display: swap; 
+        }
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); 
+            font-weight: 900; 
+            font-display: swap; 
+        }
+        
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background-color: #0b0d11; 
+            color: white; 
+            margin: 0; 
+            padding: 0; 
+            position: relative;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-green-black.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            transform: scale(1.05);
+            opacity: 1;
+            z-index: -2;
+        }
+
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
+        
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-box {
+            background: rgba(18, 18, 18, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .dropdown-menu {
+            background: rgba(18, 18, 18, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
+        }
+
+        .custom-scroll::-webkit-scrollbar { width: 5px; }
+        .custom-scroll::-webkit-scrollbar-track { background: transparent; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen w-full overflow-x-hidden selection:bg-emerald-500/20 relative">
+
+    <main class="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-start pt-10 md:pt-8 pb-4">
+        
+        <!-- Header & Toolbar Container -->
+        <div class="w-full text-center shrink-0 mb-6 animate-in relative z-40" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+                Products
+            </h1>
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide mb-6">
+            </p>
+
+            <!-- Filter / Search Toolbar -->
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-3 relative z-50">
+                <!-- Dynamic Platform Preference Toggle -->
+                <div class="relative w-full sm:w-auto shrink-0" id="platform-wrapper">
+                    <button id="platform-btn" onclick="togglePlatformMenu()" class="w-full sm:w-[170px] glass-box rounded-xl px-4 py-2.5 flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white hover:border-emerald-500/80 transition-all">
+                        <span id="platform-btn-label" class="truncate">Platform</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-zinc-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div id="platform-dropdown" class="hidden absolute top-full mt-2 left-0 w-full sm:w-52 dropdown-menu rounded-xl overflow-hidden z-[200] p-1.5 flex flex-col gap-1 max-h-60 overflow-y-auto custom-scroll text-left">
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative flex-grow w-full">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Search products..." class="w-full glass-box rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm font-medium text-white placeholder-zinc-500 focus:outline-none focus:border-emerald-500/80 transition-colors" />
+                </div>
+
+                <!-- Category Custom Dropdown -->
+                <div class="relative w-full sm:w-auto shrink-0" id="category-wrapper">
+                    <button id="category-btn" onclick="toggleCategoryMenu()" class="w-full sm:w-[190px] glass-box rounded-xl px-4 py-2.5 flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white hover:border-emerald-500/80 transition-all">
+                        <span id="category-btn-label" class="truncate">All Categories</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-zinc-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div id="category-dropdown" class="hidden absolute top-full mt-2 right-0 w-full sm:w-56 dropdown-menu rounded-xl overflow-hidden z-[200] p-1.5 flex flex-col gap-1 max-h-60 overflow-y-auto custom-scroll text-left">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Product Listings -->
+        <div id="shop-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-max animate-in pr-1 relative z-10" style="animation-delay: 0.2s; opacity: 0;">
+            <div id="loading-spinner" class="col-span-full text-center py-12 text-zinc-400 font-bold uppercase tracking-widest text-xs animate-pulse">
+                Loading Listings...
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer matched to home page positioning -->
+    <footer class="w-full flex justify-between items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+        </button>
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <!-- Platform Selection Modal -->
+    <div id="platform-modal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-md z-[300] flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+        <div class="glass-box rounded-2xl w-full max-w-md p-6 relative border border-white/20 shadow-2xl scale-95 transition-transform duration-300 flex flex-col gap-4 text-left" id="platform-modal-card">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-base sm:text-lg font-black italic uppercase text-white tracking-tight" id="modal-title">Choose Platform</h3>
+                    <p class="text-zinc-400 text-xs font-medium" id="modal-desc">This item is available on multiple platforms. Select where you'd like to view it:</p>
+                </div>
+                <button onclick="closePlatformModal()" class="text-zinc-500 hover:text-white transition-colors p-1 -mr-2 -mt-2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div id="modal-platform-list" class="flex flex-col gap-2.5 pt-2">
+            </div>
+        </div>
+    </div>
+
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-xl border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+        <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
+            <p id="cookie-text"></p>
+        </div>
+        <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
+            <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"></button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/assets/products/affiliate";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/assets/products/affiliate";
+        const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
+
+        const KNOWN_PLATFORMS = {
+            'amazon': { key: 'amazon', name: 'Amazon' },
+            'amzn': { key: 'amazon', name: 'Amazon' },
+            'holy': { key: 'holy', name: 'HOLY Energy' },
+            'holyenergy': { key: 'holy', name: 'HOLY Energy' },
+            'weareholy': { key: 'holy', name: 'HOLY Energy' },
+            'ugreen': { key: 'ugreen', name: 'Ugreen' },
+            'willhaben': { key: 'willhaben', name: 'Willhaben' },
+            'vinted': { key: 'vinted', name: 'Vinted' },
+            'ebay': { key: 'ebay', name: 'eBay' },
+            'aliexpress': { key: 'aliexpress', name: 'AliExpress' },
+            'caseking': { key: 'caseking', name: 'Caseking' },
+            'proshop': { key: 'proshop', name: 'Proshop' },
+            'mindfactory': { key: 'mindfactory', name: 'Mindfactory' },
+            'alternate': { key: 'alternate', name: 'Alternate' }
+        };
+
+        const translations = {
+            de: {
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
+                heroTitle: "Produkte",
+                heroDesc: "Hardware, Zubehör & Ausrüstung die ich empfehle und nutze",
+                cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
+                cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
+                noItems: "Momentan sind keine Artikel verfügbar.",
+                noMatch: "Keine passenden Artikel gefunden.",
+                searchPlaceholder: "Produkte suchen...",
+                allPlatforms: "Alle Plattformen",
+                platformBtn: "Plattform",
+                allCategories: "Alle Kategorien",
+                modalTitle: "Plattform wählen",
+                modalDesc: "Dieser Artikel ist auf mehreren Plattformen verfügbar. Wähle eine aus:",
+                openListing: "Öffnen"
+            },
+            en: {
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
+                heroTitle: "Products",
+                heroDesc: "Hardware, accessories & gear I personally use and recommend",
+                cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
+                cookieDecline: "Decline", cookieAccept: "Accept",
+                noItems: "No items available at the moment.",
+                noMatch: "No matching products found.",
+                searchPlaceholder: "Search products...",
+                allPlatforms: "All Platforms",
+                platformBtn: "Platform",
+                allCategories: "All Categories",
+                modalTitle: "Choose Platform",
+                modalDesc: "This item is available on multiple platforms. Select where you'd like to view it:",
+                openListing: "Open"
+            }
+        };
+
+        const SYNONYMS = {
+            'gpu': ['grafikkarte', 'video', 'card', 'geforce', 'radeon', 'nvidia', 'rtx', 'gtx'],
+            'grafikkarte': ['gpu', 'video', 'card', 'geforce', 'nvidia', 'rtx'],
+            'cpu': ['prozessor', 'processor', 'ryzen', 'intel', 'core', 'chip'],
+            'prozessor': ['cpu', 'processor', 'ryzen', 'intel'],
+            'ram': ['speicher', 'memory', 'ddr4', 'ddr5', 'arbeitsspeicher'],
+            'arbeitsspeicher': ['ram', 'memory', 'ddr4', 'ddr5'],
+            'kühler': ['fan', 'cooler', 'lüfter', 'cooling', 'heatsink', 'aio'],
+            'lüfter': ['fan', 'cooler', 'kühler', 'cooling'],
+            'fan': ['cooler', 'lüfter', 'kühler'],
+            'cooler': ['fan', 'lüfter', 'kühler'],
+            'mainboard': ['motherboard', 'board', 'mb', 'mobo'],
+            'motherboard': ['mainboard', 'board', 'mb', 'mobo'],
+            'netzteil': ['psu', 'power', 'supply'],
+            'psu': ['netzteil', 'power', 'supply']
+        };
+
+        let currentLang = localStorage.getItem('siteLang') || 'en';
+        let preferredPlatform = localStorage.getItem('affiliatePlatform') || 'all';
+        let selectedCategory = 'all';
+        let searchQuery = '';
+        let fetchedItems = [];
+        let detectedPlatforms = new Map();
+
+        function extractDomainName(url) {
+            try {
+                const parsed = new URL(url.startsWith('http') ? url : `https://${url}`);
+                const hostname = parsed.hostname.replace(/^www\./, '').toLowerCase();
+                const hostParts = hostname.split('.');
+                const root = hostParts.length >= 2 ? hostParts[hostParts.length - 2] : hostParts[0];
+                
+                if (KNOWN_PLATFORMS[root]) {
+                    return { key: KNOWN_PLATFORMS[root].key, name: KNOWN_PLATFORMS[root].name };
+                }
+                
+                for (const [pattern, info] of Object.entries(KNOWN_PLATFORMS)) {
+                    if (hostname.includes(pattern)) {
+                        return { key: info.key, name: info.name };
+                    }
+                }
+
+                const capitalized = root.charAt(0).toUpperCase() + root.slice(1);
+                return { key: root, name: capitalized };
+            } catch (e) {
+                return { key: 'link', name: 'Store' };
+            }
+        }
+
+        function togglePlatformMenu() {
+            const platformDropdown = document.getElementById('platform-dropdown');
+            const categoryDropdown = document.getElementById('category-dropdown');
+            categoryDropdown.classList.add('hidden');
+            platformDropdown.classList.toggle('hidden');
+        }
+
+        function toggleCategoryMenu() {
+            const platformDropdown = document.getElementById('platform-dropdown');
+            const categoryDropdown = document.getElementById('category-dropdown');
+            platformDropdown.classList.add('hidden');
+            categoryDropdown.classList.toggle('hidden');
+        }
+
+        window.addEventListener('click', (e) => {
+            const pWrap = document.getElementById('platform-wrapper');
+            const cWrap = document.getElementById('category-wrapper');
+            if (pWrap && !pWrap.contains(e.target)) {
+                document.getElementById('platform-dropdown').classList.add('hidden');
+            }
+            if (cWrap && !cWrap.contains(e.target)) {
+                document.getElementById('category-dropdown').classList.add('hidden');
+            }
+        });
+
+        function setPlatform(platform) {
+            preferredPlatform = platform;
+            localStorage.setItem('affiliatePlatform', platform);
+            document.getElementById('platform-dropdown').classList.add('hidden');
+            render();
+        }
+
+        function setCategory(cat) {
+            selectedCategory = cat;
+            document.getElementById('category-dropdown').classList.add('hidden');
+            render();
+        }
+
+        function handleSearch(val) {
+            searchQuery = val.toLowerCase().trim();
+            render();
+        }
+
+        function levenshtein(a, b) {
+            const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+            for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+            for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
+
+            for (let i = 1; i <= a.length; i++) {
+                for (let j = 1; j <= b.length; j++) {
+                    const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + cost
+                    );
+                }
+            }
+            return matrix[a.length][b.length];
+        }
+
+        function isFuzzyMatch(searchWord, targetWord) {
+            if (targetWord.includes(searchWord) || searchWord.includes(targetWord)) return true;
+            
+            const maxLen = Math.max(searchWord.length, targetWord.length);
+            if (maxLen <= 3) return searchWord === targetWord;
+            
+            const allowedDist = maxLen >= 7 ? 2 : 1;
+            return levenshtein(searchWord, targetWord) <= allowedDist;
+        }
+
+        function smartMatch(item, query) {
+            if (!query) return true;
+
+            const queryWords = query.split(/\s+/).filter(Boolean);
+            const titleDe = (item.title.de || "").toLowerCase();
+            const titleEn = (item.title.en || "").toLowerCase();
+            const descDe = (item.description.de || "").toLowerCase();
+            const descEn = (item.description.en || "").toLowerCase();
+            const catDe = (item.category.de || "").toLowerCase();
+            const catEn = (item.category.en || "").toLowerCase();
+
+            const targetTokens = `${titleDe} ${titleEn} ${descDe} ${descEn} ${catDe} ${catEn}`
+                .replace(/[^a-z0-9äöüß\s]/g, ' ')
+                .split(/\s+/)
+                .filter(Boolean);
+
+            return queryWords.every(qWord => {
+                if (targetTokens.some(tWord => isFuzzyMatch(qWord, tWord))) return true;
+
+                const synList = SYNONYMS[qWord] || [];
+                if (synList.some(syn => targetTokens.some(tWord => isFuzzyMatch(syn, tWord)))) return true;
+
+                return false;
+            });
+        }
+
+        function getPlatformUrls(item) {
+            const list = [];
+            if (typeof item.urls === 'string' && item.urls !== '#') {
+                const info = extractDomainName(item.urls);
+                list.push({ key: info.key, name: info.name, url: item.urls });
+            } else if (Array.isArray(item.urls)) {
+                item.urls.forEach(u => {
+                    const info = extractDomainName(u);
+                    list.push({ key: info.key, name: info.name, url: u });
+                });
+            } else if (item.urls && typeof item.urls === 'object') {
+                Object.entries(item.urls).forEach(([k, u]) => {
+                    const keyLower = k.toLowerCase();
+                    const info = KNOWN_PLATFORMS[keyLower] || extractDomainName(u);
+                    const name = info?.name || (keyLower.charAt(0).toUpperCase() + keyLower.slice(1));
+                    const resolvedKey = info?.key || keyLower;
+                    list.push({ key: resolvedKey, name: name, url: u });
+                });
+            }
+            return list;
+        }
+
+        function handleItemClick(index) {
+            const item = fetchedItems[index];
+            if (!item) return;
+
+            const platforms = getPlatformUrls(item);
+
+            if (preferredPlatform !== 'all') {
+                const preferred = platforms.find(p => p.key === preferredPlatform);
+                if (preferred) {
+                    window.open(preferred.url, '_blank');
+                    return;
+                }
+            }
+
+            if (platforms.length === 1) {
+                window.open(platforms[0].url, '_blank');
+                return;
+            }
+
+            if (platforms.length > 1) {
+                openPlatformModal(item, platforms);
+                return;
+            }
+
+            if (typeof item.urls === 'string' && item.urls !== '#') {
+                window.open(item.urls, '_blank');
+            }
+        }
+
+        function openPlatformModal(item, platforms) {
+            const modal = document.getElementById('platform-modal');
+            const card = document.getElementById('platform-modal-card');
+            const list = document.getElementById('modal-platform-list');
+            const t = translations[currentLang];
+
+            const title = currentLang === 'en' ? item.title.en : item.title.de;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = t.modalDesc;
+
+            list.innerHTML = platforms.map(p => `
+                <a href="${p.url}" target="_blank" onclick="closePlatformModal()" class="glass-box rounded-xl p-3.5 flex items-center justify-between hover:border-emerald-500/80 hover:bg-white/5 transition-all duration-200 group">
+                    <span class="font-bold text-sm text-white tracking-wide">${p.name}</span>
+                    <div class="flex items-center gap-1.5 text-zinc-400 group-hover:text-emerald-400 text-xs font-bold uppercase tracking-wider transition-colors">
+                        <span>${t.openListing}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+            `).join('');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closePlatformModal() {
+            const modal = document.getElementById('platform-modal');
+            const card = document.getElementById('platform-modal-card');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('platform-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'platform-modal') closePlatformModal();
+        });
+
+        function matchesPlatform(item) {
+            if (preferredPlatform === 'all') return true;
+            const platforms = getPlatformUrls(item);
+            return platforms.some(p => p.key === preferredPlatform);
+        }
+
+        async function fetchAffiliateItems() {
+            try {
+                const response = await fetch(GITHUB_API_URL);
+                if (!response.ok) throw new Error("Failed to fetch affiliate directory");
+                const files = await response.json();
+                
+                const jsonFiles = files.filter(file => 
+                    file.type === 'file' && 
+                    file.name.toLowerCase().endsWith('.json') && 
+                    file.name.toLowerCase() !== 'template.json'
+                );
+
+                const itemPromises = jsonFiles.map(async (file) => {
+                    const jsonUrl = file.download_url || `${GITHUB_RAW_BASE}/${file.name}`;
+                    try {
+                        const res = await fetch(jsonUrl);
+                        if (!res.ok) return null;
+
+                        const item = await res.json();
+
+                        let titleDe = item.title?.de || file.name.replace(/\.json$/i, '').replace(/_/g, ' ');
+                        let titleEn = item.title?.en || titleDe;
+                        let categoryDe = item.category?.de || "";
+                        let categoryEn = item.category?.en || categoryDe;
+                        let descriptionDe = item.description?.de || "";
+                        let descriptionEn = item.description?.en || descriptionDe;
+                        let priceEur = item.price?.eur || "";
+                        let priceUsd = item.price?.usd || "";
+
+                        return {
+                            title: { de: titleDe, en: titleEn },
+                            category: { de: categoryDe, en: categoryEn },
+                            description: { de: descriptionDe, en: descriptionEn },
+                            price: { eur: priceEur, usd: priceUsd },
+                            image: item.image || 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920',
+                            urls: item.urls || item.url || '#'
+                        };
+                    } catch (err) {
+                        return null;
+                    }
+                });
+
+                const resolved = await Promise.all(itemPromises);
+                fetchedItems = resolved.filter(i => i !== null);
+                
+                populatePlatforms();
+                populateCategories();
+                render();
+            } catch (e) {
+                console.error("Fetch error:", e);
+                render();
+            }
+        }
+
+        function populatePlatforms() {
+            detectedPlatforms.clear();
+            fetchedItems.forEach(item => {
+                const pList = getPlatformUrls(item);
+                pList.forEach(p => {
+                    if (!detectedPlatforms.has(p.key)) {
+                        detectedPlatforms.set(p.key, p.name);
+                    }
+                });
+            });
+
+            const dropdown = document.getElementById('platform-dropdown');
+            const t = translations[currentLang];
+
+            let html = `
+                <button onclick="setPlatform('all')" class="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${preferredPlatform === 'all' ? 'text-emerald-400 bg-white/5' : 'text-zinc-300 hover:text-white'}">
+                    ${t.allPlatforms}
+                </button>
+            `;
+
+            detectedPlatforms.forEach((name, key) => {
+                const isSelected = preferredPlatform === key;
+                html += `
+                    <button onclick="setPlatform('${key}')" class="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${isSelected ? 'text-emerald-400 bg-white/5' : 'text-zinc-300 hover:text-white'}">
+                        ${name}
+                    </button>
+                `;
+            });
+
+            dropdown.innerHTML = html;
+        }
+
+        function populateCategories() {
+            const dropdown = document.getElementById('category-dropdown');
+            const t = translations[currentLang];
+            
+            const uniqueCats = new Set();
+            fetchedItems.forEach(item => {
+                const cat = currentLang === 'en' ? item.category.en : item.category.de;
+                if (cat) uniqueCats.add(cat);
+            });
+
+            let html = `
+                <button onclick="setCategory('all')" class="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${selectedCategory === 'all' ? 'text-emerald-400 bg-white/5' : 'text-zinc-300 hover:text-white'}">
+                    ${t.allCategories}
+                </button>
+            `;
+
+            uniqueCats.forEach(cat => {
+                const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                html += `
+                    <button onclick="setCategory('${cat.replace(/'/g, "\\'")}')" class="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${isSelected ? 'text-emerald-400 bg-white/5' : 'text-zinc-300 hover:text-white'}">
+                        ${cat}
+                    </button>
+                `;
+            });
+
+            dropdown.innerHTML = html;
+        }
+
+        function render() {
+            const t = translations[currentLang];
+            
+            document.getElementById('hero-title').innerText = t.heroTitle;
+            document.getElementById('hero-desc').innerText = t.heroDesc;
+            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
+            
+            document.getElementById('cookie-text').innerText = t.cookieText;
+            document.getElementById('cookie-decline').innerText = t.cookieDecline;
+            document.getElementById('cookie-accept').innerText = t.cookieAccept;
+            document.getElementById('search-input').placeholder = t.searchPlaceholder;
+
+            // Platform Button Label
+            const selectedPlatformName = detectedPlatforms.get(preferredPlatform);
+            document.getElementById('platform-btn-label').innerText = preferredPlatform === 'all' || !selectedPlatformName ? t.platformBtn : selectedPlatformName;
+
+            // Category Button label
+            document.getElementById('category-btn-label').innerText = selectedCategory === 'all' ? t.allCategories : selectedCategory;
+
+            populatePlatforms();
+            populateCategories();
+
+            // Filter items
+            const filteredItems = fetchedItems.filter(item => {
+                const cat = currentLang === 'en' ? item.category.en : item.category.de;
+                const matchesCat = selectedCategory === 'all' || cat.toLowerCase() === selectedCategory.toLowerCase();
+                const matchesPlat = matchesPlatform(item);
+                const matchesFuzzy = smartMatch(item, searchQuery);
+
+                return matchesCat && matchesPlat && matchesFuzzy;
+            });
+
+            // Render Product Cards
+            const grid = document.getElementById('shop-grid');
+
+            if (fetchedItems.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500 font-bold uppercase tracking-widest text-xs">${t.noItems}</div>`;
+                return;
+            }
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500 font-bold uppercase tracking-widest text-xs">${t.noMatch}</div>`;
+                return;
+            }
+
+            grid.innerHTML = filteredItems.map(item => {
+                const realIndex = fetchedItems.indexOf(item);
+                const title = currentLang === 'en' ? item.title.en : item.title.de;
+                const desc = currentLang === 'en' ? item.description.en : item.description.de;
+                const category = currentLang === 'en' ? item.category.en : item.category.de;
+                const priceFormatted = currentLang === 'en' ? (item.price.usd ? `$${item.price.usd}` : (item.price.eur ? `${item.price.eur}€` : '')) : (item.price.eur ? `${item.price.eur}€` : (item.price.usd ? `$${item.price.usd}` : ''));
+
+                return `
+                <div onclick="handleItemClick(${realIndex})" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-emerald-500/80 hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.3)] active:scale-[0.99] p-4 flex flex-col justify-between overflow-hidden w-full cursor-pointer">
+                    
+                    <div class="aspect-square w-full rounded-xl overflow-hidden bg-black/40 mb-4 border border-white/5 relative">
+                        <img src="${item.image}" alt="${title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'" />
+                        ${category ? `<span class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider text-zinc-300 border border-white/10">${category}</span>` : ''}
+                    </div>
+                    
+                    <div class="flex flex-col flex-grow justify-between min-w-0">
+                        <div>
+                            <div class="flex justify-between items-start mb-1 gap-2">
+                                <h2 class="text-base sm:text-lg font-black text-white tracking-tight italic uppercase leading-snug truncate pr-1 group-hover:text-emerald-400 transition-colors">${title}</h2>
+                                ${priceFormatted ? `<span class="text-emerald-400 font-extrabold text-sm shrink-0">${priceFormatted}</span>` : ''}
+                            </div>
+                            <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest line-clamp-2 leading-relaxed mb-3">${desc}</p>
+                        </div>
+                        
+                        <div class="flex items-center justify-between pt-2 border-t border-white/5 mt-auto">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-white transition-colors">Details</span>
+                            <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${arrowUpRight}</svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                `;
+            }).join('');
+        }
+
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            localStorage.setItem('siteLang', currentLang);
+            populatePlatforms();
+            populateCategories();
+            render();
+        };
+
+        const cookieBanner = document.getElementById('cookie-banner');
+        const cookieConsent = localStorage.getItem('siteCookieConsent');
+
+        function injectGA() {
+            if (document.getElementById('ga-script')) return;
+            const script1 = document.createElement('script');
+            script1.id = 'ga-script';
+            script1.async = true;
+            script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
+            document.head.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-0WHX0WMFTC');
+            `;
+            document.head.appendChild(script2);
+        }
+
+        if (!cookieConsent) {
+            cookieBanner.classList.remove('hidden');
+        } else if (cookieConsent === 'granted') {
+            injectGA();
+        }
+
+        window.handleCookie = (status) => {
+            localStorage.setItem('siteCookieConsent', status);
+            cookieBanner.classList.add('opacity-0', 'translate-y-full');
+            setTimeout(() => cookieBanner.classList.add('hidden'), 400);
+            if (status === 'granted') injectGA();
+        };
+
+        fetchAffiliateItems();
+    </script>
+</body>
+</html>
