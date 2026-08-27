@@ -94,7 +94,7 @@
         
         <!-- Hero Header -->
         <div class="w-full text-center shrink-0 mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2 leading-tight">
                 About Me
             </h1>
             <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-3xl mx-auto tracking-wide mb-8">
@@ -111,7 +111,7 @@
                         <span class="text-zinc-600 text-xs">•</span>
                         <span class="text-[10px] sm:text-xs font-black uppercase tracking-widest text-zinc-400">IT Technician & Creator</span>
                     </div>
-                    <h2 class="text-2xl sm:text-3xl font-black italic uppercase text-white tracking-tight leading-none mb-2.5">Niklas Außerwöger</h2>
+                    <h2 class="text-2xl sm:text-3xl font-black italic uppercase text-white tracking-tight leading-tight mb-2.5 pt-0.5">Niklas Außerwöger</h2>
                     <p id="profile-bio" class="text-zinc-300 text-xs sm:text-sm font-medium leading-relaxed max-w-4xl">
                     </p>
                 </div>
@@ -125,10 +125,10 @@
             <div class="glass-box rounded-[1.2rem] p-6 sm:p-8 transition-all duration-300 hover:border-blue-500/80 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.3)]">
                 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                     <div>
-                        <h3 id="setup-heading" class="text-xl sm:text-2xl font-black italic uppercase text-white tracking-tight">Workstation & Setup</h3>
+                        <h3 id="setup-heading" class="text-xl sm:text-2xl font-black italic uppercase text-white tracking-tight leading-tight">Workstation & Setup</h3>
                         <p id="setup-subheading" class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest mt-0.5">Primary computing hardware & Gear</p>
                     </div>
-                    <div class="flex gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5 shrink-0" id="setup-tabs">
+                    <div class="grid grid-cols-3 sm:flex gap-1.5 p-1 bg-black/40 rounded-xl border border-white/5 w-full sm:w-auto shrink-0" id="setup-tabs">
                     </div>
                 </div>
 
@@ -153,7 +153,7 @@
                         </div>
                         <div class="overflow-hidden min-w-0">
                             <p id="spotify-status-text" class="text-[9px] font-black uppercase tracking-widest text-blue-400 mb-0.5">Currently offline</p>
-                            <p id="spotify-title" class="text-sm font-black italic uppercase text-white truncate">Not playing</p>
+                            <p id="spotify-title" class="text-sm font-black italic uppercase text-white truncate leading-tight">Not playing</p>
                             <p id="spotify-artist" class="text-zinc-500 text-xs font-bold uppercase tracking-widest truncate">Spotify</p>
                         </div>
                     </div>
@@ -167,7 +167,7 @@
                         </div>
                         <div class="overflow-hidden">
                             <span class="text-[9px] font-black uppercase tracking-widest text-emerald-400 mb-0.5 block">Spotify Profile</span>
-                            <h4 class="text-base font-black italic uppercase text-white truncate group-hover:text-emerald-400 transition-colors">@der_46er</h4>
+                            <h4 class="text-base font-black italic uppercase text-white truncate group-hover:text-emerald-400 transition-colors leading-tight">@der_46er</h4>
                             <p class="text-zinc-500 text-xs font-bold uppercase tracking-widest truncate">Open in Spotify</p>
                         </div>
                     </div>
@@ -180,7 +180,7 @@
             <!-- Dynamic Gallery Section -->
             <div class="glass-box rounded-[1.2rem] p-6 sm:p-8 transition-all duration-300 hover:border-blue-500/80 hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.3)]">
                 <div class="mb-4">
-                    <h3 id="gallery-heading" class="text-xl sm:text-2xl font-black italic uppercase text-white tracking-tight">Gallery</h3>
+                    <h3 id="gallery-heading" class="text-xl sm:text-2xl font-black italic uppercase text-white tracking-tight leading-tight">Gallery</h3>
                 </div>
                 
                 <div id="gallery-grid" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
@@ -250,7 +250,7 @@
                         { label: "Tastatur", val: "Razer BlackWidow V3" },
                         { label: "Maus", val: "Razer Basilisk V3" },
                         { label: "Tablet", val: "iPad Air M2 13\"" },
-                        { label: "Smartphones", val: "Xiaomi 17 Ultra, Xiaomi 14T Pro & iPhone XR" }
+                        { label: "Smartphones", val: "Xiaomi 17 Ultra & 14T Pro" }
                     ],
                     "Software": [
                         { label: "Betriebssysteme", val: "Windows 11 Pro & Linux Mint" },
@@ -293,7 +293,7 @@
                         { label: "Keyboard", val: "Razer BlackWidow V3" },
                         { label: "Mouse", val: "Razer Basilisk V3" },
                         { label: "Tablet", val: "iPad Air M2 13\"" },
-                        { label: "Smartphones", val: "Xiaomi 17 Ultra, Xiaomi 14T Pro & iPhone XR" }
+                        { label: "Mobile", val: "Xiaomi 17 Ultra & 14T Pro" }
                     ],
                     "Software": [
                         { label: "Operating Systems", val: "Windows 11 Pro & Linux Mint" },
@@ -325,7 +325,7 @@
             const currentCat = t.setupCategories[activeSetupTab];
 
             tabContainer.innerHTML = t.setupCategories.map((cat, idx) => `
-                <button onclick="setSetupTab(${idx})" class="px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider transition-all duration-200 ${idx === activeSetupTab ? 'bg-blue-500 text-white shadow-lg' : 'text-zinc-400 hover:text-white'}">
+                <button onclick="setSetupTab(${idx})" class="w-full sm:w-auto px-3 py-2 sm:py-1.5 rounded-lg text-[10px] font-black uppercase tracking-wider text-center flex items-center justify-center transition-all duration-200 ${idx === activeSetupTab ? 'bg-blue-500 text-white shadow-lg' : 'text-zinc-400 hover:text-white'}">
                     ${cat}
                 </button>
             `).join('');
