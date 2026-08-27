@@ -1,438 +1,731 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shop | thataustrianone</title>
+    <title>Shop | Nick</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    
-    <script type="importmap">
-      {
-        "imports": {
-          "react": "https://esm.sh/react@18.3.1",
-          "react-dom": "https://esm.sh/react-dom@18.3.1",
-          "react/jsx-runtime": "https://esm.sh/react@18.3.1/jsx-runtime"
-        }
-      }
-    </script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); 
+            font-weight: 400; 
+            font-display: swap; 
+        }
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); 
+            font-weight: 900; 
+            font-display: swap; 
+        }
         
         body { 
-            font-family: 'Inter', sans-serif; 
+            font-family: 'Inter', system-ui, sans-serif; 
             background-color: #0b0d11; 
+            color: white; 
             margin: 0; 
             padding: 0; 
+            position: relative;
         }
 
-        .header-logo-text {
-            font-weight: 900;
-            font-style: normal;
-            text-transform: lowercase;
-            letter-spacing: -0.06em;
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-orange-black.webp");
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+            filter: blur(8px);
+            transform: scale(1.05);
+            opacity: 1;
+            z-index: -2;
         }
 
-        .animate-in { animation: fadeIn 0.8s ease-out forwards; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            height: 100lvh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: -1;
+        }
         
-        @keyframes rotate {
-            from { transform: rotate(0deg); }
-            to { transform: rotate(360deg); }
+        .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+
+        .glass-box {
+            background: rgba(18, 18, 18, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
         }
-        .group:hover .animate-rotate-slow {
-            animation: rotate 4s linear infinite;
+
+        .dropdown-menu {
+            background: rgba(18, 18, 18, 0.94);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
         }
 
         .custom-scroll::-webkit-scrollbar { width: 5px; }
         .custom-scroll::-webkit-scrollbar-track { background: transparent; }
-        .custom-scroll::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
-
-        .logo-themed {
-            filter: sepia(100%) saturate(300%) hue-rotate(330deg) brightness(100%) drop-shadow(0 0 5px rgba(249, 115, 22, 0.5));
-            transition: all 0.3s ease;
-        }
-        .group:hover .logo-themed {
-            filter: sepia(100%) saturate(500%) hue-rotate(330deg) brightness(110%) drop-shadow(0 0 8px rgba(249, 115, 22, 0.8));
-        }
-
-        .glass-modal {
-            background: rgba(11, 13, 17, 0.98);
-            backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-        }
+        .custom-scroll::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 10px; }
     </style>
 </head>
-<body>
-    <div id="root"></div>
 
-    <script type="text/babel" data-type="module">
-        const { useState, useEffect, useRef } = React;
+<body class="flex flex-col min-h-screen w-full overflow-x-hidden selection:bg-orange-500/20 relative">
 
-        // --- Icons ---
-        const ChevronLeft = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6"/></svg>;
-        const ChevronRight = ({size, className}) => <svg className={className} width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6"/></svg>;
-        const ChevronDown = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"/></svg>;
-        const Info = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>;
-        const X = ({size}) => <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>;
+    <main class="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-start pt-10 md:pt-8 pb-4">
+        
+        <!-- Header & Toolbar Container -->
+        <div class="w-full text-center shrink-0 mb-6 animate-in relative z-40" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+                Shop
+            </h1>
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide mb-6">
+            </p>
+
+            <!-- Profiles Container -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-4xl mx-auto text-left mb-6">
+                
+                <!-- Willhaben -->
+                <a href="https://www.willhaben.at/iad/kaufen-und-verkaufen/verkaeuferprofil/31926735" target="_blank" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] active:scale-[0.99] px-6 flex items-center justify-between gap-3 h-[78px]">
+                    <div class="flex items-center h-full">
+                        <img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/logos/willhaben-logo.svg" alt="Willhaben" class="w-[98px] sm:w-[108px] h-auto object-contain opacity-90 group-hover:opacity-100 transition-all duration-300 translate-y-[2px]" />
+                    </div>
+                    <div class="shrink-0 flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-orange-400 transition-colors">
+                        <span class="profile-btn-text">Visit profile</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+
+                <!-- Vinted -->
+                <a href="https://www.vinted.at/member/207532481" target="_blank" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] active:scale-[0.99] px-6 flex items-center justify-between gap-3 h-[78px]">
+                    <div class="flex items-center h-full">
+                        <img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/logos/vinted-logo.svg" alt="Vinted" class="w-[95px] sm:w-[105px] h-auto object-contain opacity-90 group-hover:opacity-100 transition-all duration-300" />
+                    </div>
+                    <div class="shrink-0 flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-orange-400 transition-colors">
+                        <span class="profile-btn-text">Visit profile</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+
+                <!-- eBay -->
+                <a href="https://www.ebay.at/usr/der_46er" target="_blank" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] active:scale-[0.99] px-6 flex items-center justify-between gap-3 h-[78px]">
+                    <div class="flex items-center h-full">
+                        <img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/logos/ebay-logo.svg" alt="eBay" class="w-[125px] sm:w-[140px] h-auto object-contain opacity-90 group-hover:opacity-100 transition-all duration-300" />
+                    </div>
+                    <div class="shrink-0 flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-orange-400 transition-colors">
+                        <span class="profile-btn-text">Visit profile</span>
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+            </div>
+
+            <!-- Filter / Search Toolbar -->
+            <div class="max-w-4xl mx-auto flex flex-col sm:flex-row items-center gap-3 relative z-50">
+                <!-- Platform Preference Toggle -->
+                <div class="relative w-full sm:w-auto shrink-0" id="platform-wrapper">
+                    <button id="platform-btn" onclick="togglePlatformMenu()" class="w-full sm:w-[170px] glass-box rounded-xl px-4 py-2.5 flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white hover:border-orange-500/80 transition-all">
+                        <span id="platform-btn-label" class="truncate">Platform</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-zinc-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div id="platform-dropdown" class="hidden absolute top-full mt-2 left-0 w-full sm:w-48 dropdown-menu rounded-xl overflow-hidden z-[200] p-1.5 flex flex-col gap-1 text-left">
+                        <button onclick="setPlatform('all')" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors" id="opt-platform-all">All Platforms</button>
+                        <button onclick="setPlatform('willhaben')" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors" id="opt-platform-willhaben">Willhaben</button>
+                        <button onclick="setPlatform('vinted')" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors" id="opt-platform-vinted">Vinted</button>
+                        <button onclick="setPlatform('ebay')" class="w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors" id="opt-platform-ebay">eBay</button>
+                    </div>
+                </div>
+
+                <!-- Search Input -->
+                <div class="relative flex-grow w-full">
+                    <div class="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-zinc-500">
+                        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+                    </div>
+                    <input type="text" id="search-input" oninput="handleSearch(this.value)" placeholder="Search products..." class="w-full glass-box rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm font-medium text-white placeholder-zinc-500 focus:outline-none focus:border-orange-500/80 transition-colors" />
+                </div>
+
+                <!-- Category Custom Dropdown -->
+                <div class="relative w-full sm:w-auto shrink-0" id="category-wrapper">
+                    <button id="category-btn" onclick="toggleCategoryMenu()" class="w-full sm:w-[190px] glass-box rounded-xl px-4 py-2.5 flex items-center justify-between gap-2 text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white hover:border-orange-500/80 transition-all">
+                        <span id="category-btn-label" class="truncate">All Categories</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="shrink-0 text-zinc-500"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    <div id="category-dropdown" class="hidden absolute top-full mt-2 right-0 w-full sm:w-56 dropdown-menu rounded-xl overflow-hidden z-[200] p-1.5 flex flex-col gap-1 max-h-60 overflow-y-auto custom-scroll text-left">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Shop Listings -->
+        <div id="shop-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4 auto-rows-max animate-in pr-1 relative z-10" style="animation-delay: 0.2s; opacity: 0;">
+            <div id="loading-spinner" class="col-span-full text-center py-12 text-zinc-400 font-bold uppercase tracking-widest text-xs animate-pulse">
+                Loading Listings...
+            </div>
+        </div>
+    </main>
+
+    <!-- Natural Bottom Footer -->
+    <footer class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-4 z-20 flex justify-between items-center select-none mt-auto">
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+        </button>
+        
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <!-- Platform Selection Modal -->
+    <div id="platform-modal" class="hidden fixed inset-0 bg-black/75 backdrop-blur-md z-[300] flex items-center justify-center p-4 transition-all duration-300 opacity-0 pointer-events-none">
+        <div class="glass-box rounded-2xl w-full max-w-md p-6 relative border border-white/20 shadow-2xl scale-95 transition-transform duration-300 flex flex-col gap-4 text-left" id="platform-modal-card">
+            <div class="flex justify-between items-start">
+                <div>
+                    <h3 class="text-base sm:text-lg font-black italic uppercase text-white tracking-tight" id="modal-title">Choose Platform</h3>
+                    <p class="text-zinc-400 text-xs font-medium" id="modal-desc">This item is available on multiple platforms. Select where you'd like to view it:</p>
+                </div>
+                <button onclick="closePlatformModal()" class="text-zinc-500 hover:text-white transition-colors p-1 -mr-2 -mt-2">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                </button>
+            </div>
+            
+            <div id="modal-platform-list" class="flex flex-col gap-2.5 pt-2">
+            </div>
+        </div>
+    </div>
+
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-xl border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+        <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
+            <p id="cookie-text"></p>
+        </div>
+        <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
+            <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest"></button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/assets/products/shop";
+        const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/assets/products/shop";
+        const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
+
+        const PLATFORM_ICONS = {
+            willhaben: `<img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/logos/willhaben-logo.svg" alt="Willhaben" class="w-24 h-auto object-contain -translate-y-[1px]" />`,
+            vinted: `<img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/logos/vinted-logo.svg" alt="Vinted" class="w-20 h-auto object-contain" />`,
+            ebay: `<img src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/logos/ebay-logo.svg" alt="eBay" class="w-16 h-auto object-contain" />`
+        };
 
         const translations = {
             de: {
-                name: "Deutsch", flag: "🇦🇹", back: "Zurück", offer: "Angebot", title: "Shop",
-                description: "Hier findest du Hardware und Ersatzteile aus meinem Bestand. Die Abwicklung erfolgt sicher über die verlinkten Plattformen.",
-                viewOn: "Auf {platform} ansehen", comingSoon: "Bald neue Artikel...", legal: "Impressum & Rechtliches",
-                legalTitle: "Rechtliche Informationen", imprintLabel: "Impressum / Offenlegung", addressLabel: "Anschrift",
-                addressRequest: "Die vollständige Anschrift ist aus Datenschutzgründen nur auf begründete Anfrage per E-Mail verfügbar.",
-                contactLabel: "Kontakt", trademarkLabel: "Hinweis zu Marken & Logos",
-                trademarkText: "Alle verwendeten Logos (Willhaben, Vinted, eBay, HP, Intel, Corsair) sind Eigentum der jeweiligen Inhaber und dienen ausschließlich der Identifikation der Profile und Hardware.",
-                liabilityLabel: "Haftung für Links", liabilityText: "Ich übernehme keine Haftung für externe Links. Für den Inhalt sind ausschließlich deren Betreiber verantwortlich.",
-                viewProfile: "Profil besuchen", willhabenProfile: "Willhaben Profil", vintedProfile: "Vinted Profil", ebayProfile: "eBay Profil",
-                sold: "Verkauft", unavailable: "Nicht mehr verfügbar"
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
+                heroDesc: "Hier findest du Hardware und Ersatzteile aus meinem Bestand",
+                cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
+                cookieDecline: "Ablehnen", cookieAccept: "Akzeptieren",
+                noItems: "Momentan sind keine Artikel verfügbar.",
+                noMatch: "Keine passenden Artikel gefunden.",
+                viewProfile: "Profil besuchen",
+                searchPlaceholder: "Produkte suchen...",
+                allPlatforms: "Alle Plattformen",
+                platformBtn: "Plattform",
+                allCategories: "Alle Kategorien",
+                modalTitle: "Plattform wählen",
+                modalDesc: "Dieser Artikel ist auf mehreren Plattformen verfügbar. Wähle eine aus:",
+                openListing: "Öffnen"
             },
             en: {
-                name: "English", flag: "🇬🇧", back: "Back", offer: "Offer", title: "Shop",
-                description: "Explore hardware and spare parts from my personal inventory. Secure checkout via the linked platforms.",
-                viewOn: "View on {platform}", comingSoon: "More items coming soon...", legal: "Legal Notice",
-                legalTitle: "Legal Information", imprintLabel: "Imprint / Disclosure", addressLabel: "Address",
-                addressRequest: "Full address available upon justified request via email for privacy reasons.",
-                contactLabel: "Contact", trademarkLabel: "Trademark & Logo Notice",
-                trademarkText: "All logos used (Willhaben, Vinted, eBay, HP, Intel, Corsair) are property of their respective owners and are used for identification purposes only.",
-                liabilityLabel: "Liability for Links", liabilityText: "I assume no liability for external links. Operators of linked pages are solely responsible.",
-                viewProfile: "Visit profile", willhabenProfile: "Willhaben Profile", vintedProfile: "Vinted Profile", ebayProfile: "eBay Profile",
-                sold: "Sold", unavailable: "No longer available"
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
+                heroDesc: "Explore hardware and spare parts from my personal inventory",
+                cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
+                cookieDecline: "Decline", cookieAccept: "Accept",
+                noItems: "No items available at the moment.",
+                noMatch: "No matching products found.",
+                viewProfile: "Visit profile",
+                searchPlaceholder: "Search products...",
+                allPlatforms: "All Platforms",
+                platformBtn: "Platform",
+                allCategories: "All Categories",
+                modalTitle: "Choose Platform",
+                modalDesc: "This item is available on multiple platforms. Select where you'd like to view it:",
+                openListing: "Open"
             }
         };
 
-        const ProfileCard = ({ platform, url, userImage, logoImage, lang, labelKey, logoClass }) => (
-            <a href={url} target="_blank" className="relative group block p-0.5 rounded-[1.8rem] overflow-hidden transition-all duration-300 transform active:scale-[0.98] w-full text-zinc-100">
-                <div className="absolute inset-0 bg-gradient-to-r from-blue-500/20 via-purple-500/20 to-orange-500/20 group-hover:from-blue-500 group-hover:via-purple-500 group-hover:to-orange-500 transition-all duration-500"></div>
-                <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.7rem] p-5 z-10 m-[1px] flex items-center gap-5">
-                    <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-white/10 shrink-0 shadow-lg">
-                        <img src={userImage} alt="User" className="w-full h-full object-cover" />
-                    </div>
-                    <div className="flex flex-col gap-1.5 text-left overflow-hidden">
-                        <div className={`h-7 flex items-center ${logoClass}`}>
-                            <img src={logoImage} alt={platform} className="h-full w-auto object-contain" />
-                        </div>
-                        <h4 className="text-white font-extrabold text-sm sm:text-base tracking-tight truncate">
-                            {translations[lang][labelKey]}
-                        </h4>
-                        <div className="flex items-center gap-1.5 text-zinc-500 text-[10px] uppercase font-bold tracking-widest group-hover:text-white transition-colors">
-                            {translations[lang].viewProfile} <ChevronRight size={14} className="group-hover:translate-x-0.5 transition-transform" />
-                        </div>
-                    </div>
-                </div>
-            </a>
-        );
-
-        const ProductCard = ({ title, price, description, images, links, isSold, lang }) => {
-            const [imgIdx, setImgIdx] = useState(0);
-            const currentImage = (images && images.length > 0) ? images[imgIdx] : 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920';
-
-            const nextImg = (e) => { 
-                e.preventDefault(); 
-                setImgIdx((prev) => (prev + 1) % images.length); 
-            };
-            const prevImg = (e) => { 
-                e.preventDefault(); 
-                setImgIdx((prev) => (prev - 1 + images.length) % images.length); 
-            };
-
-            return (
-                <div className={`relative group block p-0.5 rounded-[2rem] overflow-hidden transition-all duration-300 transform ${isSold ? 'opacity-60 grayscale-[0.5]' : 'active:scale-[0.98]'} text-zinc-100`}>
-                    <div className="absolute inset-0 bg-gradient-to-r from-orange-500 via-rose-500 to-amber-500 opacity-20 group-hover:opacity-100 transition-opacity duration-500"></div>
-                    {!isSold && <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[200%] h-[200%] bg-[conic-gradient(transparent,transparent,transparent,#f97316,#fb7185,#fbbf24)] animate-rotate-slow opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>}
-                    
-                    <div className="relative bg-[#161920]/95 backdrop-blur-xl rounded-[1.9rem] p-4 z-10 m-[1px] flex flex-col h-full text-left">
-                        
-                        {/* Image Container with Slider Logic */}
-                        <div className="aspect-square rounded-[1.5rem] overflow-hidden bg-[#0f1115] mb-5 border border-white/5 relative shadow-inner group/slider">
-                            <img src={currentImage} alt={title[lang]} className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" onError={(e) => e.target.src = 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'} />
-                            
-                            {/* Arrows (Only show if multiple images) */}
-                            {images && images.length > 1 && (
-                                <div className="absolute inset-0 flex items-center justify-between px-2 opacity-0 group-hover/slider:opacity-100 transition-opacity z-20">
-                                    <button onClick={prevImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md">
-                                        <ChevronLeft size={16} />
-                                    </button>
-                                    <button onClick={nextImg} className="p-1.5 bg-black/50 text-white rounded-full hover:bg-orange-500 transition-colors backdrop-blur-md">
-                                        <ChevronRight size={16} />
-                                    </button>
-                                </div>
-                            )}
-
-                            {/* Dots (Only show if multiple images) */}
-                            {images && images.length > 1 && (
-                                <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-20">
-                                    {images.map((_, idx) => (
-                                        <div key={idx} className={`h-1.5 rounded-full transition-all ${idx === imgIdx ? 'w-4 bg-orange-500' : 'w-1.5 bg-white/50'}`} />
-                                    ))}
-                                </div>
-                            )}
-
-                            {isSold && (
-                                <div className="absolute inset-0 bg-black/60 backdrop-blur-[2px] flex items-center justify-center z-30">
-                                    <span className="px-6 py-2 bg-orange-600 text-white font-black uppercase tracking-[0.2em] rounded-full text-sm shadow-2xl rotate-[-5deg]">
-                                        {translations[lang].sold}
-                                    </span>
-                                </div>
-                            )}
-                        </div>
-
-                        <div className="flex-grow px-2 pb-4">
-                            <div className="flex justify-between items-start mb-2">
-                                <h3 className="text-xl font-bold text-white tracking-tight leading-tight">{title[lang]}</h3>
-                                <span className={`text-orange-500 font-extrabold text-lg shrink-0 ml-2 ${isSold ? 'line-through opacity-50' : ''}`}>{price}€</span>
-                            </div>
-                            <p className="text-zinc-500 text-sm leading-relaxed mb-6">{description[lang]}</p>
-                        </div>
-                        
-                        <div className="flex flex-col gap-2 mt-auto">
-                            {isSold ? (
-                                <div className="w-full py-3 bg-white/5 border border-white/5 text-zinc-600 rounded-[1rem] text-sm font-bold text-center italic cursor-not-allowed uppercase tracking-widest">
-                                    {translations[lang].unavailable}
-                                </div>
-                            ) : (
-                                links.map((link, idx) => (
-                                    <a 
-                                        key={idx}
-                                        href={link.url} 
-                                        target="_blank" 
-                                        className="flex items-center justify-center gap-2 w-full py-3 bg-white/5 hover:bg-orange-600 border border-white/5 hover:border-orange-500 text-white rounded-[1rem] text-sm font-bold transition-all duration-300 shadow-xl"
-                                    >
-                                        {translations[lang].viewOn.replace('{platform}', link.platform)}
-                                        <ChevronRight size={16} className="transition-transform group-hover:translate-x-0.5" />
-                                    </a>
-                                ))
-                            )}
-                        </div>
-                    </div>
-                </div>
-            );
+        const SYNONYMS = {
+            'gpu': ['grafikkarte', 'video', 'card', 'geforce', 'radeon', 'nvidia', 'rtx', 'gtx'],
+            'grafikkarte': ['gpu', 'video', 'card', 'geforce', 'nvidia', 'rtx'],
+            'cpu': ['prozessor', 'processor', 'ryzen', 'intel', 'core', 'chip'],
+            'prozessor': ['cpu', 'processor', 'ryzen', 'intel'],
+            'ram': ['speicher', 'memory', 'ddr4', 'ddr5', 'arbeitsspeicher'],
+            'arbeitsspeicher': ['ram', 'memory', 'ddr4', 'ddr5'],
+            'kühler': ['fan', 'cooler', 'lüfter', 'cooling', 'heatsink', 'aio'],
+            'lüfter': ['fan', 'cooler', 'kühler', 'cooling'],
+            'fan': ['cooler', 'lüfter', 'kühler'],
+            'cooler': ['fan', 'lüfter', 'kühler'],
+            'mainboard': ['motherboard', 'board', 'mb', 'mobo'],
+            'motherboard': ['mainboard', 'board', 'mb', 'mobo'],
+            'netzteil': ['psu', 'power', 'supply'],
+            'psu': ['netzteil', 'power', 'supply']
         };
 
-        const App = () => {
-            const [lang, setLang] = useState('de');
-            const [showLegal, setShowLegal] = useState(false);
-            const [showLangMenu, setShowLangMenu] = useState(false);
-            const [products, setProducts] = useState([]);
-            const menuRef = useRef(null);
-            const t = translations[lang];
+        let currentLang = localStorage.getItem('siteLang') || 'en';
+        let preferredPlatform = localStorage.getItem('shopPlatform') || 'all';
+        let selectedCategory = 'all';
+        let searchQuery = '';
+        let fetchedItems = [];
 
-            // Close language menu on outside click
-            useEffect(() => {
-                const handleClickOutside = (event) => {
-                    if (menuRef.current && !menuRef.current.contains(event.target)) setShowLangMenu(false);
-                };
-                document.addEventListener("mousedown", handleClickOutside);
-                return () => document.removeEventListener("mousedown", handleClickOutside);
-            }, []);
+        function togglePlatformMenu() {
+            const platformDropdown = document.getElementById('platform-dropdown');
+            const categoryDropdown = document.getElementById('category-dropdown');
+            categoryDropdown.classList.add('hidden');
+            platformDropdown.classList.toggle('hidden');
+        }
 
-            // Dynamic Favicon Canvas Logic
-            useEffect(() => {
-                const updateFaviconColor = (hexColor) => {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    const img = new Image();
-                    
-                    img.crossOrigin = 'Anonymous';
-                    img.src = 'https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png';
+        function toggleCategoryMenu() {
+            const platformDropdown = document.getElementById('platform-dropdown');
+            const categoryDropdown = document.getElementById('category-dropdown');
+            platformDropdown.classList.add('hidden');
+            categoryDropdown.classList.toggle('hidden');
+        }
 
-                    img.onload = () => {
-                        canvas.width = img.width || 32;
-                        canvas.height = img.height || 32;
-                        
-                        ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-                        ctx.globalCompositeOperation = 'source-in';
-                        ctx.fillStyle = hexColor;
-                        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        window.addEventListener('click', (e) => {
+            const pWrap = document.getElementById('platform-wrapper');
+            const cWrap = document.getElementById('category-wrapper');
+            if (pWrap && !pWrap.contains(e.target)) {
+                document.getElementById('platform-dropdown').classList.add('hidden');
+            }
+            if (cWrap && !cWrap.contains(e.target)) {
+                document.getElementById('category-dropdown').classList.add('hidden');
+            }
+        });
 
-                        let link = document.querySelector("link[rel~='icon']");
-                        if (!link) {
-                            link = document.createElement('link');
-                            link.rel = 'icon';
-                            document.head.appendChild(link);
-                        }
-                        link.href = canvas.toDataURL('image/png');
-                    };
-                };
+        function setPlatform(platform) {
+            preferredPlatform = platform;
+            localStorage.setItem('shopPlatform', platform);
+            document.getElementById('platform-dropdown').classList.add('hidden');
+            render();
+        }
 
-                updateFaviconColor('#f97316'); // Call with your theme orange
-            }, []);
+        function setCategory(cat) {
+            selectedCategory = cat;
+            document.getElementById('category-dropdown').classList.add('hidden');
+            render();
+        }
 
-            // Fetch Products Logic
-            useEffect(() => {
-                const detectPlatform = (url) => {
-                    const lowerUrl = url.toLowerCase();
-                    if (lowerUrl.includes('willhaben.')) return 'Willhaben';
-                    if (lowerUrl.includes('vinted.')) return 'Vinted';
-                    if (lowerUrl.includes('ebay.')) return 'eBay';
-                    return 'Shop';
-                };
+        function handleSearch(val) {
+            searchQuery = val.toLowerCase().trim();
+            render();
+        }
 
-                fetch('https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/shop/products.json')
-                    .then(res => res.json())
-                    .then(data => {
-                        const parsedProducts = data.map(item => ({
-                            ...item,
-                            links: item.urls ? item.urls.map(url => ({
-                                platform: detectPlatform(url),
-                                url: url
-                            })) : []
-                        }));
-                        setProducts(parsedProducts);
-                    })
-                    .catch(error => console.error("Error loading listings:", error));
-            }, []);
+        function levenshtein(a, b) {
+            const matrix = Array.from({ length: a.length + 1 }, () => Array(b.length + 1).fill(0));
+            for (let i = 0; i <= a.length; i++) matrix[i][0] = i;
+            for (let j = 0; j <= b.length; j++) matrix[0][j] = j;
 
-            const mainLogo = "https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png";
-            const willhabenPortrait = "https://cache.willhaben.at/mmo/userProfile/31926735_8ba50daac3161ab9f45061e2408c4c70.jpg";
-            const vintedCat = "https://images1.vinted.net/t/04_0104b_ughXXR9SsCv9pvoU69kXnLKB/f800/1757955583.webp?s=e9d9f4a64580b0d1ce07706d85d955ccb3380b2a";
-            const ebayPortrait = "https://i.ebayimg.com/00/s/MzAwWDMwMA==/z/QmkAAeSwfxlph5~G/$_57.JPG?set_id=8800004005";
-
-            const profiles = {
-                willhaben: {
-                    url: "https://www.willhaben.at/iad/kaufen-und-verkaufen/verkaeuferprofil/31926735",
-                    userImage: willhabenPortrait,
-                    logo: "https://www.willhaben.at/bbx-search/_next/static/assets/logo.f8cb483ef68cd335.svg",
-                    labelKey: "willhabenProfile", logoClass: ""
-                },
-                vinted: {
-                    url: "https://www.vinted.at/member/207532481",
-                    userImage: vintedCat,
-                    logo: "https://marketplace-web-assets.vinted.com/_next/static/media/logo.5398230b.svg",
-                    labelKey: "vintedProfile", logoClass: ""
-                },
-                ebay: {
-                    url: "https://www.ebay.at/usr/der_46er", 
-                    userImage: ebayPortrait,
-                    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/1/1b/EBay_logo.svg/1280px-EBay_logo.svg.png",
-                    labelKey: "ebayProfile", logoClass: ""
+            for (let i = 1; i <= a.length; i++) {
+                for (let j = 1; j <= b.length; j++) {
+                    const cost = a[i - 1] === b[j - 1] ? 0 : 1;
+                    matrix[i][j] = Math.min(
+                        matrix[i - 1][j] + 1,
+                        matrix[i][j - 1] + 1,
+                        matrix[i - 1][j - 1] + cost
+                    );
                 }
+            }
+            return matrix[a.length][b.length];
+        }
+
+        function isFuzzyMatch(searchWord, targetWord) {
+            if (targetWord.includes(searchWord) || searchWord.includes(targetWord)) return true;
+            
+            const maxLen = Math.max(searchWord.length, targetWord.length);
+            if (maxLen <= 3) return searchWord === targetWord;
+            
+            const allowedDist = maxLen >= 7 ? 2 : 1;
+            return levenshtein(searchWord, targetWord) <= allowedDist;
+        }
+
+        function smartMatch(item, query) {
+            if (!query) return true;
+
+            const queryWords = query.split(/\s+/).filter(Boolean);
+            const titleDe = (item.title.de || "").toLowerCase();
+            const titleEn = (item.title.en || "").toLowerCase();
+            const descDe = (item.description.de || "").toLowerCase();
+            const descEn = (item.description.en || "").toLowerCase();
+            const catDe = (item.category.de || "").toLowerCase();
+            const catEn = (item.category.en || "").toLowerCase();
+
+            const targetTokens = `${titleDe} ${titleEn} ${descDe} ${descEn} ${catDe} ${catEn}`
+                .replace(/[^a-z0-9äöüß\s]/g, ' ')
+                .split(/\s+/)
+                .filter(Boolean);
+
+            return queryWords.every(qWord => {
+                if (targetTokens.some(tWord => isFuzzyMatch(qWord, tWord))) return true;
+
+                const synList = SYNONYMS[qWord] || [];
+                if (synList.some(syn => targetTokens.some(tWord => isFuzzyMatch(syn, tWord)))) return true;
+
+                return false;
+            });
+        }
+
+        function getPlatformUrls(item) {
+            const list = [];
+            if (typeof item.urls === 'string' && item.urls !== '#') {
+                const lower = item.urls.toLowerCase();
+                if (lower.includes('willhaben')) list.push({ platform: 'willhaben', name: 'Willhaben', url: item.urls });
+                else if (lower.includes('vinted')) list.push({ platform: 'vinted', name: 'Vinted', url: item.urls });
+                else if (lower.includes('ebay')) list.push({ platform: 'ebay', name: 'eBay', url: item.urls });
+                else list.push({ platform: 'link', name: 'Listing', url: item.urls });
+            } else if (Array.isArray(item.urls)) {
+                item.urls.forEach(u => {
+                    const lower = u.toLowerCase();
+                    if (lower.includes('willhaben')) list.push({ platform: 'willhaben', name: 'Willhaben', url: u });
+                    else if (lower.includes('vinted')) list.push({ platform: 'vinted', name: 'Vinted', url: u });
+                    else if (lower.includes('ebay')) list.push({ platform: 'ebay', name: 'eBay', url: u });
+                    else list.push({ platform: 'link', name: 'Listing', url: u });
+                });
+            } else if (item.urls && typeof item.urls === 'object') {
+                if (item.urls.willhaben) list.push({ platform: 'willhaben', name: 'Willhaben', url: item.urls.willhaben });
+                if (item.urls.vinted) list.push({ platform: 'vinted', name: 'Vinted', url: item.urls.vinted });
+                if (item.urls.ebay) list.push({ platform: 'ebay', name: 'eBay', url: item.urls.ebay });
+            }
+            return list;
+        }
+
+        function handleItemClick(index) {
+            const item = fetchedItems[index];
+            if (!item) return;
+
+            const platforms = getPlatformUrls(item);
+
+            if (preferredPlatform !== 'all') {
+                const preferred = platforms.find(p => p.platform === preferredPlatform);
+                if (preferred) {
+                    window.open(preferred.url, '_blank');
+                    return;
+                }
+            }
+
+            if (platforms.length === 1) {
+                window.open(platforms[0].url, '_blank');
+                return;
+            }
+
+            if (platforms.length > 1) {
+                openPlatformModal(item, platforms);
+                return;
+            }
+
+            if (typeof item.urls === 'string' && item.urls !== '#') {
+                window.open(item.urls, '_blank');
+            }
+        }
+
+        function openPlatformModal(item, platforms) {
+            const modal = document.getElementById('platform-modal');
+            const card = document.getElementById('platform-modal-card');
+            const list = document.getElementById('modal-platform-list');
+            const t = translations[currentLang];
+
+            const title = currentLang === 'en' ? item.title.en : item.title.de;
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-desc').innerText = t.modalDesc;
+
+            list.innerHTML = platforms.map(p => `
+                <a href="${p.url}" target="_blank" onclick="closePlatformModal()" class="glass-box rounded-xl p-3.5 flex items-center justify-between hover:border-orange-500/80 hover:bg-white/5 transition-all duration-200 group">
+                    <div class="flex items-center gap-3">
+                        ${PLATFORM_ICONS[p.platform] || `<span class="font-bold text-sm text-white">${p.name}</span>`}
+                    </div>
+                    <div class="flex items-center gap-1.5 text-zinc-400 group-hover:text-orange-400 text-xs font-bold uppercase tracking-wider transition-colors">
+                        <span>${t.openListing}</span>
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:translate-x-0.5 transition-transform"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </div>
+                </a>
+            `).join('');
+
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                modal.classList.remove('opacity-0', 'pointer-events-none');
+                card.classList.remove('scale-95');
+                card.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closePlatformModal() {
+            const modal = document.getElementById('platform-modal');
+            const card = document.getElementById('platform-modal-card');
+            modal.classList.add('opacity-0', 'pointer-events-none');
+            card.classList.remove('scale-100');
+            card.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 300);
+        }
+
+        document.getElementById('platform-modal').addEventListener('click', (e) => {
+            if (e.target.id === 'platform-modal') closePlatformModal();
+        });
+
+        function matchesPlatform(item) {
+            if (preferredPlatform === 'all') return true;
+            if (typeof item.urls === 'string') {
+                return item.urls.toLowerCase().includes(preferredPlatform);
+            }
+            if (Array.isArray(item.urls)) {
+                return item.urls.some(u => u.toLowerCase().includes(preferredPlatform));
+            }
+            if (item.urls && typeof item.urls === 'object') {
+                return !!item.urls[preferredPlatform];
+            }
+            return false;
+        }
+
+        async function fetchShopItems() {
+            try {
+                const response = await fetch(GITHUB_API_URL);
+                if (!response.ok) throw new Error("Failed to fetch shop directory");
+                const files = await response.json();
+                
+                const jsonFiles = files.filter(file => 
+                    file.type === 'file' && 
+                    file.name.toLowerCase().endsWith('.json') && 
+                    file.name.toLowerCase() !== 'template.json'
+                );
+
+                const itemPromises = jsonFiles.map(async (file) => {
+                    const jsonUrl = file.download_url || `${GITHUB_RAW_BASE}/${file.name}`;
+                    try {
+                        const res = await fetch(jsonUrl);
+                        if (!res.ok) return null;
+
+                        const item = await res.json();
+
+                        let titleDe = item.title?.de || file.name.replace(/\.json$/i, '').replace(/_/g, ' ');
+                        let titleEn = item.title?.en || titleDe;
+                        let categoryDe = item.category?.de || "";
+                        let categoryEn = item.category?.en || categoryDe;
+                        let descriptionDe = item.description?.de || "";
+                        let descriptionEn = item.description?.en || descriptionDe;
+                        let priceEur = item.price?.eur || "";
+                        let priceUsd = item.price?.usd || "";
+
+                        return {
+                            title: { de: titleDe, en: titleEn },
+                            category: { de: categoryDe, en: categoryEn },
+                            description: { de: descriptionDe, en: descriptionEn },
+                            price: { eur: priceEur, usd: priceUsd },
+                            image: item.image || 'https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920',
+                            urls: item.urls || item.url || '#'
+                        };
+                    } catch (err) {
+                        return null;
+                    }
+                });
+
+                const resolved = await Promise.all(itemPromises);
+                fetchedItems = resolved.filter(i => i !== null);
+                
+                populateCategories();
+                render();
+            } catch (e) {
+                console.error("Fetch error:", e);
+                render();
+            }
+        }
+
+        function populateCategories() {
+            const dropdown = document.getElementById('category-dropdown');
+            const t = translations[currentLang];
+            
+            const uniqueCats = new Set();
+            fetchedItems.forEach(item => {
+                const cat = currentLang === 'en' ? item.category.en : item.category.de;
+                if (cat) uniqueCats.add(cat);
+            });
+
+            let html = `
+                <button onclick="setCategory('all')" class="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${selectedCategory === 'all' ? 'text-orange-400 bg-white/5' : 'text-zinc-300 hover:text-white'}">
+                    ${t.allCategories}
+                </button>
+            `;
+
+            uniqueCats.forEach(cat => {
+                const isSelected = selectedCategory.toLowerCase() === cat.toLowerCase();
+                html += `
+                    <button onclick="setCategory('${cat.replace(/'/g, "\\'")}')" class="w-full text-left px-3.5 py-2 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 transition-colors ${isSelected ? 'text-orange-400 bg-white/5' : 'text-zinc-300 hover:text-white'}">
+                        ${cat}
+                    </button>
+                `;
+            });
+
+            dropdown.innerHTML = html;
+        }
+
+        function render() {
+            const t = translations[currentLang];
+            
+            document.getElementById('hero-desc').innerText = t.heroDesc;
+            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
+            
+            document.getElementById('cookie-text').innerText = t.cookieText;
+            document.getElementById('cookie-decline').innerText = t.cookieDecline;
+            document.getElementById('cookie-accept').innerText = t.cookieAccept;
+            document.getElementById('search-input').placeholder = t.searchPlaceholder;
+
+            // Platform Button Label
+            const platformLabels = {
+                all: t.platformBtn,
+                willhaben: 'Willhaben',
+                vinted: 'Vinted',
+                ebay: 'eBay'
             };
+            document.getElementById('platform-btn-label').innerText = platformLabels[preferredPlatform];
+            document.getElementById('opt-platform-all').innerText = t.allPlatforms;
 
-            return (
-                <div className="min-h-screen bg-[#0b0d11] text-white font-sans selection:bg-orange-500/30 overflow-x-hidden relative pb-12">
-                    <div className="fixed top-0 left-0 w-full h-full pointer-events-none">
-                        <div className="absolute top-[-5%] left-[-5%] w-[40%] h-[40%] bg-blue-600/10 blur-[100px] rounded-full" />
-                        <div className="absolute bottom-[-5%] right-[-5%] w-[40%] h-[40%] bg-orange-600/10 blur-[100px] rounded-full" />
+            // Update Active Platform Styling
+            ['all', 'willhaben', 'vinted', 'ebay'].forEach(p => {
+                const opt = document.getElementById(`opt-platform-${p}`);
+                if (opt) {
+                    if (preferredPlatform === p) {
+                        opt.className = "w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider text-orange-400 bg-white/5 transition-colors";
+                    } else {
+                        opt.className = "w-full text-left px-3.5 py-2.5 rounded-lg text-xs font-bold uppercase tracking-wider hover:bg-white/10 text-zinc-300 hover:text-white transition-colors";
+                    }
+                }
+            });
+
+            // Category Button label
+            document.getElementById('category-btn-label').innerText = selectedCategory === 'all' ? t.allCategories : selectedCategory;
+
+            // Static profile button texts
+            document.querySelectorAll('.profile-btn-text').forEach(el => {
+                el.innerText = t.viewProfile;
+            });
+
+            populateCategories();
+
+            // Filter items
+            const filteredItems = fetchedItems.filter(item => {
+                const cat = currentLang === 'en' ? item.category.en : item.category.de;
+                const matchesCat = selectedCategory === 'all' || cat.toLowerCase() === selectedCategory.toLowerCase();
+                const matchesPlat = matchesPlatform(item);
+                const matchesFuzzy = smartMatch(item, searchQuery);
+
+                return matchesCat && matchesPlat && matchesFuzzy;
+            });
+
+            // Render Product Cards
+            const grid = document.getElementById('shop-grid');
+
+            if (fetchedItems.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500 font-bold uppercase tracking-widest text-xs">${t.noItems}</div>`;
+                return;
+            }
+
+            if (filteredItems.length === 0) {
+                grid.innerHTML = `<div class="col-span-full text-center py-12 text-zinc-500 font-bold uppercase tracking-widest text-xs">${t.noMatch}</div>`;
+                return;
+            }
+
+            grid.innerHTML = filteredItems.map(item => {
+                const realIndex = fetchedItems.indexOf(item);
+                const title = currentLang === 'en' ? item.title.en : item.title.de;
+                const desc = currentLang === 'en' ? item.description.en : item.description.de;
+                const category = currentLang === 'en' ? item.category.en : item.category.de;
+                const priceFormatted = currentLang === 'en' ? (item.price.usd ? `$${item.price.usd}` : `${item.price.eur}€`) : (item.price.eur ? `${item.price.eur}€` : `$${item.price.usd}`);
+
+                return `
+                <div onclick="handleItemClick(${realIndex})" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 hover:border-orange-500/80 hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)] active:scale-[0.99] p-4 flex flex-col justify-between overflow-hidden w-full cursor-pointer">
+                    
+                    <div class="aspect-square w-full rounded-xl overflow-hidden bg-black/40 mb-4 border border-white/5 relative">
+                        <img src="${item.image}" alt="${title}" class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" onerror="this.src='https://api.dicebear.com/7.x/shapes/svg?seed=tech&backgroundColor=161920'" />
+                        ${category ? `<span class="absolute top-2 left-2 bg-black/60 backdrop-blur-md px-2.5 py-1 rounded-md text-[9px] font-black uppercase tracking-wider text-zinc-300 border border-white/10">${category}</span>` : ''}
                     </div>
-
-                    <nav className="fixed top-0 w-full z-50 h-24 flex items-center px-6 md:px-12 backdrop-blur-md border-b border-white/5 bg-black/20">
-                        <div className="flex-1">
-                            <a href="../" className="text-[10px] font-black tracking-[0.2em] text-zinc-500 hover:text-white transition-all flex items-center gap-2 uppercase italic">
-                                <ChevronLeft size={14} /> {t.back}
-                            </a>
+                    
+                    <div class="flex flex-col flex-grow justify-between min-w-0">
+                        <div>
+                            <div class="flex justify-between items-start mb-1 gap-2">
+                                <h2 class="text-base sm:text-lg font-black text-white tracking-tight italic uppercase leading-snug truncate pr-1 group-hover:text-orange-400 transition-colors">${title}</h2>
+                                ${priceFormatted ? `<span class="text-orange-500 font-extrabold text-sm shrink-0">${priceFormatted}</span>` : ''}
+                            </div>
+                            <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest line-clamp-2 leading-relaxed mb-3">${desc}</p>
                         </div>
                         
-                        <div className="flex items-center gap-3">
-                             <img src={mainLogo} alt="Logo" className="w-10 h-10 object-contain logo-themed" />
-                             <span className="header-logo-text text-2xl text-white">that<span className="text-orange-500">austrianone.</span></span>
-                        </div>
-                        
-                        <div className="flex-1 flex justify-end relative" ref={menuRef}>
-                            <button 
-                                onClick={() => setShowLangMenu(!showLangMenu)} 
-                                className="flex items-center gap-3 px-8 py-3.5 bg-white/5 hover:bg-white/10 border border-white/10 rounded-full transition-all text-[11px] font-black uppercase tracking-[0.2em] text-white shadow-lg"
-                            >
-                                <span>{t.flag}</span> <span>{t.name}</span> <ChevronDown size={14} className={`transition-transform duration-300 ${showLangMenu ? 'rotate-180' : ''}`} />
-                            </button>
-                            {showLangMenu && (
-                                <div className="absolute right-0 top-16 w-48 glass-modal rounded-2xl overflow-hidden shadow-2xl animate-in z-50">
-                                    {Object.keys(translations).map((key) => (
-                                        <button key={key} onClick={() => { setLang(key); setShowLangMenu(false); }} className={`flex items-center gap-3 w-full px-6 py-5 text-left text-[11px] font-black uppercase transition-colors hover:bg-white/5 ${lang === key ? 'text-orange-500 bg-orange-500/5' : 'text-zinc-400'}`}>
-                                            <span>{translations[key].flag}</span> <span className="font-semibold">{translations[key].name}</span>
-                                        </button>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    </nav>
-
-                    <div className="relative z-10 max-w-5xl mx-auto px-6 pt-48 pb-20 animate-in">
-                        <header className="mb-12 text-center md:text-left text-zinc-100">
-                            <div className="inline-block px-4 py-1.5 bg-orange-500/10 text-orange-500 rounded-full text-[9px] font-black uppercase tracking-[0.2em] mb-8 border border-orange-500/20">{t.offer}</div>
-                            <div className="mb-6">
-                                <h1 className="text-5xl md:text-7xl font-black italic uppercase tracking-tighter text-white leading-tight">
-                                    {t.title}
-                                </h1>
-                            </div>
-                            <p className="text-zinc-500 text-lg max-w-xl leading-relaxed font-medium mb-12 italic">"{t.description}"</p>
-                            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                                <ProfileCard platform="Willhaben" url={profiles.willhaben.url} userImage={profiles.willhaben.userImage} logoImage={profiles.willhaben.logo} lang={lang} labelKey="willhabenProfile" logoClass="" />
-                                <ProfileCard platform="Vinted" url={profiles.vinted.url} userImage={profiles.vinted.userImage} logoImage={profiles.vinted.logo} lang={lang} labelKey="vintedProfile" logoClass="" />
-                                <ProfileCard platform="eBay" url={profiles.ebay.url} userImage={profiles.ebay.userImage} logoImage={profiles.ebay.logo} lang={lang} labelKey="ebayProfile" logoClass="" />
-                            </div>
-                        </header>
-
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16">
-                            {products.map((item, index) => (
-                                <ProductCard key={index} {...item} lang={lang} />
-                            ))}
-                            <div className="border-2 border-dashed border-white/5 rounded-[2.5rem] flex flex-col items-center justify-center p-12 text-center opacity-40 group">
-                                <div className="w-12 h-12 mb-4 text-zinc-700 transition-transform group-hover:scale-110">
-                                    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path></svg>
-                                </div>
-                                <p className="text-zinc-600 font-bold text-xs uppercase tracking-widest leading-relaxed">{t.comingSoon}</p>
+                        <div class="flex items-center justify-between pt-2 border-t border-white/5 mt-auto">
+                            <span class="text-[10px] font-black uppercase tracking-widest text-zinc-500 group-hover:text-white transition-colors">Details</span>
+                            <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0">
+                                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">${arrowUpRight}</svg>
                             </div>
                         </div>
                     </div>
-
-                    <footer onClick={() => window.location.href='https://thataustrianone.eu/legal/'} className="w-full text-center py-6 mt-auto cursor-pointer group select-none">
-    <p className="text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 group-hover:opacity-100 group-hover:text-white transition-all duration-200">
-        © 2026 — @der_46er
-    </p>
-</footer>
-
-                    {showLegal && (
-                        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-xl animate-in">
-                            <div className="glass-modal rounded-[2.5rem] w-full max-w-lg max-h-[85vh] overflow-hidden flex flex-col shadow-2xl">
-                                <div className="p-8 border-b border-white/5 flex justify-between items-center text-zinc-100">
-                                    <h2 className="text-2xl font-black italic uppercase tracking-tighter text-white">{t.legalTitle}</h2>
-                                    <button onClick={() => setShowLegal(false)} className="p-2 text-zinc-500 hover:text-white hover:bg-white/5 rounded-full transition-all">
-                                        <X size={24} />
-                                    </button>
-                                </div>
-                                <div className="p-8 overflow-y-auto custom-scroll space-y-10 text-left text-zinc-400 text-sm leading-relaxed">
-                                    <section>
-                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.imprintLabel}</h3>
-                                        <div className="space-y-4 font-bold text-zinc-100 uppercase">
-                                            <p className="text-2xl font-black tracking-tight italic">Niklas Ausserwoeger</p>
-                                            <p className="text-zinc-500 text-[10px] italic leading-relaxed lowercase tracking-normal">"{t.addressRequest}"</p>
-                                            <p className="text-xs tracking-widest italic">4040 Linz, Österreich</p>
-                                            <div className="pt-4">
-                                                <p className="text-zinc-600 text-[9px] mb-1 tracking-[0.3em] uppercase">{t.contactLabel}</p>
-                                                <p className="text-orange-400 text-sm font-black italic tracking-normal lowercase">niklas.ausserwoeger@gmail.com</p>
-                                            </div>
-                                        </div>
-                                    </section>
-                                    <section>
-                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.trademarkLabel}</h3>
-                                        <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.trademarkText}</p>
-                                    </section>
-                                    <section>
-                                        <h3 className="text-orange-500 font-black uppercase text-[10px] tracking-[0.4em] mb-4 italic">{t.liabilityLabel}</h3>
-                                        <p className="text-zinc-500 text-xs italic leading-relaxed uppercase">{t.liabilityText}</p>
-                                    </section>
-                                    <div className="pt-4 border-t border-white/5 text-[10px] uppercase tracking-widest text-zinc-600 font-medium text-center">
-                                        Legal Compliance • ECG Austria
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    )}
                 </div>
-            );
+                `;
+            }).join('');
+        }
+
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            localStorage.setItem('siteLang', currentLang);
+            populateCategories();
+            render();
         };
 
-        const root = ReactDOM.createRoot(document.getElementById('root'));
-        root.render(<App />);
+        const cookieBanner = document.getElementById('cookie-banner');
+        const cookieConsent = localStorage.getItem('siteCookieConsent');
+
+        function injectGA() {
+            if (document.getElementById('ga-script')) return;
+            const script1 = document.createElement('script');
+            script1.id = 'ga-script';
+            script1.async = true;
+            script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
+            document.head.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-0WHX0WMFTC');
+            `;
+            document.head.appendChild(script2);
+        }
+
+        if (!cookieConsent) {
+            cookieBanner.classList.remove('hidden');
+        } else if (cookieConsent === 'granted') {
+            injectGA();
+        }
+
+        window.handleCookie = (status) => {
+            localStorage.setItem('siteCookieConsent', status);
+            cookieBanner.classList.add('opacity-0', 'translate-y-full');
+            setTimeout(() => cookieBanner.classList.add('hidden'), 400);
+            if (status === 'granted') injectGA();
+        };
+
+        fetchShopItems();
     </script>
 </body>
 </html>
