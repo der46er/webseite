@@ -7,6 +7,13 @@
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
+    <!-- Performance Preconnects -->
+    <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+    <link rel="preconnect" href="https://raw.githubusercontent.com" crossorigin>
+    <link rel="preconnect" href="https://wsrv.nl" crossorigin>
+    <link rel="preconnect" href="https://api.lanyard.rest" crossorigin>
+    <link rel="dns-prefetch" href="https://api.open-meteo.com">
+
     <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
@@ -45,7 +52,8 @@
             background-position: center;
             background-repeat: no-repeat;
             filter: blur(8px);
-            transform: scale(1.05);
+            transform: scale(1.05) translateZ(0);
+            will-change: transform;
             opacity: 1;
             z-index: -2;
         }
@@ -60,6 +68,7 @@
             height: 100lvh;
             background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.015'/%3E%3C/svg%3E");
             pointer-events: none;
+            transform: translateZ(0);
             z-index: -1;
         }
         
@@ -113,6 +122,14 @@
 </head>
 
 <body class="flex flex-col min-h-screen w-full overflow-x-hidden selection:bg-blue-500/20 relative">
+
+    <!-- Square Merged Back Button -->
+    <a href="https://thataustrianone.eu" aria-label="Back to home" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] w-10 h-10 rounded-xl bg-black/40 hover:bg-white/10 backdrop-blur-xl border border-white/10 hover:border-white/30 text-zinc-400 hover:text-white flex items-center justify-center transition-all duration-200 hover:scale-105 active:scale-95 shadow-xl group">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-0.5 transition-transform duration-200">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
 
     <main class="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-start pt-10 md:pt-8 pb-12">
         
@@ -288,17 +305,29 @@
                     </div>
                 </div>
                 
-                <div id="gallery-grid" class="columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
-                    <div id="gallery-loading" class="col-span-full text-center py-8 text-zinc-500 font-bold uppercase tracking-widest text-xs animate-pulse">
-                        Loading Gallery...
-                    </div>
+                <!-- Unloaded / Initial State View -->
+                <div id="gallery-unloaded" class="text-center py-10 flex flex-col items-center justify-center gap-4">
+                    <p id="gallery-unloaded-desc" class="text-zinc-500 text-xs font-bold uppercase tracking-widest max-w-md mx-auto">Gallery is not loaded to increase performance</p>
+                    <button onclick="initGalleryLoad()" class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest bg-blue-500 text-white hover:bg-blue-600 hover:shadow-[0_0_25px_rgba(59,130,246,0.4)] active:scale-95 transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2" ry="2"></rect><circle cx="9" cy="9" r="2"></circle><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"></path></svg>
+                        <span id="gallery-load-btn-text">Load Gallery</span>
+                    </button>
                 </div>
 
-                <!-- Show More / Load More Button -->
-                <div class="mt-8 flex justify-center">
+                <!-- Gallery Masonry Grid -->
+                <div id="gallery-grid" class="hidden columns-1 sm:columns-2 md:columns-3 lg:columns-4 gap-4 space-y-4">
+                </div>
+
+                <!-- Gallery Bottom Actions Toolbar -->
+                <div id="gallery-bottom-actions" class="hidden mt-8 flex flex-wrap items-center justify-center gap-3">
                     <button id="gallery-load-more" onclick="loadMoreImages()" class="hidden px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest bg-blue-500/10 border border-blue-500/30 text-blue-400 hover:bg-blue-500 hover:text-white hover:shadow-[0_0_25px_rgba(59,130,246,0.3)] active:scale-95 transition-all flex items-center gap-2">
                         <span id="gallery-load-more-text">Load More</span>
                         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                    </button>
+                    
+                    <button id="gallery-unload-btn" onclick="unloadGallery()" class="px-6 py-2.5 rounded-xl text-xs font-black uppercase tracking-widest bg-rose-500/10 border border-rose-500/30 text-rose-400 hover:bg-rose-500 hover:text-white hover:shadow-[0_0_25px_rgba(244,63,94,0.3)] active:scale-95 transition-all flex items-center gap-2">
+                        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
+                        <span id="gallery-unload-btn-text">Unload Gallery</span>
                     </button>
                 </div>
             </div>
@@ -400,7 +429,10 @@
                 galleryHeading: "Galerie",
                 gallerySubheading: "EINE PERSÖNLICHE AUSWAHL AN BILDERN, AUFGENOMMEN MIT VERSCHIEDENEN KAMERAS & SMARTPHONES.",
                 galleryHint: "Klicken zum Vergrößern",
+                galleryUnloaded: "Galerie ist nicht geladen, um die Performance zu verbessern",
+                galleryLoadBtn: "Galerie laden",
                 galleryLoadMore: "Mehr anzeigen",
+                galleryUnloadBtn: "Galerie entladen",
                 noImages: "Keine Bilder verfügbar.",
                 nowPlaying: "Hört gerade live",
                 offline: "Offline",
@@ -465,7 +497,10 @@
                 galleryHeading: "Gallery",
                 gallerySubheading: "A PERSONAL SELECTION OF SHOTS CAPTURED ON VARIOUS PHONES & CAMERAS.",
                 galleryHint: "Click to expand",
+                galleryUnloaded: "Gallery is not loaded to increase performance",
+                galleryLoadBtn: "Load Gallery",
                 galleryLoadMore: "Load More",
+                galleryUnloadBtn: "Unload Gallery",
                 noImages: "No images available.",
                 nowPlaying: "Listening Live",
                 offline: "Offline",
@@ -478,24 +513,21 @@
         let currentLang = localStorage.getItem('siteLang') || 'en';
         let activeSetupTab = 0;
         let galleryImages = [];
+        let isGalleryLoaded = false;
         let latestLanyardData = null;
 
-        // Pagination & Viewport-Triggered Sequential Loader
         const INITIAL_BATCH_COUNT = 8;
         const BATCH_INCREMENT = 8;
         let visibleImageCount = INITIAL_BATCH_COUNT;
         let imageQueue = [];
         let isProcessingQueue = false;
-        let isGalleryInView = false;
-        let gallerySectionObserver = null;
 
         function getOptimizedThumb(rawUrl) {
             return `https://wsrv.nl/?url=${encodeURIComponent(rawUrl)}&w=600&output=webp&q=75`;
         }
 
         function processSequentialQueue() {
-            // Do not load any images until the user actually scrolls to the gallery section
-            if (!isGalleryInView || isProcessingQueue || imageQueue.length === 0) return;
+            if (isProcessingQueue || imageQueue.length === 0) return;
             isProcessingQueue = true;
 
             const item = imageQueue.shift();
@@ -513,7 +545,6 @@
             };
 
             loader.onerror = () => {
-                // Direct fallback to GitHub Raw if CDN proxy fails
                 const fallbackLoader = new Image();
                 fallbackLoader.src = fallbackSrc;
 
@@ -531,25 +562,6 @@
                     processSequentialQueue();
                 };
             };
-        }
-
-        function initGalleryObserver() {
-            if (gallerySectionObserver) gallerySectionObserver.disconnect();
-            const target = document.getElementById('gallery-grid');
-            if (!target) return;
-
-            gallerySectionObserver = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        isGalleryInView = true;
-                        processSequentialQueue(); // Starts loading only when scrolled near
-                    } else {
-                        isGalleryInView = false;
-                    }
-                });
-            }, { rootMargin: '200px 0px' });
-
-            gallerySectionObserver.observe(target);
         }
 
         function renderTechStack() {
@@ -605,15 +617,39 @@
                 galleryImages = files
                     .filter(f => f.type === 'file' && validExtensions.some(ext => f.name.toLowerCase().endsWith(ext)))
                     .map(f => f.download_url || `${GITHUB_GALLERY_RAW}/${f.name}`);
-                
-                renderGallery();
             } catch (err) {
                 console.error("Gallery fetch failed:", err);
-                renderGallery();
             }
         }
 
+        async function initGalleryLoad() {
+            isGalleryLoaded = true;
+            visibleImageCount = INITIAL_BATCH_COUNT;
+            document.getElementById('gallery-unloaded').classList.add('hidden');
+            document.getElementById('gallery-grid').classList.remove('hidden');
+            document.getElementById('gallery-bottom-actions').classList.remove('hidden');
+            
+            if (galleryImages.length === 0) {
+                await fetchGallery();
+            }
+            renderGallery();
+        }
+
+        function unloadGallery() {
+            isGalleryLoaded = false;
+            imageQueue = [];
+            isProcessingQueue = false;
+
+            const grid = document.getElementById('gallery-grid');
+            grid.innerHTML = '';
+            grid.classList.add('hidden');
+            
+            document.getElementById('gallery-bottom-actions').classList.add('hidden');
+            document.getElementById('gallery-unloaded').classList.remove('hidden');
+        }
+
         function renderGallery() {
+            if (!isGalleryLoaded) return;
             const t = translations[currentLang];
             const grid = document.getElementById('gallery-grid');
             const loadMoreBtn = document.getElementById('gallery-load-more');
@@ -646,7 +682,7 @@
                 });
             });
 
-            initGalleryObserver();
+            processSequentialQueue();
 
             if (visibleImageCount < galleryImages.length) {
                 loadMoreBtn.classList.remove('hidden');
@@ -823,8 +859,17 @@
             document.getElementById('gallery-subheading').innerText = t.gallerySubheading;
             document.getElementById('gallery-hint').innerText = t.galleryHint;
 
+            const unloadedDesc = document.getElementById('gallery-unloaded-desc');
+            if (unloadedDesc) unloadedDesc.innerText = t.galleryUnloaded;
+            
+            const loadBtnText = document.getElementById('gallery-load-btn-text');
+            if (loadBtnText) loadBtnText.innerText = t.galleryLoadBtn;
+
             const loadMoreText = document.getElementById('gallery-load-more-text');
             if (loadMoreText) loadMoreText.innerText = t.galleryLoadMore;
+
+            const unloadBtnText = document.getElementById('gallery-unload-btn-text');
+            if (unloadBtnText) unloadBtnText.innerText = t.galleryUnloadBtn;
 
             document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
             
@@ -834,7 +879,7 @@
 
             renderTechStack();
             renderSetup();
-            renderGallery();
+            if (isGalleryLoaded) renderGallery();
             if (latestLanyardData) {
                 updateLanyardUI(latestLanyardData);
             } else {
@@ -884,7 +929,6 @@
         };
 
         render();
-        fetchGallery();
         fetchWeather();
         initLanyardWebSocket();
         setInterval(updateLiveClock, 1000);
