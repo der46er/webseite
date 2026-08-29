@@ -156,6 +156,13 @@
 
         async function fetchProjects() {
             try {
+                const cached = sessionStorage.getItem('cachedProjects');
+                if (cached) {
+                    fetchedProjects = JSON.parse(cached);
+                    render();
+                    return;
+                }
+
                 const response = await fetch(GITHUB_API_URL);
                 if (!response.ok) throw new Error("Failed to fetch");
                 const data = await response.json();
@@ -194,6 +201,7 @@
                 // Filter out any folder that returned null
                 fetchedProjects = resolved.filter(p => p !== null);
                 
+                sessionStorage.setItem('cachedProjects', JSON.stringify(fetchedProjects));
                 render();
             } catch (e) {
                 console.error("Fetch error:", e);
