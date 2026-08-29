@@ -109,6 +109,15 @@
     </div>
     
 <script>
+        function escapeHTML(str) {
+            return String(str)
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
         document.getElementById('year').innerText = new Date().getFullYear();
 
         const GITHUB_API_URL = "https://api.github.com/repos/der46er/webseite/contents/projects";
@@ -208,7 +217,14 @@
             const t = translations[currentLang];
             
             document.getElementById('hero-desc').innerText = t.heroDesc;
-            document.getElementById('lang-indicator').innerHTML = `<img src="${t.flag}" alt="${t.alt}" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">`;
+
+            const langBtn = document.getElementById('lang-indicator');
+            langBtn.innerHTML = '';
+            const img = document.createElement('img');
+            img.src = t.flag;
+            img.alt = t.alt;
+            img.className = 'w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200';
+            langBtn.appendChild(img);
             
             document.getElementById('cookie-text').innerText = t.cookieText;
             document.getElementById('cookie-decline').innerText = t.cookieDecline;
@@ -239,8 +255,8 @@
                     
                     <div class="z-10 mt-auto flex items-end justify-between w-full">
                         <div class="flex flex-col justify-end min-w-0 pr-4">
-                            <h2 class="text-lg sm:text-xl md:text-xl font-black text-white tracking-tight italic uppercase leading-tight mb-1 group-hover:text-white transition-colors truncate pr-1">${title}</h2>
-                            <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate pr-1">${desc}</p>
+                            <h2 class="text-lg sm:text-xl md:text-xl font-black text-white tracking-tight italic uppercase leading-tight mb-1 group-hover:text-white transition-colors truncate pr-1">${escapeHTML(title)}</h2>
+                            <p class="text-zinc-500 text-[10px] sm:text-xs font-bold uppercase tracking-widest truncate pr-1">${escapeHTML(desc)}</p>
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
