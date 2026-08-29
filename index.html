@@ -159,8 +159,8 @@
                 arrowIcon: arrowUpRight
             },
             { 
-                id: 'services', 
-                href: "https://thataustrianone.eu/services/", 
+                id: 'tutorials', 
+                href: "https://thataustrianone.eu/tutorials/", 
                 isExternal: false,
                 gridClass: "col-span-1 sm:col-span-2 md:col-span-2 md:row-span-1",
                 iconClass: "text-purple-500 bg-purple-500/10",
@@ -205,7 +205,7 @@
                     projects: { title: "Projekte", desc: "Webseiten, Themes & mehr" },
                     shop: { title: "Hardware Marktplatz", desc: "Check meine aktuellen Inserate" },
                     products: { title: "Produkte", desc: "Affiliate" },
-                    services: { title: "Tech Tutorials", desc: "Simple Tutorials" },
+                    tutorials: { title: "Tech Tutorials", desc: "Simple Tutorials" },
                     about: { title: "Über Mich", desc: ";]]" },
                     socials: { title: "Socials", desc: "Folge mir auf meinen Kanälen" }
                 }
@@ -221,7 +221,7 @@
                     projects: { title: "Projects", desc: "Websites, Themes & more" },
                     shop: { title: "Hardware Marketplace", desc: "Browse my latest listings" },
                     products: { title: "Products", desc: "Affiliate" },
-                    services: { title: "Tech Tutorials", desc: "Simple Tutorials" },
+                    tutorials: { title: "Tech Tutorials", desc: "Simple Tutorials" },
                     about: { title: "About Me", desc: ";]]" },
                     socials: { title: "Socials", desc: "Follow me on my channels" }
                 }
@@ -252,8 +252,8 @@
             grid.innerHTML = cardData.map(c => {
                 const text = t.content[c.id];
                 
-                const titleClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-xl sm:text-2xl md:text-2xl' : 'text-lg sm:text-xl';
-                const descClass = ['projects', 'shop', 'services', 'socials'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
+                const titleClass = ['projects', 'shop', 'tutorials', 'socials'].includes(c.id) ? 'text-xl sm:text-2xl md:text-2xl' : 'text-lg sm:text-xl';
+                const descClass = ['projects', 'shop', 'tutorials', 'socials'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
 
                 return `
                 <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 md:p-6 flex flex-col justify-between overflow-hidden min-h-[150px] md:min-h-0 h-full">
