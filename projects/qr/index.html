@@ -1064,7 +1064,15 @@
                         const sizeData = generateImageOfSize(1024);
                         const dataUrl = sizeData.canvas.toDataURL('image/png');
                         const win = window.open('', '_blank');
-                        win.document.write(`<img src="${dataUrl}" style="max-width:100%; border-radius:16px;" onload="window.print(); setTimeout(()=>window.close(), 100)">`);
+                        const img = win.document.createElement('img');
+                        img.src = dataUrl;
+                        img.style.maxWidth = '100%';
+                        img.style.borderRadius = '16px';
+                        img.onload = () => {
+                            win.print();
+                            setTimeout(() => win.close(), 100);
+                        };
+                        win.document.body.appendChild(img);
                         win.document.close();
                     });
                 }
