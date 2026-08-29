@@ -813,9 +813,14 @@
             const populateStaticUI = () => {
                 const templateButtonsContainer = document.querySelector('.template-buttons');
                 if (templateButtonsContainer) {
-                    templateButtonsContainer.innerHTML = socialTemplates.map(template =>
-                        `<button data-prefix="${template.prefix}" class="snap-center shrink-0 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm">${template.name}</button>`
-                    ).join('');
+                    templateButtonsContainer.textContent = '';
+                    socialTemplates.forEach(template => {
+                        const btn = document.createElement('button');
+                        btn.dataset.prefix = template.prefix;
+                        btn.className = "snap-center shrink-0 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] px-4 py-2 text-[10px] font-bold tracking-widest uppercase rounded-[1rem] transition-all duration-200 active:scale-[0.99] shadow-sm";
+                        btn.textContent = template.name;
+                        templateButtonsContainer.appendChild(btn);
+                    });
                 }
             };
 
