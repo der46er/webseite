@@ -217,6 +217,7 @@
         </div>
     </div>
 
+<script src="utils.js"></script>
 <script>
     // System Variables
     const { FFmpeg } = window.FFmpegWASM;
@@ -281,12 +282,6 @@
     dropZone.addEventListener('dragleave', () => { dropZone.style.borderColor = 'rgba(255,255,255,0.1)'; });
     dropZone.addEventListener('drop', (e) => { e.preventDefault(); if(e.dataTransfer.files.length) loadFile(e.dataTransfer.files[0]); });
     fileInput.addEventListener('change', (e) => { if(e.target.files.length) loadFile(e.target.files[0]); });
-
-    function formatTime(sec) {
-        const m = Math.floor(sec / 60).toString().padStart(2, '0');
-        const s = Math.floor(sec % 60).toString().padStart(2, '0');
-        return `${m}:${s}`;
-    }
 
     async function loadFile(file) {
         if(!file) return;
