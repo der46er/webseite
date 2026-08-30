@@ -7,8 +7,62 @@
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
+    <!-- Instant Redirect Engine (Runs before DOM renders) -->
+    <script>
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
+
+        const getRequestedCode = () => {
+            const query = window.location.search;
+            const hash = window.location.hash;
+
+            if (query && query.length > 1) {
+                const params = new URLSearchParams(query);
+                if (params.get('code')) return params.get('code').trim().toLowerCase();
+                if (!query.includes('=')) return decodeURIComponent(query.slice(1)).trim().toLowerCase();
+            }
+
+            if (hash && hash.length > 1) {
+                return decodeURIComponent(hash.slice(1)).trim().toLowerCase();
+            }
+
+            return null;
+        };
+
+        const targetCode = getRequestedCode();
+
+        // If code exists, immediately dispatch network request
+        if (targetCode) {
+            // Cache-buster (&_t=...) forces Google edge to deliver real-time edits
+            fetch(SHEET_CSV_URL + "&_t=" + Date.now())
+                .then(res => res.text())
+                .then(csvText => {
+                    const lines = csvText.split(/\r?\n/);
+                    for (let i = 0; i < lines.length; i++) {
+                        const line = lines[i];
+                        if (!line) continue;
+                        
+                        // Fast parse first two columns (Code, Target URL)
+                        const cols = line.split(',');
+                        const rowCode = cols[0] ? cols[0].replace(/^"|"$/g, '').trim().toLowerCase() : "";
+                        
+                        if (rowCode === targetCode) {
+                            let targetUrl = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : "";
+                            if (targetUrl) {
+                                if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
+                                window.location.replace(targetUrl);
+                                return;
+                            }
+                        }
+                    }
+                    window.__showEmptyState && window.__showEmptyState();
+                })
+                .catch(() => {
+                    window.__showEmptyState && window.__showEmptyState();
+                });
+        }
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 
     <style>
         @font-face { 
@@ -114,21 +168,21 @@
     </footer>
 
     <script>
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
-
         document.getElementById('year').innerText = new Date().getFullYear();
 
         const translations = {
             de: {
                 flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
                 alt: "Austria Flag",
+                title: "Link | Nick",
                 resolving: "Link wird aufgelöst...",
-                empty: "seems like nothing to redirect here",
+                empty: "Hier gibt es nichts zum Weiterleiten",
                 homeBtn: "Zur Startseite"
             },
             en: {
                 flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
                 alt: "UK Flag",
+                title: "Link | Nick",
                 resolving: "Resolving link...",
                 empty: "seems like nothing to redirect here",
                 homeBtn: "Back to Home"
@@ -136,17 +190,26 @@
         };
 
         let currentLang = localStorage.getItem('siteLang') || 'en';
+        let isEmptyStateActive = false;
 
         function updateLanguageUI() {
             const t = translations[currentLang];
+            document.title = t.title;
+
             const flag = document.getElementById('flag-img');
             if (flag) {
                 flag.src = t.flag;
                 flag.alt = t.alt;
             }
+
             const homeBtn = document.getElementById('home-button');
             if (homeBtn) {
                 homeBtn.innerText = t.homeBtn;
+            }
+
+            const msgEl = document.getElementById('status-message');
+            if (msgEl) {
+                msgEl.textContent = isEmptyStateActive ? t.empty : t.resolving;
             }
         }
 
@@ -156,87 +219,27 @@
             updateLanguageUI();
         };
 
-        const getRequestedCode = () => {
-            const query = window.location.search;
-            const hash = window.location.hash;
-
-            if (query && query.length > 1) {
-                const params = new URLSearchParams(query);
-                if (params.get('code')) return params.get('code').trim().toLowerCase();
-                if (!query.includes('=')) return decodeURIComponent(query.slice(1)).trim().toLowerCase();
-            }
-
-            if (hash && hash.length > 1) {
-                return decodeURIComponent(hash.slice(1)).trim().toLowerCase();
-            }
-
-            return null;
-        };
-
-        const showEmptyState = () => {
-            document.getElementById('loading-spinner').classList.add('hidden');
-            document.getElementById('empty-icon').classList.remove('hidden');
-            
+        window.__showEmptyState = () => {
+            isEmptyStateActive = true;
+            const spinner = document.getElementById('loading-spinner');
+            const emptyIcon = document.getElementById('empty-icon');
+            const homeBtn = document.getElementById('home-button');
             const msgEl = document.getElementById('status-message');
-            msgEl.textContent = "seems like nothing to redirect here";
-            msgEl.className = "text-xs sm:text-sm font-medium text-zinc-400 my-2";
-            
-            document.getElementById('home-button').classList.remove('hidden');
-        };
 
-        const resolveRedirect = async () => {
+            if (spinner) spinner.classList.add('hidden');
+            if (emptyIcon) emptyIcon.classList.remove('hidden');
+            if (homeBtn) homeBtn.classList.remove('hidden');
+            if (msgEl) msgEl.className = "text-xs sm:text-sm font-medium text-zinc-400 my-2";
+
             updateLanguageUI();
-            const code = getRequestedCode();
-
-            if (!code) {
-                showEmptyState();
-                return;
-            }
-
-            try {
-                const response = await fetch(SHEET_CSV_URL);
-                if (!response.ok) throw new Error("Network request failed");
-
-                const csvText = await response.text();
-
-                Papa.parse(csvText, {
-                    header: false,
-                    skipEmptyLines: true,
-                    complete: (results) => {
-                        const rows = results.data;
-                        let targetUrl = null;
-
-                        for (let i = 0; i < rows.length; i++) {
-                            const rowCode = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
-                            const rowTarget = rows[i][1] ? rows[i][1].toString().trim() : "";
-
-                            if (rowCode === code) {
-                                targetUrl = rowTarget;
-                                break;
-                            }
-                        }
-
-                        if (targetUrl && targetUrl.length > 0) {
-                            if (!/^https?:\/\//i.test(targetUrl)) {
-                                targetUrl = "https://" + targetUrl;
-                            }
-                            window.location.replace(targetUrl);
-                        } else {
-                            showEmptyState();
-                        }
-                    },
-                    error: () => {
-                        showEmptyState();
-                    }
-                });
-
-            } catch (err) {
-                console.error("Redirect lookup error:", err);
-                showEmptyState();
-            }
         };
 
-        document.addEventListener('DOMContentLoaded', resolveRedirect);
+        document.addEventListener('DOMContentLoaded', () => {
+            updateLanguageUI();
+            if (!targetCode) {
+                window.__showEmptyState();
+            }
+        });
     </script>
 </body>
 </html>
