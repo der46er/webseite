@@ -342,6 +342,7 @@
             let isMatchFrame = false;
             let isFrameOff = false;
             let isCircleShape = false;
+            let isSharpRaw = false; // Plain, 1x1, sharp square mode
             
             let uploadedBgImage = null;
             let uploadedBgDataUrl = null;
@@ -510,16 +511,17 @@
             const generateImageOfSize = (baseSize) => {
                 const totalSize = parseInt(baseSize);
                 
-                const factorQZ = isCircleShape ? (256 / 1024) : (128 / 1024);
-                const factorBorder = isFrameOff ? 0 : (64 / 1024);
+                // When sharp raw mode is active: No frame, sharp 0px radius, 1:1 square canvas
+                const factorQZ = isSharpRaw ? 0 : (isCircleShape ? (256 / 1024) : (128 / 1024));
+                const factorBorder = (isFrameOff || isSharpRaw) ? 0 : (64 / 1024);
                 
-                const maxQrSize = totalSize / (1 + (factorQZ * 2) + (factorBorder * 2));
-                const quietZone = maxQrSize * factorQZ;
-                const borderThickness = maxQrSize * factorBorder;
+                const maxQrSize = isSharpRaw ? totalSize : (totalSize / (1 + (factorQZ * 2) + (factorBorder * 2)));
+                const quietZone = isSharpRaw ? 0 : (maxQrSize * factorQZ);
+                const borderThickness = (isFrameOff || isSharpRaw) ? 0 : (maxQrSize * factorBorder);
                 
-                const baseOuterRadius = isFrameOff ? (maxQrSize * (64 / 1024)) : (maxQrSize * (128 / 1024));
-                const baseInnerRadius = maxQrSize * (64 / 1024);
-                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
+                const baseOuterRadius = (isFrameOff || isSharpRaw) ? 0 : (maxQrSize * (128 / 1024));
+                const baseInnerRadius = isSharpRaw ? 0 : (maxQrSize * (64 / 1024));
+                const outerRadius = (isSharpRaw || !isCircleShape) ? baseOuterRadius : (totalSize / 2);
 
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = totalSize;
@@ -527,11 +529,11 @@
                 const ctx = tempCanvas.getContext('2d');
                 
                 const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
-                const qriousForeground = isQrGradient ? '#000000' : (qrColorPicker.value || '#000000');
+                const qriousForeground = isSharpRaw ? '#000000' : (isQrGradient ? '#000000' : (qrColorPicker.value || '#000000'));
                 const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
 
                 let finalQrToDraw = trimmedQr;
-                if (isQrGradient) {
+                if (isQrGradient && !isSharpRaw) {
                     const qrGradCanvas = document.createElement('canvas');
                     qrGradCanvas.width = trimmedQr.width;
                     qrGradCanvas.height = trimmedQr.height;
@@ -549,19 +551,18 @@
                     finalQrToDraw = qrGradCanvas;
                 }
 
-                const shouldPunchHole = !isFrameOff && (!isMatchFrame || uploadedBgImage || isTransparentBg);
-
-                if (!isFrameOff) {
+                if (!isFrameOff && !isSharpRaw) {
                     const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
                     frameGrad.addColorStop(0, gradientParams.color1);
                     frameGrad.addColorStop(1, gradientParams.color2);
                     ctx.fillStyle = frameGrad;
 
                     ctx.beginPath();
-                    if (ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
+                    if (outerRadius > 0 && ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
                     else ctx.rect(0, 0, totalSize, totalSize);
                     ctx.fill();
 
+                    const shouldPunchHole = !isMatchFrame || uploadedBgImage || isTransparentBg;
                     if (shouldPunchHole) {
                         const x = borderThickness;
                         const size = totalSize - (borderThickness * 2);
@@ -569,7 +570,7 @@
 
                         ctx.globalCompositeOperation = 'destination-out';
                         ctx.beginPath();
-                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        if (innerRadius > 0 && ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
                         ctx.fill();
                         ctx.globalCompositeOperation = 'source-over'; 
@@ -577,14 +578,14 @@
                 }
 
                 if (!isTransparentBg) {
-                    const x = isFrameOff ? 0 : borderThickness;
-                    const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
-                    const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
+                    const x = (isFrameOff || isSharpRaw) ? 0 : borderThickness;
+                    const size = (isFrameOff || isSharpRaw) ? totalSize : (totalSize - (borderThickness * 2));
+                    const innerRadius = (isCircleShape && !isSharpRaw) ? (size / 2) : baseInnerRadius;
 
-                    if (uploadedBgImage) {
+                    if (uploadedBgImage && !isSharpRaw) {
                         ctx.save();
                         ctx.beginPath();
-                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        if (innerRadius > 0 && ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
                         ctx.clip();
 
@@ -602,10 +603,10 @@
                         }
                         ctx.drawImage(uploadedBgImage, drawX, drawY, drawW, drawH);
                         ctx.restore();
-                    } else if (!isMatchFrame || isFrameOff) {
-                        ctx.fillStyle = bgZoneColorPicker.value || '#ffffff';
+                    } else if (isSharpRaw || !isMatchFrame || isFrameOff) {
+                        ctx.fillStyle = isSharpRaw ? '#ffffff' : (bgZoneColorPicker.value || '#ffffff');
                         ctx.beginPath();
-                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        if (innerRadius > 0 && ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
                         ctx.fill();
                     }
@@ -622,12 +623,12 @@
                 ctx.drawImage(finalQrToDraw, drawX, drawY, drawW, drawH);
                 ctx.imageSmoothingEnabled = true;
                 
-                if (uploadedCenterLogo) {
+                if (uploadedCenterLogo && !isSharpRaw) {
                     const logoSize = maxQrSize * 0.25;
                     const cx = totalSize / 2;
                     const cy = totalSize / 2;
 
-                    ctx.fillStyle = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
+                    ctx.fillStyle = bgZoneColorPicker.value || '#ffffff';
                     ctx.beginPath();
                     ctx.arc(cx, cy, logoSize * 0.6, 0, Math.PI * 2);
                     ctx.fill();
@@ -652,17 +653,24 @@
             };
 
             const generateSVGString = (sizeData) => {
-                const { totalSize, maxQrSize, quietZone, borderThickness, baseOuterRadius, baseInnerRadius, drawX, drawY, drawW, drawH } = sizeData;
+                const { totalSize, drawX, drawY, drawW, drawH } = sizeData;
+                const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
+                const trimmedQr = getTrimmedQrCanvas(qrTextVal, '#000000');
+                const qrDataUrl = trimmedQr.toDataURL("image/png");
+
+                if (isSharpRaw) {
+                    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
+                        ${!isTransparentBg ? `<rect width="${totalSize}" height="${totalSize}" fill="#ffffff" />` : ''}
+                        <image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />
+                    </svg>`;
+                }
+
+                const { outerRadius, innerRadius, borderThickness } = sizeData;
                 const x = isFrameOff ? 0 : borderThickness;
                 const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
-                
-                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
-                const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
-
-                const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
                 const qriousForeground = isQrGradient ? '#ffffff' : (qrColorPicker.value || '#000000');
-                const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
-                const qrDataUrl = trimmedQr.toDataURL("image/png");
+                const customTrimmed = getTrimmedQrCanvas(qrTextVal, qriousForeground);
+                const customDataUrl = customTrimmed.toDataURL("image/png");
 
                 let svgStr = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
                     <defs>
@@ -688,7 +696,7 @@
                             <stop offset="100%" stop-color="${qrGrad2ColorPicker.value || '#8b5cf6'}" />
                         </linearGradient>
                         <mask id="qrMaskLuminance">
-                            <image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />
+                            <image href="${customDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />
                         </mask>`;
                 }
                 svgStr += `</defs>`;
@@ -698,38 +706,14 @@
                 }
 
                 if (!isTransparentBg) {
-                    if (uploadedBgDataUrl) {
-                        svgStr += `
-                            <clipPath id="bgClip">
-                                <rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" />
-                            </clipPath>
-                            <image href="${uploadedBgDataUrl}" x="${x}" y="${x}" width="${size}" height="${size}" preserveAspectRatio="xMidYMid slice" clip-path="url(#bgClip)" />
-                        `;
-                    } else if (!isMatchFrame || isFrameOff) {
-                        let fill = bgZoneColorPicker.value || '#ffffff';
-                        svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="${fill}" />`;
-                    }
+                    let fill = bgZoneColorPicker.value || '#ffffff';
+                    svgStr += `<rect x="${x}" y="${x}" width="${size}" height="${size}" rx="${innerRadius}" ry="${innerRadius}" fill="${fill}" />`;
                 }
 
                 if (isQrGradient) {
                     svgStr += `<rect x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" fill="url(#qrGrad)" mask="url(#qrMaskLuminance)" />`;
                 } else {
-                    svgStr += `<image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />`;
-                }
-
-                if (uploadedCenterLogoDataUrl) {
-                    const logoSize = maxQrSize * 0.25;
-                    const cx = totalSize / 2;
-                    const cy = totalSize / 2;
-                    const fillBg = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
-
-                    svgStr += `
-                        <circle cx="${cx}" cy="${cy}" r="${logoSize * 0.6}" fill="${fillBg}" />
-                        <clipPath id="logoClip">
-                            <circle cx="${cx}" cy="${cy}" r="${logoSize * 0.55}" />
-                        </clipPath>
-                        <image href="${uploadedCenterLogoDataUrl}" x="${cx - logoSize*0.55}" y="${cy - logoSize*0.55}" width="${logoSize*1.1}" height="${logoSize*1.1}" preserveAspectRatio="xMidYMid slice" clip-path="url(#logoClip)" />
-                    `;
+                    svgStr += `<image href="${customDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />`;
                 }
 
                 svgStr += `</svg>`;
@@ -772,6 +756,17 @@
 
                 if (incomingText && qrText) {
                     qrText.value = incomingText;
+                }
+
+                // If raw / plain mode is requested (or default download parameter)
+                const isRawRequested = params.get('raw') === '1' || params.get('plain') === '1';
+                if (isRawRequested) {
+                    isSharpRaw = true;
+                    isFrameOff = true;
+                    isCircleShape = false;
+                    isQrGradient = false;
+                    qrColorPicker.value = '#000000';
+                    bgZoneColorPicker.value = '#ffffff';
                 }
 
                 const paramFormat = params.get('format');
@@ -896,28 +891,31 @@
             });
 
             const setupEventListeners = () => {
-                if(qrText) qrText.addEventListener('input', updateQr);
+                if(qrText) qrText.addEventListener('input', () => { isSharpRaw = false; updateQr(); });
                 
-                qrColorPicker.addEventListener('input', updateQr);
-                bgZoneColorPicker.addEventListener('input', updateQr);
-                grad1ColorPicker.addEventListener('input', applyGradientFromPickers);
-                grad2ColorPicker.addEventListener('input', applyGradientFromPickers);
-                qrGrad1ColorPicker.addEventListener('input', applyGradientFromPickers);
-                qrGrad2ColorPicker.addEventListener('input', applyGradientFromPickers);
+                qrColorPicker.addEventListener('input', () => { isSharpRaw = false; updateQr(); });
+                bgZoneColorPicker.addEventListener('input', () => { isSharpRaw = false; updateQr(); });
+                grad1ColorPicker.addEventListener('input', () => { isSharpRaw = false; applyGradientFromPickers(); });
+                grad2ColorPicker.addEventListener('input', () => { isSharpRaw = false; applyGradientFromPickers(); });
+                qrGrad1ColorPicker.addEventListener('input', () => { isSharpRaw = false; applyGradientFromPickers(); });
+                qrGrad2ColorPicker.addEventListener('input', () => { isSharpRaw = false; applyGradientFromPickers(); });
 
                 transparentBgBtn.addEventListener('click', () => {
+                    isSharpRaw = false;
                     isTransparentBg = !isTransparentBg;
                     transparentBgBtn.classList.toggle('active');
                     updateQr();
                 });
 
                 qrShapeToggleBtn.addEventListener('click', () => {
+                    isSharpRaw = false;
                     isCircleShape = !isCircleShape;
                     qrShapeToggleBtn.classList.toggle('active');
                     updateQr();
                 });
 
                 qrGradientToggleBtn.addEventListener('click', () => {
+                    isSharpRaw = false;
                     isQrGradient = !isQrGradient;
                     qrGradientToggleBtn.classList.toggle('active');
                     if (isQrGradient) {
@@ -933,6 +931,7 @@
                 });
 
                 matchFrameToggleBtn.addEventListener('click', () => {
+                    isSharpRaw = false;
                     isMatchFrame = !isMatchFrame;
                     matchFrameToggleBtn.classList.toggle('active');
                     updateBgZoneState();
@@ -940,6 +939,7 @@
                 });
 
                 disableFrameToggleBtn.addEventListener('click', () => {
+                    isSharpRaw = false;
                     isFrameOff = !isFrameOff;
                     disableFrameToggleBtn.classList.toggle('active');
                     updateBgZoneState();
@@ -962,6 +962,7 @@
 
                 bgImageUpload.addEventListener('change', (e) => {
                     handleImageUpload(e.target.files[0], (img, dataUrl) => {
+                        isSharpRaw = false;
                         uploadedBgImage = img;
                         uploadedBgDataUrl = dataUrl;
                         bgUploadBtn.classList.add('active');
@@ -987,6 +988,7 @@
 
                 centerLogoUpload.addEventListener('change', (e) => {
                     handleImageUpload(e.target.files[0], (img, dataUrl) => {
+                        isSharpRaw = false;
                         uploadedCenterLogo = img;
                         uploadedCenterLogoDataUrl = dataUrl;
                         centerLogoBtn.classList.add('active');
@@ -997,7 +999,7 @@
                 });
 
                 const refreshBtn = document.getElementById('refreshGradientButton');
-                if(refreshBtn) refreshBtn.addEventListener('click', applyRandomGradient);
+                if(refreshBtn) refreshBtn.addEventListener('click', () => { isSharpRaw = false; applyRandomGradient(); });
                 
                 const resetBtn = document.getElementById('resetTextButton');
                 if(resetBtn) {
