@@ -2,14 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Link | Nick</title>
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
-    <!-- Instant Redirect Engine (Runs before DOM renders) -->
+    <!-- High-Speed Server-Filtered Redirect Engine -->
     <script>
-        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
+        const SHEET_ID = "2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9";
 
         const getRequestedCode = () => {
             const query = window.location.search;
@@ -30,34 +30,42 @@
 
         const targetCode = getRequestedCode();
 
-        // If code exists, immediately dispatch network request
         if (targetCode) {
-            // Cache-buster (&_t=...) forces Google edge to deliver real-time edits
-            fetch(SHEET_CSV_URL + "&_t=" + Date.now())
+            const queryUrl = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&_t=${Date.now()}`;
+            
+            fetch(queryUrl)
                 .then(res => res.text())
                 .then(csvText => {
                     const lines = csvText.split(/\r?\n/);
+                    let foundCode = false;
+
                     for (let i = 0; i < lines.length; i++) {
                         const line = lines[i];
                         if (!line) continue;
                         
-                        // Fast parse first two columns (Code, Target URL)
                         const cols = line.split(',');
                         const rowCode = cols[0] ? cols[0].replace(/^"|"$/g, '').trim().toLowerCase() : "";
                         
                         if (rowCode === targetCode) {
+                            foundCode = true;
                             let targetUrl = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : "";
-                            if (targetUrl) {
+                            if (targetUrl && targetUrl.length > 0) {
                                 if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
                                 window.location.replace(targetUrl);
+                                return;
+                            } else {
+                                window.__showCustomError && window.__showCustomError('ERR_UNASSIGNED_ID', targetCode);
                                 return;
                             }
                         }
                     }
-                    window.__showEmptyState && window.__showEmptyState();
+
+                    if (!foundCode) {
+                        window.__showCustomError && window.__showCustomError('ERR_INVALID_ID', targetCode);
+                    }
                 })
                 .catch(() => {
-                    window.__showEmptyState && window.__showEmptyState();
+                    window.__showCustomError && window.__showCustomError('ERR_FETCH_FAILED', targetCode);
                 });
         }
     </script>
@@ -78,6 +86,12 @@
             font-display: swap; 
         }
         
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+        }
+
         body { 
             font-family: 'Inter', system-ui, sans-serif; 
             background-color: #0b0d11; 
@@ -85,13 +99,14 @@
             margin: 0; 
             padding: 0; 
             position: relative;
+            -webkit-tap-highlight-color: transparent;
         }
 
         .animate-in { 
-            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
         @keyframes fadeIn { 
-            from { opacity: 0; transform: translateY(20px); } 
+            from { opacity: 0; transform: translateY(8px); } 
             to { opacity: 1; transform: translateY(0); } 
         }
 
@@ -99,65 +114,188 @@
             background: rgba(18, 18, 18, 0.88);
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
 
         .spinner {
             border: 2.5px solid rgba(255, 255, 255, 0.1);
             border-top-color: #ffffff;
             border-radius: 50%;
-            width: 28px;
-            height: 28px;
+            width: 26px;
+            height: 26px;
             animation: spin 0.8s linear infinite;
         }
 
         @keyframes spin {
             to { transform: rotate(360deg); }
         }
+
+        .form-input {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            color: #fff;
+            transition: all 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: rgba(16, 185, 129, 0.5);
+            background: rgba(255, 255, 255, 0.07);
+        }
     </style>
 </head>
 
-<body class="flex flex-col min-h-screen w-full overflow-x-hidden selection:bg-white/10 relative">
-
-    <!-- Back Arrow to Main Page -->
-    <a href="https://thataustrianone.eu/" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group">
-        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform">
-            <line x1="19" y1="12" x2="5" y2="12"></line>
-            <polyline points="12 19 5 12 12 5"></polyline>
-        </svg>
-    </a>
+<body class="flex flex-col h-screen min-h-[100dvh] w-full selection:bg-white/10 relative select-none">
 
     <!-- Main Content Container -->
-    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center items-center py-10 md:py-6 h-full min-h-0">
-        <div class="w-full max-w-sm glass-box rounded-[1.2rem] p-6 sm:p-8 flex flex-col items-center text-center animate-in" style="opacity: 0;">
+    <main class="relative z-10 max-w-xl mx-auto px-4 w-full flex-grow flex flex-col justify-center items-center py-4 h-full min-h-0">
+        
+        <div id="main-card" class="w-full glass-box rounded-[1.4rem] p-4 sm:p-6 flex flex-col items-center text-center animate-in" style="opacity: 0;">
             
             <!-- Loading Indicator -->
-            <div id="loading-spinner" class="spinner my-4"></div>
+            <div id="loading-spinner" class="spinner my-3"></div>
 
-            <!-- Fallback State Icon -->
-            <div id="empty-icon" class="hidden my-3 p-3 rounded-full bg-white/5 border border-white/10 text-zinc-400">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <!-- Error State Icon -->
+            <div id="error-icon" class="hidden my-0.5 p-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
                     <line x1="12" y1="16" x2="12.01" y2="16"></line>
                 </svg>
             </div>
 
-            <!-- Message Text -->
-            <p id="status-message" class="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-400 my-2">
+            <!-- Title & Status Text -->
+            <h1 id="status-title" class="text-base sm:text-lg font-black italic uppercase tracking-tight text-white mt-1">
                 Resolving link...
+            </h1>
+
+            <p id="status-desc" class="hidden text-xs text-zinc-400 font-medium mt-0.5">
+                Looking up destination...
             </p>
+            
+            <!-- Error Code Pill -->
+            <div id="error-code-badge" class="hidden mt-1.5 px-2.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">
+                <span id="error-code-text">ERR_CODE</span>
+            </div>
+
+            <!-- Expandable "What can I do?" Trigger Button -->
+            <button id="help-toggle-btn" onclick="toggleHelpAccordion()" class="hidden mt-3 w-full py-2 px-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition-all active:scale-[0.99]">
+                <div class="flex items-center gap-2">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    <span id="help-toggle-text">What can I do?</span>
+                </div>
+                <svg id="help-toggle-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="transition-transform duration-300"><polyline points="6 9 12 15 18 9"></polyline></svg>
+            </button>
+
+            <!-- Modular Accordion Details -->
+            <div id="help-box" class="hidden w-full mt-2.5 flex flex-col gap-2 text-left animate-in">
+                
+                <!-- Segmented Role Selector -->
+                <div class="grid grid-cols-2 p-1 bg-black/40 rounded-xl border border-white/10 text-center select-none">
+                    <button id="tab-visitor" onclick="switchRoleTab('visitor')" class="py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-white/10 shadow-sm">
+                        Visitor
+                    </button>
+                    <button id="tab-owner" onclick="switchRoleTab('owner')" class="py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-zinc-400 hover:text-zinc-200">
+                        Owner
+                    </button>
+                </div>
+
+                <!-- Pane 1: Visitor View -->
+                <div id="pane-visitor" class="p-3 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-1">
+                    <p id="visitor-desc" class="text-xs leading-relaxed text-zinc-400 font-medium">
+                        Please try again later or inform the local staff where you scanned the QR code or found the link.
+                    </p>
+                </div>
+
+                <!-- Pane 2: Owner View -->
+                <div id="pane-owner" class="hidden p-3 rounded-xl bg-white/[0.02] border border-white/5 flex flex-col gap-2.5">
+                    
+                    <!-- Sub-view A: WhatsApp Form -->
+                    <div id="owner-wa-box" class="flex flex-col gap-2.5">
+                        <p id="owner-desc" class="text-xs leading-relaxed text-zinc-400 font-medium">
+                            Enter your details below to configure this link via WhatsApp:
+                        </p>
+
+                        <!-- Inputs -->
+                        <div class="flex flex-col gap-1.5">
+                            <input type="text" id="input-biz-name" placeholder="Business / Name *" class="form-input w-full rounded-xl px-3 py-2 text-xs font-medium placeholder:text-zinc-600">
+                            <input type="text" id="input-target-url" placeholder="Target URL (e.g. https://your-website.com)" class="form-input w-full rounded-xl px-3 py-2 text-xs font-medium placeholder:text-zinc-600">
+                        </div>
+                        
+                        <!-- Action -->
+                        <button onclick="sendFormattedWhatsApp()" class="w-full py-2.5 px-3.5 rounded-xl bg-emerald-500/10 hover:bg-emerald-500/20 border border-emerald-500/30 hover:border-emerald-500/80 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-emerald-400 hover:text-emerald-300 transition-all active:scale-[0.98]">
+                            <div class="flex items-center gap-2">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                                <span id="btn-wa-submit">Instant Setup on WhatsApp</span>
+                            </div>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+
+                        <!-- Switch to Email -->
+                        <div class="text-center pt-0">
+                            <button onclick="switchOwnerChannel('email')" id="toggle-to-email-btn" class="text-[11px] font-bold text-zinc-500 hover:text-zinc-300 transition-colors uppercase tracking-wider underline underline-offset-4">
+                                Prefer email instead?
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Sub-view B: Dedicated Email Form Box -->
+                    <div id="owner-email-box" class="hidden flex flex-col gap-2 animate-in">
+                        <p id="owner-email-desc" class="text-xs leading-relaxed text-zinc-400 font-medium">
+                            Enter your details below to submit a configuration request via Email:
+                        </p>
+
+                        <!-- Dedicated Email Inputs -->
+                        <div class="flex flex-col gap-1.5">
+                            <input type="text" id="input-email-biz-name" placeholder="Business / Name *" class="form-input w-full rounded-xl px-3 py-2 text-xs font-medium placeholder:text-zinc-600">
+                            <input type="text" id="input-email-target-url" placeholder="Target URL (e.g. https://your-website.com)" class="form-input w-full rounded-xl px-3 py-2 text-xs font-medium placeholder:text-zinc-600">
+                        </div>
+
+                        <!-- Action -->
+                        <button onclick="sendFormattedEmail()" class="w-full py-2 px-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition-all active:scale-[0.98]">
+                            <div class="flex items-center gap-2">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                                <span id="btn-email-submit">Submit via Email</span>
+                            </div>
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-500"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                        </button>
+
+                        <!-- 72h Delay Notice -->
+                        <div class="flex items-start gap-1.5 px-2 py-1.5 rounded-lg bg-red-500/10 border border-red-500/20 text-[10px] text-red-300 leading-tight">
+                            <svg class="w-3.5 h-3.5 text-red-400 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5">
+                                <circle cx="12" cy="12" r="10"></circle>
+                                <polyline points="12 6 12 12 16 14"></polyline>
+                            </svg>
+                            <span id="email-delay-warning">Please note: Email support responses may take up to 72 hours. For instant activation, use WhatsApp.</span>
+                        </div>
+
+                        <!-- Switch back to WhatsApp (Tighter Spacing) -->
+                        <div class="text-center pt-0.5">
+                            <button onclick="switchOwnerChannel('wa')" id="toggle-to-wa-btn" class="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors uppercase tracking-wider underline underline-offset-4">
+                                Use WhatsApp instead (Instant)
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Abuse Disclaimer -->
+                    <div class="flex items-center gap-1.5 px-1 pt-1 text-[9px] sm:text-[10px] text-zinc-600 leading-tight border-t border-white/5">
+                        <svg class="w-3 h-3 text-zinc-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2">
+                            <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                        </svg>
+                        <span id="abuse-warning">Abuse & spam will be reported to law enforcement.</span>
+                    </div>
+                </div>
+            </div>
 
             <!-- Home Button -->
-            <a id="home-button" href="https://thataustrianone.eu/" class="hidden mt-6 w-full py-3 bg-white text-black hover:bg-zinc-200 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] shadow-lg">
+            <a id="home-button" href="https://thataustrianone.eu/" class="hidden mt-3.5 w-full py-2.5 bg-white text-black hover:bg-zinc-200 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.98] shadow-lg shrink-0">
                 Back to Home
             </a>
         </div>
     </main>
 
     <!-- Natural Bottom Footer -->
-    <footer class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-4 z-20 flex justify-between items-center select-none mt-auto">
+    <footer class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-3 z-20 flex justify-between items-center select-none mt-auto shrink-0">
         <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
             <img id="flag-img" src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp" alt="UK Flag" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">
         </button>
@@ -166,6 +304,17 @@
             © <span id="year">2026</span> — @der_46er
         </p>
     </footer>
+
+    <!-- Cookie Consent Banner -->
+    <div id="cookie-banner" class="hidden fixed bottom-0 left-0 w-full bg-[#0b0d11]/95 backdrop-blur-xl border-t border-white/10 p-4 sm:p-6 z-[200] flex flex-col sm:flex-row justify-between items-center gap-4 animate-in">
+        <div class="text-xs sm:text-sm text-zinc-300 max-w-3xl font-medium leading-relaxed">
+            <p id="cookie-text">We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?</p>
+        </div>
+        <div class="flex gap-3 flex-shrink-0 w-full sm:w-auto">
+            <button onclick="handleCookie('denied')" id="cookie-decline" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs text-zinc-500 hover:text-white hover:bg-white/5 border border-white/10 transition-colors uppercase tracking-widest">Decline</button>
+            <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg">Accept</button>
+        </div>
+    </div>
 
     <script>
         document.getElementById('year').innerText = new Date().getFullYear();
@@ -176,21 +325,100 @@
                 alt: "Austria Flag",
                 title: "Link | Nick",
                 resolving: "Link wird aufgelöst...",
-                empty: "Hier gibt es nichts zum Weiterleiten",
-                homeBtn: "Zur Startseite"
+                errors: {
+                    ERR_MISSING_ID: {
+                        title: "Keine Link-ID angegeben",
+                        desc: "Dem aufgerufenen Link fehlt die ID nach dem Fragezeichen.",
+                        subject: "Neue Weiterleitung einrichten"
+                    },
+                    ERR_INVALID_ID: {
+                        title: "Link-ID '{CODE}' ist ungültig",
+                        desc: "Dieser Code ist nicht im System registriert.",
+                        subject: "Überprüfung eines ungültigen Link-Codes"
+                    },
+                    ERR_UNASSIGNED_ID: {
+                        title: "Kein Ziel für '{CODE}' hinterlegt",
+                        desc: "Dieser Code existiert, hat aber aktuell noch keine Ziel-URL.",
+                        subject: "Ziel-URL hinterlegen"
+                    },
+                    ERR_FETCH_FAILED: {
+                        title: "Verbindungsfehler",
+                        desc: "Die Weiterleitungsdatenbank konnte nicht abgerufen werden.",
+                        subject: "Verbindungsfehler melden"
+                    }
+                },
+                helpToggle: "Was kann ich tun?",
+                tabVisitor: "Besucher",
+                tabOwner: "Inhaber",
+                visitorDesc: "Bitte versuche es später erneut oder informiere das Personal vor Ort, wo du den QR-Code gescannt oder den Link gesehen hast.",
+                ownerDesc: "Gib deine Daten ein, um diese Weiterleitung direkt via WhatsApp einzurichten:",
+                ownerEmailDesc: "Gib deine Daten ein, um diese Weiterleitung per E-Mail anzufragen:",
+                phBizName: "Unternehmen / Name *",
+                phTargetUrl: "Ziel-URL (z.B. https://deine-webseite.at)",
+                btnWaSubmit: "Sofort-Aktivierung via WhatsApp",
+                toggleToEmail: "Lieber per E-Mail anfragen?",
+                btnEmailSubmit: "Per E-Mail absenden",
+                emailDelayWarning: "Hinweis: E-Mail-Antworten können bis zu 72 Stunden dauern. Für eine sofortige Freischaltung bitte WhatsApp nutzen.",
+                toggleToWa: "Lieber WhatsApp nutzen (Sofort)",
+                abuseWarning: "Missbrauch wird den Strafverfolgungsbehörden gemeldet.",
+                homeBtn: "Zur Startseite",
+                cookieText: "Wir verwenden Cookies und Google Analytics, um unsere Website zu verbessern und den Traffic zu analysieren. Stimmst du der Nutzung zu?",
+                cookieDecline: "Ablehnen",
+                cookieAccept: "Akzeptieren"
             },
             en: {
                 flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
                 alt: "UK Flag",
                 title: "Link | Nick",
                 resolving: "Resolving link...",
-                empty: "seems like nothing to redirect here",
-                homeBtn: "Back to Home"
+                errors: {
+                    ERR_MISSING_ID: {
+                        title: "No Link ID provided",
+                        desc: "The accessed link is missing a code after the question mark.",
+                        subject: "Configure new redirect"
+                    },
+                    ERR_INVALID_ID: {
+                        title: "Link ID '{CODE}' is invalid",
+                        desc: "This code is not registered in the system.",
+                        subject: "Verify invalid link code"
+                    },
+                    ERR_UNASSIGNED_ID: {
+                        title: "No destination for '{CODE}'",
+                        desc: "This code exists, but no destination URL has been assigned yet.",
+                        subject: "Assign destination URL"
+                    },
+                    ERR_FETCH_FAILED: {
+                        title: "Connection error",
+                        desc: "Could not reach the routing database.",
+                        subject: "Report connection error"
+                    }
+                },
+                helpToggle: "What can I do?",
+                tabVisitor: "Visitor",
+                tabOwner: "Owner",
+                visitorDesc: "Please try again later or inform the local staff where you scanned the QR code or found the link.",
+                ownerDesc: "Enter your details below to configure this link via WhatsApp:",
+                ownerEmailDesc: "Enter your details below to submit a configuration request via Email:",
+                phBizName: "Business / Name *",
+                phTargetUrl: "Target URL (e.g. https://your-website.com)",
+                btnWaSubmit: "Instant Setup on WhatsApp",
+                toggleToEmail: "Prefer email instead?",
+                btnEmailSubmit: "Submit via Email",
+                emailDelayWarning: "Please note: Email support responses may take up to 72 hours. For instant activation, use WhatsApp.",
+                toggleToWa: "Use WhatsApp instead (Instant)",
+                abuseWarning: "Abuse & spam will be reported to law enforcement.",
+                homeBtn: "Back to Home",
+                cookieText: "We use cookies and Google Analytics to improve our website and analyze traffic. Do you accept the use of cookies?",
+                cookieDecline: "Decline",
+                cookieAccept: "Accept"
             }
         };
 
         let currentLang = localStorage.getItem('siteLang') || 'en';
-        let isEmptyStateActive = false;
+        let currentErrorCode = null;
+        let currentCodeParam = null;
+        let isErrorState = false;
+        let currentRole = 'visitor';
 
         function updateLanguageUI() {
             const t = translations[currentLang];
@@ -202,15 +430,77 @@
                 flag.alt = t.alt;
             }
 
-            const homeBtn = document.getElementById('home-button');
-            if (homeBtn) {
-                homeBtn.innerText = t.homeBtn;
+            const titleEl = document.getElementById('status-title');
+            const descEl = document.getElementById('status-desc');
+
+            if (isErrorState && currentErrorCode) {
+                const errInfo = t.errors[currentErrorCode] || t.errors['ERR_INVALID_ID'];
+                const codeDisplay = currentCodeParam || "N/A";
+                
+                if (titleEl) titleEl.textContent = errInfo.title.replace(/{CODE}/g, codeDisplay);
+                if (descEl) {
+                    descEl.classList.remove('hidden');
+                    descEl.textContent = errInfo.desc.replace(/{CODE}/g, codeDisplay);
+                }
+            } else {
+                if (titleEl) titleEl.textContent = t.resolving;
+                if (descEl) descEl.classList.add('hidden');
             }
 
-            const msgEl = document.getElementById('status-message');
-            if (msgEl) {
-                msgEl.textContent = isEmptyStateActive ? t.empty : t.resolving;
-            }
+            const helpToggleText = document.getElementById('help-toggle-text');
+            if (helpToggleText) helpToggleText.innerText = t.helpToggle;
+
+            const tabVis = document.getElementById('tab-visitor');
+            if (tabVis) tabVis.innerText = t.tabVisitor;
+            const tabOwn = document.getElementById('tab-owner');
+            if (tabOwn) tabOwn.innerText = t.tabOwner;
+
+            const vDesc = document.getElementById('visitor-desc');
+            if (vDesc) vDesc.innerText = t.visitorDesc;
+
+            const oDesc = document.getElementById('owner-desc');
+            if (oDesc) oDesc.innerText = t.ownerDesc;
+
+            const oEmailDesc = document.getElementById('owner-email-desc');
+            if (oEmailDesc) oEmailDesc.innerText = t.ownerEmailDesc;
+
+            const inputBiz = document.getElementById('input-biz-name');
+            if (inputBiz) inputBiz.placeholder = t.phBizName;
+            const inputUrl = document.getElementById('input-target-url');
+            if (inputUrl) inputUrl.placeholder = t.phTargetUrl;
+
+            const inputEmailBiz = document.getElementById('input-email-biz-name');
+            if (inputEmailBiz) inputEmailBiz.placeholder = t.phBizName;
+            const inputEmailUrl = document.getElementById('input-email-target-url');
+            if (inputEmailUrl) inputEmailUrl.placeholder = t.phTargetUrl;
+
+            const btnWa = document.getElementById('btn-wa-submit');
+            if (btnWa) btnWa.innerText = t.btnWaSubmit;
+
+            const toggleToMail = document.getElementById('toggle-to-email-btn');
+            if (toggleToMail) toggleToMail.innerText = t.toggleToEmail;
+
+            const btnMail = document.getElementById('btn-email-submit');
+            if (btnMail) btnMail.innerText = t.btnEmailSubmit;
+
+            const emailWarn = document.getElementById('email-delay-warning');
+            if (emailWarn) emailWarn.innerText = t.emailDelayWarning;
+
+            const toggleToWa = document.getElementById('toggle-to-wa-btn');
+            if (toggleToWa) toggleToWa.innerText = t.toggleToWa;
+
+            const abuseEl = document.getElementById('abuse-warning');
+            if (abuseEl) abuseEl.innerText = t.abuseWarning;
+
+            const homeBtn = document.getElementById('home-button');
+            if (homeBtn) homeBtn.innerText = t.homeBtn;
+
+            const cText = document.getElementById('cookie-text');
+            if (cText) cText.innerText = t.cookieText;
+            const cDec = document.getElementById('cookie-decline');
+            if (cDec) cDec.innerText = t.cookieDecline;
+            const cAcc = document.getElementById('cookie-accept');
+            if (cAcc) cAcc.innerText = t.cookieAccept;
         }
 
         window.toggleLang = () => {
@@ -219,25 +509,206 @@
             updateLanguageUI();
         };
 
-        window.__showEmptyState = () => {
-            isEmptyStateActive = true;
+        window.toggleHelpAccordion = () => {
+            const helpBox = document.getElementById('help-box');
+            const icon = document.getElementById('help-toggle-icon');
+            if (helpBox) {
+                helpBox.classList.toggle('hidden');
+                if (icon) {
+                    icon.classList.toggle('rotate-180');
+                }
+            }
+        };
+
+        window.switchRoleTab = (role) => {
+            currentRole = role;
+            const tabVis = document.getElementById('tab-visitor');
+            const tabOwn = document.getElementById('tab-owner');
+            const paneVis = document.getElementById('pane-visitor');
+            const paneOwn = document.getElementById('pane-owner');
+
+            if (role === 'visitor') {
+                tabVis.className = "py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-white/10 shadow-sm";
+                tabOwn.className = "py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-zinc-400 hover:text-zinc-200";
+                paneVis.classList.remove('hidden');
+                paneOwn.classList.add('hidden');
+            } else {
+                tabOwn.className = "py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-white bg-white/10 shadow-sm";
+                tabVis.className = "py-1.5 text-xs font-bold uppercase tracking-wider rounded-lg transition-all text-zinc-400 hover:text-zinc-200";
+                paneOwn.classList.remove('hidden');
+                paneVis.classList.add('hidden');
+            }
+        };
+
+        window.switchOwnerChannel = (channel) => {
+            const waBox = document.getElementById('owner-wa-box');
+            const emailBox = document.getElementById('owner-email-box');
+
+            if (channel === 'email') {
+                const bizVal = document.getElementById('input-biz-name').value;
+                const urlVal = document.getElementById('input-target-url').value;
+                if (bizVal) document.getElementById('input-email-biz-name').value = bizVal;
+                if (urlVal) document.getElementById('input-email-target-url').value = urlVal;
+
+                waBox.classList.add('hidden');
+                emailBox.classList.remove('hidden');
+            } else {
+                const emailBizVal = document.getElementById('input-email-biz-name').value;
+                const emailUrlVal = document.getElementById('input-email-target-url').value;
+                if (emailBizVal) document.getElementById('input-biz-name').value = emailBizVal;
+                if (emailUrlVal) document.getElementById('input-target-url').value = emailUrlVal;
+
+                emailBox.classList.add('hidden');
+                waBox.classList.remove('hidden');
+            }
+        };
+
+        window.sendFormattedWhatsApp = () => {
+            const bizName = document.getElementById('input-biz-name').value.trim() || "Not specified";
+            const targetUrlRaw = document.getElementById('input-target-url').value.trim() || "Not specified";
+            const codeDisplay = currentCodeParam || "MISSING";
+            const t = translations[currentLang];
+            const errInfo = t.errors[currentErrorCode] || t.errors['ERR_INVALID_ID'];
+
+            const urlMonospace = `\`thataustrianone.eu/link${currentCodeParam ? '?' + currentCodeParam : ''}\``;
+            const targetMonospace = targetUrlRaw !== "Not specified" ? `\`${targetUrlRaw}\`` : targetUrlRaw;
+
+            let message = "";
+
+            if (currentLang === 'de') {
+                message = `*Link-Konfigurationsanfrage*\n\n` +
+                          `• *Anliegen:* ${errInfo.subject}\n` +
+                          `• *Link-Code:* \`${codeDisplay}\`\n` +
+                          `• *URL:* ${urlMonospace}\n` +
+                          `• *Fehlercode:* \`${currentErrorCode}\`\n\n` +
+                          `*Kundenangaben:*\n` +
+                          `• *Unternehmen / Name:* ${bizName}\n` +
+                          `• *Gewünschte Ziel-URL:* ${targetMonospace}`;
+            } else {
+                message = `*Link Configuration Request*\n\n` +
+                          `• *Request:* ${errInfo.subject}\n` +
+                          `• *Link Code:* \`${codeDisplay}\`\n` +
+                          `• *URL:* ${urlMonospace}\n` +
+                          `• *Error Code:* \`${currentErrorCode}\`\n\n` +
+                          `*Client Details:*\n` +
+                          `• *Business / Name:* ${bizName}\n` +
+                          `• *Requested Target URL:* ${targetMonospace}`;
+            }
+
+            const waUrl = `https://wa.me/4367761415909?text=${encodeURIComponent(message)}`;
+            window.open(waUrl, '_blank');
+        };
+
+        window.sendFormattedEmail = () => {
+            const bizName = document.getElementById('input-email-biz-name').value.trim() || (currentLang === 'de' ? 'Nicht angegeben' : 'Not specified');
+            const targetUrlRaw = document.getElementById('input-email-target-url').value.trim() || (currentLang === 'de' ? 'Nicht angegeben' : 'Not specified');
+            const codeDisplay = currentCodeParam || (currentLang === 'de' ? 'FEHLT' : 'MISSING');
+            const t = translations[currentLang];
+            const errInfo = t.errors[currentErrorCode] || t.errors['ERR_INVALID_ID'];
+
+            const recipient = "contact@thataustrianone.eu";
+            const subject = encodeURIComponent(`[Link Routing] ${errInfo.subject} (${codeDisplay})`);
+            
+            const BR = "%0D%0A";
+            const DBR = "%0D%0A%0D%0A";
+            
+            let body = "";
+            if (currentLang === 'de') {
+                body = `Guten Tag Niklas,` + DBR +
+                       `ich benötige Unterstützung bezüglich eines Link-Routings.` + DBR +
+                       `[LINK-DATEN]` + BR +
+                       `• Status: ${encodeURIComponent(errInfo.subject)}` + BR +
+                       `• Link-Code: ${encodeURIComponent(codeDisplay)}` + BR +
+                       `• URL: thataustrianone.eu/link${currentCodeParam ? '%3F' + encodeURIComponent(currentCodeParam) : ''}` + BR +
+                       `• Fehler: ${encodeURIComponent(currentErrorCode)}` + DBR +
+                       `[KUNDENANGABEN]` + BR +
+                       `• Unternehmen / Name: ${encodeURIComponent(bizName)}` + BR +
+                       `• Gewünschtes Ziel: ${encodeURIComponent(targetUrlRaw)}` + DBR +
+                       `Vielen Dank im Voraus für die Einrichtung.` + DBR +
+                       `Mit freundlichen Grüßen,` + BR +
+                       (bizName !== 'Nicht angegeben' ? encodeURIComponent(bizName) : '');
+            } else {
+                body = `Hello Nick,` + DBR +
+                       `I need assistance regarding a link routing configuration.` + DBR +
+                       `[LINK DETAILS]` + BR +
+                       `• Request: ${encodeURIComponent(errInfo.subject)}` + BR +
+                       `• Link Code: ${encodeURIComponent(codeDisplay)}` + BR +
+                       `• URL: thataustrianone.eu/link${currentCodeParam ? '%3F' + encodeURIComponent(currentCodeParam) : ''}` + BR +
+                       `• Error: ${encodeURIComponent(currentErrorCode)}` + DBR +
+                       `[CLIENT DETAILS]` + BR +
+                       `• Business / Name: ${encodeURIComponent(bizName)}` + BR +
+                       `• Target URL: ${encodeURIComponent(targetUrlRaw)}` + DBR +
+                       `Thank you in advance.` + DBR +
+                       `Best regards,` + BR +
+                       (bizName !== 'Not specified' ? encodeURIComponent(bizName) : '');
+            }
+
+            window.location.href = `mailto:${recipient}?subject=${subject}&body=${body}`;
+        };
+
+        window.__showCustomError = (errCode, codeStr) => {
+            isErrorState = true;
+            currentErrorCode = errCode;
+            currentCodeParam = codeStr;
+
             const spinner = document.getElementById('loading-spinner');
-            const emptyIcon = document.getElementById('empty-icon');
+            const errorIcon = document.getElementById('error-icon');
+            const codeBadge = document.getElementById('error-code-badge');
+            const codeText = document.getElementById('error-code-text');
+            const helpToggleBtn = document.getElementById('help-toggle-btn');
             const homeBtn = document.getElementById('home-button');
-            const msgEl = document.getElementById('status-message');
 
             if (spinner) spinner.classList.add('hidden');
-            if (emptyIcon) emptyIcon.classList.remove('hidden');
+            if (errorIcon) errorIcon.classList.remove('hidden');
+            if (helpToggleBtn) helpToggleBtn.classList.remove('hidden');
             if (homeBtn) homeBtn.classList.remove('hidden');
-            if (msgEl) msgEl.className = "text-xs sm:text-sm font-medium text-zinc-400 my-2";
+
+            if (codeBadge && codeText) {
+                codeBadge.classList.remove('hidden');
+                codeText.textContent = codeStr ? `${currentErrorCode}: ${codeStr}` : currentErrorCode;
+            }
 
             updateLanguageUI();
+        };
+
+        const cookieBanner = document.getElementById('cookie-banner');
+        const cookieConsent = localStorage.getItem('siteCookieConsent');
+
+        function injectGA() {
+            if (document.getElementById('ga-script')) return;
+            const script1 = document.createElement('script');
+            script1.id = 'ga-script';
+            script1.async = true;
+            script1.src = 'https://www.googletagmanager.com/gtag/js?id=G-0WHX0WMFTC';
+            document.head.appendChild(script1);
+
+            const script2 = document.createElement('script');
+            script2.innerHTML = `
+                window.dataLayer = window.dataLayer || [];
+                function gtag(){dataLayer.push(arguments);}
+                gtag('js', new Date());
+                gtag('config', 'G-0WHX0WMFTC');
+            `;
+            document.head.appendChild(script2);
+        }
+
+        if (!cookieConsent) {
+            cookieBanner.classList.remove('hidden');
+        } else if (cookieConsent === 'granted') {
+            injectGA();
+        }
+
+        window.handleCookie = (status) => {
+            localStorage.setItem('siteCookieConsent', status);
+            cookieBanner.classList.add('opacity-0', 'translate-y-full');
+            setTimeout(() => cookieBanner.classList.add('hidden'), 400);
+            if (status === 'granted') injectGA();
         };
 
         document.addEventListener('DOMContentLoaded', () => {
             updateLanguageUI();
             if (!targetCode) {
-                window.__showEmptyState();
+                window.__showCustomError('ERR_MISSING_ID', null);
             }
         });
     </script>
