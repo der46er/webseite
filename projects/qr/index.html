@@ -342,7 +342,7 @@
             let isMatchFrame = false;
             let isFrameOff = false;
             let isCircleShape = false;
-            let isSharpRaw = false; // Plain, 1x1, sharp square mode
+            let isSharpRaw = false;
             
             let uploadedBgImage = null;
             let uploadedBgDataUrl = null;
@@ -510,30 +510,42 @@
 
             const generateImageOfSize = (baseSize) => {
                 const totalSize = parseInt(baseSize);
-                
-                // When sharp raw mode is active: No frame, sharp 0px radius, 1:1 square canvas
-                const factorQZ = isSharpRaw ? 0 : (isCircleShape ? (256 / 1024) : (128 / 1024));
-                const factorBorder = (isFrameOff || isSharpRaw) ? 0 : (64 / 1024);
-                
-                const maxQrSize = isSharpRaw ? totalSize : (totalSize / (1 + (factorQZ * 2) + (factorBorder * 2)));
-                const quietZone = isSharpRaw ? 0 : (maxQrSize * factorQZ);
-                const borderThickness = (isFrameOff || isSharpRaw) ? 0 : (maxQrSize * factorBorder);
-                
-                const baseOuterRadius = (isFrameOff || isSharpRaw) ? 0 : (maxQrSize * (128 / 1024));
-                const baseInnerRadius = isSharpRaw ? 0 : (maxQrSize * (64 / 1024));
-                const outerRadius = (isSharpRaw || !isCircleShape) ? baseOuterRadius : (totalSize / 2);
-
                 const tempCanvas = document.createElement('canvas');
                 tempCanvas.width = totalSize;
                 tempCanvas.height = totalSize;
                 const ctx = tempCanvas.getContext('2d');
-                
                 const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
-                const qriousForeground = isSharpRaw ? '#000000' : (isQrGradient ? '#000000' : (qrColorPicker.value || '#000000'));
+
+                // Standard raw 1:1 format matching clean QR code standards
+                if (isSharpRaw) {
+                    new QRious({
+                        element: tempCanvas,
+                        size: totalSize,
+                        padding: Math.round(totalSize * 0.05), // standard 5% quiet zone
+                        level: 'H',
+                        value: qrTextVal,
+                        foreground: '#000000',
+                        background: '#ffffff'
+                    });
+                    return { canvas: tempCanvas, totalSize, isRaw: true };
+                }
+
+                const factorQZ = isCircleShape ? (256 / 1024) : (128 / 1024);
+                const factorBorder = isFrameOff ? 0 : (64 / 1024);
+                
+                const maxQrSize = totalSize / (1 + (factorQZ * 2) + (factorBorder * 2));
+                const quietZone = maxQrSize * factorQZ;
+                const borderThickness = isFrameOff ? 0 : (maxQrSize * factorBorder);
+                
+                const baseOuterRadius = isFrameOff ? (maxQrSize * (64 / 1024)) : (maxQrSize * (128 / 1024));
+                const baseInnerRadius = maxQrSize * (64 / 1024);
+                const outerRadius = isCircleShape ? (totalSize / 2) : baseOuterRadius;
+
+                const qriousForeground = isQrGradient ? '#000000' : (qrColorPicker.value || '#000000');
                 const trimmedQr = getTrimmedQrCanvas(qrTextVal, qriousForeground);
 
                 let finalQrToDraw = trimmedQr;
-                if (isQrGradient && !isSharpRaw) {
+                if (isQrGradient) {
                     const qrGradCanvas = document.createElement('canvas');
                     qrGradCanvas.width = trimmedQr.width;
                     qrGradCanvas.height = trimmedQr.height;
@@ -551,18 +563,19 @@
                     finalQrToDraw = qrGradCanvas;
                 }
 
-                if (!isFrameOff && !isSharpRaw) {
+                const shouldPunchHole = !isFrameOff && (!isMatchFrame || uploadedBgImage || isTransparentBg);
+
+                if (!isFrameOff) {
                     const frameGrad = ctx.createLinearGradient(0, 0, totalSize, totalSize);
                     frameGrad.addColorStop(0, gradientParams.color1);
                     frameGrad.addColorStop(1, gradientParams.color2);
                     ctx.fillStyle = frameGrad;
 
                     ctx.beginPath();
-                    if (outerRadius > 0 && ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
+                    if (ctx.roundRect) ctx.roundRect(0, 0, totalSize, totalSize, outerRadius);
                     else ctx.rect(0, 0, totalSize, totalSize);
                     ctx.fill();
 
-                    const shouldPunchHole = !isMatchFrame || uploadedBgImage || isTransparentBg;
                     if (shouldPunchHole) {
                         const x = borderThickness;
                         const size = totalSize - (borderThickness * 2);
@@ -570,7 +583,7 @@
 
                         ctx.globalCompositeOperation = 'destination-out';
                         ctx.beginPath();
-                        if (innerRadius > 0 && ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
                         ctx.fill();
                         ctx.globalCompositeOperation = 'source-over'; 
@@ -578,14 +591,14 @@
                 }
 
                 if (!isTransparentBg) {
-                    const x = (isFrameOff || isSharpRaw) ? 0 : borderThickness;
-                    const size = (isFrameOff || isSharpRaw) ? totalSize : (totalSize - (borderThickness * 2));
-                    const innerRadius = (isCircleShape && !isSharpRaw) ? (size / 2) : baseInnerRadius;
+                    const x = isFrameOff ? 0 : borderThickness;
+                    const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
+                    const innerRadius = isCircleShape ? (size / 2) : (isFrameOff ? baseOuterRadius : baseInnerRadius);
 
-                    if (uploadedBgImage && !isSharpRaw) {
+                    if (uploadedBgImage) {
                         ctx.save();
                         ctx.beginPath();
-                        if (innerRadius > 0 && ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
                         ctx.clip();
 
@@ -603,10 +616,10 @@
                         }
                         ctx.drawImage(uploadedBgImage, drawX, drawY, drawW, drawH);
                         ctx.restore();
-                    } else if (isSharpRaw || !isMatchFrame || isFrameOff) {
-                        ctx.fillStyle = isSharpRaw ? '#ffffff' : (bgZoneColorPicker.value || '#ffffff');
+                    } else if (!isMatchFrame || isFrameOff) {
+                        ctx.fillStyle = bgZoneColorPicker.value || '#ffffff';
                         ctx.beginPath();
-                        if (innerRadius > 0 && ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
+                        if (ctx.roundRect) ctx.roundRect(x, x, size, size, innerRadius);
                         else ctx.rect(x, x, size, size);
                         ctx.fill();
                     }
@@ -623,7 +636,7 @@
                 ctx.drawImage(finalQrToDraw, drawX, drawY, drawW, drawH);
                 ctx.imageSmoothingEnabled = true;
                 
-                if (uploadedCenterLogo && !isSharpRaw) {
+                if (uploadedCenterLogo) {
                     const logoSize = maxQrSize * 0.25;
                     const cx = totalSize / 2;
                     const cy = totalSize / 2;
@@ -653,19 +666,27 @@
             };
 
             const generateSVGString = (sizeData) => {
-                const { totalSize, drawX, drawY, drawW, drawH } = sizeData;
+                const { totalSize } = sizeData;
                 const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
-                const trimmedQr = getTrimmedQrCanvas(qrTextVal, '#000000');
-                const qrDataUrl = trimmedQr.toDataURL("image/png");
 
                 if (isSharpRaw) {
+                    const tempCanvas = document.createElement('canvas');
+                    new QRious({
+                        element: tempCanvas,
+                        size: totalSize,
+                        padding: Math.round(totalSize * 0.05),
+                        level: 'H',
+                        value: qrTextVal,
+                        foreground: '#000000',
+                        background: '#ffffff'
+                    });
+                    const qrDataUrl = tempCanvas.toDataURL("image/png");
                     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
-                        ${!isTransparentBg ? `<rect width="${totalSize}" height="${totalSize}" fill="#ffffff" />` : ''}
-                        <image href="${qrDataUrl}" x="${drawX}" y="${drawY}" width="${drawW}" height="${drawH}" style="image-rendering: pixelated;" />
+                        <image href="${qrDataUrl}" width="${totalSize}" height="${totalSize}" style="image-rendering: pixelated;" />
                     </svg>`;
                 }
 
-                const { outerRadius, innerRadius, borderThickness } = sizeData;
+                const { drawX, drawY, drawW, drawH, outerRadius, innerRadius, borderThickness } = sizeData;
                 const x = isFrameOff ? 0 : borderThickness;
                 const size = isFrameOff ? totalSize : (totalSize - (borderThickness*2));
                 const qriousForeground = isQrGradient ? '#ffffff' : (qrColorPicker.value || '#000000');
@@ -758,7 +779,6 @@
                     qrText.value = incomingText;
                 }
 
-                // If raw / plain mode is requested (or default download parameter)
                 const isRawRequested = params.get('raw') === '1' || params.get('plain') === '1';
                 if (isRawRequested) {
                     isSharpRaw = true;
