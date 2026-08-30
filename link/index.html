@@ -10,7 +10,7 @@
     <link rel="dns-prefetch" href="https://docs.google.com">
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
-    <!-- High-Speed Sub-Perceptual Redirect Engine -->
+    <!-- High-Speed Zero-Flash Redirect Engine -->
     <script>
         const PUB_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
 
@@ -48,13 +48,15 @@
         const targetCode = getRequestedCode();
         let redirectResolved = false;
 
-        // 0ms Cache Check
+        // Instant 0ms cache check
         if (targetCode) {
-            const cachedUrl = localStorage.getItem("qr_link_" + targetCode);
-            if (cachedUrl && /^https?:\/\//i.test(cachedUrl)) {
-                redirectResolved = true;
-                window.location.replace(cachedUrl);
-            }
+            try {
+                const cachedUrl = localStorage.getItem("qr_link_" + targetCode);
+                if (cachedUrl && /^https?:\/\//i.test(cachedUrl)) {
+                    redirectResolved = true;
+                    window.location.replace(cachedUrl);
+                }
+            } catch(e){}
         }
 
         if (targetCode && !redirectResolved) {
@@ -157,19 +159,6 @@
             box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
         }
 
-        .spinner {
-            border: 2.5px solid rgba(255, 255, 255, 0.1);
-            border-top-color: #ffffff;
-            border-radius: 50%;
-            width: 26px;
-            height: 26px;
-            animation: spin 0.8s linear infinite;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
         .form-input {
             background: rgba(255, 255, 255, 0.04);
             border: 1px solid rgba(255, 255, 255, 0.08);
@@ -186,16 +175,13 @@
 
 <body class="flex flex-col h-screen min-h-[100dvh] w-full selection:bg-white/10 relative select-none">
 
-    <!-- Main Content Container (Initially Hidden to Eliminate Flash) -->
-    <main class="relative z-10 max-w-xl mx-auto px-4 w-full flex-grow flex flex-col justify-center items-center py-4 h-full min-h-0">
+    <!-- Hard-Suppressed Container (Only Displays If an Error Occurs) -->
+    <main id="main-view" style="display: none !important;" class="relative z-10 max-w-xl mx-auto px-4 w-full flex-grow flex flex-col justify-center items-center py-4 h-full min-h-0">
         
-        <div id="main-card" class="w-full glass-box rounded-[1.4rem] p-4 sm:p-6 flex flex-col items-center text-center opacity-0 transition-opacity duration-300 pointer-events-none">
+        <div id="main-card" class="w-full glass-box rounded-[1.4rem] p-4 sm:p-6 flex flex-col items-center text-center animate-in">
             
-            <!-- Loading Indicator -->
-            <div id="loading-spinner" class="spinner my-3"></div>
-
             <!-- Error State Icon -->
-            <div id="error-icon" class="hidden my-0.5 p-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
+            <div id="error-icon" class="my-0.5 p-2 rounded-full bg-red-500/10 border border-red-500/20 text-red-400">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
                     <circle cx="12" cy="12" r="10"></circle>
                     <line x1="12" y1="8" x2="12" y2="12"></line>
@@ -205,20 +191,20 @@
 
             <!-- Title & Status Text -->
             <h1 id="status-title" class="text-base sm:text-lg font-black italic uppercase tracking-tight text-white mt-1">
-                Resolving link...
+                Link Error
             </h1>
 
-            <p id="status-desc" class="hidden text-xs text-zinc-400 font-medium mt-0.5">
-                Looking up destination...
+            <p id="status-desc" class="text-xs text-zinc-400 font-medium mt-0.5">
+                Could not reach destination.
             </p>
             
             <!-- Error Code Pill -->
-            <div id="error-code-badge" class="hidden mt-1.5 px-2.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">
+            <div id="error-code-badge" class="mt-1.5 px-2.5 py-0.5 rounded-md bg-white/5 border border-white/10 text-[9px] sm:text-[10px] font-mono font-bold tracking-widest text-zinc-400 uppercase">
                 <span id="error-code-text">ERR_CODE</span>
             </div>
 
             <!-- Expandable "What can I do?" Trigger Button -->
-            <button id="help-toggle-btn" onclick="toggleHelpAccordion()" class="hidden mt-3 w-full py-2 px-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition-all active:scale-[0.99]">
+            <button id="help-toggle-btn" onclick="toggleHelpAccordion()" class="mt-3 w-full py-2 px-3.5 rounded-xl bg-white/5 hover:bg-white/10 border border-white/10 flex items-center justify-between text-xs font-bold uppercase tracking-wider text-zinc-300 hover:text-white transition-all active:scale-[0.99]">
                 <div class="flex items-center gap-2">
                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-zinc-400"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     <span id="help-toggle-text">What can I do?</span>
@@ -327,14 +313,14 @@
             </div>
 
             <!-- Home Button -->
-            <a id="home-button" href="https://thataustrianone.eu/" class="hidden mt-3.5 w-full py-2.5 bg-white text-black hover:bg-zinc-200 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.98] shadow-lg shrink-0">
+            <a id="home-button" href="https://thataustrianone.eu/" class="mt-3.5 w-full py-2.5 bg-white text-black hover:bg-zinc-200 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.98] shadow-lg shrink-0">
                 Back to Home
             </a>
         </div>
     </main>
 
     <!-- Natural Bottom Footer -->
-    <footer id="main-footer" class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-3 z-20 flex justify-between items-center select-none mt-auto shrink-0 opacity-0 transition-opacity duration-300">
+    <footer id="main-footer" style="display: none !important;" class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-3 z-20 flex justify-between items-center select-none mt-auto shrink-0">
         <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
             <img id="flag-img" src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp" alt="UK Flag" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">
         </button>
@@ -363,7 +349,6 @@
                 flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
                 alt: "Austria Flag",
                 title: "Link | Nick",
-                resolving: "Link wird aufgelöst...",
                 errors: {
                     ERR_MISSING_ID: {
                         title: "Keine Link-ID angegeben",
@@ -409,7 +394,6 @@
                 flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
                 alt: "UK Flag",
                 title: "Link | Nick",
-                resolving: "Resolving link...",
                 errors: {
                     ERR_MISSING_ID: {
                         title: "No Link ID provided",
@@ -460,16 +444,10 @@
         let currentRole = 'visitor';
 
         function revealUI() {
-            const card = document.getElementById('main-card');
+            const mainView = document.getElementById('main-view');
             const footer = document.getElementById('main-footer');
-            if (card) {
-                card.classList.remove('opacity-0', 'pointer-events-none');
-                card.classList.add('opacity-100');
-            }
-            if (footer) {
-                footer.classList.remove('opacity-0');
-                footer.classList.add('opacity-100');
-            }
+            if (mainView) mainView.style.setProperty('display', 'flex', 'important');
+            if (footer) footer.style.setProperty('display', 'flex', 'important');
         }
 
         function updateLanguageUI() {
@@ -490,13 +468,7 @@
                 const codeDisplay = currentCodeParam || "N/A";
                 
                 if (titleEl) titleEl.textContent = errInfo.title.replace(/{CODE}/g, codeDisplay);
-                if (descEl) {
-                    descEl.classList.remove('hidden');
-                    descEl.textContent = errInfo.desc.replace(/{CODE}/g, codeDisplay);
-                }
-            } else {
-                if (titleEl) titleEl.textContent = t.resolving;
-                if (descEl) descEl.classList.add('hidden');
+                if (descEl) descEl.textContent = errInfo.desc.replace(/{CODE}/g, codeDisplay);
             }
 
             const helpToggleText = document.getElementById('help-toggle-text');
@@ -703,17 +675,8 @@
             currentErrorCode = errCode;
             currentCodeParam = codeStr;
 
-            const spinner = document.getElementById('loading-spinner');
-            const errorIcon = document.getElementById('error-icon');
             const codeBadge = document.getElementById('error-code-badge');
             const codeText = document.getElementById('error-code-text');
-            const helpToggleBtn = document.getElementById('help-toggle-btn');
-            const homeBtn = document.getElementById('home-button');
-
-            if (spinner) spinner.classList.add('hidden');
-            if (errorIcon) errorIcon.classList.remove('hidden');
-            if (helpToggleBtn) helpToggleBtn.classList.remove('hidden');
-            if (homeBtn) homeBtn.classList.remove('hidden');
 
             if (codeBadge && codeText) {
                 codeBadge.classList.remove('hidden');
@@ -762,11 +725,6 @@
             updateLanguageUI();
             if (!targetCode) {
                 window.__showCustomError('ERR_MISSING_ID', null);
-            } else {
-                // If resolving takes > 350ms, gently reveal the loading card
-                setTimeout(() => {
-                    if (!redirectResolved) revealUI();
-                }, 350);
             }
         });
     </script>
