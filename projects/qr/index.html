@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" style="--theme-color: #007bff; --theme-rgb: 0, 123, 255;">
 <head>
-    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>TAO | Local QR</title>
-    
-    <link rel="icon" type="image/png" href="/assets/favicon.png">
+    <link rel="icon" type="image/png" href="https://thataustrianone.eu/assets/favicon.png">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrious/4.0.2/qrious.min.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
@@ -60,7 +59,6 @@
         .format-control { padding: 4px; display: flex; }
         .format-control button { color: rgba(255,255,255,0.5); border-radius: 1rem; transition: all 0.3s; flex: 1; border: 1px solid transparent; }
         
-        /* Unified Button Active State */
         .adv-toggle.active, .quality-btn.active, .format-control button.active, .custom-res-input.active {
             border-color: rgba(255, 255, 255, 0.3) !important;
             background: rgba(255, 255, 255, 0.1) !important;
@@ -68,7 +66,6 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.3);
         }
 
-        /* Checkerboard for Transparent Preview */
         .checker-bg {
             background-color: transparent;
             background-image: linear-gradient(45deg, rgba(255,255,255,0.05) 25%, transparent 25%, transparent 75%, rgba(255,255,255,0.05) 75%, rgba(255,255,255,0.05)),
@@ -77,22 +74,10 @@
             background-position: 0 0, 10px 10px;
         }
 
-        /* Custom Scrollbar for horizontal containers */
-        .custom-scrollbar::-webkit-scrollbar {
-            height: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 4px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-        }
-        .custom-scrollbar {
-            scrollbar-width: thin;
-            scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05);
-        }
+        .custom-scrollbar::-webkit-scrollbar { height: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: rgba(255, 255, 255, 0.05); border-radius: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 4px; }
+        .custom-scrollbar { scrollbar-width: thin; scrollbar-color: rgba(255, 255, 255, 0.2) rgba(255, 255, 255, 0.05); }
 
         canvas { 
             display: block; 
@@ -122,7 +107,6 @@
             color: #fff;
         }
 
-        /* Hide number input spinners */
         input[type="number"]::-webkit-inner-spin-button, input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         input[type="number"] { -moz-appearance: textfield; }
 
@@ -133,7 +117,12 @@
     </style>
 </head>
 <body class="selection:bg-emerald-500/30">
-    <!-- Back Arrow to Main Page --> <a href="https://thataustrianone.eu" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"> <line x1="19" y1="12" x2="5" y2="12"></line> <polyline points="12 19 5 12 12 5"></polyline> </svg> </a>
+    <a href="https://thataustrianone.eu/" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
 
     <div class="fixed inset-0 pointer-events-none z-0">
         <div class="absolute -top-[5%] -left-[5%] w-[40%] h-[40%] blur-[100px] rounded-full theme-bg-glow transition-all duration-1000"></div>
@@ -145,8 +134,8 @@
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
         </button>
         
-        <button onclick="toggleLanguage()" id="langToggleBtn" title="Switch to English" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 overflow-hidden p-2.5">
-            <img id="langFlagImg" src="/assets/flags/united-kingdom-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
+        <button onclick="toggleLanguage()" id="langToggleBtn" title="Wechseln zu Deutsch" class="w-10 h-10 rounded-full flex items-center justify-center hover:bg-white/10 transition-all active:scale-95 overflow-hidden p-2.5">
+            <img id="langFlagImg" src="https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/austria-flag.webp" alt="Language Flag" class="w-full h-full object-cover rounded-sm">
         </button>
         
         <a href="https://thataustrianone.eu/socials/" target="_self" title="My Social Links" class="w-10 h-10 rounded-full flex items-center justify-center text-zinc-400 hover:text-white hover:bg-white/10 transition-all active:scale-95">
@@ -173,20 +162,19 @@
         <div class="bg-white/[0.03] border border-white/[0.05] shadow-2xl rounded-[2.5rem] p-5 sm:p-8 w-full flex flex-col items-center">
             
             <div class="relative w-full mb-6">
-                 <input type="text" id="qrText" placeholder="Enter text or URL" class="w-full rounded-[1.2rem] px-6 py-4 pr-12 text-center font-bold tracking-wider text-sm transition-colors shadow-lg">
+                 <input type="text" id="qrText" placeholder="Text or URL" class="w-full rounded-[1.2rem] px-6 py-4 pr-12 text-center font-bold tracking-wider text-sm transition-colors shadow-lg">
                  <button id="resetTextButton" title="Clear input" class="absolute right-4 top-1/2 -translate-y-1/2 text-white/40 hover:text-red-400 transition-colors">
-                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd" /></svg>
+                    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm5-1a1 1 0 00-1 1v6a1 1 0 102 0V8a1 1 0 00-1-1z" clip-rule="evenodd"></path></svg>
                  </button>
             </div>
 
             <div class="template-buttons flex flex-nowrap sm:flex-wrap overflow-x-auto sm:overflow-visible justify-start sm:justify-center gap-2 mb-6 w-full pb-3 sm:pb-0 custom-scrollbar px-1 sm:px-0 snap-x"></div>
 
             <div class="relative w-full flex justify-center mb-6">
-                <canvas id="mainDomCanvas" class="checker-bg w-full max-w-[240px] aspect-square rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.6)]" style="image-rendering: pixelated;"></canvas>
+                <canvas id="mainDomCanvas" class="checker-bg w-full max-w-[240px] aspect-square rounded-[1.5rem] shadow-[0_15px_40px_rgba(0,0,0,0.6)]" style="image-rendering: pixelated;" width="512" height="512"></canvas>
             </div>
 
             <div class="w-full flex flex-col items-center gap-5 mt-2">
-                
                 <div class="flex flex-wrap justify-center items-center gap-3 sm:gap-4 w-full mb-2">
                     <label id="qrColorWrapper" class="flex flex-col items-center gap-2 cursor-pointer group">
                         <span data-i18n="qrCode" class="text-[9px] font-bold text-zinc-500 uppercase tracking-widest group-hover:text-white transition-colors">QR Code</span>
@@ -263,16 +251,16 @@
                 
                 <div class="flex gap-2 sm:gap-3 justify-center w-full">
                     <button id="printQrCodeButton" title="Print" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
-                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M19,8H5C3.34,8,2,9.34,2,11v6h4v4h12v-4h4v-6C22,9.34,20.66,8,19,8z M16,19H8v-5h8V19z M19,12c-0.55,0-1-0.45-1-1 s0.45-1,1-1s1,0.45,1,1S19.55,12,19,12z M18,3H6v4h12V3z"/></svg>
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M19,8H5C3.34,8,2,9.34,2,11v6h4v4h12v-4h4v-6C22,9.34,20.66,8,19,8z M16,19H8v-5h8V19z M19,12c-0.55,0-1-0.45-1-1 s0.45-1,1-1s1,0.45,1,1S19.55,12,19,12z M18,3H6v4h12V3z"></path></svg>
                     </button>
                     <button id="saveQrCodeButton" title="Save" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
-                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"/></svg>
+                        <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M5 20h14v-2H5v2zm14-9h-4V3H9v8H5l7 7 7-7z"></path></svg>
                     </button>
                     <button id="copyQrCodeButton" title="Copy Image" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
                         <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
                     </button>
                     <button id="refreshGradientButton" title="Randomize Colors" class="flex items-center justify-center w-14 h-14 bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.05] hover:border-white/[0.12] rounded-[1.2rem] transition-all duration-200 active:scale-[0.99] shadow-lg">
-                         <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg>
+                         <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="currentColor"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"></path></svg>
                     </button>
                 </div>
             </div>
@@ -312,7 +300,6 @@
         document.addEventListener('DOMContentLoaded', () => {
             const qrText = document.getElementById('qrText');
             
-            // Pickers
             const qrColorPicker = document.getElementById('qrColorPicker');
             const bgZoneColorPicker = document.getElementById('bgZoneColorPicker');
             const grad1ColorPicker = document.getElementById('grad1ColorPicker');
@@ -320,13 +307,11 @@
             const qrGrad1ColorPicker = document.getElementById('qrGrad1ColorPicker');
             const qrGrad2ColorPicker = document.getElementById('qrGrad2ColorPicker');
             
-            // Wrappers
             const qrColorWrapper = document.getElementById('qrColorWrapper');
             const qrGrad1Wrapper = document.getElementById('qrGrad1Wrapper');
             const qrGrad2Wrapper = document.getElementById('qrGrad2Wrapper');
             const bgZoneWrapper = document.getElementById('bgZoneWrapper');
             
-            // Action Buttons
             const copyQrCodeButton = document.getElementById('copyQrCodeButton');
             const transparentBgBtn = document.getElementById('transparentBgBtn');
             const qrGradientToggleBtn = document.getElementById('qrGradientToggleBtn');
@@ -334,7 +319,6 @@
             const disableFrameToggleBtn = document.getElementById('disableFrameToggleBtn');
             const qrShapeToggleBtn = document.getElementById('qrShapeToggleBtn');
             
-            // Image Uploads
             const bgImageUpload = document.getElementById('bgImageUpload');
             const bgUploadBtn = document.getElementById('bgUploadBtn');
             const centerLogoUpload = document.getElementById('centerLogoUpload');
@@ -348,13 +332,11 @@
             const qualityBtns = document.querySelectorAll('.quality-btn');
             const customResInput = document.getElementById('customResInput');
             
-            // Core States
             let currentSaveFormat = 'png';
             let currentLang = 'en';
             let currentQuality = 1024;
             let gradientParams = { angle: 135, color1: '#007bff', color2: '#8b5cf6' };
             
-            // Advanced States
             let isTransparentBg = false;
             let isQrGradient = false;
             let isMatchFrame = false;
@@ -754,9 +736,67 @@
                 return svgStr;
             };
 
-            const safeSetText = (id, text) => {
-                const el = document.getElementById(id);
-                if (el && text) el.textContent = text;
+            const triggerInstantDownload = (overrideFormat, overrideQuality, customFilename) => {
+                const fmt = overrideFormat || currentSaveFormat;
+                const quality = overrideQuality || currentQuality;
+                const name = customFilename || translations[currentLang].fileName;
+                const sizeData = generateImageOfSize(quality);
+                const link = document.createElement('a');
+
+                if (fmt === 'svg') {
+                    const svgString = generateSVGString(sizeData);
+                    const blob = new Blob([svgString], { type: 'image/svg+xml;charset=utf-8' });
+                    link.download = `${name}.svg`;
+                    link.href = URL.createObjectURL(blob);
+                } else {
+                    const ext = fmt === 'jpeg' ? 'jpg' : fmt;
+                    link.download = `${name}.${ext}`;
+                    link.href = sizeData.canvas.toDataURL(`image/${fmt}`, 1.0);
+                }
+
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+
+            const handleUrlQueryParams = () => {
+                const search = window.location.search;
+                if (!search) return;
+
+                const params = new URLSearchParams(search);
+
+                let incomingText = params.get('text') || params.get('url');
+                if (!incomingText && search.length > 1 && !search.includes('=')) {
+                    incomingText = decodeURIComponent(search.slice(1));
+                }
+
+                if (incomingText && qrText) {
+                    qrText.value = incomingText;
+                }
+
+                const paramFormat = params.get('format');
+                if (paramFormat && ['png', 'svg', 'jpeg', 'webp'].includes(paramFormat.toLowerCase())) {
+                    currentSaveFormat = paramFormat.toLowerCase();
+                    if (formatControl) {
+                        formatControl.querySelectorAll('button').forEach(btn => {
+                            btn.classList.toggle('active', btn.dataset.format === currentSaveFormat);
+                        });
+                    }
+                }
+
+                const paramQuality = parseInt(params.get('quality'), 10);
+                if (paramQuality && paramQuality > 0) {
+                    currentQuality = paramQuality;
+                }
+
+                const shouldDownload = params.get('download') === '1' || params.get('download') === 'true';
+                const filename = params.get('filename') || '';
+
+                if (shouldDownload) {
+                    setTimeout(() => {
+                        triggerInstantDownload(currentSaveFormat, currentQuality, filename);
+                    }, 150);
+                }
             };
 
             window.toggleLanguage = () => {
@@ -773,10 +813,10 @@
                 
                 if (flagImg && toggleBtn) {
                     if (currentLang === 'en') {
-                        flagImg.src = "/assets/flags/austria-flag.webp";
+                        flagImg.src = "https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/austria-flag.webp";
                         toggleBtn.title = "Wechseln zu Deutsch";
                     } else {
-                        flagImg.src = "/assets/flags/united-kingdom-flag.webp";
+                        flagImg.src = "https://raw.githubusercontent.com/der46er/webseite/main/assets/flags/united-kingdom-flag.webp";
                         toggleBtn.title = "Switch to English";
                     }
                 }
@@ -1019,7 +1059,6 @@
                     pDwnBtn.addEventListener('click', (e) => {
                         e.preventDefault();
                         const link = document.createElement('a');
-                        
                         const sizeData = generateImageOfSize(currentQuality);
                         
                         if (currentSaveFormat === 'svg') {
@@ -1092,6 +1131,8 @@
 
                 setLanguage(localStorage.getItem('qrGeneratorLanguage') || 'en');
                 applyGradientFromPickers(); 
+                
+                handleUrlQueryParams();
                 updateQr();
             };
 
