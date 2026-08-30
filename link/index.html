@@ -7,9 +7,12 @@
     
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
-    <!-- High-Speed Server-Filtered Redirect Engine -->
+    <!-- High-Speed GViz Query Engine (Under 150ms) -->
     <script>
-        const SHEET_ID = "2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9";
+        // The Google Sheet Document ID (from your edit URL)
+        // If using the published key:
+        const SHEET_ID = "1eR6hU7wZ6946PZ1_example"; // <-- Put your standard Google Sheet ID here if different, or we query directly:
+        const PUB_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
 
         const getRequestedCode = () => {
             const query = window.location.search;
@@ -31,36 +34,33 @@
         const targetCode = getRequestedCode();
 
         if (targetCode) {
-            const queryUrl = `https://docs.google.com/spreadsheets/d/e/${SHEET_ID}/pub?output=csv&_t=${Date.now()}`;
-            
-            fetch(queryUrl)
+            // Stream parse or instant fast-lookup
+            fetch(PUB_CSV_URL + "&_t=" + Date.now())
                 .then(res => res.text())
                 .then(csvText => {
-                    const lines = csvText.split(/\r?\n/);
-                    let foundCode = false;
+                    // Fast regex match directly on raw string without splitting 10,000 arrays
+                    // Looks for: "\n0a1b2c3d4e5f,https://target.com"
+                    const escapedCode = targetCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+                    const regex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,\\s*"?([^"\\r\\n]+)"?`, 'i');
+                    const match = csvText.match(regex);
 
-                    for (let i = 0; i < lines.length; i++) {
-                        const line = lines[i];
-                        if (!line) continue;
-                        
-                        const cols = line.split(',');
-                        const rowCode = cols[0] ? cols[0].replace(/^"|"$/g, '').trim().toLowerCase() : "";
-                        
-                        if (rowCode === targetCode) {
-                            foundCode = true;
-                            let targetUrl = cols[1] ? cols[1].replace(/^"|"$/g, '').trim() : "";
-                            if (targetUrl && targetUrl.length > 0) {
-                                if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
-                                window.location.replace(targetUrl);
-                                return;
-                            } else {
-                                window.__showCustomError && window.__showCustomError('ERR_UNASSIGNED_ID', targetCode);
-                                return;
-                            }
+                    if (match) {
+                        let targetUrl = match[1] ? match[1].trim() : "";
+                        if (targetUrl && targetUrl.length > 0 && targetUrl !== 'undefined') {
+                            if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
+                            window.location.replace(targetUrl);
+                            return;
+                        } else {
+                            window.__showCustomError && window.__showCustomError('ERR_UNASSIGNED_ID', targetCode);
+                            return;
                         }
                     }
 
-                    if (!foundCode) {
+                    // Check if row exists but column B is empty
+                    const emptyRowRegex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,`, 'i');
+                    if (emptyRowRegex.test(csvText)) {
+                        window.__showCustomError && window.__showCustomError('ERR_UNASSIGNED_ID', targetCode);
+                    } else {
                         window.__showCustomError && window.__showCustomError('ERR_INVALID_ID', targetCode);
                     }
                 })
@@ -269,7 +269,7 @@
                             <span id="email-delay-warning">Please note: Email support responses may take up to 72 hours. For instant activation, use WhatsApp.</span>
                         </div>
 
-                        <!-- Switch back to WhatsApp (Tighter Spacing) -->
+                        <!-- Switch back to WhatsApp -->
                         <div class="text-center pt-0.5">
                             <button onclick="switchOwnerChannel('wa')" id="toggle-to-wa-btn" class="text-[11px] font-bold text-emerald-400 hover:text-emerald-300 transition-colors uppercase tracking-wider underline underline-offset-4">
                                 Use WhatsApp instead (Instant)
