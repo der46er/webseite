@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link | Nick</title>
+    
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+
+    <style>
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2'); 
+            font-weight: 400; 
+            font-display: swap; 
+        }
+        @font-face { 
+            font-family: 'Inter'; 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-900.woff2') format('woff2'); 
+            font-weight: 900; 
+            font-display: swap; 
+        }
+        
+        body { 
+            font-family: 'Inter', system-ui, sans-serif; 
+            background-color: #0b0d11; 
+            color: white; 
+            margin: 0; 
+            padding: 0; 
+            position: relative;
+        }
+
+        .animate-in { 
+            animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+        }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(20px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+
+        .glass-box {
+            background: rgba(18, 18, 18, 0.88);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+        }
+
+        .spinner {
+            border: 2.5px solid rgba(255, 255, 255, 0.1);
+            border-top-color: #ffffff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+
+<body class="flex flex-col min-h-screen w-full overflow-x-hidden selection:bg-white/10 relative">
+
+    <!-- Back Arrow to Main Page -->
+    <a href="https://thataustrianone.eu/" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
+
+    <!-- Main Content Container -->
+    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center items-center py-10 md:py-6 h-full min-h-0">
+        <div class="w-full max-w-sm glass-box rounded-[1.2rem] p-6 sm:p-8 flex flex-col items-center text-center animate-in" style="opacity: 0;">
+            
+            <!-- Loading Indicator -->
+            <div id="loading-spinner" class="spinner my-4"></div>
+
+            <!-- Fallback State Icon -->
+            <div id="empty-icon" class="hidden my-3 p-3 rounded-full bg-white/5 border border-white/10 text-zinc-400">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+
+            <!-- Message Text -->
+            <p id="status-message" class="text-xs sm:text-sm font-bold uppercase tracking-wider text-zinc-400 my-2">
+                Resolving link...
+            </p>
+
+            <!-- Home Button -->
+            <a id="home-button" href="https://thataustrianone.eu/" class="hidden mt-6 w-full py-3 bg-white text-black hover:bg-zinc-200 rounded-xl font-black text-xs uppercase tracking-widest transition-all duration-200 active:scale-[0.99] shadow-lg">
+                Back to Home
+            </a>
+        </div>
+    </main>
+
+    <!-- Natural Bottom Footer -->
+    <footer class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-4 z-20 flex justify-between items-center select-none mt-auto">
+        <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+            <img id="flag-img" src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp" alt="UK Flag" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">
+        </button>
+        
+        <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
+            © <span id="year">2026</span> — @der_46er
+        </p>
+    </footer>
+
+    <script>
+        const SHEET_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
+
+        document.getElementById('year').innerText = new Date().getFullYear();
+
+        const translations = {
+            de: {
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp",
+                alt: "Austria Flag",
+                resolving: "Link wird aufgelöst...",
+                empty: "seems like nothing to redirect here",
+                homeBtn: "Zur Startseite"
+            },
+            en: {
+                flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp",
+                alt: "UK Flag",
+                resolving: "Resolving link...",
+                empty: "seems like nothing to redirect here",
+                homeBtn: "Back to Home"
+            }
+        };
+
+        let currentLang = localStorage.getItem('siteLang') || 'en';
+
+        function updateLanguageUI() {
+            const t = translations[currentLang];
+            const flag = document.getElementById('flag-img');
+            if (flag) {
+                flag.src = t.flag;
+                flag.alt = t.alt;
+            }
+            const homeBtn = document.getElementById('home-button');
+            if (homeBtn) {
+                homeBtn.innerText = t.homeBtn;
+            }
+        }
+
+        window.toggleLang = () => {
+            currentLang = currentLang === 'en' ? 'de' : 'en';
+            localStorage.setItem('siteLang', currentLang);
+            updateLanguageUI();
+        };
+
+        const getRequestedCode = () => {
+            const query = window.location.search;
+            const hash = window.location.hash;
+
+            if (query && query.length > 1) {
+                const params = new URLSearchParams(query);
+                if (params.get('code')) return params.get('code').trim().toLowerCase();
+                if (!query.includes('=')) return decodeURIComponent(query.slice(1)).trim().toLowerCase();
+            }
+
+            if (hash && hash.length > 1) {
+                return decodeURIComponent(hash.slice(1)).trim().toLowerCase();
+            }
+
+            return null;
+        };
+
+        const showEmptyState = () => {
+            document.getElementById('loading-spinner').classList.add('hidden');
+            document.getElementById('empty-icon').classList.remove('hidden');
+            
+            const msgEl = document.getElementById('status-message');
+            msgEl.textContent = "seems like nothing to redirect here";
+            msgEl.className = "text-xs sm:text-sm font-medium text-zinc-400 my-2";
+            
+            document.getElementById('home-button').classList.remove('hidden');
+        };
+
+        const resolveRedirect = async () => {
+            updateLanguageUI();
+            const code = getRequestedCode();
+
+            if (!code) {
+                showEmptyState();
+                return;
+            }
+
+            try {
+                const response = await fetch(SHEET_CSV_URL);
+                if (!response.ok) throw new Error("Network request failed");
+
+                const csvText = await response.text();
+
+                Papa.parse(csvText, {
+                    header: false,
+                    skipEmptyLines: true,
+                    complete: (results) => {
+                        const rows = results.data;
+                        let targetUrl = null;
+
+                        for (let i = 0; i < rows.length; i++) {
+                            const rowCode = rows[i][0] ? rows[i][0].toString().trim().toLowerCase() : "";
+                            const rowTarget = rows[i][1] ? rows[i][1].toString().trim() : "";
+
+                            if (rowCode === code) {
+                                targetUrl = rowTarget;
+                                break;
+                            }
+                        }
+
+                        if (targetUrl && targetUrl.length > 0) {
+                            if (!/^https?:\/\//i.test(targetUrl)) {
+                                targetUrl = "https://" + targetUrl;
+                            }
+                            window.location.replace(targetUrl);
+                        } else {
+                            showEmptyState();
+                        }
+                    },
+                    error: () => {
+                        showEmptyState();
+                    }
+                });
+
+            } catch (err) {
+                console.error("Redirect lookup error:", err);
+                showEmptyState();
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', resolveRedirect);
+    </script>
+</body>
+</html>
