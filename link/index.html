@@ -10,7 +10,7 @@
     <link rel="dns-prefetch" href="https://docs.google.com">
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
-    <!-- High-Performance Chunk-Streaming Engine -->
+    <!-- High-Speed Sub-Perceptual Redirect Engine -->
     <script>
         const PUB_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
 
@@ -46,13 +46,22 @@
         };
 
         const targetCode = getRequestedCode();
+        let redirectResolved = false;
 
+        // 0ms Cache Check
         if (targetCode) {
+            const cachedUrl = localStorage.getItem("qr_link_" + targetCode);
+            if (cachedUrl && /^https?:\/\//i.test(cachedUrl)) {
+                redirectResolved = true;
+                window.location.replace(cachedUrl);
+            }
+        }
+
+        if (targetCode && !redirectResolved) {
             const escapedCode = targetCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
             const matchRegex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,\\s*"?([^",\\r\\n]+)"?`, 'i');
             const emptyRegex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,`, 'i');
 
-            // High-speed stream consumer
             (async () => {
                 try {
                     const response = await fetch(PUB_CSV_URL + "&_t=" + Date.now());
@@ -71,26 +80,22 @@
                         buffer += chunk;
                         fullText += chunk;
 
-                        // Check buffer stream immediately without waiting for full 1.5MB download
                         const match = buffer.match(matchRegex);
                         if (match && match[1]) {
                             let targetUrl = match[1].replace(/^"|"$/g, '').trim();
                             if (targetUrl && targetUrl.length > 0 && targetUrl.toLowerCase() !== 'undefined') {
                                 if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
-                                // Terminate network download immediately & redirect
+                                redirectResolved = true;
+                                try { localStorage.setItem("qr_link_" + targetCode, targetUrl); } catch(e){}
                                 reader.cancel();
                                 window.location.replace(targetUrl);
                                 return;
                             }
                         }
 
-                        // Keep buffer memory slim
-                        if (buffer.length > 2500) {
-                            buffer = buffer.slice(-1000);
-                        }
+                        if (buffer.length > 2500) buffer = buffer.slice(-1000);
                     }
 
-                    // End of stream checks
                     if (emptyRegex.test(fullText)) {
                         window.__showCustomError && window.__showCustomError('ERR_UNASSIGNED_ID', targetCode);
                     } else {
@@ -123,6 +128,7 @@
             height: 100%;
             height: 100dvh;
             overflow: hidden;
+            background-color: #0b0d11;
         }
 
         body { 
@@ -136,7 +142,7 @@
         }
 
         .animate-in { 
-            animation: fadeIn 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
+            animation: fadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards; 
         }
         @keyframes fadeIn { 
             from { opacity: 0; transform: translateY(8px); } 
@@ -180,10 +186,10 @@
 
 <body class="flex flex-col h-screen min-h-[100dvh] w-full selection:bg-white/10 relative select-none">
 
-    <!-- Main Content Container -->
+    <!-- Main Content Container (Initially Hidden to Eliminate Flash) -->
     <main class="relative z-10 max-w-xl mx-auto px-4 w-full flex-grow flex flex-col justify-center items-center py-4 h-full min-h-0">
         
-        <div id="main-card" class="w-full glass-box rounded-[1.4rem] p-4 sm:p-6 flex flex-col items-center text-center animate-in" style="opacity: 0;">
+        <div id="main-card" class="w-full glass-box rounded-[1.4rem] p-4 sm:p-6 flex flex-col items-center text-center opacity-0 transition-opacity duration-300 pointer-events-none">
             
             <!-- Loading Indicator -->
             <div id="loading-spinner" class="spinner my-3"></div>
@@ -328,7 +334,7 @@
     </main>
 
     <!-- Natural Bottom Footer -->
-    <footer class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-3 z-20 flex justify-between items-center select-none mt-auto shrink-0">
+    <footer id="main-footer" class="w-full max-w-[1500px] mx-auto px-4 sm:px-6 py-3 z-20 flex justify-between items-center select-none mt-auto shrink-0 opacity-0 transition-opacity duration-300">
         <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
             <img id="flag-img" src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp" alt="UK Flag" class="w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200">
         </button>
@@ -452,6 +458,19 @@
         let currentCodeParam = null;
         let isErrorState = false;
         let currentRole = 'visitor';
+
+        function revealUI() {
+            const card = document.getElementById('main-card');
+            const footer = document.getElementById('main-footer');
+            if (card) {
+                card.classList.remove('opacity-0', 'pointer-events-none');
+                card.classList.add('opacity-100');
+            }
+            if (footer) {
+                footer.classList.remove('opacity-0');
+                footer.classList.add('opacity-100');
+            }
+        }
 
         function updateLanguageUI() {
             const t = translations[currentLang];
@@ -702,6 +721,7 @@
             }
 
             updateLanguageUI();
+            revealUI();
         };
 
         const cookieBanner = document.getElementById('cookie-banner');
@@ -742,6 +762,11 @@
             updateLanguageUI();
             if (!targetCode) {
                 window.__showCustomError('ERR_MISSING_ID', null);
+            } else {
+                // If resolving takes > 350ms, gently reveal the loading card
+                setTimeout(() => {
+                    if (!redirectResolved) revealUI();
+                }, 350);
             }
         });
     </script>
