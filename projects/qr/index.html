@@ -516,18 +516,20 @@
                 const ctx = tempCanvas.getContext('2d');
                 const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
 
-                // Standard raw 1:1 format matching clean QR code standards
+                // Exact 1:1 square centered rendering for raw export
                 if (isSharpRaw) {
-                    new QRious({
-                        element: tempCanvas,
-                        size: totalSize,
-                        padding: Math.round(totalSize * 0.05), // standard 5% quiet zone
-                        level: 'H',
-                        value: qrTextVal,
-                        foreground: '#000000',
-                        background: '#ffffff'
-                    });
-                    return { canvas: tempCanvas, totalSize, isRaw: true };
+                    const trimmedQr = getTrimmedQrCanvas(qrTextVal, '#000000');
+                    const quietZone = Math.round(totalSize * 0.06); // 6% margin
+                    const availableSize = totalSize - (quietZone * 2);
+                    const drawX = Math.round((totalSize - availableSize) / 2);
+                    const drawY = Math.round((totalSize - availableSize) / 2);
+
+                    ctx.fillStyle = '#ffffff';
+                    ctx.fillRect(0, 0, totalSize, totalSize);
+                    ctx.imageSmoothingEnabled = false;
+                    ctx.drawImage(trimmedQr, drawX, drawY, availableSize, availableSize);
+
+                    return { canvas: tempCanvas, totalSize, drawX, drawY, drawW: availableSize, drawH: availableSize, isRaw: true };
                 }
 
                 const factorQZ = isCircleShape ? (256 / 1024) : (128 / 1024);
@@ -641,7 +643,7 @@
                     const cx = totalSize / 2;
                     const cy = totalSize / 2;
 
-                    ctx.fillStyle = bgZoneColorPicker.value || '#ffffff';
+                    ctx.fillStyle = isTransparentBg ? (bgZoneColorPicker.value || '#ffffff') : (bgZoneColorPicker.value || '#ffffff');
                     ctx.beginPath();
                     ctx.arc(cx, cy, logoSize * 0.6, 0, Math.PI * 2);
                     ctx.fill();
@@ -670,19 +672,15 @@
                 const qrTextVal = qrText.value || (translations[currentLang] ? translations[currentLang].initialQrValue : translations['en'].initialQrValue);
 
                 if (isSharpRaw) {
-                    const tempCanvas = document.createElement('canvas');
-                    new QRious({
-                        element: tempCanvas,
-                        size: totalSize,
-                        padding: Math.round(totalSize * 0.05),
-                        level: 'H',
-                        value: qrTextVal,
-                        foreground: '#000000',
-                        background: '#ffffff'
-                    });
-                    const qrDataUrl = tempCanvas.toDataURL("image/png");
+                    const trimmedQr = getTrimmedQrCanvas(qrTextVal, '#000000');
+                    const qrDataUrl = trimmedQr.toDataURL("image/png");
+                    const quietZone = Math.round(totalSize * 0.06);
+                    const availableSize = totalSize - (quietZone * 2);
+                    const drawPos = Math.round((totalSize - availableSize) / 2);
+
                     return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${totalSize} ${totalSize}" width="${totalSize}" height="${totalSize}">
-                        <image href="${qrDataUrl}" width="${totalSize}" height="${totalSize}" style="image-rendering: pixelated;" />
+                        <rect width="${totalSize}" height="${totalSize}" fill="#ffffff" />
+                        <image href="${qrDataUrl}" x="${drawPos}" y="${drawPos}" width="${availableSize}" height="${availableSize}" style="image-rendering: pixelated;" />
                     </svg>`;
                 }
 
