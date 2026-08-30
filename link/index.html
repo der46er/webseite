@@ -5,9 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Link | Nick</title>
     
+    <!-- Instant DNS & TLS Pre-Warming -->
+    <link rel="preconnect" href="https://docs.google.com" crossorigin>
+    <link rel="dns-prefetch" href="https://docs.google.com">
     <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
 
-    <!-- High-Speed Server-Filtered Redirect Engine -->
+    <!-- High-Performance Chunk-Streaming Engine -->
     <script>
         const PUB_CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSbBhBzinBSn0V_RgNciL_-BmUyHcUZHcYO3atwe-MfSmZOGtSIM_jeQH9tW8emxGVSVhj6_vyKuqW9/pub?output=csv";
 
@@ -15,14 +18,28 @@
             const query = window.location.search;
             const hash = window.location.hash;
 
+            let extracted = null;
+
             if (query && query.length > 1) {
                 const params = new URLSearchParams(query);
-                if (params.get('code')) return params.get('code').trim().toLowerCase();
-                if (!query.includes('=')) return decodeURIComponent(query.slice(1)).trim().toLowerCase();
+                if (params.get('code')) {
+                    extracted = params.get('code');
+                } else {
+                    extracted = query.slice(1);
+                    if (extracted.includes('=')) extracted = extracted.split('=')[0];
+                }
+            } else if (hash && hash.length > 1) {
+                extracted = hash.slice(1);
             }
 
-            if (hash && hash.length > 1) {
-                return decodeURIComponent(hash.slice(1)).trim().toLowerCase();
+            if (!extracted) {
+                const parts = window.location.pathname.split('/').filter(Boolean);
+                if (parts.length > 1 && parts[0] === 'link') extracted = parts[1];
+            }
+
+            if (extracted) {
+                extracted = decodeURIComponent(extracted).trim().toLowerCase().replace(/\/+$/, '');
+                return extracted.split('&')[0].split('#')[0] || null;
             }
 
             return null;
@@ -31,35 +48,58 @@
         const targetCode = getRequestedCode();
 
         if (targetCode) {
-            fetch(PUB_CSV_URL + "&_t=" + Date.now())
-                .then(res => res.text())
-                .then(csvText => {
-                    const escapedCode = targetCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-                    
-                    // Matches: [START_OF_LINE/NEWLINE]"code","TARGET_URL_ONLY",[ANYTHING_ELSE]
-                    const regex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,\\s*"?([^",\\r\\n]+)"?`, 'i');
-                    const match = csvText.match(regex);
+            const escapedCode = targetCode.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            const matchRegex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,\\s*"?([^",\\r\\n]+)"?`, 'i');
+            const emptyRegex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,`, 'i');
 
-                    if (match && match[1]) {
-                        let targetUrl = match[1].replace(/^"|"$/g, '').trim();
-                        if (targetUrl && targetUrl.length > 0 && targetUrl.toLowerCase() !== 'undefined') {
-                            if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
-                            window.location.replace(targetUrl);
-                            return;
+            // High-speed stream consumer
+            (async () => {
+                try {
+                    const response = await fetch(PUB_CSV_URL + "&_t=" + Date.now());
+                    if (!response.ok || !response.body) throw new Error();
+
+                    const reader = response.body.getReader();
+                    const decoder = new TextDecoder("utf-8");
+                    let buffer = "";
+                    let fullText = "";
+
+                    while (true) {
+                        const { done, value } = await reader.read();
+                        if (done) break;
+
+                        const chunk = decoder.decode(value, { stream: true });
+                        buffer += chunk;
+                        fullText += chunk;
+
+                        // Check buffer stream immediately without waiting for full 1.5MB download
+                        const match = buffer.match(matchRegex);
+                        if (match && match[1]) {
+                            let targetUrl = match[1].replace(/^"|"$/g, '').trim();
+                            if (targetUrl && targetUrl.length > 0 && targetUrl.toLowerCase() !== 'undefined') {
+                                if (!/^https?:\/\//i.test(targetUrl)) targetUrl = "https://" + targetUrl;
+                                // Terminate network download immediately & redirect
+                                reader.cancel();
+                                window.location.replace(targetUrl);
+                                return;
+                            }
+                        }
+
+                        // Keep buffer memory slim
+                        if (buffer.length > 2500) {
+                            buffer = buffer.slice(-1000);
                         }
                     }
 
-                    // Check if row exists but target URL (Column B) is empty
-                    const emptyRowRegex = new RegExp(`(?:^|\\r?\\n)"?${escapedCode}"?,`, 'i');
-                    if (emptyRowRegex.test(csvText)) {
+                    // End of stream checks
+                    if (emptyRegex.test(fullText)) {
                         window.__showCustomError && window.__showCustomError('ERR_UNASSIGNED_ID', targetCode);
                     } else {
                         window.__showCustomError && window.__showCustomError('ERR_INVALID_ID', targetCode);
                     }
-                })
-                .catch(() => {
+                } catch (e) {
                     window.__showCustomError && window.__showCustomError('ERR_FETCH_FAILED', targetCode);
-                });
+                }
+            })();
         }
     </script>
 
@@ -563,7 +603,7 @@
             const t = translations[currentLang];
             const errInfo = t.errors[currentErrorCode] || t.errors['ERR_INVALID_ID'];
 
-            const urlMonospace = `\`thataustrianone.eu/link${currentCodeParam ? '?' + currentCodeParam : ''}\``;
+            const urlMonospace = `\`thataustrianone.eu/link${currentCodeParam ? '/?' + currentCodeParam : ''}\``;
             const targetMonospace = targetUrlRaw !== "Not specified" ? `\`${targetUrlRaw}\`` : targetUrlRaw;
 
             let message = "";
@@ -612,7 +652,7 @@
                        `[LINK-DATEN]` + BR +
                        `• Status: ${encodeURIComponent(errInfo.subject)}` + BR +
                        `• Link-Code: ${encodeURIComponent(codeDisplay)}` + BR +
-                       `• URL: thataustrianone.eu/link${currentCodeParam ? '%3F' + encodeURIComponent(currentCodeParam) : ''}` + BR +
+                       `• URL: thataustrianone.eu/link${currentCodeParam ? '/%3F' + encodeURIComponent(currentCodeParam) : ''}` + BR +
                        `• Fehler: ${encodeURIComponent(currentErrorCode)}` + DBR +
                        `[KUNDENANGABEN]` + BR +
                        `• Unternehmen / Name: ${encodeURIComponent(bizName)}` + BR +
@@ -626,7 +666,7 @@
                        `[LINK DETAILS]` + BR +
                        `• Request: ${encodeURIComponent(errInfo.subject)}` + BR +
                        `• Link Code: ${encodeURIComponent(codeDisplay)}` + BR +
-                       `• URL: thataustrianone.eu/link${currentCodeParam ? '%3F' + encodeURIComponent(currentCodeParam) : ''}` + BR +
+                       `• URL: thataustrianone.eu/link${currentCodeParam ? '/%3F' + encodeURIComponent(currentCodeParam) : ''}` + BR +
                        `• Error: ${encodeURIComponent(currentErrorCode)}` + DBR +
                        `[CLIENT DETAILS]` + BR +
                        `• Business / Name: ${encodeURIComponent(bizName)}` + BR +
