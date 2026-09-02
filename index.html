@@ -23,30 +23,24 @@
             position: relative;
         }
 
-        /* 
-           Using 100vw and 100lvh (Large Viewport Height). 
-           This locks the image to the maximum screen size and prevents Android/iOS browsers 
-           from recalculating the background height when the address bar hides during scrolling. 
-        */
         body::before {
             content: "";
             position: fixed;
             top: 0;
             left: 0;
             width: 100vw;
-            height: 100vh; /* Fallback for older browsers */
-            height: 100lvh; /* Modern locked viewport height */
+            height: 100vh;
+            height: 100lvh;
             background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-cyan-black.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
             filter: blur(8px);
-            transform: scale(1.05); /* Just enough to hide the blurred edges, no extreme zoom */
+            transform: scale(1.05);
             opacity: 1;
             z-index: -2;
         }
 
-        /* Seamless SVG grain noise overlay positioned identically */
         body::after {
             content: "";
             position: fixed;
@@ -63,7 +57,6 @@
         .animate-in { animation: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        /* Matched directly to the action-bar style from the target web app */
         .glass-box {
             background: rgba(18, 18, 18, 0.88);
             backdrop-filter: blur(12px);
@@ -74,25 +67,25 @@
     </style>
 </head>
 
-<!-- Dual-Layout approach: Scrollable on Mobile, strictly locked full-screen on Desktop -->
-<body class="flex flex-col min-h-[100dvh] md:h-screen w-full overflow-x-hidden overflow-y-auto md:overflow-hidden selection:bg-white/10 relative">
+<body class="flex flex-col min-h-[100dvh] w-full overflow-x-hidden overflow-y-auto selection:bg-white/10 relative">
 
-    <main class="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-center py-10 md:py-6 h-full min-h-0">
+    <main class="relative z-10 max-w-[92rem] mx-auto px-4 sm:px-6 lg:px-10 w-full flex-grow flex flex-col justify-center py-8 lg:py-6">
         
-        <div class="w-full text-center shrink-0 mb-8 sm:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
-            <h1 id="hero-title" class="text-4xl sm:text-5xl md:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
-                </h1>
-            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm md:text-base font-medium max-w-xl mx-auto tracking-wide">
-                </p>
+        <div class="w-full text-center shrink-0 mb-6 lg:mb-8 animate-in" style="animation-delay: 0.1s; opacity: 0;">
+            <h1 id="hero-title" class="text-4xl sm:text-5xl lg:text-6xl font-black italic uppercase tracking-tighter text-white mb-2">
+            </h1>
+            <p id="hero-desc" class="text-zinc-400 text-xs sm:text-sm lg:text-base font-medium max-w-xl mx-auto tracking-wide min-h-[1.25rem]">
+            </p>
         </div>
 
-        <!-- Strict Grid for Desktop, flowing column for mobile -->
-        <div id="bento-grid" class="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 md:grid-rows-3 gap-3 sm:gap-4 flex-grow min-h-0 animate-in" style="animation-delay: 0.2s; opacity: 0;">
-            </div>
+        <!-- Dynamic 12-column grid -->
+        <div id="bento-grid" class="w-full grid grid-cols-1 md:grid-cols-12 gap-3.5 sm:gap-4 flex-grow animate-in" style="animation-delay: 0.2s; opacity: 0;">
+        </div>
     </main>
 
-    <footer class="w-full flex justify-between items-center px-6 py-5 md:py-4 shrink-0 relative z-10 select-none">
+    <footer class="w-full flex justify-between items-center px-6 lg:px-10 py-4 shrink-0 relative z-10 select-none">
         <button onclick="toggleLang()" id="lang-indicator" class="focus:outline-none hover:scale-105 active:scale-95 transition-all duration-200">
+            <img id="flag-img" src="" alt="Flag" class="w-7 h-auto rounded-md shadow-md object-contain opacity-80 hover:opacity-100 transition-opacity duration-200" style="image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;">
         </button>
         <p onclick="window.location.href='https://thataustrianone.eu/legal/'" class="cursor-pointer text-zinc-600 text-[10px] sm:text-xs font-black italic tracking-widest uppercase opacity-70 hover:opacity-100 hover:text-white transition-all duration-300">
             © <span id="year">2026</span> — @der_46er
@@ -123,13 +116,12 @@
 
         const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
 
-        // Maintained dynamic color outer glows exactly matched to your UI references
         const cardData = [
             { 
                 id: 'projects', 
                 href: "https://thataustrianone.eu/projects/", 
                 isExternal: false,
-                gridClass: "col-span-1 sm:col-span-2 md:col-span-2 md:row-span-1",
+                gridClass: "col-span-1 md:col-span-6 min-h-[145px] lg:min-h-[175px]",
                 iconClass: "text-zinc-300 bg-zinc-300/10",
                 hoverBorder: "hover:border-zinc-300/80",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(212,212,216,0.4)]",
@@ -140,7 +132,7 @@
                 id: 'shop', 
                 href: "https://thataustrianone.eu/shop/", 
                 isExternal: false,
-                gridClass: "col-span-1 sm:col-span-2 md:col-span-2 md:row-span-1",
+                gridClass: "col-span-1 md:col-span-6 min-h-[145px] lg:min-h-[175px]",
                 iconClass: "text-orange-500 bg-orange-500/10",
                 hoverBorder: "hover:border-orange-500/80",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(249,115,22,0.4)]",
@@ -151,10 +143,10 @@
                 id: 'products', 
                 href: "https://thataustrianone.eu/products/", 
                 isExternal: false,
-                gridClass: "col-span-1 sm:col-span-1 md:col-span-1 md:row-span-1",
+                gridClass: "col-span-1 md:col-span-4 min-h-[145px] lg:min-h-[175px]",
                 iconClass: "text-emerald-500 bg-emerald-500/10",
                 hoverBorder: "hover:border-emerald-500/80",
-                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(16,185,129,0.4)]",
+                hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(168,85,247,0.4)]",
                 icon: '<path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>',
                 arrowIcon: arrowUpRight
             },
@@ -162,7 +154,7 @@
                 id: 'tutorials', 
                 href: "https://thataustrianone.eu/tutorials/", 
                 isExternal: false,
-                gridClass: "col-span-1 sm:col-span-2 md:col-span-2 md:row-span-1",
+                gridClass: "col-span-1 md:col-span-4 min-h-[145px] lg:min-h-[175px]",
                 iconClass: "text-purple-500 bg-purple-500/10",
                 hoverBorder: "hover:border-purple-500/80",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(168,85,247,0.4)]",
@@ -173,7 +165,7 @@
                 id: 'about', 
                 href: "https://thataustrianone.eu/about-me/", 
                 isExternal: false,
-                gridClass: "col-span-1 sm:col-span-1 md:col-span-1 md:row-span-1",
+                gridClass: "col-span-1 md:col-span-4 min-h-[145px] lg:min-h-[175px]",
                 iconClass: "text-blue-500 bg-blue-500/10",
                 hoverBorder: "hover:border-blue-500/80",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(59,130,246,0.4)]",
@@ -184,7 +176,7 @@
                 id: 'socials', 
                 href: "https://thataustrianone.eu/socials", 
                 isExternal: false,
-                gridClass: "col-span-1 sm:col-span-2 md:col-span-4 md:row-span-1",
+                gridClass: "col-span-1 md:col-span-12 min-h-[135px] lg:min-h-[160px]",
                 iconClass: "text-red-500 bg-red-500/10",
                 hoverBorder: "hover:border-red-500/80",
                 hoverShadow: "hover:shadow-[0_0_50px_-5px_rgba(239,68,68,0.4)]",
@@ -230,34 +222,10 @@
 
         let currentLang = localStorage.getItem('siteLang') || 'en';
 
-        function render() {
-            const t = translations[currentLang];
-            
-            document.getElementById('hero-title').textContent = t.heroTitle;
-            document.getElementById('hero-desc').innerText = t.heroDesc;
-            
-            const langBtn = document.getElementById('lang-indicator');
-            langBtn.innerHTML = '';
-            const img = document.createElement('img');
-            img.src = t.flag;
-            img.alt = t.alt;
-            img.className = 'w-7 h-auto rounded-md shadow-md object-cover opacity-80 hover:opacity-100 transition-opacity duration-200';
-            langBtn.appendChild(img);
-            
-            document.getElementById('cookie-text').innerText = t.cookieText;
-            document.getElementById('cookie-decline').innerText = t.cookieDecline;
-            document.getElementById('cookie-accept').innerText = t.cookieAccept;
-
+        function initGrid() {
             const grid = document.getElementById('bento-grid');
-            grid.innerHTML = cardData.map(c => {
-                const text = t.content[c.id];
-                
-                const titleClass = ['projects', 'shop', 'tutorials', 'socials'].includes(c.id) ? 'text-xl sm:text-2xl md:text-2xl' : 'text-lg sm:text-xl';
-                const descClass = ['projects', 'shop', 'tutorials', 'socials'].includes(c.id) ? 'text-[10px] sm:text-xs md:text-sm' : 'text-[9px] sm:text-[10px]';
-
-                return `
-                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 md:p-6 flex flex-col justify-between overflow-hidden min-h-[150px] md:min-h-0 h-full">
-                    
+            grid.innerHTML = cardData.map(c => `
+                <a href="${c.href}" target="${c.isExternal ? '_blank' : '_self'}" class="group relative glass-box rounded-[1.2rem] transition-all duration-300 ${c.hoverBorder} ${c.hoverShadow} active:scale-[0.99] ${c.gridClass} p-5 lg:p-6 flex flex-col justify-between overflow-hidden">
                     <div class="flex items-start justify-start w-full">
                         <div class="w-12 h-12 md:w-14 md:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center shrink-0 transition-transform duration-500 group-hover:-translate-y-1 ${c.iconClass} z-10">
                             <svg class="w-6 h-6 md:w-7 md:h-7" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">${c.icon}</svg>
@@ -265,9 +233,9 @@
                     </div>
                     
                     <div class="z-10 mt-auto pt-6 flex items-end justify-between w-full">
-                        <div class="flex flex-col justify-end min-w-0 pr-6">
-                            <h2 class="${titleClass} font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2">${escapeHTML(text.title)}</h2>
-                            <p class="text-zinc-500 ${descClass} font-bold uppercase tracking-widest truncate pr-2">${escapeHTML(text.desc)}</p>
+                        <div class="flex flex-col justify-end min-w-0 pr-4">
+                            <h2 id="card-title-${c.id}" class="text-xl sm:text-2xl font-black text-white tracking-tight italic uppercase leading-none mb-1 group-hover:text-white transition-colors truncate pr-2"></h2>
+                            <p id="card-desc-${c.id}" class="text-zinc-500 text-[10px] sm:text-xs md:text-sm font-bold uppercase tracking-widest truncate pr-2"></p>
                         </div>
                         
                         <div class="text-zinc-700 group-hover:text-white transition-all transform group-hover:translate-x-1 group-hover:-translate-y-1 shrink-0 pb-0.5">
@@ -275,14 +243,36 @@
                         </div>
                     </div>
                 </a>
-                `;
-            }).join('');
+            `).join('');
+        }
+
+        function updateContent() {
+            const t = translations[currentLang];
+            
+            document.getElementById('hero-title').textContent = t.heroTitle;
+            document.getElementById('hero-desc').textContent = t.heroDesc;
+            
+            const flagImg = document.getElementById('flag-img');
+            flagImg.src = t.flag;
+            flagImg.alt = t.alt;
+            
+            document.getElementById('cookie-text').textContent = t.cookieText;
+            document.getElementById('cookie-decline').textContent = t.cookieDecline;
+            document.getElementById('cookie-accept').textContent = t.cookieAccept;
+
+            cardData.forEach(c => {
+                const text = t.content[c.id];
+                const titleEl = document.getElementById(`card-title-${c.id}`);
+                const descEl = document.getElementById(`card-desc-${c.id}`);
+                if (titleEl) titleEl.textContent = text.title;
+                if (descEl) descEl.textContent = text.desc;
+            });
         }
 
         window.toggleLang = () => {
             currentLang = currentLang === 'en' ? 'de' : 'en';
             localStorage.setItem('siteLang', currentLang);
-            render();
+            updateContent();
         };
 
         const cookieBanner = document.getElementById('cookie-banner');
@@ -319,7 +309,8 @@
             if (status === 'granted') injectGA();
         };
 
-        render();
+        initGrid();
+        updateContent();
     </script>
 </body>
 </html>
