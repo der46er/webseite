@@ -270,7 +270,7 @@
       border-radius: 3px;
     }
 
-    /* Clickable Swatch Item */
+    /* Editable Swatch Item */
     .stop-item {
       display: flex;
       align-items: center;
@@ -282,11 +282,9 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: border-color 0.2s, background 0.2s;
       flex-shrink: 0;
-      cursor: pointer;
-      user-select: none;
     }
 
-    .stop-item:hover {
+    .stop-item:hover, .stop-item:focus-within {
       border-color: rgba(255, 255, 255, 0.3);
       background: rgba(255, 255, 255, 0.12);
     }
@@ -296,7 +294,8 @@
       border-color: rgba(0, 0, 0, 0.1);
     }
 
-    body.light-theme .stop-item:hover {
+    body.light-theme .stop-item:hover,
+    body.light-theme .stop-item:focus-within {
       background: rgba(0, 0, 0, 0.08);
       border-color: rgba(0, 0, 0, 0.25);
     }
@@ -307,6 +306,7 @@
       border-radius: 4px;
       flex-shrink: 0;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transition: background-color 0.15s ease;
     }
 
     .hex-input {
@@ -320,8 +320,7 @@
       padding: 4px;
       text-transform: uppercase;
       outline: none;
-      cursor: pointer;
-      pointer-events: none;
+      cursor: text;
     }
 
     body.light-theme .hex-input { color: #000; }
@@ -341,11 +340,11 @@
       border-radius: 4px;
       transition: color 0.2s, background 0.2s;
       flex-shrink: 0;
-      pointer-events: none;
     }
 
-    .stop-item:hover .action-icon-btn {
+    .action-icon-btn:hover {
       color: #fff;
+      background: rgba(255, 255, 255, 0.1);
     }
 
     /* Buttons */
@@ -507,14 +506,12 @@
   </style>
 </head>
 <body>
-    <!-- Back Arrow to Main Page --> <a href="https://thataustrianone.eu" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"> <line x1="19" y1="12" x2="5" y2="12"></line> <polyline points="12 19 5 12 12 5"></polyline> </svg> </a>
 
   <!-- Main Container -->
   <main class="app-container">
     
     <!-- Left Side Workspace -->
     <div class="workspace-split">
-      <!-- Interactive Color Wheel Card -->
       <div class="wheel-card">
         <div class="wheel-wrapper" id="wheel-wrapper">
           <canvas class="wheel-canvas" id="wheel-canvas" width="800" height="800"></canvas>
@@ -576,7 +573,6 @@
   </div>
 
   <script>
-    // Shared Path-Scoped Theme Storage Key
     const THEME_KEY = 'color_tools_theme';
 
     function saveThemeMode(theme) {
@@ -616,7 +612,7 @@
       applyTheme();
     });
 
-    // Fast Color Engine Utilities
+    // Color conversion utilities
     function hslToHex(h, s, l) {
       l /= 100;
       const a = s * Math.min(l, 1 - l) / 100;
@@ -628,12 +624,63 @@
       return `#${f(0)}${f(8)}${f(4)}`.toUpperCase();
     }
 
+    function hexToHsl(hex) {
+      let cleaned = hex.replace('#', '').trim();
+      if (cleaned.length === 3) {
+        cleaned = cleaned.split('').map(c => c + c).join('');
+      }
+      if (cleaned.length !== 6) return null;
+
+      const num = parseInt(cleaned, 16);
+      if (isNaN(num)) return null;
+
+      const r = (num >> 16) & 255;
+      const g = (num >> 8) & 255;
+      const b = num & 255;
+
+      const rNorm = r / 255;
+      const gNorm = g / 255;
+      const bNorm = b / 255;
+
+      const max = Math.max(rNorm, gNorm, bNorm);
+      const min = Math.min(rNorm, gNorm, bNorm);
+      let h = 0;
+      let s = 0;
+      const l = (max + min) / 2;
+
+      if (max !== min) {
+        const d = max - min;
+        s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+        switch (max) {
+          case rNorm: h = (gNorm - bNorm) / d + (gNorm < bNorm ? 6 : 0); break;
+          case gNorm: h = (bNorm - rNorm) / d + 2; break;
+          case bNorm: h = (rNorm - gNorm) / d + 4; break;
+        }
+        h *= 60;
+      }
+
+      return {
+        h: Math.round(h),
+        s: Math.round(s * 100),
+        l: Math.round(l * 100)
+      };
+    }
+
+    // Harmony offsets relative to the primary base hue
+    const HARMONY_OFFSETS = {
+      complementary: [0, 180],
+      analogous: [-30, 0, 30],
+      triadic: [0, 120, 240],
+      tetradic: [0, 90, 180, 270],
+      monochromatic: [0, 0, 0, 0, 0]
+    };
+
     // Wheel & Harmony State
-    let currentHue = 0;        // 0 to 360
-    let currentSat = 100;      // 0 to 100
+    let currentHue = 0;
+    let currentSat = 100;
     let harmonyMode = 'complementary';
-    let currentSwatches = [];  // Color Hex Strings
-    let currentPoints = [];    // Angles and Saturations [{h, s, l}, ...]
+    let currentSwatches = [];
+    let currentPoints = [];
 
     const canvas = document.getElementById('wheel-canvas');
     const ctx = canvas.getContext('2d');
@@ -645,14 +692,12 @@
     const exportPngBtn = document.getElementById('export-png-btn');
     const exportPdfBtn = document.getElementById('export-pdf-btn');
 
-    // Instant Hardware-Accelerated Canvas Rendering
     function drawColorWheel() {
       const w = canvas.width;
       const h = canvas.height;
       const cx = w / 2;
       const cy = h / 2;
 
-      // Render Hue Angle Gradient
       const conicGrad = ctx.createConicGradient(0, cx, cy);
       conicGrad.addColorStop(0, '#FF0000');
       conicGrad.addColorStop(1/6, '#FFFF00');
@@ -665,7 +710,6 @@
       ctx.fillStyle = conicGrad;
       ctx.fillRect(0, 0, w, h);
 
-      // Render Saturation Radial Gradient (Center to Edge)
       const radialGrad = ctx.createRadialGradient(cx, cy, 0, cx, cy, cx);
       radialGrad.addColorStop(0, '#FFFFFF');
       radialGrad.addColorStop(1, 'rgba(255, 255, 255, 0)');
@@ -674,7 +718,7 @@
       ctx.fillRect(0, 0, w, h);
     }
 
-    function calculateHarmonySwatches() {
+    function calculateHarmonySwatches(options = {}) {
       const swatches = [];
       const points = [];
       const h = currentHue;
@@ -712,8 +756,8 @@
       currentPoints = points;
 
       renderPins();
-      renderSwatches();
       updatePaletteDisplay();
+      renderSwatches(options.activeInputIndex);
     }
 
     function renderPins() {
@@ -723,7 +767,8 @@
 
       currentPoints.forEach((p, idx) => {
         const pin = document.createElement('div');
-        const isPrimary = (harmonyMode === 'monochromatic' && idx === 2) || (harmonyMode !== 'monochromatic' && p.h === currentHue && p.s === currentSat);
+        const isPrimary = (harmonyMode === 'monochromatic' && idx === 2) || 
+                          (harmonyMode !== 'monochromatic' && p.h === currentHue && p.s === currentSat);
 
         pin.className = isPrimary ? 'wheel-pin' : 'wheel-pin harmony-pin';
 
@@ -752,9 +797,25 @@
       });
     }
 
-    function renderSwatches() {
+    function renderSwatches(preserveIndex = null) {
+      const existingItems = stopsContainer.querySelectorAll('.stop-item');
+      
+      if (existingItems.length === currentSwatches.length) {
+        currentSwatches.forEach((color, idx) => {
+          const item = existingItems[idx];
+          const colorPreview = item.querySelector('.stop-color-preview');
+          const hexInput = item.querySelector('.hex-input');
+
+          colorPreview.style.backgroundColor = color;
+          if (idx !== preserveIndex) {
+            hexInput.value = color;
+          }
+        });
+        return;
+      }
+
       stopsContainer.innerHTML = '';
-      currentSwatches.forEach((color) => {
+      currentSwatches.forEach((color, idx) => {
         const item = document.createElement('div');
         item.className = 'stop-item';
 
@@ -766,14 +827,38 @@
         hexInput.type = 'text';
         hexInput.className = 'hex-input';
         hexInput.value = color;
-        hexInput.readOnly = true;
+        hexInput.maxLength = 7;
+        hexInput.spellcheck = false;
+
+        hexInput.addEventListener('input', () => {
+          let val = hexInput.value.trim();
+          if (!val.startsWith('#') && val.length > 0) {
+            val = '#' + val;
+          }
+
+          const parsed = hexToHsl(val);
+          if (parsed) {
+            const offsets = HARMONY_OFFSETS[harmonyMode] || [0];
+            const offset = offsets[idx] || 0;
+
+            currentHue = (parsed.h - offset + 360) % 360;
+            currentSat = parsed.s;
+
+            calculateHarmonySwatches({ activeInputIndex: idx });
+          }
+        });
+
+        hexInput.addEventListener('blur', () => {
+          hexInput.value = currentSwatches[idx];
+        });
 
         const copyBtn = document.createElement('button');
         copyBtn.className = 'action-icon-btn';
         copyBtn.innerText = 'Copy';
 
-        item.addEventListener('click', () => {
-          navigator.clipboard.writeText(color);
+        copyBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          navigator.clipboard.writeText(currentSwatches[idx]);
           copyBtn.innerText = '✓';
           setTimeout(() => copyBtn.innerText = 'Copy', 1000);
         });
@@ -786,7 +871,6 @@
       });
     }
 
-    // Wheel Drag Event Listeners
     let isDragging = false;
 
     function sampleWheelPointer(e) {
@@ -835,7 +919,6 @@
 
     window.addEventListener('resize', renderPins);
 
-    // Export Canvas Generator
     function generatePaletteCanvas(width = 2560, height = 1440) {
       const canvas = document.createElement('canvas');
       canvas.width = width;
