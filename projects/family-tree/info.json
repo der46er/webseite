@@ -1,0 +1,19 @@
+{
+  "project": {
+    "id": "family-tree-generator",
+    "title": "Family Tree Generator",
+    "title_en": "Family Tree Generator",
+    "description": "Erstellen Sie interaktive Stammbäume.",
+    "description_en": "Create interactive family trees.",
+    "version": "1.0",
+    "date": "2026-09-03",
+    "status": "Live",
+    "technologies": [
+      "HTML5",
+      "JavaScript",
+      "SVG",
+      "CSS3",
+      "Inter (Static)"
+    ]
+  }
+}
