@@ -1,0 +1,2478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Tree Studio</title>
+<style>
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
+  }
+
+  @font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('https://raw.githubusercontent.com/der46er/webseite/main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-700.woff2') format('woff2');
+  }
+
+  :root {
+    --bg-color: #0F0F0F;
+    --text-color: #F0F0F0;
+    --panel-bg: #1c1c1c;
+    --border-color: #333333;
+    --grid-dot-color: #444444;
+    --line-color: #8c7870;
+    --card-shadow: rgba(0, 0, 0, 0.55);
+    --input-bg: #141414;
+    --accent: #5e81ac;
+    --scrollbar-thumb: #3a3a3a;
+    --scrollbar-thumb-hover: #555555;
+  }
+
+  [data-theme="light"] {
+    --bg-color: #F0F0F0;
+    --text-color: #0F0F0F;
+    --panel-bg: #ffffff;
+    --border-color: #dcdcdc;
+    --grid-dot-color: #9a9a9a;
+    --line-color: #68574e;
+    --card-shadow: rgba(0, 0, 0, 0.1);
+    --input-bg: #f9f9f9;
+    --accent: #3b6b9c;
+    --scrollbar-thumb: #cccccc;
+    --scrollbar-thumb-hover: #aaaaaa;
+  }
+
+  * { 
+    box-sizing: border-box; 
+    margin: 0; 
+    padding: 0; 
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+
+  *::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background-color: var(--scrollbar-thumb);
+    border-radius: 10px;
+    transition: background-color 0.2s ease;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background-color: var(--scrollbar-thumb-hover);
+  }
+
+  body { background-color: var(--bg-color); color: var(--text-color); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+  .icon {
+    width: 14px;
+    height: 14px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    display: inline-block;
+    vertical-align: middle;
+  }
+
+  header {
+    background: var(--panel-bg);
+    border-bottom: 1px solid var(--border-color);
+    padding: 8px 16px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    z-index: 50;
+    border-radius: 0 0 16px 16px;
+  }
+
+  button, label.btn-label {
+    background: #2b2b2b;
+    color: #fff;
+    border: 1px solid var(--border-color);
+    padding: 6px 14px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 13px;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background-color 0.15s, transform 0.1s;
+    user-select: none;
+  }
+
+  [data-theme="light"] button, [data-theme="light"] label.btn-label {
+    background: #e5e5e5;
+    color: #0F0F0F;
+  }
+
+  button:hover, label.btn-label:hover { filter: brightness(1.15); transform: translateY(-1px); }
+  button:active, label.btn-label:active { transform: translateY(0); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+  #btn-lang-toggle { padding: 4px 10px; }
+  #btn-lang-toggle img { width: 20px; height: auto; border-radius: 4px; display: block; }
+
+  #viewport {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    background-color: var(--bg-color);
+    cursor: grab;
+  }
+
+  #viewport.panning { cursor: grabbing; user-select: none; }
+
+  #world {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 0;
+    height: 0;
+    transform-origin: 0 0;
+    will-change: transform;
+  }
+
+  #grid-canvas {
+    position: absolute;
+    top: -100000px;
+    left: -100000px;
+    width: 200000px;
+    height: 200000px;
+    background-image: radial-gradient(circle 1.5px at 0 0, var(--grid-dot-color) 1.5px, transparent 1.5px);
+    background-size: 24px 24px;
+    background-position: 100000px 100000px;
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  svg#tree-lines {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 30;
+  }
+
+  .line-group { pointer-events: stroke; cursor: pointer; }
+  .line-hitbox { stroke: transparent; stroke-width: 20px; fill: none; cursor: pointer; }
+  .line-path { fill: none; stroke-width: 2.5px; stroke-linejoin: round; stroke-linecap: round; transition: stroke-width 0.15s; }
+  .line-group:hover .line-path { stroke-width: 4.5px; filter: drop-shadow(0 0 4px rgba(255, 255, 255, 0.4)); }
+  .line-group.selected .line-path { stroke-width: 4px; filter: drop-shadow(0 0 6px #88c0d0); }
+
+  .anchor-handle-div {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: #5e81ac;
+    border: 3px solid #ffffff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+    cursor: crosshair;
+    pointer-events: auto;
+    z-index: 40;
+    transform: translate(-50%, -50%);
+    transition: background 0.12s, transform 0.12s;
+    box-sizing: border-box;
+  }
+  .anchor-handle-div:hover { background: #88c0d0; transform: translate(-50%, -50%) scale(1.3); }
+  .anchor-handle-div.snapping { background: #a3be8c; border-color: #eceff4; transform: translate(-50%, -50%) scale(1.5); }
+
+  #anchor-drag-line {
+    position: absolute;
+    top: 0; left: 0;
+    overflow: visible;
+    pointer-events: none;
+    z-index: 38;
+  }
+
+  .port-dot.port-snap-target {
+    transform: translate(-50%, -50%) scale(1.6);
+    background: #a3be8c;
+    box-shadow: 0 0 0 5px rgba(163,190,140,0.35);
+  }
+
+  .person-card {
+    position: absolute;
+    box-sizing: border-box;
+    border-radius: 18px;
+    border: 2px solid #82929e;
+    box-shadow: 0 8px 20px var(--card-shadow);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 8px 10px 10px;
+    cursor: grab;
+    user-select: none;
+    -webkit-user-select: none;
+    z-index: 15;
+    will-change: transform, left, top;
+  }
+
+  .person-card.active { outline: 2.5px solid #88c0d0; }
+  .person-card:active { cursor: grabbing; }
+
+  body.line-selected .person-card { cursor: default; }
+
+  .person-card.theme-blue { background-color: #d1e3f0; border-color: #7997ac; color: #243542; }
+  .person-card.theme-pink { background-color: #f7d4d6; border-color: #bfa0a2; color: #4a282a; }
+  .person-card.theme-green { background-color: #d6eedf; border-color: #8db59c; color: #1b3d28; }
+  .person-card.theme-yellow { background-color: #fdf0cd; border-color: #cfbd83; color: #463b15; }
+
+  .card-name {
+    font-size: 12px;
+    font-weight: 700;
+    height: 18px;
+    line-height: 18px;
+    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 100%;
+    text-align: center;
+    pointer-events: none;
+  }
+
+  .avatar-wrap {
+    flex: 1;
+    width: 100%;
+    background: #111;
+    border-radius: 12px;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: inset 0 0 4px rgba(0,0,0,0.5);
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .avatar-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
+  }
+
+  .port-dot {
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    background: #474747;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    cursor: crosshair;
+    z-index: 20;
+    transform: translate(-50%, -50%);
+    transition: transform 0.15s, background-color 0.15s;
+  }
+
+  .port-dot:hover, .port-dot.drag-hover {
+    transform: translate(-50%, -50%) scale(1.4);
+    background: #88c0d0;
+  }
+
+  .port-dot.connecting {
+    background: #5e81ac;
+    box-shadow: 0 0 0 4px #88c0d0;
+    animation: pulse 1s infinite alternate;
+  }
+
+  .port-top { top: 0; left: 50%; }
+  .port-bottom { top: 100%; left: 50%; }
+  .port-left { left: 0; top: 50%; }
+  .port-right { left: 100%; top: 50%; }
+
+  @keyframes pulse { from { transform: translate(-50%, -50%) scale(1.1); } to { transform: translate(-50%, -50%) scale(1.4); } }
+
+  .line-label {
+    font-size: 10px;
+    fill: var(--text-color);
+    font-weight: 600;
+    paint-order: stroke;
+    stroke: var(--bg-color);
+    stroke-width: 3px;
+    pointer-events: none;
+  }
+
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.7);
+    backdrop-filter: blur(2px);
+    z-index: 100;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 16px;
+  }
+
+  .modal-backdrop.open { display: flex; }
+
+  .modal-card {
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    padding: 24px;
+    width: 420px;
+    max-width: 100%;
+    border-radius: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    box-shadow: 0 16px 32px rgba(0,0,0,0.6);
+  }
+
+  .modal-card-large {
+    width: 680px;
+    max-height: 85vh;
+  }
+
+  .tutorial-content {
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: -4px;
+    font-size: 13px;
+    line-height: 1.55;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tutorial-section {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+
+  .tutorial-section h4 {
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tutorial-legend-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .tutorial-legend-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .tutorial-legend-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  .side-drawer {
+    position: fixed;
+    top: 60px;
+    right: -380px;
+    width: 350px;
+    height: calc(100vh - 80px);
+    background: var(--panel-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 20px 0 0 20px;
+    box-shadow: -6px 0 24px var(--card-shadow);
+    z-index: 45;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    overflow-y: auto;
+    transition: right 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .side-drawer.open { right: 0; }
+
+  .form-group { display: flex; flex-direction: column; gap: 5px; font-size: 12px; }
+  .form-group input, .form-group select, .form-group textarea {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    padding: 8px 12px;
+    border-radius: 12px;
+    font-size: 13px;
+    outline: none;
+  }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color: var(--accent); }
+
+  .toggle-switch-wrap {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 12px;
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    cursor: pointer;
+  }
+
+  .toggle-switch-wrap input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+    accent-color: var(--accent);
+  }
+</style>
+</head>
+<body data-theme="dark">
+
+<header>
+  <button class="primary" id="btn-add-person">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14"/></svg> <span data-i18n="addPerson">Add Person</span>
+  </button>
+  <button id="btn-clone-person">
+    <svg class="icon" viewBox="0 0 24 24"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg> <span data-i18n="duplicate">Duplicate</span>
+  </button>
+  <button id="btn-fit-view">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg> <span data-i18n="centerTree">Center Tree</span>
+  </button>
+  <button id="btn-open-export">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> <span data-i18n="exportImage">Export Image</span>
+  </button>
+  <button id="save-json-btn">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2zM17 21v-8H7v8M7 3v5h8"/></svg> <span data-i18n="saveJson">Save JSON</span>
+  </button>
+  <label class="btn-label" for="load-file">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> <span data-i18n="loadJson">Load JSON</span>
+  </label>
+  <input type="file" id="load-file" accept=".json" style="display:none;">
+  <button id="btn-open-tutorial">
+    <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg> <span data-i18n="tutorial">Tutorial</span>
+  </button>
+  <button id="btn-reset">
+    <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> <span data-i18n="clear">Clear</span>
+  </button>
+  <button id="btn-lang-toggle" style="margin-left: auto;" title="Language">
+    <img id="lang-flag" src="https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp" alt="Language">
+  </button>
+  <button id="btn-open-bg-settings" title="Settings">
+    <svg class="icon" viewBox="0 0 24 24"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+  </button>
+  <button id="theme-toggle">
+    <svg class="icon" id="theme-icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/></svg>
+    <span id="theme-text" data-i18n="lightMode">Light Mode</span>
+  </button>
+</header>
+
+<div id="viewport">
+  <div id="world">
+    <div id="grid-canvas"></div>
+    <svg id="tree-lines"></svg>
+    <svg id="anchor-drag-line"></svg>
+    <div id="anchor-handles-layer"></div>
+    <div id="cards-container"></div>
+  </div>
+</div>
+
+<!-- Settings Modal -->
+<div class="modal-backdrop" id="modal-bg-settings">
+  <div class="modal-card">
+    <h3 data-i18n="bgSettingsTitle">Canvas Background & Tree Settings</h3>
+    
+    <label class="toggle-switch-wrap">
+      <div>
+        <strong style="display:block; font-size:13px;" data-i18n="styledLinesToggleTitle">Styled Relationship Line Patterns</strong>
+        <span style="font-size:11px; opacity:0.75;" data-i18n="styledLinesToggleDesc">Display dashes & dots according to relationship types</span>
+      </div>
+      <input type="checkbox" id="toggle-styled-lines" checked>
+    </label>
+
+    <div class="form-group">
+      <label data-i18n="bgColorLabel">Background Canvas Color</label>
+      <div style="display:flex; gap: 8px; align-items: center;">
+        <input type="color" id="bg-color-picker" value="#0F0F0F" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
+        <span style="font-size: 11px; opacity: 0.8;" data-i18n="baseFieldTone">Base field tone</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label data-i18n="gridDotLabel">Grid Dot Matrix Color</label>
+      <div style="display:flex; gap: 8px; align-items: center;">
+        <input type="color" id="grid-dot-picker" value="#444444" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
+        <span style="font-size: 11px; opacity: 0.8;" data-i18n="gridDotsColor">Grid dots color</span>
+      </div>
+    </div>
+    <div class="form-group">
+      <label data-i18n="presetThemesLabel">Preset Themes</label>
+      <select id="bg-preset-select">
+        <option value="custom" data-i18n="optCustom">Custom Defined</option>
+        <option value="dark-slate" data-i18n="optDarkSlate">Deep Slate (#0F0F0F)</option>
+        <option value="pure-black" data-i18n="optPureBlack">OLED Pure Black (#000000)</option>
+        <option value="navy" data-i18n="optNavy">Midnight Navy (#0b101b)</option>
+        <option value="light-clean" data-i18n="optLightClean">Clean White (#F0F0F0)</option>
+      </select>
+    </div>
+    <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+      <button id="btn-close-bg-settings" class="primary" data-i18n="done">Done</button>
+    </div>
+  </div>
+</div>
+
+<!-- Detailed Tutorial & Info Modal -->
+<div class="modal-backdrop" id="modal-tutorial">
+  <div class="modal-card modal-card-large">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+      <h3 data-i18n="tutorialTitle">Family Tree Studio — Documentation & Tutorial</h3>
+      <button id="btn-close-tutorial" class="primary" style="padding: 4px 12px;" data-i18n="gotIt">Got it</button>
+    </div>
+
+    <div class="tutorial-content" id="tutorial-body"></div>
+  </div>
+</div>
+
+<!-- Relationship Modal -->
+<div class="modal-backdrop" id="modal-relation">
+  <div class="modal-card">
+    <h3 id="relation-dialog-title" data-i18n="connectRelatives">Connect Relatives</h3>
+    <div class="form-group">
+      <label data-i18n="relClassification">Relationship Classification</label>
+      <select id="modal-rel-type"></select>
+    </div>
+    <div class="form-group">
+      <label data-i18n="lineColor">Line Color</label>
+      <div style="display: flex; gap: 8px; align-items: center;">
+        <input type="color" id="modal-line-color" value="#8c7870" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
+        <span style="font-size: 11px; opacity: 0.8;" data-i18n="customRouteColor">Custom route accent color</span>
+      </div>
+    </div>
+    <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
+      <button id="modal-rel-cancel" data-i18n="cancel">Cancel</button>
+      <button class="primary" id="modal-rel-confirm" data-i18n="connect">Connect</button>
+    </div>
+  </div>
+</div>
+
+<!-- Export Modal -->
+<div class="modal-backdrop" id="modal-export">
+  <div class="modal-card">
+    <h3 data-i18n="exportDiagram">Export Diagram</h3>
+    <div class="form-group">
+      <label data-i18n="format">Format</label>
+      <select id="export-format">
+        <option value="png">PNG (Raster Image)</option>
+        <option value="jpeg">JPG / JPEG</option>
+        <option value="webp">WEBP (Optimized)</option>
+        <option value="svg">SVG (Vector Graph)</option>
+      </select>
+    </div>
+    <div class="form-group" id="group-resolution">
+      <label data-i18n="resolutionQuality">Resolution Quality</label>
+      <select id="export-res">
+        <option value="480">480p (SD)</option>
+        <option value="720">720p (HD)</option>
+        <option value="1080" selected>1080p (Full HD)</option>
+        <option value="1440">2K (QHD)</option>
+        <option value="2160">4K (Ultra HD)</option>
+      </select>
+    </div>
+    <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 10px;">
+      <button id="btn-export-cancel" data-i18n="cancel">Cancel</button>
+      <button class="primary" id="btn-export-download" data-i18n="download">Download</button>
+    </div>
+  </div>
+</div>
+
+<!-- Profile Edit Drawer -->
+<aside class="side-drawer" id="side-panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+    <h3 id="panel-title">Edit Details</h3>
+    <button id="btn-close-panel" style="padding: 4px 10px;">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="form-group">
+    <label data-i18n="nameLabel">Name</label>
+    <input type="text" id="edit-name">
+  </div>
+  <div class="form-group">
+    <label data-i18n="boxSizeLabel">Box Size (1:1 Aspect Ratio)</label>
+    <select id="edit-grid-size">
+      <option value="6x6" data-i18n="size6x6">6x6 Dots (144 × 144px)</option>
+      <option value="8x8" data-i18n="size8x8">8x8 Dots (192 × 192px)</option>
+      <option value="10x10" data-i18n="size10x10">10x10 Dots (240 × 240px)</option>
+    </select>
+  </div>
+  <div class="form-group">
+    <label data-i18n="cardColorLabel">Card Color Style</label>
+    <select id="edit-theme">
+      <option value="theme-blue" data-i18n="themeBlue">Blue Card</option>
+      <option value="theme-pink" data-i18n="themePink">Pink Card</option>
+      <option value="theme-green" data-i18n="themeGreen">Green Card</option>
+      <option value="theme-yellow" data-i18n="themeYellow">Yellow Card</option>
+      <option value="theme-custom" data-i18n="themeCustom">Custom Color</option>
+    </select>
+  </div>
+  <div class="form-group" id="group-custom-color" style="display: none;">
+    <label data-i18n="customColorLabel">Custom Box Color</label>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <input type="color" id="edit-custom-color" value="#a3be8c" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
+      <span style="font-size: 11px; opacity: 0.8;" data-i18n="customBackgroundShade">Custom background shade</span>
+    </div>
+  </div>
+  <div class="form-group">
+    <label data-i18n="profilePictureLabel">Profile Picture</label>
+    <input type="file" id="edit-avatar" accept="image/*">
+  </div>
+  <div class="form-group">
+    <label data-i18n="datesEraLabel">Dates / Era</label>
+    <input type="text" id="edit-dates" placeholder="e.g. 1995 - Present">
+  </div>
+  <div class="form-group">
+    <label data-i18n="bioLabel">Biographical Notes</label>
+    <textarea id="edit-bio" rows="3"></textarea>
+  </div>
+  <div style="display:flex; justify-content:flex-start; margin-top:auto; padding-top:10px;">
+    <button id="btn-delete-node" style="background:#b33a3a; color:#fff; width: 100%; justify-content: center;" data-i18n="deletePerson">Delete Person</button>
+  </div>
+</aside>
+
+<!-- Line Inspector Drawer -->
+<aside class="side-drawer" id="line-panel">
+  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+    <h3 data-i18n="lineInspector">Line Inspector</h3>
+    <button id="btn-close-line-panel" style="padding: 4px 10px;">
+      <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+  </div>
+  <div class="form-group">
+    <label data-i18n="relType">Relationship Type</label>
+    <select id="line-edit-type"></select>
+  </div>
+  <div class="form-group">
+    <label data-i18n="lineColor">Line Color</label>
+    <div style="display: flex; gap: 8px; align-items: center;">
+      <input type="color" id="line-edit-color" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
+      <span style="font-size: 11px; opacity: 0.8;" data-i18n="autoUpdatesCanvas">Auto-updates canvas</span>
+    </div>
+  </div>
+  <div style="font-size: 12px; line-height: 1.5; opacity: 0.8; margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px;" data-i18n="lineTip">
+    <strong>Tip:</strong> Drag either circular endpoint directly on the diagram to reconnect it to another card port.
+  </div>
+  <div style="display:flex; justify-content:space-between; margin-top:auto; padding-top:10px;">
+    <button id="btn-delete-line" style="background:#b33a3a; color:#fff; width: 100%;" data-i18n="deleteLine">Delete Line</button>
+  </div>
+</aside>
+
+<script>
+  const GRID_SIZE = 24;
+
+  const I18N = {
+    en: {
+      flag: 'https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp',
+      alt: 'UK Flag',
+      addPerson: 'Add Person',
+      duplicate: 'Duplicate',
+      centerTree: 'Center Tree',
+      exportImage: 'Export Image',
+      saveJson: 'Save JSON',
+      loadJson: 'Load JSON',
+      tutorial: 'Tutorial',
+      clear: 'Clear',
+      lightMode: 'Light Mode',
+      darkMode: 'Dark Mode',
+      bgSettingsTitle: 'Canvas Background & Tree Settings',
+      styledLinesToggleTitle: 'Styled Relationship Line Patterns',
+      styledLinesToggleDesc: 'Display dashes & dots according to relationship types (disable for uniform solid lines)',
+      bgColorLabel: 'Background Canvas Color',
+      baseFieldTone: 'Base field tone',
+      gridDotLabel: 'Grid Dot Matrix Color',
+      gridDotsColor: 'Grid dots color',
+      presetThemesLabel: 'Preset Themes',
+      optCustom: 'Custom Defined',
+      optDarkSlate: 'Deep Slate (#0F0F0F)',
+      optPureBlack: 'OLED Pure Black (#000000)',
+      optNavy: 'Midnight Navy (#0b101b)',
+      optLightClean: 'Clean White (#F0F0F0)',
+      done: 'Done',
+      tutorialTitle: 'Family Tree Studio — Documentation & Tutorial',
+      gotIt: 'Got it',
+      connectRelatives: 'Connect Relatives',
+      relClassification: 'Relationship Classification',
+      lineColor: 'Line Color',
+      customRouteColor: 'Custom route accent color',
+      cancel: 'Cancel',
+      connect: 'Connect',
+      exportDiagram: 'Export Diagram',
+      format: 'Format',
+      resolutionQuality: 'Resolution Quality',
+      download: 'Download',
+      editDetails: 'Edit',
+      nameLabel: 'Name',
+      boxSizeLabel: 'Box Size (1:1 Aspect Ratio)',
+      size6x6: '6x6 Dots (144 × 144px)',
+      size8x8: '8x8 Dots (192 × 192px)',
+      size10x10: '10x10 Dots (240 × 240px)',
+      cardColorLabel: 'Card Color Style',
+      themeBlue: 'Blue Card',
+      themePink: 'Pink Card',
+      themeGreen: 'Green Card',
+      themeYellow: 'Yellow Card',
+      themeCustom: 'Custom Color',
+      customColorLabel: 'Custom Box Color',
+      customBackgroundShade: 'Custom background shade',
+      profilePictureLabel: 'Profile Picture',
+      datesEraLabel: 'Dates / Era',
+      datesPlaceholder: 'e.g. 1995 - Present',
+      bioLabel: 'Biographical Notes',
+      deletePerson: 'Delete Person',
+      lineInspector: 'Line Inspector',
+      relType: 'Relationship Type',
+      autoUpdatesCanvas: 'Auto-updates canvas',
+      lineTip: '<strong>Tip:</strong> Drag either circular endpoint directly on the diagram to reconnect it to another card port.',
+      deleteLine: 'Delete Line',
+      clearConfirm: 'Clear the entire canvas? This removes all people and connections.',
+      emptyAlert: 'The canvas is empty.',
+      invalidJson: 'Invalid family tree JSON file.',
+      unnamed: 'Unnamed',
+      personPrefix: 'Person',
+      copySuffix: 'Copy',
+      connectTitle: (s, ss, t, ts) => `Connect ${s} (${ss}) → ${t} (${ts})`,
+      relGroups: {
+        blood: 'Direct / Blood',
+        spouse: 'Spouse / Partnership',
+        adopt: 'Adoptive & Foster',
+        step: 'Step & Blended',
+        extended: 'In-Laws & Extended'
+      },
+      relLabels: {
+        child_biological: { opt: 'Child', tag: 'Child' },
+        parent:           { opt: 'Parent', tag: 'Parent' },
+        sibling_full:     { opt: 'Full Sibling', tag: 'Sibling' },
+        twin_identical:   { opt: 'Identical Twin', tag: 'Twin' },
+        twin_fraternal:   { opt: 'Fraternal Twin', tag: 'Twin' },
+        spouse_current:   { opt: 'Spouse / Partner', tag: 'Spouse' },
+        partner_engaged:  { opt: 'Fiancé / Engaged', tag: 'Engaged' },
+        ex_spouse:        { opt: 'Ex-Spouse / Divorced', tag: 'Divorced' },
+        dating:           { opt: 'Dating', tag: 'Partner' },
+        child_adopted:    { opt: 'Adopted Child', tag: 'Adopted' },
+        parent_adoptive:  { opt: 'Adoptive Parent', tag: 'Adoptive' },
+        foster_child:     { opt: 'Foster Child', tag: 'Foster' },
+        guardian:         { opt: 'Legal Guardian', tag: 'Guardian' },
+        sibling_half:     { opt: 'Half Sibling', tag: 'Half Sibling' },
+        step_child:       { opt: 'Stepchild', tag: 'Stepchild' },
+        step_parent:      { opt: 'Stepparent', tag: 'Stepparent' },
+        step_sibling:     { opt: 'Stepsibling', tag: 'Stepsibling' },
+        child_in_law:     { opt: 'Son/Daughter-in-Law', tag: 'In-Law' },
+        parent_in_law:    { opt: 'Parent-in-Law', tag: 'In-Law' },
+        cousin:           { opt: 'Cousin', tag: 'Cousin' },
+        uncle_aunt:       { opt: 'Uncle / Aunt', tag: 'Uncle/Aunt' },
+        nephew_niece:     { opt: 'Nephew / Niece', tag: 'Niece/Nephew' },
+        grandchild:       { opt: 'Grandchild', tag: 'Grandchild' },
+        chosen_family:    { opt: 'Chosen Family', tag: 'Chosen' },
+        pet:              { opt: 'Companion / Pet', tag: 'Companion' }
+      },
+      tutorialSections: `
+        <div class="tutorial-section">
+          <h4>1. Canvas Navigation & Controls</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Panning:</strong> Click and drag on empty canvas space to move around.</li>
+            <li><strong>Zooming:</strong> Scroll your mouse wheel up or down (0.4x to 2.0x).</li>
+            <li><strong>Center View:</strong> Hit <em>Center Tree</em> in the top navigation to fit the entire graph cleanly in the viewport.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>2. Managing People & Boxes</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Add / Move:</strong> Click <em>Add Person</em> to place a card on the grid. Drag a card across the grid; collision protection guarantees boxes never overlap.</li>
+            <li><strong>Live Editing:</strong> Select any person card to open the drawer on the right. Name, sizing (6x6, 8x8, 10x10), custom hex colors, biography, and photos apply instantly as you type without pressing save.</li>
+            <li><strong>Duplication:</strong> Press <kbd>Ctrl+D</kbd> or the <em>Duplicate</em> button to clone the selected card.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>3. Connecting & Re-Routing Connections</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Connect:</strong> Click any circular port dot (Top, Bottom, Left, or Right) on a person, then click another person's port to create an orthogonal connecting route.</li>
+            <li><strong>Obstacle Bypassing:</strong> Line routes automatically calculate integer dot corridors that bypass intermediate cards.</li>
+            <li><strong>Anchor Point Dragging:</strong> Click any existing line to select it. Two circular handles appear at the ends—drag either handle directly to another port to reconnect it on the fly.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>4. Why Are Some Lines Solid and Some Dashed?</h4>
+          <p style="margin-bottom: 8px;">The line stroke visually codifies the exact bond category between two individuals:</p>
+          <table class="tutorial-legend-table">
+            <tr>
+              <td><strong>Solid Line (Continuous)</strong></td>
+              <td>Direct blood bonds & primary unions: biological child, parent, identical twins, legal spouses, direct aunt/uncle/grandchild.</td>
+            </tr>
+            <tr>
+              <td><strong>Short Dashes (<code>3 3</code>)</strong></td>
+              <td>Sibling bonds: full siblings or step-siblings.</td>
+            </tr>
+            <tr>
+              <td><strong>Medium Dashes (<code>4 4</code> / <code>5 4</code>)</strong></td>
+              <td>Secondary or step relationships: dating partners, legal guardians, cousins, fraternal twins, stepchildren/stepparents.</td>
+            </tr>
+            <tr>
+              <td><strong>Spaced Dashes (<code>6 3</code> / <code>6 4</code> / <code>8 4</code>)</strong></td>
+              <td>Extended or transitional ties: engaged partners, adoptive parents/children, in-laws, and divorced/ex-spouses.</td>
+            </tr>
+            <tr>
+              <td><strong>Fine Dotted Lines (<code>2 2</code> / <code>2 4</code>)</strong></td>
+              <td>Foster placements or beloved family companions/pets.</td>
+            </tr>
+          </table>
+          <p style="margin-top: 8px; font-size: 11px; opacity: 0.8;">You can toggle this pattern mode on or off anytime in <strong>Settings</strong> (wrench icon). When disabled, every line renders as a clean solid stroke.</p>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>5. Data Storage & High-Resolution Export</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Persistence:</strong> Changes are saved automatically to your local browser storage.</li>
+            <li><strong>JSON Backups:</strong> Use <em>Save JSON</em> and <em>Load JSON</em> to backup or share your complete diagrams.</li>
+            <li><strong>Exporting:</strong> Export in PNG, JPG, WEBP (up to 4K resolution) or pure SVG vector format.</li>
+          </ul>
+        </div>
+      `
+    },
+    de: {
+      flag: 'https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp',
+      alt: 'Österreich Flagge',
+      addPerson: 'Person hinzufügen',
+      duplicate: 'Duplizieren',
+      centerTree: 'Zentrieren',
+      exportImage: 'Bild exportieren',
+      saveJson: 'JSON speichern',
+      loadJson: 'JSON laden',
+      tutorial: 'Anleitung',
+      clear: 'Leeren',
+      lightMode: 'Heller Modus',
+      darkMode: 'Dunkler Modus',
+      bgSettingsTitle: 'Hintergrund- & Stammbaum-Einstellungen',
+      styledLinesToggleTitle: 'Beziehungs-Linienstile (Gestrichelt / Gepunktet)',
+      styledLinesToggleDesc: 'Linien je nach Beziehungstyp unterschiedlich mustern (deaktivieren für einheitliche durchgezogene Linien)',
+      bgColorLabel: 'Hintergrundfarbe',
+      baseFieldTone: 'Arbeitsbereich-Farbton',
+      gridDotLabel: 'Rasterpunkte-Farbe',
+      gridDotsColor: 'Farbe der Rasterpunkte',
+      presetThemesLabel: 'Farb-Presets',
+      optCustom: 'Benutzerdefiniert',
+      optDarkSlate: 'Deep Slate (#0F0F0F)',
+      optPureBlack: 'OLED Pure Black (#000000)',
+      optNavy: 'Midnight Navy (#0b101b)',
+      optLightClean: 'Clean White (#F0F0F0)',
+      done: 'Fertig',
+      tutorialTitle: 'Family Tree Studio — Anleitung & Dokumentation',
+      gotIt: 'Verstanden',
+      connectRelatives: 'Verbindung herstellen',
+      relClassification: 'Beziehungskategorie',
+      lineColor: 'Linienfarbe',
+      customRouteColor: 'Benutzerdefinierte Linienfarbe',
+      cancel: 'Abbrechen',
+      connect: 'Verbinden',
+      exportDiagram: 'Diagramm exportieren',
+      format: 'Dateiformat',
+      resolutionQuality: 'Auflösung / Qualität',
+      download: 'Herunterladen',
+      editDetails: 'Bearbeiten',
+      nameLabel: 'Name',
+      boxSizeLabel: 'Kartengröße (1:1 Seitenverhältnis)',
+      size6x6: '6x6 Punkte (144 × 144px)',
+      size8x8: '8x8 Punkte (192 × 192px)',
+      size10x10: '10x10 Punkte (240 × 240px)',
+      cardColorLabel: 'Karten-Farbdesign',
+      themeBlue: 'Blaue Karte',
+      themePink: 'Rosa Karte',
+      themeGreen: 'Grüne Karte',
+      themeYellow: 'Gelbe Karte',
+      themeCustom: 'Eigene Farbe',
+      customColorLabel: 'Eigene Box-Farbe',
+      customBackgroundShade: 'Eigener Hintergrund-Farbton',
+      profilePictureLabel: 'Profilbild',
+      datesEraLabel: 'Lebensdaten / Epoche',
+      datesPlaceholder: 'z.B. 1995 - Heute',
+      bioLabel: 'Biografie / Notizen',
+      deletePerson: 'Person löschen',
+      lineInspector: 'Linien-Inspektor',
+      relType: 'Beziehungstyp',
+      autoUpdatesCanvas: 'Wird live angewendet',
+      lineTip: '<strong>Tipp:</strong> Ziehe die runden Endpunkte direkt im Diagramm, um sie mit einem anderen Port zu verbinden.',
+      deleteLine: 'Linie löschen',
+      clearConfirm: 'Möchtest du die gesamte Arbeitsfläche leeren? Alle Personen und Verbindungen werden gelöscht.',
+      emptyAlert: 'Die Arbeitsfläche ist leer.',
+      invalidJson: 'Ungültige Stammbaum-JSON-Datei.',
+      unnamed: 'Unbenannt',
+      personPrefix: 'Person',
+      copySuffix: 'Kopie',
+      connectTitle: (s, ss, t, ts) => `Verbinde ${s} (${ss}) → ${t} (${ts})`,
+      relGroups: {
+        blood: 'Direkt / Blutsverwandt',
+        spouse: 'Ehe / Partnerschaft',
+        adopt: 'Adoption & Pflege',
+        step: 'Stief- & Patchwork',
+        extended: 'Schwieger & Erweitert'
+      },
+      relLabels: {
+        child_biological: { opt: 'Kind', tag: 'Kind' },
+        parent:           { opt: 'Elternteil', tag: 'Eltern' },
+        sibling_full:     { opt: 'Geschwister (Voll)', tag: 'Geschwister' },
+        twin_identical:   { opt: 'Eineiiger Zwilling', tag: 'Zwilling' },
+        twin_fraternal:   { opt: 'Zweieiiger Zwilling', tag: 'Zwilling' },
+        spouse_current:   { opt: 'Ehepartner / Partner', tag: 'Ehepartner' },
+        partner_engaged:  { opt: 'Verlobt', tag: 'Verlobt' },
+        ex_spouse:        { opt: 'Geschieden / Ex-Partner', tag: 'Geschieden' },
+        dating:           { opt: 'In Beziehung', tag: 'Partner' },
+        child_adopted:    { opt: 'Adoptivkind', tag: 'Adoptiert' },
+        parent_adoptive:  { opt: 'Adoptiveltern', tag: 'Adoptiv' },
+        foster_child:     { opt: 'Pflegekind', tag: 'Pflegekind' },
+        guardian:         { opt: 'Vormund', tag: 'Vormund' },
+        sibling_half:     { opt: 'Halbgeschwister', tag: 'Halbgeschwister' },
+        step_child:       { opt: 'Stiefkind', tag: 'Stiefkind' },
+        step_parent:      { opt: 'Stiefeltern', tag: 'Stiefeltern' },
+        step_sibling:     { opt: 'Stiefgeschwister', tag: 'Stiefgeschwister' },
+        child_in_law:     { opt: 'Schwiegersohn/-tochter', tag: 'Schwieger' },
+        parent_in_law:    { opt: 'Schwiegereltern', tag: 'Schwieger' },
+        cousin:           { opt: 'Cousin / Cousine', tag: 'Cousin' },
+        uncle_aunt:       { opt: 'Onkel / Tante', tag: 'Onkel/Tante' },
+        nephew_niece:     { opt: 'Neffe / Nichte', tag: 'Nichte/Neffe' },
+        grandchild:       { opt: 'Enkelkind', tag: 'Enkel' },
+        chosen_family:    { opt: 'Wahlfamilie', tag: 'Wahlfamilie' },
+        pet:              { opt: 'Haustier / Begleiter', tag: 'Gefährte' }
+      },
+      tutorialSections: `
+        <div class="tutorial-section">
+          <h4>1. Navigation & Arbeitsfläche</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Verschieben (Pan):</strong> Halte die linke Maustaste auf dem leeren Hintergrund gedrückt und ziehe die Maus.</li>
+            <li><strong>Zoomen:</strong> Nutze das Mausrad zum stufenlosen Zoomen (0.4x bis 2.0x).</li>
+            <li><strong>Zentrieren:</strong> Ein Klick auf <em>Zentrieren</em> richtet den gesamten Baum passend im Bild aus.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>2. Personen & Boxen verwalten</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Erstellen / Verschieben:</strong> Klicke auf <em>Person hinzufügen</em>. Verschiebe Karten per Drag & Drop; eine automatische Kollisionserkennung verhindert Überlappungen.</li>
+            <li><strong>Live-Bearbeitung:</strong> Klicke eine Karte an, um das Seitenmenü zu öffnen. Name, Größen (6x6, 8x8, 10x10), eigene Hex-Farben, Lebensdaten und Fotos werden ohne manuelles Speichern direkt live übernommen.</li>
+            <li><strong>Duplizieren:</strong> Wähle eine Person aus und drücke <kbd>Strg+D</kbd> oder den <em>Duplizieren</em>-Button.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>3. Verbindungen herstellen & Ankerpunkte verschieben</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Verbinden:</strong> Klicke auf einen Anschluss-Punkt (Oben, Unten, Links oder Rechts) einer Karte und anschließend auf einen Punkt der Zielperson.</li>
+            <li><strong>Hindernis-Umgehung:</strong> Linien suchen sich automatisch einen freien Pfad um im Weg liegende Karten herum.</li>
+            <li><strong>Ankerpunkte verschieben:</strong> Wähle eine bestehende Linie per Klick aus. An den Enden erscheinen runde Griffe, die du einfach auf einen anderen Port ziehen kannst.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>4. Warum sind manche Linien durchgezogen und manche gestrichelt?</h4>
+          <p style="margin-bottom: 8px;">Der Linienstil visualisiert die Art des Verwandtschafts- oder Beziehungsverhältnisses:</p>
+          <table class="tutorial-legend-table">
+            <tr>
+              <td><strong>Durchgezogene Linie (Solid)</strong></td>
+              <td>Direkte Blutsbande & primäre Verbindungen: leibliche Kinder, Eltern, eineiige Zwillinge, Ehepartner, direkte Tanten/Onkel/Enkel.</td>
+            </tr>
+            <tr>
+              <td><strong>Kurze Striche (<code>3 3</code>)</strong></td>
+              <td>Geschwisterbande: Vollgeschwister oder Stiefgeschwister.</td>
+            </tr>
+            <tr>
+              <td><strong>Mittlere Striche (<code>4 4</code> / <code>5 4</code>)</strong></td>
+              <td>Sekundäre oder Patchwork-Verhältnisse: Partnerschaften/Dating, Vormunde, Cousins/Cousinen, zweieiige Zwillinge, Stiefeltern/-kinder.</td>
+            </tr>
+            <tr>
+              <td><strong>Weite Striche (<code>6 3</code> / <code>6 4</code> / <code>8 4</code>)</strong></td>
+              <td>Erweiterte oder veränderte Bindungen: Verlobte, Adoptionen, Schwiegerverwandtschaft oder geschiedene Ex-Partner.</td>
+            </tr>
+            <tr>
+              <td><strong>Feine Punktlinien (<code>2 2</code> / <code>2 4</code>)</strong></td>
+              <td>Pflegekinder oder tierische Weggefährten/Haustiere.</td>
+            </tr>
+          </table>
+          <p style="margin-top: 8px; font-size: 11px; opacity: 0.8;">Du kannst dieses Muster in den <strong>Einstellungen</strong> (Schraubenschlüssel-Symbol) jederzeit an- oder ausschalten. Deaktiviert werden alle Linien einheitlich durchgezogen gezeichnet.</p>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>5. Datenspeicherung & Hochauflösender Export</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Automatisches Speichern:</strong> Alle Änderungen bleiben direkt im Browser gespeichert.</li>
+            <li><strong>JSON-Dateien:</strong> Über <em>JSON speichern</em> und <em>JSON laden</em> kannst du Sicherheitskopien exportieren und importieren.</li>
+            <li><strong>Bild-Export:</strong> Speichere den Stammbaum als PNG, JPG, WEBP (bis 4K) oder verlustfreie SVG-Vektorgrafik.</li>
+          </ul>
+        </div>
+      `
+    }
+  };
+
+  let currentLang = localStorage.getItem('siteLang') || 'en';
+
+  const REL_DEFINITIONS = [
+    { group: 'blood', items: ['child_biological', 'parent', 'sibling_full', 'twin_identical', 'twin_fraternal'] },
+    { group: 'spouse', items: ['spouse_current', 'partner_engaged', 'ex_spouse', 'dating'] },
+    { group: 'adopt', items: ['child_adopted', 'parent_adoptive', 'foster_child', 'guardian'] },
+    { group: 'step', items: ['sibling_half', 'step_child', 'step_parent', 'step_sibling'] },
+    { group: 'extended', items: ['child_in_law', 'parent_in_law', 'cousin', 'uncle_aunt', 'nephew_niece', 'grandchild', 'chosen_family', 'pet'] }
+  ];
+
+  const REL_DASH = {
+    child_biological: 'none',
+    parent:           'none',
+    sibling_full:     '3 3',
+    twin_identical:   'none',
+    twin_fraternal:   '5 4',
+    spouse_current:   'none',
+    partner_engaged:  '6 3',
+    ex_spouse:        '8 4',
+    dating:           '4 4',
+    child_adopted:    '6 4',
+    parent_adoptive:  '6 4',
+    foster_child:     '2 4',
+    guardian:         '4 4',
+    sibling_half:     '6 3',
+    step_child:       '5 4',
+    step_parent:      '5 4',
+    step_sibling:     '3 3',
+    child_in_law:     '6 4',
+    parent_in_law:    '6 4',
+    cousin:           '4 4',
+    uncle_aunt:       'none',
+    nephew_niece:     'none',
+    grandchild:       'none',
+    chosen_family:    '4 4',
+    pet:              '2 2'
+  };
+
+  function toGrid(pxVal) { return Math.round(pxVal / GRID_SIZE); }
+  function toPx(gridVal) { return Math.round(gridVal) * GRID_SIZE; }
+  function snap(val) { return toPx(toGrid(val)); }
+
+  function adjustColorShade(hex, percent) {
+    let num = parseInt(hex.replace('#', ''), 16);
+    let r = (num >> 16) + percent;
+    let g = ((num >> 8) & 0x00FF) + percent;
+    let b = (num & 0x0000FF) + percent;
+    return `#${((1 << 24) + (Math.min(255, Math.max(0, r)) << 16) + (Math.min(255, Math.max(0, g)) << 8) + Math.min(255, Math.max(0, b))).toString(16).slice(1)}`;
+  }
+
+  function getReadableTextColor(hex) {
+    let num = parseInt(hex.replace('#', ''), 16);
+    let r = num >> 16;
+    let g = (num >> 8) & 0x00FF;
+    let b = num & 0x0000FF;
+    return (((r * 299) + (g * 587) + (b * 114)) / 1000 >= 140) ? '#1f2937' : '#ffffff';
+  }
+
+  let state = {
+    members: [],
+    links: [],
+    pan: { x: 0, y: 0 },
+    zoom: 1,
+    bgColor: null,
+    gridColor: null,
+    styledLinePatterns: true
+  };
+
+  let connectSource = null;
+  let connectTarget = null;
+  let selectedId = null;
+  let selectedLinkId = null;
+  let dragItem = null;
+  let dragOffset = { gx: 0, gy: 0 };
+  let imageBuffer = null;
+
+  let draggingAnchor = null;
+  let snapTarget = null;
+
+  let isPanning = false;
+  let panStart = { x: 0, y: 0 };
+  let panOrigin = { x: 0, y: 0 };
+
+  const viewport  = document.getElementById('viewport');
+  const world     = document.getElementById('world');
+  const cardsContainer   = document.getElementById('cards-container');
+  const anchorHandlesLayer = document.getElementById('anchor-handles-layer');
+  const anchorDragSvg    = document.getElementById('anchor-drag-line');
+  const svg       = document.getElementById('tree-lines');
+  const sidePanel = document.getElementById('side-panel');
+  const linePanel = document.getElementById('line-panel');
+  const toggleStyledLines = document.getElementById('toggle-styled-lines');
+
+  function populateRelationshipSelects() {
+    const t = I18N[currentLang];
+    const selects = [document.getElementById('modal-rel-type'), document.getElementById('line-edit-type')];
+    selects.forEach(sel => {
+      if (!sel) return;
+      const prevVal = sel.value;
+      sel.innerHTML = '';
+      REL_DEFINITIONS.forEach(grp => {
+        const optgroup = document.createElement('optgroup');
+        optgroup.label = t.relGroups[grp.group] || grp.group;
+        grp.items.forEach(typeKey => {
+          const opt = document.createElement('option');
+          opt.value = typeKey;
+          opt.textContent = t.relLabels[typeKey]?.opt || typeKey;
+          optgroup.appendChild(opt);
+        });
+        sel.appendChild(optgroup);
+      });
+      if (prevVal) sel.value = prevVal;
+    });
+  }
+
+  function applyLanguage(lang) {
+    currentLang = lang;
+    localStorage.setItem('siteLang', lang);
+    const t = I18N[lang];
+
+    const flagImg = document.getElementById('lang-flag');
+    if (flagImg) {
+      flagImg.src = t.flag;
+      flagImg.alt = t.alt;
+    }
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      const key = el.getAttribute('data-i18n');
+      if (t[key]) el.innerHTML = t[key];
+    });
+
+    const tutBody = document.getElementById('tutorial-body');
+    if (tutBody) tutBody.innerHTML = t.tutorialSections;
+
+    const datesInput = document.getElementById('edit-dates');
+    if (datesInput) datesInput.placeholder = t.datesPlaceholder;
+
+    populateRelationshipSelects();
+
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    document.getElementById('theme-text').textContent = isDark ? t.lightMode : t.darkMode;
+
+    if (selectedId) {
+      const member = state.members.find(m => m.id === selectedId);
+      if (member) {
+        document.getElementById('panel-title').textContent = `${t.editDetails}: ${member.name || t.unnamed}`;
+      }
+    }
+
+    drawConnections();
+  }
+
+  function setCookie(name, value, days = 365) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+  }
+
+  function getCookie(name) {
+    const val = `; ${document.cookie}`;
+    const parts = val.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
+  }
+
+  function persist() {
+    try {
+      localStorage.setItem('ft_map_state', JSON.stringify(state));
+    } catch(e) {}
+  }
+
+  function loadPersistedState() {
+    try {
+      const data = localStorage.getItem('ft_map_state');
+      if (data) {
+        state = JSON.parse(data);
+        if (!state.pan) state.pan = { x: 0, y: 0 };
+        if (!state.zoom) state.zoom = 1;
+        if (state.styledLinePatterns === undefined) state.styledLinePatterns = true;
+        state.members.forEach(m => {
+          m.gx = (m.gx !== undefined) ? Math.round(m.gx) : toGrid(m.x || 0);
+          m.gy = (m.gy !== undefined) ? Math.round(m.gy) : toGrid(m.y || 0);
+          m.x = toPx(m.gx);
+          m.y = toPx(m.gy);
+        });
+        state.links.forEach(l => {
+          if (!l.id) l.id = 'link_' + Math.random().toString(36).substr(2, 9);
+        });
+        if (state.bgColor) document.documentElement.style.setProperty('--bg-color', state.bgColor);
+        if (state.gridColor) document.documentElement.style.setProperty('--grid-dot-color', state.gridColor);
+        if (toggleStyledLines) toggleStyledLines.checked = state.styledLinePatterns;
+      }
+    } catch(e) {}
+  }
+
+  function updateTransform() {
+    world.style.transform = `translate(${state.pan.x}px, ${state.pan.y}px) scale(${state.zoom})`;
+  }
+
+  function screenToWorld(clientX, clientY) {
+    const rect = viewport.getBoundingClientRect();
+    const wx = (clientX - rect.left - state.pan.x) / state.zoom;
+    const wy = (clientY - rect.top - state.pan.y) / state.zoom;
+    return { x: wx, y: wy, gx: toGrid(wx), gy: toGrid(wy) };
+  }
+
+  function getCardUnitSpan(member) {
+    const format = member.size || '6x6';
+    return parseInt(format.split('x')[0], 10) || 6;
+  }
+
+  function getCardDims(member) {
+    const units = getCardUnitSpan(member);
+    const pxSize = units * GRID_SIZE;
+    return { w: pxSize, h: pxSize, units };
+  }
+
+  function getPortCoords(member, side) {
+    const units = getCardUnitSpan(member);
+    const half = Math.round(units / 2);
+    const mgx = member.gx !== undefined ? member.gx : toGrid(member.x);
+    const mgy = member.gy !== undefined ? member.gy : toGrid(member.y);
+
+    let pgx = mgx + half;
+    let pgy = mgy + half;
+
+    switch (side) {
+      case 'top':    pgx = mgx + half; pgy = mgy; break;
+      case 'bottom': pgx = mgx + half; pgy = mgy + units; break;
+      case 'left':   pgx = mgx; pgy = mgy + half; break;
+      case 'right':  pgx = mgx + units; pgy = mgy + half; break;
+      default:       pgx = mgx + half; pgy = mgy + units; break;
+    }
+
+    return { gx: pgx, gy: pgy, x: toPx(pgx), y: toPx(pgy) };
+  }
+
+  function getCardBoundsGrid(member) {
+    const units = getCardUnitSpan(member);
+    const mgx = member.gx !== undefined ? member.gx : toGrid(member.x);
+    const mgy = member.gy !== undefined ? member.gy : toGrid(member.y);
+    return { left: mgx, right: mgx + units, top: mgy, bottom: mgy + units };
+  }
+
+  function getClearanceGridPoint(gPos, side) {
+    switch (side) {
+      case 'top':    return { gx: gPos.gx, gy: gPos.gy - 1 };
+      case 'bottom': return { gx: gPos.gx, gy: gPos.gy + 1 };
+      case 'left':   return { gx: gPos.gx - 1, gy: gPos.gy };
+      case 'right':  return { gx: gPos.gx + 1, gy: gPos.gy };
+      default:       return { gx: gPos.gx, gy: gPos.gy + 1 };
+    }
+  }
+
+  function segmentHitsBoxGrid(p1, p2, box, pad = 1) {
+    const L = box.left - pad;
+    const R = box.right + pad;
+    const T = box.top - pad;
+    const B = box.bottom + pad;
+
+    if (p1.gy === p2.gy) {
+      if (p1.gy > T && p1.gy < B) {
+        const minX = Math.min(p1.gx, p2.gx);
+        const maxX = Math.max(p1.gx, p2.gx);
+        if (maxX > L && minX < R) return true;
+      }
+    } else if (p1.gx === p2.gx) {
+      if (p1.gx > L && p1.gx < R) {
+        const minY = Math.min(p1.gy, p2.gy);
+        const maxY = Math.max(p1.gy, p2.gy);
+        if (maxY > T && minY < B) return true;
+      }
+    }
+    return false;
+  }
+
+  function gridPointsToSvgPath(gridPts) {
+    const clean = [];
+    gridPts.forEach(p => {
+      const cur = { gx: Math.round(p.gx), gy: Math.round(p.gy) };
+      if (!clean.length) {
+        clean.push(cur);
+      } else {
+        const last = clean[clean.length - 1];
+        if (last.gx !== cur.gx || last.gy !== cur.gy) clean.push(cur);
+      }
+    });
+
+    if (clean.length < 2) return { path: `M 0 0`, midX: 0, midY: 0 };
+
+    let d = `M ${toPx(clean[0].gx)} ${toPx(clean[0].gy)}`;
+    for (let i = 1; i < clean.length; i++) {
+      d += ` L ${toPx(clean[i].gx)} ${toPx(clean[i].gy)}`;
+    }
+
+    const midIdx = Math.floor(clean.length / 2);
+    return { path: d, midX: toPx(clean[midIdx].gx), midY: toPx(clean[midIdx].gy) };
+  }
+
+  function calculateEdgePath(sPos, sSide, tPos, tSide, sourceMember, targetMember) {
+    const s = { gx: Math.round(sPos.gx !== undefined ? sPos.gx : sPos.x / GRID_SIZE),
+                gy: Math.round(sPos.gy !== undefined ? sPos.gy : sPos.y / GRID_SIZE) };
+    const t = { gx: Math.round(tPos.gx !== undefined ? tPos.gx : tPos.x / GRID_SIZE),
+                gy: Math.round(tPos.gy !== undefined ? tPos.gy : tPos.y / GRID_SIZE) };
+
+    const sBox = sourceMember ? getCardBoundsGrid(sourceMember) : null;
+    const tBox = targetMember ? getCardBoundsGrid(targetMember) : null;
+    const allBoxes = [sBox, tBox].filter(Boolean);
+
+    function isSegmentAllowed(p1, p2) {
+      for (const box of allBoxes) {
+        if (segmentHitsBoxGrid(p1, p2, box)) return false;
+      }
+      return true;
+    }
+
+    if (s.gx === t.gx || s.gy === t.gy) {
+      if (isSegmentAllowed(s, t)) return gridPointsToSvgPath([s, t]);
+    }
+
+    const c1 = getClearanceGridPoint(s, sSide);
+    const c2 = getClearanceGridPoint(t, tSide);
+
+    const xs = new Set();
+    const ys = new Set();
+
+    [s.gx, c1.gx, c2.gx, t.gx].forEach(v => xs.add(v));
+    [s.gy, c1.gy, c2.gy, t.gy].forEach(v => ys.add(v));
+
+    allBoxes.forEach(b => {
+      xs.add(b.left - 2);
+      xs.add(b.right + 2);
+      ys.add(b.top - 2);
+      ys.add(b.bottom + 2);
+    });
+
+    xs.add(Math.round((c1.gx + c2.gx) / 2));
+    ys.add(Math.round((c1.gy + c2.gy) / 2));
+    xs.add(Math.round((s.gx + c2.gx) / 2));
+    xs.add(Math.round((c1.gx + t.gx) / 2));
+    ys.add(Math.round((s.gy + c2.gy) / 2));
+    ys.add(Math.round((c1.gy + t.gy) / 2));
+
+    const xArr = Array.from(xs).sort((a, b) => a - b);
+    const yArr = Array.from(ys).sort((a, b) => a - b);
+
+    const queue = [{ pt: c1, path: [s, c1] }];
+    const visited = new Set([`${c1.gx},${c1.gy}`]);
+    let bestRoute = null;
+
+    while (queue.length > 0) {
+      const cur = queue.shift();
+      if (cur.pt.gx === c2.gx && cur.pt.gy === c2.gy) {
+        bestRoute = cur.path;
+        break;
+      }
+
+      const neighbors = [];
+      xArr.forEach(x => { if (x !== cur.pt.gx) neighbors.push({ gx: x, gy: cur.pt.gy }); });
+      yArr.forEach(y => { if (y !== cur.pt.gy) neighbors.push({ gx: cur.pt.gx, gy: y }); });
+
+      neighbors.sort((a, b) =>
+        (Math.abs(a.gx - c2.gx) + Math.abs(a.gy - c2.gy)) -
+        (Math.abs(b.gx - c2.gx) + Math.abs(b.gy - c2.gy))
+      );
+
+      for (const next of neighbors) {
+        const key = `${next.gx},${next.gy}`;
+        if (!visited.has(key) && isSegmentAllowed(cur.pt, next)) {
+          visited.add(key);
+          queue.push({ pt: next, path: [...cur.path, next] });
+        }
+      }
+    }
+
+    if (bestRoute) {
+      bestRoute.push(t);
+      return gridPointsToSvgPath(bestRoute);
+    }
+
+    const envLeft   = allBoxes.length ? Math.min(...allBoxes.map(b => b.left)) - 2 : c1.gx;
+    const envRight  = allBoxes.length ? Math.max(...allBoxes.map(b => b.right)) + 2 : c1.gx;
+    const envTop    = allBoxes.length ? Math.min(...allBoxes.map(b => b.top)) - 2 : c1.gy;
+    const envBottom = allBoxes.length ? Math.max(...allBoxes.map(b => b.bottom)) + 2 : c1.gy;
+
+    const detours = [
+      [s, c1, { gx: c1.gx, gy: envBottom }, { gx: c2.gx, gy: envBottom }, c2, t],
+      [s, c1, { gx: c1.gx, gy: envTop }, { gx: c2.gx, gy: envTop }, c2, t],
+      [s, c1, { gx: envRight, gy: c1.gy }, { gx: envRight, gy: c2.gy }, c2, t],
+      [s, c1, { gx: envLeft, gy: c1.gy }, { gx: envLeft, gy: c2.gy }, c2, t],
+    ];
+
+    for (const pts of detours) {
+      let ok = true;
+      for (let i = 0; i < pts.length - 1; i++) {
+        if (!isSegmentAllowed(pts[i], pts[i + 1])) { ok = false; break; }
+      }
+      if (ok) return gridPointsToSvgPath(pts);
+    }
+
+    return gridPointsToSvgPath(detours[0]);
+  }
+
+  function normalizePos(pos) {
+    if (!pos) return { gx: 0, gy: 0, x: 0, y: 0 };
+    const gx = pos.gx !== undefined ? Math.round(pos.gx) : Math.round((pos.x || 0) / GRID_SIZE);
+    const gy = pos.gy !== undefined ? Math.round(pos.gy) : Math.round((pos.y || 0) / GRID_SIZE);
+    return { gx, gy, x: toPx(gx), y: toPx(gy) };
+  }
+
+  function updateLinePath(link) {
+    const group = svg.querySelector(`[data-link-id="${link.id}"]`);
+    if (!group) return;
+    const source = state.members.find(m => m.id === link.source);
+    const target = state.members.find(m => m.id === link.target);
+    const sSide = link.sourceSide || 'bottom';
+    const tSide = link.targetSide || 'top';
+    const sPos  = normalizePos(source ? getPortCoords(source, sSide) : null);
+    const tPos  = normalizePos(target ? getPortCoords(target, tSide) : null);
+    const route = calculateEdgePath(sPos, sSide, tPos, tSide, source, target);
+    const hitbox = group.querySelector('.line-hitbox');
+    const path   = group.querySelector('.line-path');
+    let label  = group.querySelector('.line-label');
+    if (hitbox) hitbox.setAttribute('d', route.path);
+    if (path)   path.setAttribute('d', route.path);
+
+    const t = I18N[currentLang];
+    const localizedTag = t.relLabels[link.type]?.tag || '';
+    if (localizedTag) {
+      if (!label) {
+        label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        label.setAttribute('text-anchor', 'middle');
+        label.setAttribute('class', 'line-label');
+        group.appendChild(label);
+      }
+      label.textContent = localizedTag;
+      label.setAttribute('x', route.midX);
+      label.setAttribute('y', route.midY - 6);
+    } else if (label) {
+      label.remove();
+    }
+  }
+
+  function updateConnectedLines(memberId) {
+    state.links.forEach(l => {
+      if (l.source === memberId || l.target === memberId) updateLinePath(l);
+    });
+  }
+
+  function drawConnections() {
+    svg.innerHTML = '';
+    const fallbackColor = getComputedStyle(document.body).getPropertyValue('--line-color').trim() || '#8c7870';
+    const t = I18N[currentLang];
+
+    state.links.forEach(link => {
+      const source = state.members.find(m => m.id === link.source);
+      const target = state.members.find(m => m.id === link.target);
+      const sSide  = link.sourceSide || 'bottom';
+      const tSide  = link.targetSide || 'top';
+      const sPos   = normalizePos(source ? getPortCoords(source, sSide) : null);
+      const tPos   = normalizePos(target ? getPortCoords(target, tSide) : null);
+      const route  = calculateEdgePath(sPos, sSide, tPos, tSide, source, target);
+      
+      const dashStyle = (state.styledLinePatterns !== false) ? (REL_DASH[link.type] || 'none') : 'none';
+      const localizedTag = t.relLabels[link.type]?.tag || '';
+      const strokeColor = link.color || fallbackColor;
+      const isSelected  = selectedLinkId === link.id;
+
+      const group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      group.setAttribute('class', `line-group ${isSelected ? 'selected' : ''}`);
+      group.dataset.linkId = link.id;
+      group.addEventListener('click', (e) => { e.stopPropagation(); selectLink(link.id); });
+
+      const hitbox = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      hitbox.setAttribute('d', route.path);
+      hitbox.setAttribute('class', 'line-hitbox');
+      group.appendChild(hitbox);
+
+      const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+      path.setAttribute('d', route.path);
+      path.setAttribute('class', 'line-path');
+      path.setAttribute('stroke', strokeColor);
+      if (dashStyle !== 'none') path.setAttribute('stroke-dasharray', dashStyle);
+      group.appendChild(path);
+
+      if (localizedTag) {
+        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+        text.setAttribute('x', route.midX);
+        text.setAttribute('y', route.midY - 6);
+        text.setAttribute('text-anchor', 'middle');
+        text.setAttribute('class', 'line-label');
+        text.textContent = localizedTag;
+        group.appendChild(text);
+      }
+
+      svg.appendChild(group);
+    });
+
+    refreshAnchorHandles();
+  }
+
+  function refreshAnchorHandles() {
+    anchorHandlesLayer.innerHTML = '';
+    if (!selectedLinkId || draggingAnchor) return;
+
+    const link = state.links.find(l => l.id === selectedLinkId);
+    if (!link) return;
+    const source = state.members.find(m => m.id === link.source);
+    const target = state.members.find(m => m.id === link.target);
+    const sSide  = link.sourceSide || 'bottom';
+    const tSide  = link.targetSide || 'top';
+    const sPos   = normalizePos(source ? getPortCoords(source, sSide) : null);
+    const tPos   = normalizePos(target ? getPortCoords(target, tSide) : null);
+
+    const makeHandle = (handlePos, endType, fixedPos, fixedSide) => {
+      const div = document.createElement('div');
+      div.className = 'anchor-handle-div';
+      div.style.left = handlePos.x + 'px';
+      div.style.top  = handlePos.y + 'px';
+      div.dataset.end = endType;
+
+      div.addEventListener('mousedown', (ev) => {
+        ev.stopPropagation();
+        ev.preventDefault();
+        draggingAnchor = {
+          linkId:    link.id,
+          end:       endType,
+          fixedPos:  normalizePos(fixedPos),
+          fixedSide: fixedSide
+        };
+        snapTarget = null;
+        anchorHandlesLayer.innerHTML = '';
+        updateRubberbandLine(handlePos.x, handlePos.y);
+      });
+
+      return div;
+    };
+
+    anchorHandlesLayer.appendChild(makeHandle(sPos, 'source', tPos, tSide));
+    anchorHandlesLayer.appendChild(makeHandle(tPos, 'target', sPos, sSide));
+  }
+
+  function updateRubberbandLine(curPxX, curPxY) {
+    if (!draggingAnchor) { anchorDragSvg.innerHTML = ''; return; }
+    const fp = draggingAnchor.fixedPos;
+    anchorDragSvg.innerHTML =
+      `<line x1="${fp.x}" y1="${fp.y}" x2="${curPxX}" y2="${curPxY}"
+             stroke="#88c0d0" stroke-width="2" stroke-dasharray="6 4"
+             stroke-linecap="round" opacity="0.85"/>
+       <circle cx="${curPxX}" cy="${curPxY}" r="6"
+               fill="${snapTarget ? '#a3be8c' : '#5e81ac'}"
+               stroke="#fff" stroke-width="2.5"/>`;
+  }
+
+  function clearRubberbandLine() { anchorDragSvg.innerHTML = ''; }
+
+  function cardsOverlapGrid(a, b, minSpacing = 1) {
+    const aUnits = getCardUnitSpan(a);
+    const bUnits = getCardUnitSpan(b);
+    return !(
+      a.gx + aUnits + minSpacing <= b.gx ||
+      b.gx + bUnits + minSpacing <= a.gx ||
+      a.gy + aUnits + minSpacing <= b.gy ||
+      b.gy + bUnits + minSpacing <= a.gy
+    );
+  }
+
+  function findNonOverlappingPos(dragMember, desiredGx, desiredGy) {
+    const others = state.members.filter(m => m.id !== dragMember.id);
+    const probe  = { ...dragMember, gx: desiredGx, gy: desiredGy };
+
+    const overlaps = others.some(o => cardsOverlapGrid(probe, o));
+    if (!overlaps) return { gx: desiredGx, gy: desiredGy };
+
+    for (let r = 1; r <= 100; r++) {
+      for (let dx = -r; dx <= r; dx++) {
+        for (let dy = -r; dy <= r; dy++) {
+          if (Math.abs(dx) !== r && Math.abs(dy) !== r) continue;
+          const candidate = { ...dragMember, gx: desiredGx + dx, gy: desiredGy + dy };
+          if (!others.some(o => cardsOverlapGrid(candidate, o))) {
+            return { gx: desiredGx + dx, gy: desiredGy + dy };
+          }
+        }
+      }
+    }
+
+    return { gx: dragMember.gx, gy: dragMember.gy };
+  }
+
+  function render() {
+    cardsContainer.innerHTML = '';
+    const t = I18N[currentLang];
+
+    state.members.forEach(m => {
+      m.gx = (m.gx !== undefined) ? Math.round(m.gx) : toGrid(m.x || 0);
+      m.gy = (m.gy !== undefined) ? Math.round(m.gy) : toGrid(m.y || 0);
+      m.x = toPx(m.gx);
+      m.y = toPx(m.gy);
+
+      const dims = getCardDims(m);
+
+      const card = document.createElement('div');
+      card.className = `person-card ${m.theme || 'theme-blue'} ${m.id === selectedId ? 'active' : ''}`;
+      card.style.left = `${m.x}px`;
+      card.style.top = `${m.y}px`;
+      card.style.width = `${dims.w}px`;
+      card.style.height = `${dims.h}px`;
+      card.dataset.id = m.id;
+
+      if (m.theme === 'theme-custom' && m.customColor) {
+        card.style.backgroundColor = m.customColor;
+        card.style.borderColor = adjustColorShade(m.customColor, -35);
+        card.style.color = getReadableTextColor(m.customColor);
+      }
+
+      card.innerHTML = `
+        <div class="card-name">${m.name || t.unnamed}</div>
+        <div class="avatar-wrap">
+          ${m.avatar ? `<img src="${m.avatar}" alt="${m.name}" draggable="false">` : ''}
+        </div>
+        <div class="port-dot port-top" data-side="top" title="Top connector"></div>
+        <div class="port-dot port-bottom" data-side="bottom" title="Bottom connector"></div>
+        <div class="port-dot port-left" data-side="left" title="Left connector"></div>
+        <div class="port-dot port-right" data-side="right" title="Right connector"></div>
+      `;
+
+      if (connectSource && connectSource.id === m.id) {
+        const activePort = card.querySelector(`.port-${connectSource.side}`);
+        if (activePort) activePort.classList.add('connecting');
+      }
+
+      card.addEventListener('mousedown', (e) => {
+        if (selectedLinkId) return;
+        if (e.target.classList.contains('port-dot')) return;
+        selectMember(m.id);
+        dragItem = m;
+        const wCoords = screenToWorld(e.clientX, e.clientY);
+        dragOffset.gx = wCoords.gx - m.gx;
+        dragOffset.gy = wCoords.gy - m.gy;
+      });
+
+      card.addEventListener('dblclick', () => {
+        if (!selectedLinkId) selectMember(m.id);
+      });
+
+      card.querySelectorAll('.port-dot').forEach(port => {
+        port.addEventListener('click', (e) => {
+          e.stopPropagation();
+          handlePortClick(m.id, port.dataset.side);
+        });
+      });
+
+      cardsContainer.appendChild(card);
+    });
+
+    drawConnections();
+    updateTransform();
+    persist();
+  }
+
+  viewport.addEventListener('wheel', (e) => {
+    e.preventDefault();
+    const zoomFactor = 1.1;
+    const newZoom = e.deltaY < 0 ? Math.min(state.zoom * zoomFactor, 2.0) : Math.max(state.zoom / zoomFactor, 0.4);
+
+    if (newZoom !== state.zoom) {
+      const rect = viewport.getBoundingClientRect();
+      const mouseX = e.clientX - rect.left;
+      const mouseY = e.clientY - rect.top;
+
+      state.pan.x = mouseX - (mouseX - state.pan.x) * (newZoom / state.zoom);
+      state.pan.y = mouseY - (mouseY - state.pan.y) * (newZoom / state.zoom);
+      state.zoom = newZoom;
+      updateTransform();
+      persist();
+    }
+  }, { passive: false });
+
+  function fitAndCenterView() {
+    if (state.members.length === 0) {
+      state.pan = { x: 0, y: 0 };
+      state.zoom = 1;
+      updateTransform();
+      return;
+    }
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    state.members.forEach(m => {
+      const dims = getCardDims(m);
+      minX = Math.min(minX, m.x);
+      minY = Math.min(minY, m.y);
+      maxX = Math.max(maxX, m.x + dims.w);
+      maxY = Math.max(maxY, m.y + dims.h);
+    });
+
+    const padding = 120;
+    const treeW = (maxX - minX) + padding * 2;
+    const treeH = (maxY - minY) + padding * 2;
+
+    const vpW = viewport.clientWidth;
+    const vpH = viewport.clientHeight;
+
+    const fitZoom = Math.min(Math.max(Math.min(vpW / treeW, vpH / treeH), 0.4), 1.4);
+    state.zoom = fitZoom;
+
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    state.pan.x = Math.round(vpW / 2 - centerX * fitZoom);
+    state.pan.y = Math.round(vpH / 2 - centerY * fitZoom);
+
+    updateTransform();
+    persist();
+  }
+
+  document.getElementById('btn-fit-view').addEventListener('click', fitAndCenterView);
+
+  function cloneSelectedPerson() {
+    if (!selectedId) return;
+    const orig = state.members.find(m => m.id === selectedId);
+    if (!orig) return;
+
+    const t = I18N[currentLang];
+    const newId = 'p_' + Date.now();
+    const rawGx = (orig.gx !== undefined ? orig.gx : toGrid(orig.x)) + 2;
+    const rawGy = (orig.gy !== undefined ? orig.gy : toGrid(orig.y)) + 2;
+    const proxyClone = { ...orig, id: newId, gx: rawGx, gy: rawGy };
+    state.members.push(proxyClone);
+    const { gx: newGx, gy: newGy } = findNonOverlappingPos(proxyClone, rawGx, rawGy);
+    proxyClone.gx = newGx;
+    proxyClone.gy = newGy;
+    proxyClone.x  = toPx(newGx);
+    proxyClone.y  = toPx(newGy);
+    proxyClone.name = `${orig.name} (${t.copySuffix})`;
+    render();
+    selectMember(newId);
+  }
+
+  document.getElementById('btn-clone-person').addEventListener('click', cloneSelectedPerson);
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'd') {
+      e.preventDefault();
+      cloneSelectedPerson();
+    }
+  });
+
+  function selectLink(linkId) {
+    selectedLinkId = linkId;
+    selectedId = null;
+    document.body.classList.add('line-selected');
+    sidePanel.classList.remove('open');
+
+    const link = state.links.find(l => l.id === linkId);
+    if (!link) return;
+
+    document.getElementById('line-edit-type').value = link.type || 'child_biological';
+    document.getElementById('line-edit-color').value = link.color || '#8c7870';
+    linePanel.classList.add('open');
+    drawConnections();
+  }
+
+  document.getElementById('line-edit-color').addEventListener('input', (e) => {
+    if (!selectedLinkId) return;
+    const link = state.links.find(l => l.id === selectedLinkId);
+    if (link) {
+      link.color = e.target.value;
+      const group = svg.querySelector(`[data-link-id="${link.id}"] .line-path`);
+      if (group) group.setAttribute('stroke', link.color);
+      persist();
+    }
+  });
+
+  document.getElementById('line-edit-type').addEventListener('change', (e) => {
+    if (!selectedLinkId) return;
+    const link = state.links.find(l => l.id === selectedLinkId);
+    if (link) {
+      link.type = e.target.value;
+      drawConnections();
+      persist();
+    }
+  });
+
+  document.getElementById('btn-close-line-panel').addEventListener('click', () => {
+    linePanel.classList.remove('open');
+    selectedLinkId = null;
+    document.body.classList.remove('line-selected');
+    drawConnections();
+  });
+
+  document.getElementById('btn-delete-line').addEventListener('click', () => {
+    deleteSelectedLink();
+  });
+
+  function deleteSelectedLink() {
+    if (!selectedLinkId) return;
+    state.links = state.links.filter(l => l.id !== selectedLinkId);
+    linePanel.classList.remove('open');
+    selectedLinkId = null;
+    document.body.classList.remove('line-selected');
+    drawConnections();
+    persist();
+  }
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedLinkId && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+      e.preventDefault();
+      deleteSelectedLink();
+    }
+  });
+
+  viewport.addEventListener('mousedown', (e) => {
+    if (e.target.id === 'viewport' || e.target.id === 'world' || e.target.id === 'grid-canvas' || e.target.tagName === 'svg') {
+      isPanning = true;
+      viewport.classList.add('panning');
+      panStart.x = e.clientX;
+      panStart.y = e.clientY;
+      panOrigin.x = state.pan.x;
+      panOrigin.y = state.pan.y;
+    }
+  });
+
+  function handlePortClick(id, side) {
+    const t = I18N[currentLang];
+    if (!connectSource) {
+      connectSource = { id, side };
+      render();
+    } else if (connectSource.id === id && connectSource.side === side) {
+      connectSource = null;
+      render();
+    } else {
+      connectTarget = { id, side };
+      const s = state.members.find(m => m.id === connectSource.id);
+      const targetM = state.members.find(m => m.id === connectTarget.id);
+      document.getElementById('relation-dialog-title').textContent = t.connectTitle(s.name, connectSource.side, targetM.name, connectTarget.side);
+      document.getElementById('modal-relation').classList.add('open');
+    }
+  }
+
+  document.getElementById('modal-rel-confirm').addEventListener('click', () => {
+    if (connectSource && connectTarget) {
+      const relType = document.getElementById('modal-rel-type').value;
+      const lineColor = document.getElementById('modal-line-color').value;
+
+      state.links.push({
+        id: 'link_' + Date.now() + Math.random().toString(36).substr(2, 4),
+        source: connectSource.id,
+        sourceSide: connectSource.side,
+        target: connectTarget.id,
+        targetSide: connectTarget.side,
+        type: relType,
+        color: lineColor
+      });
+    }
+    document.getElementById('modal-relation').classList.remove('open');
+    connectSource = null;
+    connectTarget = null;
+    render();
+  });
+
+  document.getElementById('modal-rel-cancel').addEventListener('click', () => {
+    document.getElementById('modal-relation').classList.remove('open');
+    connectSource = null;
+    connectTarget = null;
+    render();
+  });
+
+  document.getElementById('btn-add-person').addEventListener('click', () => {
+    const t = I18N[currentLang];
+    const center = screenToWorld(viewport.clientWidth / 2, viewport.clientHeight / 2);
+    const desiredGx = center.gx - 3;
+    const desiredGy = center.gy - 3;
+    const newId = 'p_' + Date.now();
+
+    const newPersonCandidate = {
+      id: newId,
+      name: `${t.personPrefix} ${state.members.length + 1}`,
+      size: '6x6',
+      theme: 'theme-blue',
+      customColor: '#5e81ac',
+      avatar: null,
+      bio: '',
+      dates: '',
+      gx: desiredGx,
+      gy: desiredGy
+    };
+
+    const { gx: finalGx, gy: finalGy } = findNonOverlappingPos(newPersonCandidate, desiredGx, desiredGy);
+
+    newPersonCandidate.gx = finalGx;
+    newPersonCandidate.gy = finalGy;
+    newPersonCandidate.x = toPx(finalGx);
+    newPersonCandidate.y = toPx(finalGy);
+
+    state.members.push(newPersonCandidate);
+    render();
+    selectMember(newId);
+  });
+
+  window.addEventListener('mousemove', (e) => {
+    if (isPanning) {
+      state.pan.x = panOrigin.x + (e.clientX - panStart.x);
+      state.pan.y = panOrigin.y + (e.clientY - panStart.y);
+      updateTransform();
+      return;
+    }
+
+    if (draggingAnchor) {
+      const wCoords = screenToWorld(e.clientX, e.clientY);
+      const snapRadiusPx = Math.max(20, Math.min(60, 36 / state.zoom));
+
+      let bestDist = snapRadiusPx;
+      let closest  = null;
+
+      state.members.forEach(m => {
+        ['top', 'bottom', 'left', 'right'].forEach(side => {
+          const p    = getPortCoords(m, side);
+          const dist = Math.hypot(p.x - wCoords.x, p.y - wCoords.y);
+          if (dist < bestDist) {
+            bestDist = dist;
+            closest  = { memberId: m.id, side, pos: normalizePos(p) };
+          }
+        });
+      });
+
+      document.querySelectorAll('.port-dot.port-snap-target').forEach(el => el.classList.remove('port-snap-target'));
+      snapTarget = null;
+
+      let cursorPxX, cursorPxY;
+      if (closest) {
+        snapTarget  = { memberId: closest.memberId, side: closest.side };
+        cursorPxX   = closest.pos.x;
+        cursorPxY   = closest.pos.y;
+        const cardEl = cardsContainer.querySelector(`[data-id="${closest.memberId}"]`);
+        if (cardEl) {
+          const portEl = cardEl.querySelector(`.port-${closest.side}`);
+          if (portEl) portEl.classList.add('port-snap-target');
+        }
+      } else {
+        cursorPxX = toPx(wCoords.gx);
+        cursorPxY = toPx(wCoords.gy);
+      }
+
+      updateRubberbandLine(cursorPxX, cursorPxY);
+      return;
+    }
+
+    if (dragItem) {
+      const wCoords = screenToWorld(e.clientX, e.clientY);
+      const rawGx   = wCoords.gx - dragOffset.gx;
+      const rawGy   = wCoords.gy - dragOffset.gy;
+
+      const { gx: newGx, gy: newGy } = findNonOverlappingPos(dragItem, rawGx, rawGy);
+
+      if (newGx !== dragItem.gx || newGy !== dragItem.gy) {
+        dragItem.gx = newGx;
+        dragItem.gy = newGy;
+        dragItem.x  = toPx(newGx);
+        dragItem.y  = toPx(newGy);
+
+        const el = cardsContainer.querySelector(`[data-id="${dragItem.id}"]`);
+        if (el) {
+          el.style.left = `${dragItem.x}px`;
+          el.style.top  = `${dragItem.y}px`;
+        }
+        updateConnectedLines(dragItem.id);
+        if (selectedLinkId) refreshAnchorHandles();
+      }
+    }
+  });
+
+  window.addEventListener('mouseup', (e) => {
+    if (isPanning) {
+      isPanning = false;
+      viewport.classList.remove('panning');
+      persist();
+    }
+
+    if (draggingAnchor) {
+      document.querySelectorAll('.port-dot.port-snap-target').forEach(el => el.classList.remove('port-snap-target'));
+      clearRubberbandLine();
+
+      const link = state.links.find(l => l.id === draggingAnchor.linkId);
+      if (link && snapTarget) {
+        if (draggingAnchor.end === 'source') {
+          link.source     = snapTarget.memberId;
+          link.sourceSide = snapTarget.side;
+        } else {
+          link.target     = snapTarget.memberId;
+          link.targetSide = snapTarget.side;
+        }
+      }
+
+      draggingAnchor = null;
+      snapTarget     = null;
+      drawConnections();
+      persist();
+      return;
+    }
+
+    if (dragItem) {
+      dragItem = null;
+      persist();
+    }
+  });
+
+  viewport.addEventListener('click', (e) => {
+    if (e.target.id === 'viewport' || e.target.id === 'world' || e.target.id === 'grid-canvas' || e.target.tagName === 'svg') {
+      selectedId = null;
+      selectedLinkId = null;
+      document.body.classList.remove('line-selected');
+      sidePanel.classList.remove('open');
+      linePanel.classList.remove('open');
+      anchorHandlesLayer.innerHTML = '';
+      document.querySelectorAll('.person-card.active').forEach(c => c.classList.remove('active'));
+      drawConnections();
+    }
+  });
+
+  const editThemeSelect = document.getElementById('edit-theme');
+  const groupCustomColor = document.getElementById('group-custom-color');
+  editThemeSelect.addEventListener('change', (e) => {
+    groupCustomColor.style.display = (e.target.value === 'theme-custom') ? 'flex' : 'none';
+  });
+
+  function selectMember(id) {
+    selectedId = id;
+    selectedLinkId = null;
+    document.body.classList.remove('line-selected');
+    linePanel.classList.remove('open');
+    anchorHandlesLayer.innerHTML = '';
+
+    document.querySelectorAll('.person-card').forEach(c => {
+      c.classList.toggle('active', c.dataset.id === id);
+    });
+
+    const member = state.members.find(m => m.id === id);
+    if (!member) return;
+
+    const t = I18N[currentLang];
+    document.getElementById('panel-title').textContent = `${t.editDetails}: ${member.name || t.unnamed}`;
+    document.getElementById('edit-name').value = member.name || '';
+    document.getElementById('edit-grid-size').value = member.size || '6x6';
+    document.getElementById('edit-theme').value = member.theme || 'theme-blue';
+    document.getElementById('edit-custom-color').value = member.customColor || '#5e81ac';
+    groupCustomColor.style.display = (member.theme === 'theme-custom') ? 'flex' : 'none';
+    document.getElementById('edit-dates').value = member.dates || '';
+    document.getElementById('edit-bio').value = member.bio || '';
+    imageBuffer = member.avatar;
+
+    sidePanel.classList.add('open');
+    drawConnections();
+  }
+
+  function liveApplyCardEdits() {
+    if (!selectedId) return;
+    const member = state.members.find(m => m.id === selectedId);
+    if (!member) return;
+
+    const rawName = document.getElementById('edit-name').value;
+    member.name = rawName.trim() || I18N[currentLang].unnamed;
+    member.size = document.getElementById('edit-grid-size').value || '6x6';
+    member.theme = document.getElementById('edit-theme').value;
+    member.customColor = document.getElementById('edit-custom-color').value;
+    member.dates = document.getElementById('edit-dates').value;
+    member.bio = document.getElementById('edit-bio').value;
+    if (imageBuffer !== undefined) member.avatar = imageBuffer;
+
+    document.getElementById('panel-title').textContent = `${I18N[currentLang].editDetails}: ${member.name}`;
+    render();
+  }
+
+  ['edit-name', 'edit-dates', 'edit-bio'].forEach(id => {
+    document.getElementById(id).addEventListener('input', liveApplyCardEdits);
+  });
+
+  ['edit-grid-size', 'edit-theme', 'edit-custom-color'].forEach(id => {
+    document.getElementById(id).addEventListener('input', liveApplyCardEdits);
+    document.getElementById(id).addEventListener('change', liveApplyCardEdits);
+  });
+
+  document.getElementById('edit-avatar').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (evt) => {
+        imageBuffer = evt.target.result;
+        liveApplyCardEdits();
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+
+  document.getElementById('btn-close-panel').addEventListener('click', () => {
+    sidePanel.classList.remove('open');
+    selectedId = null;
+    document.querySelectorAll('.person-card.active').forEach(c => c.classList.remove('active'));
+  });
+
+  document.getElementById('btn-delete-node').addEventListener('click', () => {
+    if (!selectedId) return;
+    state.members = state.members.filter(m => m.id !== selectedId);
+    state.links = state.links.filter(l => l.source !== selectedId && l.target !== selectedId);
+    sidePanel.classList.remove('open');
+    selectedId = null;
+    render();
+  });
+
+  document.getElementById('btn-lang-toggle').addEventListener('click', () => {
+    const nextLang = currentLang === 'en' ? 'de' : 'en';
+    applyLanguage(nextLang);
+  });
+
+  const modalBg = document.getElementById('modal-bg-settings');
+  document.getElementById('btn-open-bg-settings').addEventListener('click', () => {
+    modalBg.classList.add('open');
+  });
+
+  document.getElementById('btn-close-bg-settings').addEventListener('click', () => {
+    modalBg.classList.remove('open');
+  });
+
+  toggleStyledLines.addEventListener('change', (e) => {
+    state.styledLinePatterns = e.target.checked;
+    drawConnections();
+    persist();
+  });
+
+  document.getElementById('bg-color-picker').addEventListener('input', (e) => {
+    state.bgColor = e.target.value;
+    document.documentElement.style.setProperty('--bg-color', state.bgColor);
+    persist();
+  });
+
+  document.getElementById('grid-dot-picker').addEventListener('input', (e) => {
+    state.gridColor = e.target.value;
+    document.documentElement.style.setProperty('--grid-dot-color', state.gridColor);
+    persist();
+  });
+
+  document.getElementById('bg-preset-select').addEventListener('change', (e) => {
+    const preset = e.target.value;
+    if (preset === 'dark-slate') {
+      state.bgColor = '#0F0F0F';
+      state.gridColor = '#444444';
+    } else if (preset === 'pure-black') {
+      state.bgColor = '#000000';
+      state.gridColor = '#2a2a2a';
+    } else if (preset === 'navy') {
+      state.bgColor = '#0b101b';
+      state.gridColor = '#29354d';
+    } else if (preset === 'light-clean') {
+      state.bgColor = '#F0F0F0';
+      state.gridColor = '#9a9a9a';
+    }
+    if (preset !== 'custom') {
+      document.getElementById('bg-color-picker').value = state.bgColor;
+      document.getElementById('grid-dot-picker').value = state.gridColor;
+      document.documentElement.style.setProperty('--bg-color', state.bgColor);
+      document.documentElement.style.setProperty('--grid-dot-color', state.gridColor);
+      persist();
+    }
+  });
+
+  document.getElementById('btn-open-export').addEventListener('click', () => {
+    document.getElementById('modal-export').classList.add('open');
+  });
+
+  document.getElementById('btn-export-cancel').addEventListener('click', () => {
+    document.getElementById('modal-export').classList.remove('open');
+  });
+
+  document.getElementById('export-format').addEventListener('change', (e) => {
+    const isSvg = e.target.value === 'svg';
+    document.getElementById('group-resolution').style.display = isSvg ? 'none' : 'flex';
+  });
+
+  document.getElementById('btn-export-download').addEventListener('click', () => {
+    const format = document.getElementById('export-format').value;
+    const targetHeight = parseInt(document.getElementById('export-res').value, 10);
+    const t = I18N[currentLang];
+
+    if (state.members.length === 0) {
+      alert(t.emptyAlert);
+      return;
+    }
+
+    let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+    state.members.forEach(m => {
+      const dims = getCardDims(m);
+      minX = Math.min(minX, m.x);
+      minY = Math.min(minY, m.y);
+      maxX = Math.max(maxX, m.x + dims.w);
+      maxY = Math.max(maxY, m.y + dims.h);
+    });
+
+    const padding = 72;
+    minX = snap(minX - padding);
+    minY = snap(minY - padding);
+    const boxW = snap((maxX - minX) + padding * 2);
+    const boxH = snap((maxY - minY) + padding * 2);
+
+    if (format === 'svg') {
+      exportAsSVG(minX, minY, boxW, boxH);
+    } else {
+      exportAsRaster(minX, minY, boxW, boxH, format, targetHeight);
+    }
+    document.getElementById('modal-export').classList.remove('open');
+  });
+
+  function exportAsSVG(minX, minY, boxW, boxH) {
+    const clonedSvg = svg.cloneNode(true);
+    clonedSvg.setAttribute('viewBox', `${minX} ${minY} ${boxW} ${boxH}`);
+    clonedSvg.setAttribute('width', boxW);
+    clonedSvg.setAttribute('height', boxH);
+
+    clonedSvg.querySelectorAll('.line-hitbox, .anchor-handle').forEach(el => el.remove());
+
+    const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
+    fo.setAttribute('x', minX);
+    fo.setAttribute('y', minY);
+    fo.setAttribute('width', boxW);
+    fo.setAttribute('height', boxH);
+
+    const div = document.createElement('div');
+    div.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+    state.members.forEach(m => {
+      const card = cardsContainer.querySelector(`[data-id="${m.id}"]`).cloneNode(true);
+      card.querySelectorAll('.port-dot').forEach(p => p.remove());
+      div.appendChild(card);
+    });
+    fo.appendChild(div);
+    clonedSvg.appendChild(fo);
+
+    const blob = new Blob([new XMLSerializer().serializeToString(clonedSvg)], { type: 'image/svg+xml;charset=utf-8' });
+    downloadBlob(blob, `family_tree.svg`);
+  }
+
+  function exportAsRaster(minX, minY, boxW, boxH, format, targetHeight) {
+    const scale = targetHeight / boxH;
+    const canvas = document.createElement('canvas');
+    canvas.width = boxW * scale;
+    canvas.height = targetHeight;
+    const ctx = canvas.getContext('2d');
+
+    const currentBg = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim() || '#0F0F0F';
+    ctx.fillStyle = currentBg;
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.scale(scale, scale);
+    ctx.translate(-minX, -minY);
+
+    state.links.forEach(l => {
+      const s = state.members.find(m => m.id === l.source);
+      const t = state.members.find(m => m.id === l.target);
+      if (!s || !t) return;
+
+      const sPos = getPortCoords(s, l.sourceSide || 'bottom');
+      const tPos = getPortCoords(t, l.targetSide || 'top');
+      const route = calculateEdgePath(sPos, l.sourceSide || 'bottom', tPos, l.targetSide || 'top', s, t);
+
+      ctx.strokeStyle = l.color || '#8c7870';
+      ctx.lineWidth = 2.5;
+
+      const isDashed = (state.styledLinePatterns !== false) && REL_DASH[l.type] && REL_DASH[l.type] !== 'none';
+      if (isDashed) {
+        ctx.setLineDash(REL_DASH[l.type].split(' ').map(Number));
+      } else {
+        ctx.setLineDash([]);
+      }
+
+      const path2d = new Path2D(route.path);
+      ctx.stroke(path2d);
+      ctx.setLineDash([]);
+    });
+
+    const themeColors = {
+      'theme-blue': '#d1e3f0',
+      'theme-pink': '#f7d4d6',
+      'theme-green': '#d6eedf',
+      'theme-yellow': '#fdf0cd'
+    };
+
+    let loadedImgs = 0;
+    const imgTotal = state.members.filter(m => m.avatar).length;
+
+    function finalizeDownload() {
+      const mime = `image/${format}`;
+      canvas.toBlob((blob) => {
+        downloadBlob(blob, `family_tree_${targetHeight}p.${format === 'jpeg' ? 'jpg' : format}`);
+      }, mime, 0.95);
+    }
+
+    if (imgTotal === 0) {
+      renderCardsRaster(ctx, themeColors);
+      finalizeDownload();
+    } else {
+      state.members.forEach(m => {
+        if (m.avatar) {
+          const img = new Image();
+          img.onload = () => {
+            m._cachedImg = img;
+            loadedImgs++;
+            if (loadedImgs === imgTotal) {
+              renderCardsRaster(ctx, themeColors);
+              finalizeDownload();
+            }
+          };
+          img.src = m.avatar;
+        }
+      });
+    }
+  }
+
+  function renderCardsRaster(ctx, themeColors) {
+    state.members.forEach(m => {
+      const dims = getCardDims(m);
+      const isCustom = m.theme === 'theme-custom' && m.customColor;
+      const cardBg = isCustom ? m.customColor : (themeColors[m.theme] || '#d1e3f0');
+      const cardBorder = isCustom ? adjustColorShade(m.customColor, -35) : '#82929e';
+      const textColor = isCustom ? getReadableTextColor(m.customColor) : '#222';
+
+      ctx.fillStyle = cardBg;
+      ctx.beginPath();
+      ctx.roundRect(m.x, m.y, dims.w, dims.h, 18);
+      ctx.fill();
+      ctx.strokeStyle = cardBorder;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.fillStyle = textColor;
+      ctx.font = 'bold 12px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText(m.name, m.x + dims.w / 2, m.y + 20, dims.w - 16);
+
+      const avatarSize = dims.w - 20;
+      ctx.fillStyle = '#111';
+      ctx.beginPath();
+      ctx.roundRect(m.x + 10, m.y + 28, avatarSize, avatarSize, 12);
+      ctx.fill();
+
+      if (m._cachedImg) {
+        ctx.save();
+        ctx.beginPath();
+        ctx.roundRect(m.x + 10, m.y + 28, avatarSize, avatarSize, 12);
+        ctx.clip();
+        ctx.drawImage(m._cachedImg, m.x + 10, m.y + 28, avatarSize, avatarSize);
+        ctx.restore();
+      }
+    });
+  }
+
+  function downloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  const tutorialModal = document.getElementById('modal-tutorial');
+  function checkTutorialOnLoad() {
+    if (!getCookie('ft_tutorial_seen')) {
+      tutorialModal.classList.add('open');
+    }
+  }
+
+  document.getElementById('btn-close-tutorial').addEventListener('click', () => {
+    setCookie('ft_tutorial_seen', 'true', 365);
+    tutorialModal.classList.remove('open');
+  });
+
+  document.getElementById('btn-open-tutorial').addEventListener('click', () => {
+    tutorialModal.classList.add('open');
+  });
+
+  const themeBtn = document.getElementById('theme-toggle');
+  const themeText = document.getElementById('theme-text');
+  const themeIcon = document.getElementById('theme-icon');
+
+  themeBtn.addEventListener('click', () => {
+    const isDark = document.body.getAttribute('data-theme') === 'dark';
+    document.body.setAttribute('data-theme', isDark ? 'light' : 'dark');
+    const t = I18N[currentLang];
+    themeText.textContent = isDark ? t.darkMode : t.lightMode;
+    themeIcon.innerHTML = isDark
+      ? '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>'
+      : '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>';
+    drawConnections();
+  });
+
+  document.getElementById('save-json-btn').addEventListener('click', () => {
+    const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+    downloadBlob(blob, 'family_tree.json');
+  });
+
+  document.getElementById('load-file').addEventListener('change', (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      try {
+        state = JSON.parse(evt.target.result);
+        if (!state.pan) state.pan = { x: 0, y: 0 };
+        if (!state.zoom) state.zoom = 1;
+        if (state.styledLinePatterns === undefined) state.styledLinePatterns = true;
+        state.members.forEach(m => {
+          m.gx = (m.gx !== undefined) ? Math.round(m.gx) : toGrid(m.x || 0);
+          m.gy = (m.gy !== undefined) ? Math.round(m.gy) : toGrid(m.y || 0);
+          m.x = toPx(m.gx);
+          m.y = toPx(m.gy);
+        });
+        sidePanel.classList.remove('open');
+        linePanel.classList.remove('open');
+        selectedId = null;
+        selectedLinkId = null;
+        document.body.classList.remove('line-selected');
+        if (state.bgColor) document.documentElement.style.setProperty('--bg-color', state.bgColor);
+        if (state.gridColor) document.documentElement.style.setProperty('--grid-dot-color', state.gridColor);
+        if (toggleStyledLines) toggleStyledLines.checked = state.styledLinePatterns;
+        render();
+        fitAndCenterView();
+      } catch (err) {
+        alert(I18N[currentLang].invalidJson);
+      }
+    };
+    reader.readAsText(file);
+  });
+
+  document.getElementById('btn-reset').addEventListener('click', () => {
+    if (confirm(I18N[currentLang].clearConfirm)) {
+      state = { members: [], links: [], pan: { x: 0, y: 0 }, zoom: 1, bgColor: null, gridColor: null, styledLinePatterns: true };
+      sidePanel.classList.remove('open');
+      linePanel.classList.remove('open');
+      selectedId = null;
+      selectedLinkId = null;
+      document.body.classList.remove('line-selected');
+      if (toggleStyledLines) toggleStyledLines.checked = true;
+      render();
+    }
+  });
+
+  loadPersistedState();
+  applyLanguage(currentLang);
+  render();
+  checkTutorialOnLoad();
+</script>
+</body>
+</html>
