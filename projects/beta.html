@@ -71,7 +71,13 @@
 </head>
 
 <body class="flex flex-col min-h-[100dvh] md:h-screen w-full overflow-x-hidden overflow-y-auto md:overflow-hidden selection:bg-white/10 relative">
-    <!-- Back Arrow to Main Page --> <a href="https://thataustrianone.eu" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"> <line x1="19" y1="12" x2="5" y2="12"></line> <polyline points="12 19 5 12 12 5"></polyline> </svg> </a>
+    <!-- Glass Box Back Button (Matched to card styling & transparency) -->
+    <a href="https://thataustrianone.eu" aria-label="Back to home" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] w-10 h-10 rounded-xl glass-box hover:border-zinc-300/80 hover:shadow-[0_0_25px_rgba(212,212,216,0.3)] text-zinc-400 hover:text-white flex items-center justify-center transition-all duration-300 hover:scale-105 active:scale-95 group">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-0.5 transition-transform duration-200">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+        </svg>
+    </a>
 
     <main class="relative z-10 max-w-[1500px] mx-auto px-4 sm:px-6 w-full flex-grow flex flex-col justify-start py-10 md:py-6 h-full min-h-0">
         
@@ -107,8 +113,8 @@
             <button onclick="handleCookie('granted')" id="cookie-accept" class="flex-1 sm:flex-none px-6 py-3 rounded-xl font-bold text-xs bg-white text-black hover:bg-zinc-200 transition-colors uppercase tracking-widest shadow-lg"></button>
         </div>
     </div>
-    
-<script>
+
+    <script>
         function escapeHTML(str) {
             return String(str)
                 .replace(/&/g, "&amp;")
@@ -124,6 +130,7 @@
         const GITHUB_RAW_BASE = "https://raw.githubusercontent.com/der46er/webseite/main/projects";
         const arrowUpRight = '<line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline>';
 
+        // SVG Icon Library for dynamic rendering based on info.json
         const iconsMap = {
             web: `<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>`,
             theme: `<path d="M18.37 2.63a2.12 2.12 0 0 1 3 3L13.5 13.5l-4 1 1-4Z"/><path d="M9 14.5 4 19.5c-.83.83-2.17.83-3 0 0 0 0 0 0 0s.83-2.17 0-3L6 11.5"/>`,
@@ -155,44 +162,35 @@
 
         async function fetchProjects() {
             try {
-                const response = await fetch(GITHUB_API_URL);
-                if (!response.ok) throw new Error("Failed to fetch repository folders");
+                sessionStorage.removeItem('cachedProjects');
+                const timestamp = Date.now();
+
+                const response = await fetch(`${GITHUB_API_URL}?t=${timestamp}`, {
+                    cache: 'no-store'
+                });
+                if (!response.ok) throw new Error("Failed to fetch");
                 const data = await response.json();
                 
-                // Only take directories
+                // STAGE 1: Strictly filter ONLY subdirectories (type === 'dir')
                 const directories = data.filter(file => file.type === 'dir');
 
+                // STAGE 2: Fetch info.json inside each directory; bypass GitHub Raw CDN caching
                 const projectPromises = directories.map(async (folder) => {
-                    // Cache buster parameter prevents stale responses from raw GitHub CDN
-                    const infoUrl = `${GITHUB_RAW_BASE}/${folder.name}/info.json?v=${Date.now()}`;
+                    const infoUrl = `${GITHUB_RAW_BASE}/${folder.name}/info.json?t=${timestamp}`;
                     try {
-                        const infoRes = await fetch(infoUrl);
+                        const infoRes = await fetch(infoUrl, { cache: 'no-store' });
                         if (!infoRes.ok) return null;
 
                         const info = await infoRes.json();
-                        
-                        // Strict validation for the new project format
-                        if (!info || typeof info !== 'object' || !info.project || typeof info.project !== 'object') {
-                            return null;
-                        }
+                        const p = info.project || info;
 
-                        const p = info.project;
-
-                        // Verify mandatory fields are present
-                        if (!p.id || !p.title || !p.description) {
-                            return null;
-                        }
-
-                        let titleDe = p.title;
+                        let titleDe = p.title || folder.name.replace(/_/g, ' ');
                         let titleEn = p.title_en || titleDe;
-                        let descriptionDe = p.description;
+                        let descriptionDe = p.description || "Website / Projekt";
                         let descriptionEn = p.description_en || descriptionDe;
                         let iconType = (p.icon && iconsMap[p.icon.toLowerCase()]) ? p.icon.toLowerCase() : 'web';
 
                         return {
-                            id: p.id,
-                            version: p.version || '',
-                            date: p.date || '',
                             name: { de: titleDe, en: titleEn },
                             description: { de: descriptionDe, en: descriptionEn },
                             icon: iconType,
