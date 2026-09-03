@@ -147,37 +147,6 @@
   button:active, label.btn-label:active { transform: translateY(0); }
   button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
 
-  .btn-group {
-    display: inline-flex;
-    align-items: center;
-    background: #2b2b2b;
-    border: 1px solid var(--border-color);
-    border-radius: 20px;
-    overflow: hidden;
-    flex-shrink: 0;
-  }
-
-  [data-theme="light"] .btn-group {
-    background: #e5e5e5;
-  }
-
-  .btn-group button {
-    border: none;
-    border-radius: 0;
-    padding: 7px 12px;
-    background: transparent;
-  }
-
-  .btn-group button:hover {
-    transform: none;
-    filter: brightness(1.2);
-  }
-
-  .btn-group .btn-gear {
-    padding: 7px 9px;
-    border-left: 1px solid var(--border-color);
-  }
-
   #btn-lang-toggle { padding: 4px 10px; margin-left: auto; }
   #btn-lang-toggle img { width: 20px; height: auto; border-radius: 4px; display: block; }
 
@@ -361,87 +330,14 @@
 
   @keyframes pulse { from { transform: translate(-50%, -50%) scale(1.1); } to { transform: translate(-50%, -50%) scale(1.4); } }
 
-  .line-label-bg {
-    fill: var(--bg-color);
-    rx: 4px;
-    ry: 4px;
-  }
-
   .line-label {
-    font-size: 11px;
-    font-weight: 700;
+    font-size: 10px;
     fill: var(--text-color);
+    font-weight: 600;
     paint-order: stroke;
     stroke: var(--bg-color);
-    stroke-width: 4px;
-    stroke-linejoin: round;
+    stroke-width: 3px;
     pointer-events: none;
-  }
-
-  /* Map Legend Container (Auto Expanding, No Scrollbar) */
-  .legend-box {
-    position: absolute;
-    box-sizing: border-box;
-    background: var(--panel-bg);
-    border: 2px solid var(--border-color);
-    border-radius: 16px;
-    box-shadow: 0 10px 24px var(--card-shadow);
-    padding: 12px 14px;
-    z-index: 25;
-    cursor: grab;
-    user-select: none;
-    touch-action: none;
-    display: flex;
-    flex-direction: column;
-    overflow: visible;
-  }
-
-  .legend-box.active {
-    outline: 2.5px solid #88c0d0;
-  }
-
-  .legend-box:active {
-    cursor: grabbing;
-  }
-
-  .legend-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid var(--border-color);
-    padding-bottom: 6px;
-    margin-bottom: 8px;
-    font-size: 12px;
-    font-weight: 700;
-    color: var(--accent);
-  }
-
-  .legend-items {
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    overflow: visible;
-  }
-
-  .legend-row {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    font-size: 12px;
-  }
-
-  .legend-line-sample {
-    width: 36px;
-    height: 12px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-
-  .legend-line-sample svg {
-    width: 100%;
-    height: 100%;
-    overflow: visible;
   }
 
   .modal-backdrop {
@@ -462,7 +358,7 @@
     background: var(--panel-bg);
     border: 1px solid var(--border-color);
     padding: 24px;
-    width: 440px;
+    width: 420px;
     max-width: 100%;
     border-radius: 20px;
     display: flex;
@@ -471,7 +367,54 @@
     box-shadow: 0 16px 32px rgba(0,0,0,0.6);
   }
 
-  /* Slide-out Panel / Drawer */
+  .modal-card-large {
+    width: 680px;
+    max-height: 85vh;
+  }
+
+  .tutorial-content {
+    overflow-y: auto;
+    padding-right: 10px;
+    margin-right: -4px;
+    font-size: 13px;
+    line-height: 1.55;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  .tutorial-section {
+    background: var(--input-bg);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 12px 16px;
+  }
+
+  .tutorial-section h4 {
+    color: var(--accent);
+    margin-bottom: 8px;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .tutorial-legend-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 6px;
+    font-size: 12px;
+  }
+
+  .tutorial-legend-table td {
+    padding: 5px 8px;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .tutorial-legend-table tr:last-child td {
+    border-bottom: none;
+  }
+
+  /* Desktop side drawers */
   .side-drawer {
     position: fixed;
     top: 60px;
@@ -493,6 +436,7 @@
 
   .side-drawer.open { right: 0; }
 
+  /* Mobile bottom sheet transformation */
   @media (max-width: 768px) {
     .side-drawer {
       top: auto;
@@ -519,6 +463,7 @@
 
     .modal-card {
       width: 100%;
+      max-width: 100%;
       border-radius: 24px 24px 0 0;
       border-bottom: none;
       padding: 20px 20px calc(20px + env(safe-area-inset-bottom, 0px));
@@ -570,18 +515,6 @@
   <button id="btn-fit-view">
     <svg class="icon" viewBox="0 0 24 24"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg> <span data-i18n="centerTree">Center Tree</span>
   </button>
-
-  <!-- Grouped Map Legend button + Gear -->
-  <div class="btn-group">
-    <button id="btn-toggle-legend" title="Toggle Map Legend on canvas">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M3 3h18v18H3z"/><path d="M7 8h10M7 12h6M7 16h8"/></svg> 
-      <span data-i18n="legendBtn">Map Legend</span>
-    </button>
-    <button class="btn-gear" id="btn-open-legend-settings" title="Configure Map Legend">
-      <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
-    </button>
-  </div>
-
   <button id="btn-open-export">
     <svg class="icon" viewBox="0 0 24 24"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/></svg> <span data-i18n="exportImage">Export Image</span>
   </button>
@@ -592,6 +525,9 @@
     <svg class="icon" viewBox="0 0 24 24"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg> <span data-i18n="loadJson">Load JSON</span>
   </label>
   <input type="file" id="load-file" accept=".json" style="display:none;">
+  <button id="btn-open-tutorial">
+    <svg class="icon" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg> <span data-i18n="tutorial">Tutorial</span>
+  </button>
   <button id="btn-reset">
     <svg class="icon" viewBox="0 0 24 24"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg> <span data-i18n="clear">Clear</span>
   </button>
@@ -614,7 +550,6 @@
     <svg id="anchor-drag-line"></svg>
     <div id="anchor-handles-layer"></div>
     <div id="cards-container"></div>
-    <div id="legend-container"></div>
   </div>
 </div>
 
@@ -645,9 +580,31 @@
         <span style="font-size: 11px; opacity: 0.8;" data-i18n="gridDotsColor">Grid dots color</span>
       </div>
     </div>
+    <div class="form-group">
+      <label data-i18n="presetThemesLabel">Preset Themes</label>
+      <select id="bg-preset-select">
+        <option value="custom" data-i18n="optCustom">Custom Defined</option>
+        <option value="dark-slate" data-i18n="optDarkSlate">Deep Slate (#0F0F0F)</option>
+        <option value="pure-black" data-i18n="optPureBlack">OLED Pure Black (#000000)</option>
+        <option value="navy" data-i18n="optNavy">Midnight Navy (#0b101b)</option>
+        <option value="light-clean" data-i18n="optLightClean">Clean White (#F0F0F0)</option>
+      </select>
+    </div>
     <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 8px;">
       <button id="btn-close-bg-settings" class="primary" data-i18n="done">Done</button>
     </div>
+  </div>
+</div>
+
+<!-- Detailed Tutorial & Info Modal -->
+<div class="modal-backdrop" id="modal-tutorial">
+  <div class="modal-card modal-card-large">
+    <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
+      <h3 data-i18n="tutorialTitle">Family Tree Studio — Documentation & Tutorial</h3>
+      <button id="btn-close-tutorial" class="primary" style="padding: 4px 12px;" data-i18n="gotIt">Got it</button>
+    </div>
+
+    <div class="tutorial-content" id="tutorial-body"></div>
   </div>
 </div>
 
@@ -662,7 +619,7 @@
     <div class="form-group">
       <label data-i18n="lineColor">Line Color</label>
       <div style="display: flex; gap: 8px; align-items: center;">
-        <input type="color" id="modal-line-color" value="#e65100" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
+        <input type="color" id="modal-line-color" value="#8c7870" style="padding: 2px; width: 44px; height: 36px; cursor: pointer;">
         <span style="font-size: 11px; opacity: 0.8;" data-i18n="customRouteColor">Custom route accent color</span>
       </div>
     </div>
@@ -791,36 +748,6 @@
   </div>
 </aside>
 
-<!-- Legend Editor Drawer -->
-<aside class="side-drawer" id="legend-panel">
-  <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid var(--border-color); padding-bottom:8px;">
-    <h3 data-i18n="legendPanelTitle">Edit Map Legend</h3>
-    <button id="btn-close-legend-panel" style="padding: 4px 10px;">
-      <svg class="icon" viewBox="0 0 24 24"><path d="M18 6L6 18M6 6l12 12"/></svg>
-    </button>
-  </div>
-  <div class="form-group">
-    <label data-i18n="legendTitleLabel">Legend Box Title</label>
-    <input type="text" id="legend-edit-title" value="Tree Legend">
-  </div>
-  <div class="form-group">
-    <label data-i18n="legendWidthLabel">Legend Box Width</label>
-    <select id="legend-edit-width">
-      <option value="6" data-i18n="width6">6 Dots (144px - Narrow)</option>
-      <option value="8" data-i18n="width8">8 Dots (192px - Compact)</option>
-      <option value="10" data-i18n="width10" selected>10 Dots (240px - Standard)</option>
-      <option value="12" data-i18n="width12">12 Dots (288px - Wide)</option>
-    </select>
-  </div>
-  <div style="display:flex; flex-direction:column; gap:6px; margin-top:4px;">
-    <label style="font-size:12px; font-weight:600;" data-i18n="legendItemsHeading">Active Connections & Explanations</label>
-    <div id="legend-edit-items-container" style="display:flex; flex-direction:column; gap:8px; max-height:260px; overflow-y:auto; padding-right:4px;"></div>
-  </div>
-  <div style="display:flex; flex-direction:column; gap:8px; margin-top:auto; padding-top:10px;">
-    <button id="btn-toggle-legend-visibility" style="background:#2b2b2b; color:#fff; width:100%; justify-content:center;" data-i18n="hideLegend">Hide Legend</button>
-  </div>
-</aside>
-
 <script>
   const GRID_SIZE = 24;
 
@@ -831,22 +758,29 @@
       addPerson: 'Add Person',
       duplicate: 'Duplicate',
       centerTree: 'Center Tree',
-      legendBtn: 'Map Legend',
-      legendPanelTitle: 'Edit Map Legend',
       exportImage: 'Export Image',
       saveJson: 'Save JSON',
       loadJson: 'Load JSON',
+      tutorial: 'Tutorial',
       clear: 'Clear',
       lightMode: 'Light Mode',
       darkMode: 'Dark Mode',
       bgSettingsTitle: 'Canvas Background & Tree Settings',
       styledLinesToggleTitle: 'Styled Relationship Line Patterns',
-      styledLinesToggleDesc: 'Display dashes & dots according to relationship types',
+      styledLinesToggleDesc: 'Display dashes & dots according to relationship types (disable for uniform solid lines)',
       bgColorLabel: 'Background Canvas Color',
       baseFieldTone: 'Base field tone',
       gridDotLabel: 'Grid Dot Matrix Color',
       gridDotsColor: 'Grid dots color',
+      presetThemesLabel: 'Preset Themes',
+      optCustom: 'Custom Defined',
+      optDarkSlate: 'Deep Slate (#0F0F0F)',
+      optPureBlack: 'OLED Pure Black (#000000)',
+      optNavy: 'Midnight Navy (#0b101b)',
+      optLightClean: 'Clean White (#F0F0F0)',
       done: 'Done',
+      tutorialTitle: 'Family Tree Studio — Documentation & Tutorial',
+      gotIt: 'Got it',
       connectRelatives: 'Connect Relatives',
       relClassification: 'Relationship Classification',
       lineColor: 'Line Color',
@@ -890,17 +824,6 @@
       personPrefix: 'Person',
       copySuffix: 'Copy',
       connectTitle: (s, ss, t, ts) => `Connect ${s} (${ss}) → ${t} (${ts})`,
-      legendTitleLabel: 'Legend Box Title',
-      legendWidthLabel: 'Legend Box Width',
-      width6: '6 Dots (144px - Narrow)',
-      width8: '8 Dots (192px - Compact)',
-      width10: '10 Dots (240px - Standard)',
-      width12: '12 Dots (288px - Wide)',
-      legendItemsHeading: 'Active Connections & Explanations',
-      hideLegend: 'Hide Legend',
-      showLegend: 'Show Legend on Canvas',
-      defaultLegendTitle: 'Tree Legend',
-      noActiveLinesMsg: 'No relationship lines yet',
       relGroups: {
         blood: 'Direct / Blood',
         spouse: 'Spouse / Partnership',
@@ -934,7 +857,33 @@
         grandchild:       { opt: 'Grandchild', tag: 'Grandchild' },
         chosen_family:    { opt: 'Chosen Family', tag: 'Chosen' },
         pet:              { opt: 'Companion / Pet', tag: 'Companion' }
-      }
+      },
+      tutorialSections: `
+        <div class="tutorial-section">
+          <h4>1. Canvas Navigation & Controls</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Panning:</strong> Click and drag on empty canvas space to move around (or 2 fingers on mobile).</li>
+            <li><strong>Zooming:</strong> Scroll mouse wheel or pinch with two fingers.</li>
+            <li><strong>Center View:</strong> Hit <em>Center Tree</em> to fit the entire graph cleanly.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>2. Managing People & Boxes</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Add / Move:</strong> Click <em>Add Person</em> to place a card on the grid. Drag a card; collision protection guarantees boxes never overlap.</li>
+            <li><strong>Live Editing:</strong> Select any card to open the bottom sheet/drawer. Name, sizing, custom colors, and bios update live.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>3. Connecting Relatives</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Connect:</strong> Tap/click any circular port dot (Top, Bottom, Left, or Right) on a person, then tap another person's port.</li>
+            <li><strong>Anchor Re-routing:</strong> Tap any existing connection line to select it and drag its endpoints directly to different ports.</li>
+          </ul>
+        </div>
+      `
     },
     de: {
       flag: 'https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp',
@@ -942,22 +891,29 @@
       addPerson: 'Person hinzufügen',
       duplicate: 'Duplizieren',
       centerTree: 'Zentrieren',
-      legendBtn: 'Kartenlegende',
-      legendPanelTitle: 'Kartenlegende bearbeiten',
       exportImage: 'Bild exportieren',
       saveJson: 'JSON speichern',
       loadJson: 'JSON laden',
+      tutorial: 'Anleitung',
       clear: 'Leeren',
       lightMode: 'Heller Modus',
       darkMode: 'Dunkler Modus',
       bgSettingsTitle: 'Hintergrund- & Stammbaum-Einstellungen',
       styledLinesToggleTitle: 'Beziehungs-Linienstile (Gestrichelt / Gepunktet)',
-      styledLinesToggleDesc: 'Linien je nach Beziehungstyp unterschiedlich mustern',
+      styledLinesToggleDesc: 'Linien je nach Beziehungstyp unterschiedlich mustern (deaktivieren für einheitliche durchgezogene Linien)',
       bgColorLabel: 'Hintergrundfarbe',
       baseFieldTone: 'Arbeitsbereich-Farbton',
       gridDotLabel: 'Rasterpunkte-Farbe',
       gridDotsColor: 'Farbe der Rasterpunkte',
+      presetThemesLabel: 'Farb-Presets',
+      optCustom: 'Benutzerdefiniert',
+      optDarkSlate: 'Deep Slate (#0F0F0F)',
+      optPureBlack: 'OLED Pure Black (#000000)',
+      optNavy: 'Midnight Navy (#0b101b)',
+      optLightClean: 'Clean White (#F0F0F0)',
       done: 'Fertig',
+      tutorialTitle: 'Family Tree Studio — Anleitung & Dokumentation',
+      gotIt: 'Verstanden',
       connectRelatives: 'Verbindung herstellen',
       relClassification: 'Beziehungskategorie',
       lineColor: 'Linienfarbe',
@@ -1001,17 +957,6 @@
       personPrefix: 'Person',
       copySuffix: 'Kopie',
       connectTitle: (s, ss, t, ts) => `Verbinde ${s} (${ss}) → ${t} (${ts})`,
-      legendTitleLabel: 'Titel der Legendenbox',
-      legendWidthLabel: 'Legendenbreite',
-      width6: '6 Punkte (144px - Schmal)',
-      width8: '8 Punkte (192px - Kompakt)',
-      width10: '10 Punkte (240px - Standard)',
-      width12: '12 Punkte (288px - Breit)',
-      legendItemsHeading: 'Aktive Linien & Erklärungen',
-      hideLegend: 'Legende ausblenden',
-      showLegend: 'Legende auf Leinwand anzeigen',
-      defaultLegendTitle: 'Legende',
-      noActiveLinesMsg: 'Noch keine Linien vorhanden',
       relGroups: {
         blood: 'Direkt / Blutsverwandt',
         spouse: 'Ehe / Partnerschaft',
@@ -1045,7 +990,25 @@
         grandchild:       { opt: 'Enkelkind', tag: 'Enkel' },
         chosen_family:    { opt: 'Wahlfamilie', tag: 'Wahlfamilie' },
         pet:              { opt: 'Haustier / Begleiter', tag: 'Gefährte' }
-      }
+      },
+      tutorialSections: `
+        <div class="tutorial-section">
+          <h4>1. Navigation & Arbeitsfläche</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Verschieben:</strong> Auf freien Flächen mit der Maus ziehen (oder mit 2 Fingern auf dem Handy).</li>
+            <li><strong>Zoomen:</strong> Mausrad oder 2-Finger Pinch-Geste.</li>
+            <li><strong>Zentrieren:</strong> Ein Klick auf <em>Zentrieren</em> richtet den Baum optimal aus.</li>
+          </ul>
+        </div>
+
+        <div class="tutorial-section">
+          <h4>2. Personen & Boxen verwalten</h4>
+          <ul style="padding-left: 18px;">
+            <li><strong>Erstellen / Bewegen:</strong> Karte per Touch oder Maus verschieben. Überlappungsschutz verhindert Kollisionen.</li>
+            <li><strong>Live-Bearbeitung:</strong> Tippe eine Karte an; das kompakte Menü öffnet sich am Bildschirmrand ohne das Diagramm zu verdecken.</li>
+          </ul>
+        </div>
+      `
     }
   };
 
@@ -1114,15 +1077,7 @@
     zoom: 1,
     bgColor: null,
     gridColor: null,
-    styledLinePatterns: true,
-    legend: {
-      enabled: false,
-      title: 'Tree Legend',
-      widthUnits: 10,
-      gx: 2,
-      gy: 2,
-      items: {}
-    }
+    styledLinePatterns: true
   };
 
   let connectSource = null;
@@ -1140,6 +1095,7 @@
   let panStart = { x: 0, y: 0 };
   let panOrigin = { x: 0, y: 0 };
 
+  // Multi-touch gestures
   let touchStartDist = 0;
   let touchStartZoom = 1;
   let touchStartCenter = { x: 0, y: 0 };
@@ -1147,13 +1103,11 @@
   const viewport  = document.getElementById('viewport');
   const world     = document.getElementById('world');
   const cardsContainer   = document.getElementById('cards-container');
-  const legendContainer  = document.getElementById('legend-container');
   const anchorHandlesLayer = document.getElementById('anchor-handles-layer');
   const anchorDragSvg    = document.getElementById('anchor-drag-line');
   const svg       = document.getElementById('tree-lines');
   const sidePanel = document.getElementById('side-panel');
   const linePanel = document.getElementById('line-panel');
-  const legendPanel = document.getElementById('legend-panel');
   const toggleStyledLines = document.getElementById('toggle-styled-lines');
 
   function populateRelationshipSelects() {
@@ -1194,6 +1148,9 @@
       if (t[key]) el.innerHTML = t[key];
     });
 
+    const tutBody = document.getElementById('tutorial-body');
+    if (tutBody) tutBody.innerHTML = t.tutorialSections;
+
     const datesInput = document.getElementById('edit-dates');
     if (datesInput) datesInput.placeholder = t.datesPlaceholder;
 
@@ -1209,8 +1166,20 @@
       }
     }
 
-    renderLegend();
     drawConnections();
+  }
+
+  function setCookie(name, value, days = 365) {
+    const d = new Date();
+    d.setTime(d.getTime() + (days * 24 * 60 * 60 * 1000));
+    document.cookie = `${name}=${value};expires=${d.toUTCString()};path=/;SameSite=Lax`;
+  }
+
+  function getCookie(name) {
+    const val = `; ${document.cookie}`;
+    const parts = val.split(`; ${name}=`);
+    if (parts.length === 2) return parts.pop().split(';').shift();
+    return null;
   }
 
   function persist() {
@@ -1227,12 +1196,6 @@
         if (!state.pan) state.pan = { x: 0, y: 0 };
         if (!state.zoom) state.zoom = 1;
         if (state.styledLinePatterns === undefined) state.styledLinePatterns = true;
-        if (!state.legend) {
-          state.legend = { enabled: false, title: 'Tree Legend', widthUnits: 10, gx: 2, gy: 2, items: {} };
-        }
-        if (!state.legend.widthUnits) {
-          state.legend.widthUnits = 10;
-        }
         state.members.forEach(m => {
           m.gx = (m.gx !== undefined) ? Math.round(m.gx) : toGrid(m.x || 0);
           m.gy = (m.gy !== undefined) ? Math.round(m.gy) : toGrid(m.y || 0);
@@ -1269,17 +1232,6 @@
     const units = getCardUnitSpan(member);
     const pxSize = units * GRID_SIZE;
     return { w: pxSize, h: pxSize, units };
-  }
-
-  // Calculate dynamic Legend dimensions snapping to 24px increments
-  function getLegendDims() {
-    const gw = parseInt(state.legend?.widthUnits, 10) || 10;
-    const count = getActiveLineVariations().length;
-    // Base height: Header + padding (~40px) + 24px per line item, min 1 item height
-    const rowCount = Math.max(1, count);
-    const neededPx = 42 + (rowCount * 24);
-    const gh = Math.max(3, Math.ceil(neededPx / GRID_SIZE));
-    return { gw, gh, w: gw * GRID_SIZE, h: gh * GRID_SIZE };
   }
 
   function getPortCoords(member, side) {
@@ -1319,7 +1271,7 @@
     }
   }
 
-  function segmentHitsBoxGrid(p1, p2, box, pad = 0.5) {
+  function segmentHitsBoxGrid(p1, p2, box, pad = 1) {
     const L = box.left - pad;
     const R = box.right + pad;
     const T = box.top - pad;
@@ -1353,32 +1305,15 @@
       }
     });
 
-    if (clean.length < 2) return { path: `M 0 0`, midX: 0, midY: 0, segments: [] };
+    if (clean.length < 2) return { path: `M 0 0`, midX: 0, midY: 0 };
 
     let d = `M ${toPx(clean[0].gx)} ${toPx(clean[0].gy)}`;
-    const segments = [];
     for (let i = 1; i < clean.length; i++) {
       d += ` L ${toPx(clean[i].gx)} ${toPx(clean[i].gy)}`;
-      segments.push({
-        p1: { x: toPx(clean[i - 1].gx), y: toPx(clean[i - 1].gy) },
-        p2: { x: toPx(clean[i].gx), y: toPx(clean[i].gy) }
-      });
     }
 
-    let bestSeg = segments[0];
-    let maxLen = -1;
-    segments.forEach(s => {
-      const len = Math.hypot(s.p2.x - s.p1.x, s.p2.y - s.p1.y);
-      if (len > maxLen) {
-        maxLen = len;
-        bestSeg = s;
-      }
-    });
-
-    const midX = (bestSeg.p1.x + bestSeg.p2.x) / 2;
-    const midY = (bestSeg.p1.y + bestSeg.p2.y) / 2;
-
-    return { path: d, midX, midY, segments };
+    const midIdx = Math.floor(clean.length / 2);
+    return { path: d, midX: toPx(clean[midIdx].gx), midY: toPx(clean[midIdx].gy) };
   }
 
   function calculateEdgePath(sPos, sSide, tPos, tSide, sourceMember, targetMember) {
@@ -1396,38 +1331,6 @@
         if (segmentHitsBoxGrid(p1, p2, box)) return false;
       }
       return true;
-    }
-
-    if ((sSide === 'left' || sSide === 'right') && tSide === 'top') {
-      const dropY = Math.round(s.gy + (t.gy - s.gy) / 2);
-      const corridor = [
-        s,
-        { gx: s.gx + (sSide === 'left' ? -1 : 1), gy: s.gy },
-        { gx: s.gx + (sSide === 'left' ? -1 : 1), gy: dropY },
-        { gx: t.gx, gy: dropY },
-        t
-      ];
-      let valid = true;
-      for (let i = 0; i < corridor.length - 1; i++) {
-        if (!isSegmentAllowed(corridor[i], corridor[i + 1])) { valid = false; break; }
-      }
-      if (valid) return gridPointsToSvgPath(corridor);
-    }
-
-    if (sSide === 'top' && (tSide === 'left' || tSide === 'right')) {
-      const dropY = Math.round(t.gy + (s.gy - t.gy) / 2);
-      const corridor = [
-        s,
-        { gx: s.gx, gy: dropY },
-        { gx: t.gx + (tSide === 'left' ? -1 : 1), gy: dropY },
-        { gx: t.gx + (tSide === 'left' ? -1 : 1), gy: t.gy },
-        t
-      ];
-      let valid = true;
-      for (let i = 0; i < corridor.length - 1; i++) {
-        if (!isSegmentAllowed(corridor[i], corridor[i + 1])) { valid = false; break; }
-      }
-      if (valid) return gridPointsToSvgPath(corridor);
     }
 
     if (s.gx === t.gx || s.gy === t.gy) {
@@ -1450,8 +1353,12 @@
       ys.add(b.bottom + 2);
     });
 
-    const midY = Math.round((c1.gy + c2.gy) / 2);
-    ys.add(midY);
+    xs.add(Math.round((c1.gx + c2.gx) / 2));
+    ys.add(Math.round((c1.gy + c2.gy) / 2));
+    xs.add(Math.round((s.gx + c2.gx) / 2));
+    xs.add(Math.round((c1.gx + t.gx) / 2));
+    ys.add(Math.round((s.gy + c2.gy) / 2));
+    ys.add(Math.round((c1.gy + t.gy) / 2));
 
     const xArr = Array.from(xs).sort((a, b) => a - b);
     const yArr = Array.from(ys).sort((a, b) => a - b);
@@ -1490,7 +1397,27 @@
       return gridPointsToSvgPath(bestRoute);
     }
 
-    return gridPointsToSvgPath([s, c1, { gx: c2.gx, gy: c1.gy }, c2, t]);
+    const envLeft   = allBoxes.length ? Math.min(...allBoxes.map(b => b.left)) - 2 : c1.gx;
+    const envRight  = allBoxes.length ? Math.max(...allBoxes.map(b => b.right)) + 2 : c1.gx;
+    const envTop    = allBoxes.length ? Math.min(...allBoxes.map(b => b.top)) - 2 : c1.gy;
+    const envBottom = allBoxes.length ? Math.max(...allBoxes.map(b => b.bottom)) + 2 : c1.gy;
+
+    const detours = [
+      [s, c1, { gx: c1.gx, gy: envBottom }, { gx: c2.gx, gy: envBottom }, c2, t],
+      [s, c1, { gx: c1.gx, gy: envTop }, { gx: c2.gx, gy: envTop }, c2, t],
+      [s, c1, { gx: envRight, gy: c1.gy }, { gx: envRight, gy: c2.gy }, c2, t],
+      [s, c1, { gx: envLeft, gy: c1.gy }, { gx: envLeft, gy: c2.gy }, c2, t],
+    ];
+
+    for (const pts of detours) {
+      let ok = true;
+      for (let i = 0; i < pts.length - 1; i++) {
+        if (!isSegmentAllowed(pts[i], pts[i + 1])) { ok = false; break; }
+      }
+      if (ok) return gridPointsToSvgPath(pts);
+    }
+
+    return gridPointsToSvgPath(detours[0]);
   }
 
   function normalizePos(pos) {
@@ -1513,8 +1440,6 @@
     const hitbox = group.querySelector('.line-hitbox');
     const path   = group.querySelector('.line-path');
     let label  = group.querySelector('.line-label');
-    let labelBg = group.querySelector('.line-label-bg');
-
     if (hitbox) hitbox.setAttribute('d', route.path);
     if (path)   path.setAttribute('d', route.path);
 
@@ -1522,28 +1447,16 @@
     const localizedTag = t.relLabels[link.type]?.tag || '';
     if (localizedTag) {
       if (!label) {
-        labelBg = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        labelBg.setAttribute('class', 'line-label-bg');
-        group.appendChild(labelBg);
-
         label = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         label.setAttribute('text-anchor', 'middle');
-        label.setAttribute('dominant-baseline', 'middle');
         label.setAttribute('class', 'line-label');
         group.appendChild(label);
       }
       label.textContent = localizedTag;
       label.setAttribute('x', route.midX);
-      label.setAttribute('y', route.midY);
-
-      const textW = localizedTag.length * 7 + 10;
-      labelBg.setAttribute('x', route.midX - textW / 2);
-      labelBg.setAttribute('y', route.midY - 8);
-      labelBg.setAttribute('width', textW);
-      labelBg.setAttribute('height', 16);
-    } else {
-      if (label) label.remove();
-      if (labelBg) labelBg.remove();
+      label.setAttribute('y', route.midY - 6);
+    } else if (label) {
+      label.remove();
     }
   }
 
@@ -1555,7 +1468,7 @@
 
   function drawConnections() {
     svg.innerHTML = '';
-    const fallbackColor = '#e65100';
+    const fallbackColor = getComputedStyle(document.body).getPropertyValue('--line-color').trim() || '#8c7870';
     const t = I18N[currentLang];
 
     state.links.forEach(link => {
@@ -1590,20 +1503,10 @@
       group.appendChild(path);
 
       if (localizedTag) {
-        const textW = localizedTag.length * 7 + 10;
-        const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
-        bgRect.setAttribute('x', route.midX - textW / 2);
-        bgRect.setAttribute('y', route.midY - 8);
-        bgRect.setAttribute('width', textW);
-        bgRect.setAttribute('height', 16);
-        bgRect.setAttribute('class', 'line-label-bg');
-        group.appendChild(bgRect);
-
         const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
         text.setAttribute('x', route.midX);
-        text.setAttribute('y', route.midY);
+        text.setAttribute('y', route.midY - 6);
         text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('dominant-baseline', 'middle');
         text.setAttribute('class', 'line-label');
         text.textContent = localizedTag;
         group.appendChild(text);
@@ -1683,22 +1586,19 @@
   function clearRubberbandLine() { anchorDragSvg.innerHTML = ''; }
 
   function cardsOverlapGrid(a, b, minSpacing = 1) {
-    const aDim = a.isLegend ? getLegendDims() : { gw: getCardUnitSpan(a), gh: getCardUnitSpan(a) };
-    const bDim = b.isLegend ? getLegendDims() : { gw: getCardUnitSpan(b), gh: getCardUnitSpan(b) };
+    const aUnits = getCardUnitSpan(a);
+    const bUnits = getCardUnitSpan(b);
     return !(
-      a.gx + aDim.gw + minSpacing <= b.gx ||
-      b.gx + bDim.gw + minSpacing <= a.gx ||
-      a.gy + aDim.gh + minSpacing <= b.gy ||
-      b.gy + bDim.gh + minSpacing <= a.gy
+      a.gx + aUnits + minSpacing <= b.gx ||
+      b.gx + bUnits + minSpacing <= a.gx ||
+      a.gy + aUnits + minSpacing <= b.gy ||
+      b.gy + bUnits + minSpacing <= a.gy
     );
   }
 
   function findNonOverlappingPos(dragMember, desiredGx, desiredGy) {
     const others = state.members.filter(m => m.id !== dragMember.id);
-    if (state.legend && state.legend.enabled && !dragMember.isLegend) {
-      others.push({ id: 'legend_box', gx: state.legend.gx, gy: state.legend.gy, isLegend: true });
-    }
-    const probe = { ...dragMember, gx: desiredGx, gy: desiredGy };
+    const probe  = { ...dragMember, gx: desiredGx, gy: desiredGy };
 
     const overlaps = others.some(o => cardsOverlapGrid(probe, o));
     if (!overlaps) return { gx: desiredGx, gy: desiredGy };
@@ -1717,203 +1617,6 @@
 
     return { gx: dragMember.gx, gy: dragMember.gy };
   }
-
-  function getActiveLineVariations() {
-    const map = new Map();
-    state.links.forEach(l => {
-      const type = l.type || 'child_biological';
-      const color = l.color || '#e65100';
-      const key = `${type}_${color}`;
-      if (!map.has(key)) {
-        map.set(key, { type, color, key });
-      }
-    });
-    return Array.from(map.values());
-  }
-
-  function renderLegend() {
-    legendContainer.innerHTML = '';
-    if (!state.legend || !state.legend.enabled) return;
-
-    const t = I18N[currentLang];
-    const lg = state.legend;
-    const pxX = toPx(lg.gx);
-    const pxY = toPx(lg.gy);
-    const dims = getLegendDims();
-
-    const box = document.createElement('div');
-    box.className = 'legend-box';
-    box.style.left = `${pxX}px`;
-    box.style.top = `${pxY}px`;
-    box.style.width = `${dims.w}px`;
-    box.style.height = `${dims.h}px`;
-
-    const activeLines = getActiveLineVariations();
-    let rowsHtml = '';
-    activeLines.forEach(item => {
-      const desc = (lg.items && lg.items[item.key]) || t.relLabels[item.type]?.opt || item.type;
-      const dash = (state.styledLinePatterns !== false) ? (REL_DASH[item.type] || 'none') : 'none';
-      const dashAttr = dash !== 'none' ? `stroke-dasharray="${dash}"` : '';
-
-      rowsHtml += `
-        <div class="legend-row">
-          <div class="legend-line-sample">
-            <svg viewBox="0 0 36 12">
-              <line x1="0" y1="6" x2="36" y2="6" stroke="${item.color}" stroke-width="3" ${dashAttr} stroke-linecap="round"/>
-            </svg>
-          </div>
-          <span style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">${desc}</span>
-        </div>
-      `;
-    });
-
-    box.innerHTML = `
-      <div class="legend-header">
-        <span>${lg.title || t.defaultLegendTitle}</span>
-      </div>
-      <div class="legend-items">
-        ${rowsHtml || `<div style="opacity:0.6; font-size:11px;">${t.noActiveLinesMsg}</div>`}
-      </div>
-    `;
-
-    box.addEventListener('click', (e) => {
-      e.stopPropagation();
-      openLegendDrawer();
-    });
-
-    const initLegendDrag = (clientX, clientY) => {
-      dragItem = { isLegend: true, id: 'legend_box', gx: lg.gx, gy: lg.gy };
-      const wCoords = screenToWorld(clientX, clientY);
-      dragOffset.gx = wCoords.gx - lg.gx;
-      dragOffset.gy = wCoords.gy - lg.gy;
-    };
-
-    box.addEventListener('mousedown', (e) => {
-      initLegendDrag(e.clientX, e.clientY);
-    });
-
-    box.addEventListener('touchstart', (e) => {
-      if (e.touches.length === 1) {
-        e.stopPropagation();
-        initLegendDrag(e.touches[0].clientX, e.touches[0].clientY);
-      }
-    }, { passive: false });
-
-    legendContainer.appendChild(box);
-  }
-
-  function openLegendDrawer() {
-    selectedId = null;
-    selectedLinkId = null;
-    document.body.classList.remove('line-selected');
-    sidePanel.classList.remove('open');
-    linePanel.classList.remove('open');
-    document.querySelectorAll('.person-card.active').forEach(c => c.classList.remove('active'));
-
-    const t = I18N[currentLang];
-    const lg = state.legend;
-    document.getElementById('legend-edit-title').value = lg.title || t.defaultLegendTitle;
-    document.getElementById('legend-edit-width').value = lg.widthUnits || 10;
-
-    const toggleBtn = document.getElementById('btn-toggle-legend-visibility');
-    toggleBtn.textContent = lg.enabled ? t.hideLegend : t.showLegend;
-    toggleBtn.style.background = lg.enabled ? '#b33a3a' : 'var(--accent)';
-
-    populateLegendDrawerItems();
-    legendPanel.classList.add('open');
-  }
-
-  function populateLegendDrawerItems() {
-    const t = I18N[currentLang];
-    const lg = state.legend;
-    const container = document.getElementById('legend-edit-items-container');
-    container.innerHTML = '';
-    const activeLines = getActiveLineVariations();
-
-    if (!activeLines.length) {
-      container.innerHTML = `<div style="opacity:0.6; font-size:11px; padding: 4px 0;">${t.noActiveLinesMsg}</div>`;
-      return;
-    }
-
-    activeLines.forEach(item => {
-      const currentDesc = (lg.items && lg.items[item.key]) || t.relLabels[item.type]?.opt || item.type;
-      const row = document.createElement('div');
-      row.style.display = 'flex';
-      row.style.alignItems = 'center';
-      row.style.gap = '8px';
-
-      const sample = document.createElement('div');
-      sample.style.width = '32px';
-      sample.style.height = '12px';
-      sample.style.flexShrink = '0';
-      const dash = (state.styledLinePatterns !== false) ? (REL_DASH[item.type] || 'none') : 'none';
-      sample.innerHTML = `
-        <svg viewBox="0 0 32 12" style="width:100%; height:100%; overflow:visible;">
-          <line x1="0" y1="6" x2="32" y2="6" stroke="${item.color}" stroke-width="3" ${dash !== 'none' ? `stroke-dasharray="${dash}"` : ''}/>
-        </svg>
-      `;
-
-      const input = document.createElement('input');
-      input.type = 'text';
-      input.value = currentDesc;
-      input.dataset.key = item.key;
-      input.style.flex = '1';
-      input.style.fontSize = '12px';
-      input.style.padding = '6px 10px';
-
-      input.addEventListener('input', (e) => {
-        if (!state.legend.items) state.legend.items = {};
-        state.legend.items[item.key] = e.target.value.trim();
-        renderLegend();
-        persist();
-      });
-
-      row.appendChild(sample);
-      row.appendChild(input);
-      container.appendChild(row);
-    });
-  }
-
-  document.getElementById('legend-edit-title').addEventListener('input', (e) => {
-    state.legend.title = e.target.value.trim() || 'Tree Legend';
-    renderLegend();
-    persist();
-  });
-
-  document.getElementById('legend-edit-width').addEventListener('change', (e) => {
-    state.legend.widthUnits = parseInt(e.target.value, 10) || 10;
-    renderLegend();
-    persist();
-  });
-
-  document.getElementById('btn-close-legend-panel').addEventListener('click', () => {
-    legendPanel.classList.remove('open');
-  });
-
-  document.getElementById('btn-toggle-legend-visibility').addEventListener('click', () => {
-    state.legend.enabled = !state.legend.enabled;
-    const t = I18N[currentLang];
-    const toggleBtn = document.getElementById('btn-toggle-legend-visibility');
-    toggleBtn.textContent = state.legend.enabled ? t.hideLegend : t.showLegend;
-    toggleBtn.style.background = state.legend.enabled ? '#b33a3a' : 'var(--accent)';
-    renderLegend();
-    persist();
-  });
-
-  document.getElementById('btn-toggle-legend').addEventListener('click', () => {
-    state.legend.enabled = !state.legend.enabled;
-    if (state.legend.enabled && (state.legend.gx === undefined || state.legend.gx === 0)) {
-      const center = screenToWorld(viewport.clientWidth / 2, viewport.clientHeight / 2);
-      state.legend.gx = center.gx - 4;
-      state.legend.gy = center.gy - 4;
-    }
-    renderLegend();
-    persist();
-  });
-
-  document.getElementById('btn-open-legend-settings').addEventListener('click', () => {
-    openLegendDrawer();
-  });
 
   function render() {
     cardsContainer.innerHTML = '';
@@ -2000,7 +1703,6 @@
       cardsContainer.appendChild(card);
     });
 
-    renderLegend();
     drawConnections();
     updateTransform();
     persist();
@@ -2024,6 +1726,7 @@
     }
   }, { passive: false });
 
+  // Touch gesture listeners for Canvas
   function getTouchDistance(t1, t2) {
     return Math.hypot(t1.clientX - t2.clientX, t1.clientY - t2.clientY);
   }
@@ -2110,16 +1813,6 @@
       maxY = Math.max(maxY, m.y + dims.h);
     });
 
-    if (state.legend && state.legend.enabled) {
-      const legDim = getLegendDims();
-      const legX = toPx(state.legend.gx);
-      const legY = toPx(state.legend.gy);
-      minX = Math.min(minX, legX);
-      minY = Math.min(minY, legY);
-      maxX = Math.max(maxX, legX + legDim.w);
-      maxY = Math.max(maxY, legY + legDim.h);
-    }
-
     const padding = 120;
     const treeW = (maxX - minX) + padding * 2;
     const treeH = (maxY - minY) + padding * 2;
@@ -2177,13 +1870,12 @@
     selectedId = null;
     document.body.classList.add('line-selected');
     sidePanel.classList.remove('open');
-    legendPanel.classList.remove('open');
 
     const link = state.links.find(l => l.id === linkId);
     if (!link) return;
 
     document.getElementById('line-edit-type').value = link.type || 'child_biological';
-    document.getElementById('line-edit-color').value = link.color || '#e65100';
+    document.getElementById('line-edit-color').value = link.color || '#8c7870';
     linePanel.classList.add('open');
     drawConnections();
   }
@@ -2195,8 +1887,6 @@
       link.color = e.target.value;
       const group = svg.querySelector(`[data-link-id="${link.id}"] .line-path`);
       if (group) group.setAttribute('stroke', link.color);
-      renderLegend();
-      populateLegendDrawerItems();
       persist();
     }
   });
@@ -2207,8 +1897,6 @@
     if (link) {
       link.type = e.target.value;
       drawConnections();
-      renderLegend();
-      populateLegendDrawerItems();
       persist();
     }
   });
@@ -2231,10 +1919,15 @@
     selectedLinkId = null;
     document.body.classList.remove('line-selected');
     drawConnections();
-    renderLegend();
-    populateLegendDrawerItems();
     persist();
   }
+
+  window.addEventListener('keydown', (e) => {
+    if ((e.key === 'Delete' || e.key === 'Backspace') && selectedLinkId && !['INPUT', 'TEXTAREA', 'SELECT'].includes(document.activeElement.tagName)) {
+      e.preventDefault();
+      deleteSelectedLink();
+    }
+  });
 
   viewport.addEventListener('mousedown', (e) => {
     if (e.target.id === 'viewport' || e.target.id === 'world' || e.target.id === 'grid-canvas' || e.target.tagName === 'svg') {
@@ -2283,7 +1976,6 @@
     connectSource = null;
     connectTarget = null;
     render();
-    populateLegendDrawerItems();
   });
 
   document.getElementById('modal-rel-cancel').addEventListener('click', () => {
@@ -2378,21 +2070,6 @@
       const rawGx   = wCoords.gx - dragOffset.gx;
       const rawGy   = wCoords.gy - dragOffset.gy;
 
-      if (dragItem.isLegend) {
-        const snappedGx = Math.round(rawGx);
-        const snappedGy = Math.round(rawGy);
-        if (snappedGx !== state.legend.gx || snappedGy !== state.legend.gy) {
-          state.legend.gx = snappedGx;
-          state.legend.gy = snappedGy;
-          const box = legendContainer.querySelector('.legend-box');
-          if (box) {
-            box.style.left = `${toPx(snappedGx)}px`;
-            box.style.top = `${toPx(snappedGy)}px`;
-          }
-        }
-        return;
-      }
-
       const { gx: newGx, gy: newGy } = findNonOverlappingPos(dragItem, rawGx, rawGy);
 
       if (newGx !== dragItem.gx || newGy !== dragItem.gy) {
@@ -2457,7 +2134,6 @@
       document.body.classList.remove('line-selected');
       sidePanel.classList.remove('open');
       linePanel.classList.remove('open');
-      legendPanel.classList.remove('open');
       anchorHandlesLayer.innerHTML = '';
       document.querySelectorAll('.person-card.active').forEach(c => c.classList.remove('active'));
       drawConnections();
@@ -2475,7 +2151,6 @@
     selectedLinkId = null;
     document.body.classList.remove('line-selected');
     linePanel.classList.remove('open');
-    legendPanel.classList.remove('open');
     anchorHandlesLayer.innerHTML = '';
 
     document.querySelectorAll('.person-card').forEach(c => {
@@ -2571,7 +2246,6 @@
   toggleStyledLines.addEventListener('change', (e) => {
     state.styledLinePatterns = e.target.checked;
     drawConnections();
-    renderLegend();
     persist();
   });
 
@@ -2585,6 +2259,30 @@
     state.gridColor = e.target.value;
     document.documentElement.style.setProperty('--grid-dot-color', state.gridColor);
     persist();
+  });
+
+  document.getElementById('bg-preset-select').addEventListener('change', (e) => {
+    const preset = e.target.value;
+    if (preset === 'dark-slate') {
+      state.bgColor = '#0F0F0F';
+      state.gridColor = '#444444';
+    } else if (preset === 'pure-black') {
+      state.bgColor = '#000000';
+      state.gridColor = '#2a2a2a';
+    } else if (preset === 'navy') {
+      state.bgColor = '#0b101b';
+      state.gridColor = '#29354d';
+    } else if (preset === 'light-clean') {
+      state.bgColor = '#F0F0F0';
+      state.gridColor = '#9a9a9a';
+    }
+    if (preset !== 'custom') {
+      document.getElementById('bg-color-picker').value = state.bgColor;
+      document.getElementById('grid-dot-picker').value = state.gridColor;
+      document.documentElement.style.setProperty('--bg-color', state.bgColor);
+      document.documentElement.style.setProperty('--grid-dot-color', state.gridColor);
+      persist();
+    }
   });
 
   document.getElementById('btn-open-export').addEventListener('click', () => {
@@ -2618,16 +2316,6 @@
       maxX = Math.max(maxX, m.x + dims.w);
       maxY = Math.max(maxY, m.y + dims.h);
     });
-
-    if (state.legend && state.legend.enabled) {
-      const legDim = getLegendDims();
-      const legX = toPx(state.legend.gx);
-      const legY = toPx(state.legend.gy);
-      minX = Math.min(minX, legX);
-      minY = Math.min(minY, legY);
-      maxX = Math.max(maxX, legX + legDim.w);
-      maxY = Math.max(maxY, legY + legDim.h);
-    }
 
     const padding = 72;
     minX = snap(minX - padding);
@@ -2694,12 +2382,6 @@
       card.querySelectorAll('.port-dot').forEach(p => p.remove());
       div.appendChild(card);
     });
-
-    if (state.legend && state.legend.enabled) {
-      const legEl = legendContainer.querySelector('.legend-box');
-      if (legEl) div.appendChild(legEl.cloneNode(true));
-    }
-
     fo.appendChild(div);
     clonedSvg.appendChild(fo);
 
@@ -2718,6 +2400,7 @@
     const gridDotColor = getComputedStyle(document.documentElement).getPropertyValue('--grid-dot-color').trim() || '#444444';
     const includeGrid = document.getElementById('export-include-grid')?.checked ?? true;
 
+    // Background base fill
     ctx.fillStyle = currentBg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -2725,6 +2408,7 @@
     ctx.scale(scale, scale);
     ctx.translate(-minX, -minY);
 
+    // Optional Dot Grid Render
     if (includeGrid) {
       ctx.fillStyle = gridDotColor;
       const startX = Math.floor(minX / GRID_SIZE) * GRID_SIZE;
@@ -2741,18 +2425,17 @@
       }
     }
 
-    const t = I18N[currentLang];
-
+    // Relationship lines
     state.links.forEach(l => {
       const s = state.members.find(m => m.id === l.source);
-      const targetM = state.members.find(m => m.id === l.target);
-      if (!s || !targetM) return;
+      const t = state.members.find(m => m.id === l.target);
+      if (!s || !t) return;
 
       const sPos = getPortCoords(s, l.sourceSide || 'bottom');
-      const tPos = getPortCoords(targetM, l.targetSide || 'top');
-      const route = calculateEdgePath(sPos, l.sourceSide || 'bottom', tPos, l.targetSide || 'top', s, targetM);
+      const tPos = getPortCoords(t, l.targetSide || 'top');
+      const route = calculateEdgePath(sPos, l.sourceSide || 'bottom', tPos, l.targetSide || 'top', s, t);
 
-      ctx.strokeStyle = l.color || '#e65100';
+      ctx.strokeStyle = l.color || '#8c7870';
       ctx.lineWidth = 2.5;
 
       const isDashed = (state.styledLinePatterns !== false) && REL_DASH[l.type] && REL_DASH[l.type] !== 'none';
@@ -2765,72 +2448,7 @@
       const path2d = new Path2D(route.path);
       ctx.stroke(path2d);
       ctx.setLineDash([]);
-
-      const tag = t.relLabels[l.type]?.tag;
-      if (tag) {
-        ctx.font = 'bold 11px Inter, sans-serif';
-        const metrics = ctx.measureText(tag);
-        const padX = 6;
-        const rectW = metrics.width + padX * 2;
-        const rectH = 16;
-
-        ctx.fillStyle = currentBg;
-        ctx.beginPath();
-        ctx.roundRect(route.midX - rectW / 2, route.midY - rectH / 2, rectW, rectH, 4);
-        ctx.fill();
-
-        ctx.strokeStyle = currentBg;
-        ctx.lineWidth = 3;
-        ctx.strokeText(tag, route.midX, route.midY + 4);
-
-        ctx.fillStyle = '#ffffff';
-        ctx.textAlign = 'center';
-        ctx.fillText(tag, route.midX, route.midY + 4);
-      }
     });
-
-    if (state.legend && state.legend.enabled) {
-      const legDim = getLegendDims();
-      const legX = toPx(state.legend.gx);
-      const legY = toPx(state.legend.gy);
-      const items = getActiveLineVariations();
-
-      ctx.fillStyle = '#1c1c1c';
-      ctx.beginPath();
-      ctx.roundRect(legX, legY, legDim.w, legDim.h, 16);
-      ctx.fill();
-      ctx.strokeStyle = '#333333';
-      ctx.lineWidth = 2;
-      ctx.stroke();
-
-      ctx.fillStyle = '#5e81ac';
-      ctx.font = 'bold 12px Inter, sans-serif';
-      ctx.textAlign = 'left';
-      ctx.fillText(state.legend.title || t.defaultLegendTitle, legX + 14, legY + 20);
-
-      items.forEach((item, idx) => {
-        const itemY = legY + 42 + idx * 24;
-        const desc = (state.legend.items && state.legend.items[item.key]) || t.relLabels[item.type]?.opt || item.type;
-        const dash = (state.styledLinePatterns !== false) ? (REL_DASH[item.type] || 'none') : 'none';
-
-        ctx.strokeStyle = item.color;
-        ctx.lineWidth = 3;
-        if (dash !== 'none') {
-          ctx.setLineDash(dash.split(' ').map(Number));
-        } else {
-          ctx.setLineDash([]);
-        }
-        ctx.beginPath();
-        ctx.moveTo(legX + 14, itemY);
-        ctx.lineTo(legX + 50, itemY);
-        ctx.stroke();
-        ctx.setLineDash([]);
-
-        ctx.fillStyle = '#f0f0f0';
-        ctx.font = '12px Inter, sans-serif';
-        ctx.fillText(desc, legX + 58, itemY + 4);
-      });
-    }
 
     const themeColors = {
       'theme-blue': '#d1e3f0',
@@ -2879,6 +2497,7 @@
       const cardBorder = isCustom ? adjustColorShade(m.customColor, -35) : '#82929e';
       const textColor = isCustom ? getReadableTextColor(m.customColor) : '#222';
 
+      // 1. Outer rounded card background & border
       ctx.fillStyle = cardBg;
       ctx.beginPath();
       ctx.roundRect(m.x, m.y, dims.w, dims.h, 18);
@@ -2887,12 +2506,14 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      // 2. Card label text
       ctx.fillStyle = textColor;
       ctx.font = 'bold 12px Inter, sans-serif';
       ctx.textAlign = 'center';
       ctx.textBaseline = 'middle';
       ctx.fillText(m.name, m.x + dims.w / 2, m.y + 17, dims.w - 16);
 
+      // 3. Inner avatar area correctly bounded within card padding
       const padX = 10;
       const topOffset = 30;
       const padBottom = 10;
@@ -2906,6 +2527,7 @@
       ctx.roundRect(innerX, innerY, innerW, innerH, 12);
       ctx.fill();
 
+      // 4. Clip & render avatar photo if present
       if (m._cachedImg) {
         ctx.save();
         ctx.beginPath();
@@ -2925,6 +2547,22 @@
     a.click();
     URL.revokeObjectURL(url);
   }
+
+  const tutorialModal = document.getElementById('modal-tutorial');
+  function checkTutorialOnLoad() {
+    if (!getCookie('ft_tutorial_seen')) {
+      tutorialModal.classList.add('open');
+    }
+  }
+
+  document.getElementById('btn-close-tutorial').addEventListener('click', () => {
+    setCookie('ft_tutorial_seen', 'true', 365);
+    tutorialModal.classList.remove('open');
+  });
+
+  document.getElementById('btn-open-tutorial').addEventListener('click', () => {
+    tutorialModal.classList.add('open');
+  });
 
   const themeBtn = document.getElementById('theme-toggle');
   const themeText = document.getElementById('theme-text');
@@ -2956,10 +2594,6 @@
         if (!state.pan) state.pan = { x: 0, y: 0 };
         if (!state.zoom) state.zoom = 1;
         if (state.styledLinePatterns === undefined) state.styledLinePatterns = true;
-        if (!state.legend) {
-          state.legend = { enabled: false, title: 'Tree Legend', widthUnits: 10, gx: 2, gy: 2, items: {} };
-        }
-        if (!state.legend.widthUnits) state.legend.widthUnits = 10;
         state.members.forEach(m => {
           m.gx = (m.gx !== undefined) ? Math.round(m.gx) : toGrid(m.x || 0);
           m.gy = (m.gy !== undefined) ? Math.round(m.gy) : toGrid(m.y || 0);
@@ -2968,7 +2602,6 @@
         });
         sidePanel.classList.remove('open');
         linePanel.classList.remove('open');
-        legendPanel.classList.remove('open');
         selectedId = null;
         selectedLinkId = null;
         document.body.classList.remove('line-selected');
@@ -2986,19 +2619,9 @@
 
   document.getElementById('btn-reset').addEventListener('click', () => {
     if (confirm(I18N[currentLang].clearConfirm)) {
-      state = { 
-        members: [], 
-        links: [], 
-        pan: { x: 0, y: 0 }, 
-        zoom: 1, 
-        bgColor: null, 
-        gridColor: null, 
-        styledLinePatterns: true,
-        legend: { enabled: false, title: 'Tree Legend', widthUnits: 10, gx: 2, gy: 2, items: {} }
-      };
+      state = { members: [], links: [], pan: { x: 0, y: 0 }, zoom: 1, bgColor: null, gridColor: null, styledLinePatterns: true };
       sidePanel.classList.remove('open');
       linePanel.classList.remove('open');
-      legendPanel.classList.remove('open');
       selectedId = null;
       selectedLinkId = null;
       document.body.classList.remove('line-selected');
@@ -3010,6 +2633,7 @@
   loadPersistedState();
   applyLanguage(currentLang);
   render();
+  checkTutorialOnLoad();
 </script>
 </body>
 </html>
