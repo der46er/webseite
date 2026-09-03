@@ -594,6 +594,13 @@
         <option value="2160">4K (Ultra HD)</option>
       </select>
     </div>
+    <label class="toggle-switch-wrap" style="margin-top: 6px;">
+      <div>
+        <strong style="display:block; font-size:13px;" data-i18n="exportIncludeGrid">Include Background Grid Dots</strong>
+        <span style="font-size:11px; opacity:0.75;" data-i18n="exportIncludeGridDesc">Render the dot matrix behind exported elements</span>
+      </div>
+      <input type="checkbox" id="export-include-grid" checked>
+    </label>
     <div style="display:flex; justify-content: flex-end; gap: 8px; margin-top: 10px;">
       <button id="btn-export-cancel" data-i18n="cancel">Cancel</button>
       <button class="primary" id="btn-export-download" data-i18n="download">Download</button>
@@ -724,6 +731,8 @@
       exportDiagram: 'Export Diagram',
       format: 'Format',
       resolutionQuality: 'Resolution Quality',
+      exportIncludeGrid: 'Include Background Grid Dots',
+      exportIncludeGridDesc: 'Render the dot matrix behind exported elements',
       download: 'Download',
       editDetails: 'Edit',
       nameLabel: 'Name',
@@ -894,6 +903,8 @@
       exportDiagram: 'Diagramm exportieren',
       format: 'Dateiformat',
       resolutionQuality: 'Auflösung / Qualität',
+      exportIncludeGrid: 'Hintergrund-Rasterpunkte mitexportieren',
+      exportIncludeGridDesc: 'Zeichnet das Punktmuster auch im exportierten Bild ein',
       download: 'Herunterladen',
       editDetails: 'Bearbeiten',
       nameLabel: 'Name',
@@ -2246,6 +2257,36 @@
 
     clonedSvg.querySelectorAll('.line-hitbox, .anchor-handle').forEach(el => el.remove());
 
+    const includeGrid = document.getElementById('export-include-grid')?.checked ?? true;
+    const currentBg = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim() || '#0F0F0F';
+    const gridDotColor = getComputedStyle(document.documentElement).getPropertyValue('--grid-dot-color').trim() || '#444444';
+
+    const bgRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    bgRect.setAttribute('x', minX);
+    bgRect.setAttribute('y', minY);
+    bgRect.setAttribute('width', boxW);
+    bgRect.setAttribute('height', boxH);
+    bgRect.setAttribute('fill', currentBg);
+    clonedSvg.insertBefore(bgRect, clonedSvg.firstChild);
+
+    if (includeGrid) {
+      const defs = document.createElementNS('http://www.w3.org/2000/svg', 'defs');
+      defs.innerHTML = `
+        <pattern id="svg-grid-pattern" width="24" height="24" patternUnits="userSpaceOnUse">
+          <circle cx="12" cy="12" r="1.5" fill="${gridDotColor}" />
+        </pattern>
+      `;
+      clonedSvg.insertBefore(defs, clonedSvg.firstChild);
+
+      const gridRect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+      gridRect.setAttribute('x', minX);
+      gridRect.setAttribute('y', minY);
+      gridRect.setAttribute('width', boxW);
+      gridRect.setAttribute('height', boxH);
+      gridRect.setAttribute('fill', 'url(#svg-grid-pattern)');
+      clonedSvg.insertBefore(gridRect, bgRect.nextSibling);
+    }
+
     const fo = document.createElementNS('http://www.w3.org/2000/svg', 'foreignObject');
     fo.setAttribute('x', minX);
     fo.setAttribute('y', minY);
@@ -2274,11 +2315,35 @@
     const ctx = canvas.getContext('2d');
 
     const currentBg = getComputedStyle(document.documentElement).getPropertyValue('--bg-color').trim() || '#0F0F0F';
+    const gridDotColor = getComputedStyle(document.documentElement).getPropertyValue('--grid-dot-color').trim() || '#444444';
+    const includeGrid = document.getElementById('export-include-grid')?.checked ?? true;
+
+    // Background base fill
     ctx.fillStyle = currentBg;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.save();
     ctx.scale(scale, scale);
     ctx.translate(-minX, -minY);
 
+    // Optional Dot Grid Render
+    if (includeGrid) {
+      ctx.fillStyle = gridDotColor;
+      const startX = Math.floor(minX / GRID_SIZE) * GRID_SIZE;
+      const endX = minX + boxW;
+      const startY = Math.floor(minY / GRID_SIZE) * GRID_SIZE;
+      const endY = minY + boxH;
+
+      for (let gx = startX; gx <= endX; gx += GRID_SIZE) {
+        for (let gy = startY; gy <= endY; gy += GRID_SIZE) {
+          ctx.beginPath();
+          ctx.arc(gx, gy, 1.5, 0, Math.PI * 2);
+          ctx.fill();
+        }
+      }
+    }
+
+    // Relationship lines
     state.links.forEach(l => {
       const s = state.members.find(m => m.id === l.source);
       const t = state.members.find(m => m.id === l.target);
@@ -2314,6 +2379,7 @@
     const imgTotal = state.members.filter(m => m.avatar).length;
 
     function finalizeDownload() {
+      ctx.restore();
       const mime = `image/${format}`;
       canvas.toBlob((blob) => {
         downloadBlob(blob, `family_tree_${targetHeight}p.${format === 'jpeg' ? 'jpg' : format}`);
@@ -2349,6 +2415,7 @@
       const cardBorder = isCustom ? adjustColorShade(m.customColor, -35) : '#82929e';
       const textColor = isCustom ? getReadableTextColor(m.customColor) : '#222';
 
+      // 1. Outer rounded card background & border
       ctx.fillStyle = cardBg;
       ctx.beginPath();
       ctx.roundRect(m.x, m.y, dims.w, dims.h, 18);
@@ -2357,23 +2424,34 @@
       ctx.lineWidth = 2;
       ctx.stroke();
 
+      // 2. Card label text
       ctx.fillStyle = textColor;
       ctx.font = 'bold 12px Inter, sans-serif';
       ctx.textAlign = 'center';
-      ctx.fillText(m.name, m.x + dims.w / 2, m.y + 20, dims.w - 16);
+      ctx.textBaseline = 'middle';
+      ctx.fillText(m.name, m.x + dims.w / 2, m.y + 17, dims.w - 16);
 
-      const avatarSize = dims.w - 20;
+      // 3. Inner avatar area correctly bounded within card padding
+      const padX = 10;
+      const topOffset = 30;
+      const padBottom = 10;
+      const innerW = dims.w - padX * 2;
+      const innerH = dims.h - topOffset - padBottom;
+      const innerX = m.x + padX;
+      const innerY = m.y + topOffset;
+
       ctx.fillStyle = '#111';
       ctx.beginPath();
-      ctx.roundRect(m.x + 10, m.y + 28, avatarSize, avatarSize, 12);
+      ctx.roundRect(innerX, innerY, innerW, innerH, 12);
       ctx.fill();
 
+      // 4. Clip & render avatar photo if present
       if (m._cachedImg) {
         ctx.save();
         ctx.beginPath();
-        ctx.roundRect(m.x + 10, m.y + 28, avatarSize, avatarSize, 12);
+        ctx.roundRect(innerX, innerY, innerW, innerH, 12);
         ctx.clip();
-        ctx.drawImage(m._cachedImg, m.x + 10, m.y + 28, avatarSize, avatarSize);
+        ctx.drawImage(m._cachedImg, innerX, innerY, innerW, innerH);
         ctx.restore();
       }
     });
