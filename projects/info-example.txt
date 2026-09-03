@@ -1,0 +1,5 @@
+Icons:
+web
+theme
+hardware
+energy
