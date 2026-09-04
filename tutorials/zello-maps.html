@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="author" content="Niklas Außerwöger">
+  <meta name="copyright" content="Niklas Außerwöger">
+  <title>Guide: Zello & Google Maps Group</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --accent: #ea580c;
+      --bg: #F0F0F0;
+      --bg-gradient-end: #F0F0F0;
+      --card-bg: #ffffff;
+      --border: #d1d5db;
+      --text: #111827;
+      --muted: #4b5563;
+      --sub-box-bg: #f3f4f6;
+      --pill-bg: #e5e7eb;
+      --pill-border: #d1d5db;
+      --group-box-bg: linear-gradient(180deg, #fffaf5 0%, #fff7ed 100%);
+      --group-box-border: #fed7aa;
+      --ptt-bg: #ffffff;
+      --callout-bg: #eff6ff;
+      --callout-border: #2563eb;
+      --callout-text: #1e3a8a;
+      --radius: 20px;
+    }
+
+    [data-theme="dark"] {
+      --primary: #60a5fa;
+      --accent: #f97316;
+      --bg: #0F0F0F;
+      --bg-gradient-end: #0F0F0F;
+      --card-bg: #18181b;
+      --border: #27272a;
+      --text: #f4f4f5;
+      --muted: #a1a1aa;
+      --sub-box-bg: #27272a;
+      --pill-bg: #27272a;
+      --pill-border: #3f3f46;
+      --group-box-bg: linear-gradient(180deg, #271e17 0%, #1f1915 100%);
+      --group-box-border: #7c2d12;
+      --ptt-bg: #27272a;
+      --callout-bg: #172554;
+      --callout-border: #60a5fa;
+      --callout-text: #bfdbfe;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.65;
+      font-size: 19px;
+      padding: 24px 16px 36px 16px;
+      -webkit-font-smoothing: antialiased;
+      transition: background-color 0.25s ease, color 0.25s ease;
+    }
+
+    .container {
+      max-width: 840px;
+      margin: 0 auto;
+    }
+
+    .action-bar {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .theme-toggle-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      width: 44px;
+      height: 44px;
+      cursor: pointer;
+      color: var(--text);
+      transition: all 0.2s ease;
+    }
+
+    .theme-toggle-btn:hover {
+      border-color: var(--muted);
+      transform: translateY(-1px);
+    }
+
+    .theme-toggle-btn svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    .icon-sun {
+      display: none;
+    }
+
+    .icon-moon {
+      display: block;
+    }
+
+    [data-theme="dark"] .icon-sun {
+      display: block;
+    }
+
+    [data-theme="dark"] .icon-moon {
+      display: none;
+    }
+
+    .lang-switch {
+      display: inline-flex;
+      background: var(--sub-box-bg);
+      border: 1px solid var(--border);
+      padding: 4px;
+      border-radius: 12px;
+      gap: 4px;
+    }
+
+    .lang-btn {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+
+    .lang-btn.active {
+      background: var(--card-bg);
+      color: var(--primary);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn-pdf {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 12px;
+      padding: 8px 16px;
+      font-size: 15px;
+      font-weight: 700;
+      color: var(--text);
+      cursor: pointer;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      transition: all 0.15s ease;
+    }
+
+    .btn-pdf:hover {
+      border-color: var(--muted);
+      transform: translateY(-1px);
+    }
+
+    .btn-pdf svg {
+      width: 18px;
+      height: 18px;
+      stroke: var(--accent);
+    }
+
+    header {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 28px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .header-logos {
+      display: flex;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+
+    .header-logos img {
+      width: 60px;
+      height: 60px;
+      border-radius: 14px;
+      object-fit: cover;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    }
+
+    header h1 {
+      font-size: 25px;
+      font-weight: 800;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+      line-height: 1.25;
+    }
+
+    header p {
+      font-size: 17px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .card {
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: var(--radius);
+      padding: 30px 26px;
+      margin-bottom: 28px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05);
+      transition: background 0.25s ease, border-color 0.25s ease;
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 2px solid var(--border);
+    }
+
+    .card-header img {
+      width: 42px;
+      height: 42px;
+      border-radius: 11px;
+      object-fit: cover;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      font-size: 22px;
+      font-weight: 800;
+      color: var(--text);
+      margin: 0;
+    }
+
+    h3 {
+      font-size: 19px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 22px 0 12px 0;
+    }
+
+    .app-icon-preview {
+      background: var(--sub-box-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .app-icon-preview img {
+      width: 68px;
+      height: 68px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+      border: 2px solid var(--card-bg);
+    }
+
+    .app-icon-text strong {
+      display: block;
+      font-size: 18px;
+      color: var(--text);
+      margin-bottom: 2px;
+    }
+
+    .app-icon-text p {
+      margin: 0;
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.45;
+    }
+
+    .download-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+
+    .download-card {
+      background: var(--sub-box-bg);
+      border: 1.5px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .download-card strong {
+      font-size: 17px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    .store-link {
+      display: inline-block;
+      margin-bottom: 10px;
+    }
+
+    .store-badge-img {
+      height: 42px;
+      max-width: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
+    .download-card p {
+      font-size: 15.5px;
+      color: var(--muted);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .step-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 16px;
+    }
+
+    .step-num {
+      flex-shrink: 0;
+      width: 36px;
+      height: 36px;
+      background: var(--sub-box-bg);
+      color: var(--primary);
+      border: 2px solid var(--primary);
+      font-weight: 800;
+      font-size: 17px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 2px;
+    }
+
+    .num-orange {
+      background: var(--sub-box-bg);
+      color: var(--accent);
+      border-color: var(--accent);
+    }
+
+    .step-content {
+      flex: 1;
+    }
+
+    .step-content strong {
+      display: block;
+      color: var(--text);
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .step-content p {
+      color: var(--muted);
+      font-size: 17px;
+      margin-bottom: 4px;
+    }
+
+    .sub-bullets {
+      list-style: none;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      padding-left: 0;
+    }
+
+    .sub-bullets li {
+      position: relative;
+      padding-left: 20px;
+      font-size: 16.5px;
+      color: var(--muted);
+      line-height: 1.5;
+    }
+
+    .sub-bullets li::before {
+      content: "•";
+      position: absolute;
+      left: 4px;
+      color: var(--primary);
+      font-weight: bold;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+
+    .btn-pill {
+      display: inline-block;
+      background: var(--pill-bg);
+      color: var(--text);
+      font-weight: 700;
+      font-size: 15px;
+      padding: 0 8px;
+      border-radius: 6px;
+      border: 1.5px solid var(--pill-border);
+      white-space: nowrap;
+      vertical-align: baseline;
+      line-height: 1.4;
+      margin: 0 2px;
+    }
+
+    .group-box {
+      background: var(--group-box-bg);
+      border: 1.5px solid var(--group-box-border);
+      border-radius: 16px;
+      padding: 20px 18px;
+      margin: 22px 0 16px 0;
+    }
+
+    .group-box h3 {
+      color: var(--accent);
+      margin-top: 0;
+      margin-bottom: 12px;
+      font-size: 19px;
+    }
+
+    .ptt-widget {
+      background: var(--ptt-bg);
+      border: 2px dashed var(--group-box-border);
+      border-radius: 14px;
+      padding: 16px;
+      text-align: center;
+      margin-top: 12px;
+    }
+
+    .ptt-circle {
+      width: 84px;
+      height: 84px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      margin: 0 auto 10px auto;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 14px rgba(234, 88, 12, 0.3);
+      border: 3px solid #ffffff;
+    }
+
+    .ptt-widget p {
+      font-weight: 700;
+      color: var(--text);
+      font-size: 16px;
+      margin: 0;
+    }
+
+    .info-callout {
+      background: var(--callout-bg);
+      border-left: 4px solid var(--callout-border);
+      border-radius: 0 12px 12px 0;
+      padding: 14px 18px;
+      font-size: 16.5px;
+      color: var(--callout-text);
+      margin-top: 18px;
+    }
+
+    .info-callout strong {
+      display: block;
+      font-size: 17.5px;
+      margin-bottom: 2px;
+    }
+
+    .card-footer {
+      text-align: center;
+      margin-top: 24px;
+      padding-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    @media (max-width: 660px) {
+      .download-grid {
+        grid-template-columns: 1fr;
+      }
+      header {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .app-icon-preview {
+        flex-direction: column;
+        text-align: center;
+      }
+      .action-bar {
+        justify-content: space-between;
+      }
+    }
+
+    /* Print styling: always forced to white background and sharp light contrast */
+    @page {
+      size: A4 portrait;
+      margin: 8mm 10mm;
+    }
+
+    @media print {
+      :root, [data-theme="dark"], [data-theme="light"] {
+        --primary: #1d4ed8 !important;
+        --accent: #ea580c !important;
+        --bg: #ffffff !important;
+        --card-bg: #ffffff !important;
+        --border: #cbd5e1 !important;
+        --text: #0f172a !important;
+        --muted: #475569 !important;
+        --sub-box-bg: #f8fafc !important;
+        --pill-bg: #f1f5f9 !important;
+        --pill-border: #cbd5e1 !important;
+        --group-box-bg: #fffaf5 !important;
+        --group-box-border: #fed7aa !important;
+        --ptt-bg: #ffffff !important;
+        --callout-bg: #eff6ff !important;
+        --callout-border: #1d4ed8 !important;
+        --callout-text: #1e3a8a !important;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 10.5pt !important;
+        line-height: 1.35 !important;
+        padding: 0 !important;
+      }
+
+      .container {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+
+      .action-bar {
+        display: none !important;
+      }
+
+      .card-zello {
+        page-break-after: always;
+        break-after: page;
+      }
+
+      .card-maps {
+        page-break-before: always;
+        break-before: page;
+      }
+
+      header {
+        padding: 10px 14px !important;
+        margin-bottom: 10px !important;
+        gap: 14px !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 10px !important;
+        box-shadow: none !important;
+      }
+
+      .header-logos img {
+        width: 44px !important;
+        height: 44px !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+      }
+
+      header h1 {
+        font-size: 14pt !important;
+        margin-bottom: 2px !important;
+      }
+
+      header p {
+        font-size: 9.5pt !important;
+      }
+
+      .card {
+        padding: 12px 14px !important;
+        margin-bottom: 0 !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 10px !important;
+        box-shadow: none !important;
+      }
+
+      .card-header {
+        margin-bottom: 8px !important;
+        padding-bottom: 6px !important;
+        gap: 10px !important;
+      }
+
+      .card-header img {
+        width: 28px !important;
+        height: 28px !important;
+        border-radius: 6px !important;
+        box-shadow: none !important;
+      }
+
+      h2 {
+        font-size: 12.5pt !important;
+      }
+
+      h3 {
+        font-size: 11pt !important;
+        margin: 8px 0 4px 0 !important;
+      }
+
+      .app-icon-preview {
+        padding: 6px 10px !important;
+        margin-bottom: 8px !important;
+        gap: 10px !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+      }
+
+      .app-icon-preview img {
+        width: 38px !important;
+        height: 38px !important;
+        border-radius: 8px !important;
+        box-shadow: none !important;
+      }
+
+      .app-icon-text strong {
+        font-size: 9.5pt !important;
+        margin-bottom: 1px !important;
+      }
+
+      .app-icon-text p {
+        font-size: 8.5pt !important;
+      }
+
+      .download-grid {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 8px !important;
+      }
+
+      .download-card {
+        padding: 6px 8px !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 8px !important;
+      }
+
+      .download-card strong {
+        font-size: 9.5pt !important;
+        margin-bottom: 4px !important;
+      }
+
+      .store-link {
+        margin-bottom: 4px !important;
+      }
+
+      .store-badge-img {
+        height: 24px !important;
+      }
+
+      .download-card p {
+        font-size: 8.5pt !important;
+      }
+
+      .step-list {
+        gap: 8px !important;
+      }
+
+      .step-item {
+        gap: 10px !important;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .step-num {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 9pt !important;
+        border: 1.5px solid #bfdbfe !important;
+        background: #eff6ff !important;
+        color: #1d4ed8 !important;
+        margin-top: 1px !important;
+      }
+
+      .num-orange {
+        background: #fff7ed !important;
+        color: #ea580c !important;
+        border-color: #fed7aa !important;
+      }
+
+      .step-content strong {
+        font-size: 10pt !important;
+        margin-bottom: 1px !important;
+      }
+
+      .step-content p {
+        font-size: 9pt !important;
+        margin-bottom: 2px !important;
+      }
+
+      .sub-bullets {
+        margin-top: 4px !important;
+        gap: 3px !important;
+      }
+
+      .sub-bullets li {
+        font-size: 8.5pt !important;
+        line-height: 1.3 !important;
+        padding-left: 14px !important;
+      }
+
+      .sub-bullets li::before {
+        font-size: 14px !important;
+        left: 2px !important;
+        color: #1d4ed8 !important;
+      }
+
+      .btn-pill {
+        font-size: 8pt !important;
+        padding: 0 4px !important;
+        border-width: 1px !important;
+        border-radius: 4px !important;
+      }
+
+      .group-box {
+        margin: 8px 0 !important;
+        padding: 8px 10px !important;
+        border-radius: 8px !important;
+        border: 1px solid #fed7aa !important;
+      }
+
+      .group-box h3 {
+        margin-bottom: 6px !important;
+        font-size: 10.5pt !important;
+        color: #c2410c !important;
+      }
+
+      .ptt-widget {
+        padding: 6px !important;
+        margin-top: 6px !important;
+        border: 1.5px dashed #fdba74 !important;
+      }
+
+      .ptt-circle {
+        width: 48px !important;
+        height: 48px !important;
+        font-size: 7.5pt !important;
+        margin-bottom: 4px !important;
+        box-shadow: none !important;
+        border-width: 2px !important;
+      }
+
+      .ptt-widget p {
+        font-size: 8.5pt !important;
+        line-height: 1.25 !important;
+      }
+
+      .info-callout {
+        margin-top: 8px !important;
+        padding: 6px 10px !important;
+        font-size: 8.5pt !important;
+        border-radius: 0 6px 6px 0 !important;
+        border-left-width: 3px !important;
+      }
+
+      .info-callout strong {
+        font-size: 9pt !important;
+      }
+
+      .card-footer {
+        margin-top: 10px !important;
+        padding-top: 6px !important;
+        font-size: 8pt !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+
+    <div class="action-bar">
+      <button class="theme-toggle-btn" id="theme-toggle" onclick="toggleTheme()" title="Toggle Dark/Light Mode" aria-label="Toggle theme">
+        <svg class="icon-moon" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
+        </svg>
+        <svg class="icon-sun" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
+        </svg>
+      </button>
+
+      <div class="lang-switch" role="group" aria-label="Language selector">
+        <button class="lang-btn" id="btn-de" onclick="setLanguage('de')">DE</button>
+        <button class="lang-btn active" id="btn-en" onclick="setLanguage('en')">EN</button>
+      </div>
+
+      <button class="btn-pdf" onclick="window.print()">
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
+        </svg>
+        <span class="i18n" data-de="PDF herunterladen" data-en="Download as PDF">Download as PDF</span>
+      </button>
+    </div>
+
+    <!-- PAGE 1: HEADER + ZELLO GUIDE -->
+    <header>
+      <div class="header-logos">
+        <img src="https://play-lh.googleusercontent.com/XImUIrofZzj89HNm9Ru4pZvQqqeoqFjEgn3dnYF_kBfcTRuTswSygF3W6GfrHJjgd7MhY2oJ5J8ytwgF5o9_3Pc" alt="Zello Logo">
+        <img src="https://play-lh.googleusercontent.com/B8pdO_2K5nBsF0g1h6dKwV_jQFLP-XombGDEQGtJT-mw1EUKCKJpa9lBGCF4rP_MwCsozSXyvI3z19g9R3J4=w480-h960-rw" alt="Google Maps Logo">
+      </div>
+      <div>
+        <h1 class="i18n" data-de="Zello & Google Maps: Leitfaden für die Gruppe" data-en="Zello & Google Maps: Group Guide">Zello & Google Maps: Group Guide</h1>
+        <p class="i18n" data-de="Schritt-für-Schritt-Anleitung für die gemeinsame Funk- und Standortgruppe" data-en="Step-by-step guide for group radio and real-time location sharing">Step-by-step guide for group radio and real-time location sharing</p>
+      </div>
+    </header>
+
+    <section class="card card-zello">
+      <div class="card-header">
+        <img src="https://play-lh.googleusercontent.com/XImUIrofZzj89HNm9Ru4pZvQqqeoqFjEgn3dnYF_kBfcTRuTswSygF3W6GfrHJjgd7MhY2oJ5J8ytwgF5o9_3Pc" alt="Zello">
+        <h2 class="i18n" data-de="1. Zello (Walkie-Talkie für die Gruppe)" data-en="1. Zello (Group Walkie-Talkie)">1. Zello (Group Walkie-Talkie)</h2>
+      </div>
+
+      <div class="app-icon-preview">
+        <img src="https://play-lh.googleusercontent.com/XImUIrofZzj89HNm9Ru4pZvQqqeoqFjEgn3dnYF_kBfcTRuTswSygF3W6GfrHJjgd7MhY2oJ5J8ytwgF5o9_3Pc" alt="Zello App Icon">
+        <div class="app-icon-text">
+          <strong class="i18n" data-de="So sieht das App-Symbol von Zello aus:" data-en="This is what the Zello app icon looks like:">This is what the Zello app icon looks like:</strong>
+          <p class="i18n" data-de="Achten Sie auf dieses orangefarbene Symbol mit dem runden Kreis in der Mitte auf Ihrem Bildschirm." data-en="Look for this orange icon with the circle in the middle on your phone screen.">Look for this orange icon with the circle in the middle on your phone screen.</p>
+        </div>
+      </div>
+
+      <h3 class="i18n" data-de="Schritt 1: Zello auf das Smartphone laden" data-en="Step 1: Download Zello to your Smartphone">Step 1: Download Zello to your Smartphone</h3>
+      <div class="download-grid">
+        <div class="download-card">
+          <strong class="i18n" data-de="Für Apple iPhone" data-en="For Apple iPhone">For Apple iPhone</strong>
+          <a class="store-link" href="https://apps.apple.com/app/zello-walkie-talkie/id508231856" target="_blank" rel="noopener noreferrer">
+            <img class="store-badge-img" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3c/Download_on_the_App_Store_Badge.svg/1280px-Download_on_the_App_Store_Badge.svg.png?utm_source=commons.wikimedia.org&utm_campaign=index&utm_content=thumbnail" alt="App Store Badge">
+          </a>
+          <p class="i18n" data-de="Tippen Sie oben auf das Bild oder suchen Sie im blauen <em>App Store</em> nach „Zello“. Tippen Sie auf <span class='btn-pill'>Laden</span>." data-en="Tap the image above or search for 'Zello' in the blue <em>App Store</em>. Tap <span class='btn-pill'>Get</span>.">Tap the image above or search for 'Zello' in the blue <em>App Store</em>. Tap <span class='btn-pill'>Get</span>.</p>
+        </div>
+
+        <div class="download-card">
+          <strong class="i18n" data-de="Für Android (Samsung, Xiaomi etc.)" data-en="For Android (Samsung, Xiaomi, etc.)">For Android (Samsung, Xiaomi, etc.)</strong>
+          <a class="store-link" href="https://play.google.com/store/apps/details?id=com.loudtalks" target="_blank" rel="noopener noreferrer">
+            <img class="store-badge-img" src="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/78/Google_Play_Store_badge_EN.svg/1280px-Google_Play_Store_badge_EN.svg.png?utm_source=de.wikipedia.org&utm_campaign=index&utm_content=thumbnail" alt="Google Play Badge">
+          </a>
+          <p class="i18n" data-de="Tippen Sie oben auf das Bild oder suchen Sie im bunten <em>Play Store</em> nach „Zello“. Tippen Sie auf <span class='btn-pill'>Installieren</span>." data-en="Tap the image above or search for 'Zello' in the colorful <em>Play Store</em>. Tap <span class='btn-pill'>Install</span>.">Tap the image above or search for 'Zello' in the colorful <em>Play Store</em>. Tap <span class='btn-pill'>Install</span>.</p>
+        </div>
+      </div>
+
+      <h3 class="i18n" data-de="Schritt 2: Erstes Starten & Berechtigung (Zello Version 7.15)" data-en="Step 2: Initial Setup & Permissions (Zello Version 7.15)">Step 2: Initial Setup & Permissions (Zello Version 7.15)</h3>
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Konto anlegen (nur beim ersten Mal)" data-en="Create an account (first time only)">Create an account (first time only)</strong>
+            <p class="i18n" data-de="Öffnen Sie Zello. Tippen Sie auf dem Startbildschirm auf <span class='btn-pill'>Konto erstellen</span> (oder <em>Zello-Konto erstellen</em>)." data-en="Open Zello. On the welcome screen, tap <span class='btn-pill'>Create account</span> (or <em>Create Zello account</em>).">Open Zello. On the welcome screen, tap <span class='btn-pill'>Create account</span> (or <em>Create Zello account</em>).</p>
+            <ul class="sub-bullets">
+              <li class="i18n" data-de="<strong>Benutzername:</strong> Zello verlangt einen Namen ohne Leerzeichen (wie z. B. <em>Benutzer1234</em>). Wählen Sie am besten etwas Wiedererkennbares wie Ihren Vornamen und Wohnort (z. B. <em>MariaLinz</em> oder <em>Peter4020</em>). Ist ein Name vergeben, hängen Sie einfach eine Zahl an." data-en="<strong>Username:</strong> Zello requires a username without spaces (e.g. <em>User1234</em>). Choose something recognizable like your first name and city (e.g. <em>MariaLinz</em> or <em>Peter4020</em>). If already taken, just add numbers at the end."><strong>Username:</strong> Zello requires a username without spaces (e.g. <em>User1234</em>). Choose something recognizable like your first name and city (e.g. <em>MariaLinz</em> or <em>Peter4020</em>). If already taken, just add numbers at the end.</li>
+              <li class="i18n" data-de="<strong>Passwort:</strong> Geben Sie ein Kennwort ein (mindestens 6 Zeichen), das Sie sich gut merken können." data-en="<strong>Password:</strong> Enter a password (at least 6 characters) that is easy for you to remember."><strong>Password:</strong> Enter a password (at least 6 characters) that is easy for you to remember.</li>
+              <li class="i18n" data-de="<strong>E-Mail:</strong> Geben Sie Ihre normale E-Mail-Adresse an (falls Sie einmal Ihr Passwort zurücksetzen müssen)." data-en="<strong>Email:</strong> Enter your standard email address (in case you need to reset your password)."><strong>Email:</strong> Enter your standard email address (in case you need to reset your password).</li>
+            </ul>
+          </div>
+        </li>
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Mikrofon erlauben (Wichtig!)" data-en="Allow Microphone (Important!)">Allow Microphone (Important!)</strong>
+            <p class="i18n" data-de="Das Handy zeigt ein Abfragefenster: <em>„Möchte Zello Zugriff auf das Mikrofon erlauben?“</em> Tippen Sie auf <strong>„Erlauben“</strong> oder <strong>„Beim Verwenden der App“</strong>." data-en="A prompt appears: <em>'Allow Zello to access microphone?'</em> Tap <strong>'Allow'</strong> or <strong>'While using the app'</strong>.">A prompt appears: <em>'Allow Zello to access microphone?'</em> Tap <strong>'Allow'</strong> or <strong>'While using the app'</strong>.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="group-box">
+        <h3 class="i18n" data-de="So richten Sie die gemeinsame Funk-Gruppe ein" data-en="Setting up the shared radio group">Setting up the shared radio group</h3>
+
+        <ul class="step-list">
+          <li class="step-item">
+            <div class="step-num num-orange">A</div>
+            <div class="step-content">
+              <strong class="i18n" data-de="Einer aus der Gruppe erstellt den Kanal einmalig:" data-en="One person creates the channel once:">One person creates the channel once:</strong>
+              <p class="i18n" data-de="Tippen Sie in Zello auf <span class='btn-pill'>Kanäle</span> → <span class='btn-pill'>+</span> → <strong>„Neuen Kanal erstellen“</strong>. Namen wählen (z. B. <em>Reisegruppe1234</em>), Typ auf <strong>„Passwortgeschützt“</strong> setzen, Passwort eingeben (z. B. <em>sonne123</em>) und auf <strong>Erstellen</strong> tippen." data-en="In Zello, tap <span class='btn-pill'>Channels</span> → <span class='btn-pill'>+</span> → <strong>'Create new channel'</strong>. Choose a name (e.g. <em>TravelGroup1234</em>), set to <strong>'Password protected'</strong>, pick a password (e.g. <em>sun123</em>) and tap <strong>Create</strong>.">In Zello, tap <span class='btn-pill'>Channels</span> → <span class='btn-pill'>+</span> → <strong>'Create new channel'</strong>. Choose a name (e.g. <em>TravelGroup1234</em>), set to <strong>'Password protected'</strong>, pick a password (e.g. <em>sun123</em>) and tap <strong>Create</strong>.</p>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-num num-orange">B</div>
+            <div class="step-content">
+              <strong class="i18n" data-de="Alle anderen treten dem Kanal bei:" data-en="Everyone else joins the channel:">Everyone else joins the channel:</strong>
+              <p class="i18n" data-de="Zello öffnen → <span class='btn-pill'>Kanäle</span> → <span class='btn-pill'>+</span> → <strong>„Kanal suchen“</strong> → Namen eingeben, Passwort eingeben und auf <strong>Beitreten</strong> drücken." data-en="Open Zello → <span class='btn-pill'>Channels</span> → <span class='btn-pill'>+</span> → <strong>'Find channel'</strong> → type name, enter password, and tap <strong>Join</strong>.">Open Zello → <span class='btn-pill'>Channels</span> → <span class='btn-pill'>+</span> → <strong>'Find channel'</strong> → type name, enter password, and tap <strong>Join</strong>.</p>
+            </div>
+          </li>
+
+          <li class="step-item">
+            <div class="step-num num-orange">C</div>
+            <div class="step-content">
+              <strong class="i18n" data-de="In der Gruppe sprechen (Funkgerät-Prinzip):" data-en="Talking in the group (Walkie-Talkie style):">Talking in the group (Walkie-Talkie style):</strong>
+              <div class="ptt-widget">
+                <div class="ptt-circle i18n" data-de="Gedrückt<br>Halten" data-en="Hold &amp;<br>Speak">Hold &amp;<br>Speak</div>
+                <p class="i18n" data-de="1. Daumen auf den Kreis legen &amp; <strong>fest gedrückt halten</strong>. 2. Satz sprechen. 3. Danach Daumen <strong>sofort loslassen</strong>!" data-en="1. Place thumb on circle &amp; <strong>hold down firmly</strong>. 2. Speak sentence. 3. <strong>Release thumb immediately</strong>!">1. Place thumb on circle &amp; <strong>hold down firmly</strong>. 2. Speak sentence. 3. <strong>Release thumb immediately</strong>!</p>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+
+      <div class="info-callout">
+        <strong class="i18n" data-de="Tipp zum Ausprobieren:" data-en="Test Tip:">Test Tip:</strong>
+        <span class="i18n" data-de="Unter Kontakten den Test-Kontakt <em>echo</em> anfunken: Taste halten und sprechen – echo wiederholt Ihre Stimme zur Kontrolle." data-en="Call the test contact <em>echo</em> in your contacts: hold the button and speak – echo plays back your voice to verify.">Call the test contact <em>echo</em> in your contacts: hold the button and speak – echo plays back your voice to verify.</span>
+      </div>
+    </section>
+
+    <!-- PAGE 2: GOOGLE MAPS GUIDE -->
+    <section class="card card-maps">
+      <div class="card-header">
+        <img src="https://play-lh.googleusercontent.com/B8pdO_2K5nBsF0g1h6dKwV_jQFLP-XombGDEQGtJT-mw1EUKCKJpa9lBGCF4rP_MwCsozSXyvI3z19g9R3J4=w480-h960-rw" alt="Google Maps Logo">
+        <h2 class="i18n" data-de="2. Standorte der Gruppe auf der Karte sehen (Google Maps)" data-en="2. View Group Locations on Map (Google Maps)">2. View Group Locations on Map (Google Maps)</h2>
+      </div>
+
+      <div class="app-icon-preview">
+        <img src="https://play-lh.googleusercontent.com/B8pdO_2K5nBsF0g1h6dKwV_jQFLP-XombGDEQGtJT-mw1EUKCKJpa9lBGCF4rP_MwCsozSXyvI3z19g9R3J4=w480-h960-rw" alt="Google Maps App Icon">
+        <div class="app-icon-text">
+          <strong class="i18n" data-de="So sieht das App-Symbol von Google Maps aus:" data-en="This is what the Google Maps app icon looks like:">This is what the Google Maps app icon looks like:</strong>
+          <p class="i18n" data-de="Suchen Sie auf Ihrem Handybildschirm nach dieser bunten Stecknadel mit dem Namen <strong>Maps</strong>." data-en="Look for this colorful map pin icon labeled <strong>Maps</strong> on your phone screen.">Look for this colorful map pin icon labeled <strong>Maps</strong> on your phone screen.</p>
+        </div>
+      </div>
+
+      <ul class="step-list">
+        <li class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Google Maps öffnen" data-en="Open Google Maps">Open Google Maps</strong>
+            <p class="i18n" data-de="Tippen Sie auf das bunte Stecknadel-Symbol <strong>Maps</strong> auf Ihrem Handy." data-en="Tap the colorful map pin icon <strong>Maps</strong> on your phone.">Tap the colorful map pin icon <strong>Maps</strong> on your phone.</p>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Das Profilmenü öffnen" data-en="Open the profile menu">Open the profile menu</strong>
+            <p class="i18n" data-de="Ganz oben rechts in der Suchzeile auf den kleinen Kreis mit Ihrem <strong>Anfangsbuchstaben</strong> (oder Profilfoto) tippen." data-en="At the top right of the search bar, tap the circle with your <strong>initial</strong> (or profile picture).">At the top right of the search bar, tap the circle with your <strong>initial</strong> (or profile picture).</p>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Standortfreigabe auswählen" data-en="Select Location sharing">Select Location sharing</strong>
+            <p class="i18n" data-de="Tippen Sie im Menü auf die Zeile <span class='btn-pill'>Standortfreigabe</span> (neben einer kleinen Nadel)." data-en="In the menu, tap <span class='btn-pill'>Location sharing</span> (next to the small pin icon).">In the menu, tap <span class='btn-pill'>Location sharing</span> (next to the small pin icon).</p>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Standort teilen starten" data-en="Start sharing your location">Start sharing your location</strong>
+            <p class="i18n" data-de="Tippen Sie auf den blauen Knopf <span class='btn-pill'>Standort teilen</span> (oder oben links auf <em>+ Neue Freigabe</em>)." data-en="Tap the blue button <span class='btn-pill'>Share location</span> (or tap <em>+ New share</em> at top left).">Tap the blue button <span class='btn-pill'>Share location</span> (or tap <em>+ New share</em> at top left).</p>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">5</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Dauer festlegen" data-en="Set the duration">Set the duration</strong>
+            <p class="i18n" data-de="Wählen Sie aus, wie lange die anderen sehen dürfen, wo Sie sind:" data-en="Choose how long others can see your real-time location:">Choose how long others can see your real-time location:</p>
+            <ul class="sub-bullets">
+              <li class="i18n" data-de="Tippen Sie auf das Plus-Zeichen (+), um die Zeit z. B. auf <strong>„Für 4 Stunden“</strong> oder <strong>„Für 8 Stunden“</strong> einzustellen (ideal für Ausflüge)." data-en="Tap (+) to set the duration, e.g. <strong>'For 4 hours'</strong> or <strong>'For 8 hours'</strong> (ideal for day trips).">Tap (+) to set the duration, e.g. <strong>'For 4 hours'</strong> or <strong>'For 8 hours'</strong> (ideal for day trips).</li>
+              <li class="i18n" data-de="Oder wählen Sie <strong>„Bis zur Deaktivierung“</strong> für dauerhaftes Teilen." data-en="Or choose <strong>'Until you turn this off'</strong> for continuous sharing.">Or choose <strong>'Until you turn this off'</strong> for continuous sharing.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">6</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Den Link in Ihren WhatsApp-Gruppenchat schicken" data-en="Send link to WhatsApp group chat">Send link to WhatsApp group chat</strong>
+            <p class="i18n" data-de="Unten in der App-Leiste auf das grüne <span class='btn-pill'>WhatsApp</span> Symbol tippen (oder <em>Link kopieren</em>). Gemeinsamen <strong>Gruppenchat</strong> auswählen und absenden." data-en="In the bottom tray, tap the green <span class='btn-pill'>WhatsApp</span> icon (or <em>Copy link</em>). Select your <strong>group chat</strong> and send.">In the bottom tray, tap the green <span class='btn-pill'>WhatsApp</span> icon (or <em>Copy link</em>). Select your <strong>group chat</strong> and send.</p>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">7</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Gegenseitig sichtbar werden: „Zurückteilen“" data-en="Make everyone visible: 'Share back'">Make everyone visible: 'Share back'</strong>
+            <p class="i18n" data-de="Damit sich alle Teilnehmer gegenseitig sehen:" data-en="To ensure every participant sees each other:">To ensure every participant sees each other:</p>
+            <ul class="sub-bullets">
+              <li class="i18n" data-de="Jeder tippt im WhatsApp-Chat auf den geschickten blauen Link." data-en="Everyone taps the shared link in WhatsApp.">Everyone taps the shared link in WhatsApp.</li>
+              <li class="i18n" data-de="Google Maps öffnet sich. Oben erscheint ein blauer Balken: <strong>„Standort mit ... zurückteilen“</strong>." data-en="Google Maps opens. A blue bar appears: <strong>'Share location back with...'</strong>.">Google Maps opens. A blue bar appears: <strong>'Share location back with...'</strong>.</li>
+              <li class="i18n" data-de="Jeder tippt einmal auf diesen blauen Balken. Nun sind alle mit Bild auf der Karte sichtbar." data-en="Everyone taps this bar. Now all avatars are simultaneously visible on the map.">Everyone taps this bar. Now all avatars are simultaneously visible on the map.</li>
+            </ul>
+          </div>
+        </li>
+
+        <li class="step-item">
+          <div class="step-num">8</div>
+          <div class="step-content">
+            <strong class="i18n" data-de="Freigabe beenden" data-en="Stop sharing">Stop sharing</strong>
+            <p class="i18n" data-de="Nach dem Ausflug: Google Maps öffnen → Profilkreis oben rechts → <span class='btn-pill'>Standortfreigabe</span> → aktive Freigabe antippen → <span class='btn-pill' style='color: #ef4444; border-color: #f87171;'>Stoppen</span>." data-en="After the trip: Google Maps → top-right profile icon → <span class='btn-pill'>Location sharing</span> → tap share → <span class='btn-pill' style='color: #ef4444; border-color: #f87171;'>Stop</span>.">After the trip: Google Maps → top-right profile icon → <span class='btn-pill'>Location sharing</span> → tap share → <span class='btn-pill' style='color: #ef4444; border-color: #f87171;'>Stop</span>.</p>
+          </div>
+        </li>
+      </ul>
+
+      <div class="card-footer">
+        © 2026 Niklas Außerwöger
+      </div>
+    </section>
+
+  </div>
+
+  <script>
+    let userThemePreference = null;
+
+    function applyTheme(theme) {
+      document.documentElement.setAttribute('data-theme', theme);
+    }
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = current === 'dark' ? 'light' : 'dark';
+      userThemePreference = next;
+      applyTheme(next);
+    }
+
+    function setLanguage(lang) {
+      document.documentElement.lang = lang;
+      
+      document.querySelectorAll('.i18n').forEach(el => {
+        const text = el.getAttribute(`data-${lang}`);
+        if (text) {
+          el.innerHTML = text;
+        }
+      });
+
+      document.getElementById('btn-de').classList.toggle('active', lang === 'de');
+      document.getElementById('btn-en').classList.toggle('active', lang === 'en');
+      
+      document.title = lang === 'en' 
+        ? 'Guide: Zello & Google Maps Group' 
+        : 'Anleitung: Zello & Google Maps Gruppe';
+    }
+
+    function initAutoDetection() {
+      // 1. Language: Default English, switch to German if browser/system is German
+      const browserLanguages = navigator.languages || [navigator.language || navigator.userLanguage || ''];
+      const prefersGerman = Array.from(browserLanguages).some(lang => lang && lang.toLowerCase().startsWith('de'));
+      setLanguage(prefersGerman ? 'de' : 'en');
+
+      // 2. Theme: Default dark (#0F0F0F), switch to light (#F0F0F0) if browser prefers light
+      const lightQuery = window.matchMedia('(prefers-color-scheme: light)');
+      const initialTheme = lightQuery.matches ? 'light' : 'dark';
+      applyTheme(initialTheme);
+
+      // React dynamically to live changes in system light/dark mode if user hasn't overridden
+      lightQuery.addEventListener('change', (e) => {
+        if (!userThemePreference) {
+          applyTheme(e.matches ? 'light' : 'dark');
+        }
+      });
+    }
+
+    initAutoDetection();
+  </script>
+</body>
+</html>
