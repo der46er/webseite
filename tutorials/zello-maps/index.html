@@ -514,7 +514,108 @@
       font-size: 14px;
     }
 
-    /* Mobile UX Enhancements */
+    /* Cookie Banner Container */
+    .cookie-banner-wrap {
+      position: fixed;
+      bottom: 20px;
+      left: 20px;
+      right: 20px;
+      display: none;
+      justify-content: center;
+      z-index: 9999;
+      pointer-events: none;
+    }
+
+    .cookie-banner {
+      pointer-events: auto;
+      max-width: 580px;
+      width: 100%;
+      background: var(--card-bg);
+      border: 2px solid var(--border);
+      border-radius: 18px;
+      padding: 18px 22px;
+      box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.4);
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      animation: bannerSlideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes bannerSlideUp {
+      from {
+        opacity: 0;
+        transform: translateY(24px) scale(0.97);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .cookie-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .cookie-header span {
+      font-size: 22px;
+    }
+
+    .cookie-header strong {
+      font-size: 17px;
+      color: var(--text);
+    }
+
+    .cookie-banner p {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.45;
+      margin: 0;
+    }
+
+    .cookie-actions {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .cookie-btn-decline {
+      background: transparent;
+      border: none;
+      color: var(--muted);
+      font-size: 14px;
+      font-weight: 600;
+      padding: 8px 14px;
+      cursor: pointer;
+      border-radius: 8px;
+      transition: color 0.15s ease;
+    }
+
+    .cookie-btn-decline:hover {
+      color: var(--text);
+    }
+
+    .cookie-btn-accept {
+      background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+      color: #ffffff;
+      border: none;
+      padding: 10px 22px;
+      border-radius: 10px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .cookie-btn-accept:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.45);
+    }
+
     @media (max-width: 660px) {
       body {
         font-size: 17px;
@@ -629,6 +730,26 @@
         padding: 12px 14px;
         font-size: 15px;
       }
+
+      .cookie-banner-wrap {
+        left: 12px;
+        right: 12px;
+        bottom: 12px;
+      }
+
+      .cookie-banner {
+        padding: 16px;
+      }
+
+      .cookie-actions {
+        flex-direction: column-reverse;
+        width: 100%;
+      }
+
+      .cookie-btn-accept, .cookie-btn-decline {
+        width: 100%;
+        text-align: center;
+      }
     }
 
     /* Print styling: Always light mode & strict A4 boundaries */
@@ -675,7 +796,7 @@
         width: 100% !important;
       }
 
-      .action-bar {
+      .action-bar, .cookie-banner-wrap {
         display: none !important;
       }
 
@@ -1038,7 +1159,7 @@
               <strong class="i18n" data-de="In der Gruppe sprechen (Funkgerät-Prinzip):" data-en="Talking in the group (Walkie-Talkie style):">Talking in the group (Walkie-Talkie style):</strong>
               <div class="ptt-widget">
                 <div class="ptt-circle i18n" data-de="Gedrückt<br>Halten" data-en="Hold &amp;<br>Speak">Hold &amp;<br>Speak</div>
-                <p class="i18n" data-de="1. Daumen auf den Kreis legen &amp; <strong>fest gedrückt halten</strong>. 2. Satz sprechen. 3. Danach Daumen <strong>sofort loslassen</strong>!" data-en="1. Place thumb on circle &amp; <strong>hold down firmly</strong>. 2. Speak sentence. 3. <strong>Release thumb immediately</strong>!">1. Place thumb on circle &amp; <strong>hold down firmly</strong>. 2. Speak sentence. 3. <strong>Release thumb immediately</strong>!</p>
+                <p class="i18n" data-de="1. Daumen auf den Kreis legen &amp; <strong>fest gedrückt halten</strong>. 2. Satz sprechen. 3. Danach Daumen <strong>sofort loslassen</strong>!" data-en="1. Place thumb on circle &amp; <strong>hold down firmly</strong>. 2. Speak sentence. 3. <strong>Release thumb immediately</strong>!">1. Daumen auf den Kreis legen &amp; <strong>fest gedrückt halten</strong>. 2. Satz sprechen. 3. Danach Daumen <strong>sofort loslassen</strong>!</p>
               </div>
             </div>
           </li>
@@ -1148,8 +1269,61 @@
 
   </div>
 
+  <!-- Cookie Consent Banner -->
+  <div class="cookie-banner-wrap" id="cookie-banner" role="dialog" aria-live="polite">
+    <div class="cookie-banner">
+      <div class="cookie-header">
+        <span>✨</span>
+        <strong class="i18n" data-de="Besseres Nutzungserlebnis aktivieren" data-en="Enhance your experience">Enhance your experience</strong>
+      </div>
+      <p class="i18n" data-de="Wir verwenden anonyme Web-Analysen, um Ladezeiten zu optimieren und sicherzustellen, dass Anleitungen auf allen Smartphones einwandfrei dargestellt werden." data-en="We use privacy-friendly, anonymous analytics to optimize page speed and verify that all guide steps display reliably across devices.">We use privacy-friendly, anonymous analytics to optimize page speed and verify that all guide steps display reliably across devices.</p>
+      <div class="cookie-actions">
+        <button class="cookie-btn-decline i18n" onclick="declineCookies()" data-de="Nur notwendige" data-en="Necessary only">Necessary only</button>
+        <button class="cookie-btn-accept i18n" onclick="acceptCookies()" data-de="Einverstanden &amp; Fortfahren" data-en="Agree &amp; Continue">Agree &amp; Continue</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    const GTAG_ID = 'G-0WHX0WMFTC';
     let userThemePreference = null;
+
+    function loadGoogleAnalytics() {
+      if (window.gtagLoaded) return;
+      window.gtagLoaded = true;
+
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = `https://www.googletagmanager.com/gtag/js?id=${GTAG_ID}`;
+      document.head.appendChild(script);
+
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){ dataLayer.push(arguments); }
+      window.gtag = gtag;
+
+      gtag('js', new Date());
+      gtag('config', GTAG_ID, { anonymize_ip: true });
+    }
+
+    function acceptCookies() {
+      localStorage.setItem('cookieConsent', 'granted');
+      document.getElementById('cookie-banner').style.display = 'none';
+      loadGoogleAnalytics();
+    }
+
+    function declineCookies() {
+      localStorage.setItem('cookieConsent', 'denied');
+      document.getElementById('cookie-banner').style.display = 'none';
+    }
+
+    function checkCookieConsent() {
+      const consent = localStorage.getItem('cookieConsent');
+      if (consent === 'granted') {
+        loadGoogleAnalytics();
+      } else if (consent === null) {
+        document.getElementById('cookie-banner').style.display = 'flex';
+      }
+    }
 
     function applyTheme(theme) {
       document.documentElement.setAttribute('data-theme', theme);
@@ -1181,7 +1355,6 @@
     }
 
     function handlePrint() {
-      // Provides direct access to print / save-as-PDF sheet on iOS and Android browsers
       window.focus();
       setTimeout(() => {
         window.print();
@@ -1202,6 +1375,8 @@
           applyTheme(e.matches ? 'light' : 'dark');
         }
       });
+
+      checkCookieConsent();
     }
 
     initAutoDetection();
