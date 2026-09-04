@@ -67,6 +67,8 @@
       padding: 24px 16px 36px 16px;
       -webkit-font-smoothing: antialiased;
       transition: background-color 0.25s ease, color 0.25s ease;
+      overflow-wrap: break-word;
+      word-break: break-word;
     }
 
     .container {
@@ -94,6 +96,7 @@
       cursor: pointer;
       color: var(--text);
       transition: all 0.2s ease;
+      flex-shrink: 0;
     }
 
     .theme-toggle-btn:hover {
@@ -129,6 +132,7 @@
       padding: 4px;
       border-radius: 12px;
       gap: 4px;
+      flex-shrink: 0;
     }
 
     .lang-btn {
@@ -163,6 +167,7 @@
       cursor: pointer;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
       transition: all 0.15s ease;
+      touch-action: manipulation;
     }
 
     .btn-pdf:hover {
@@ -174,6 +179,7 @@
       width: 18px;
       height: 18px;
       stroke: var(--accent);
+      flex-shrink: 0;
     }
 
     header {
@@ -243,6 +249,7 @@
       border-radius: 11px;
       object-fit: cover;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      flex-shrink: 0;
     }
 
     h2 {
@@ -374,6 +381,7 @@
 
     .step-content {
       flex: 1;
+      min-width: 0;
     }
 
     .step-content strong {
@@ -426,7 +434,7 @@
       padding: 0 8px;
       border-radius: 6px;
       border: 1.5px solid var(--pill-border);
-      white-space: nowrap;
+      white-space: normal;
       vertical-align: baseline;
       line-height: 1.4;
       margin: 0 2px;
@@ -506,24 +514,124 @@
       font-size: 14px;
     }
 
+    /* Mobile UX Enhancements */
     @media (max-width: 660px) {
-      .download-grid {
-        grid-template-columns: 1fr;
+      body {
+        font-size: 17px;
+        padding: 14px 10px 24px 10px;
       }
+
+      .action-bar {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        grid-template-rows: auto auto;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+
+      .theme-toggle-btn {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .lang-switch {
+        grid-column: 2;
+        grid-row: 1;
+        justify-self: end;
+      }
+
+      .btn-pdf {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        width: 100%;
+        justify-content: center;
+        padding: 12px;
+        font-size: 16px;
+      }
+
       header {
         flex-direction: column;
-        align-items: flex-start;
+        align-items: center;
+        text-align: center;
+        padding: 18px 14px;
+        gap: 14px;
       }
+
+      header h1 {
+        font-size: 21px;
+      }
+
+      header p {
+        font-size: 15px;
+      }
+
+      .card {
+        padding: 20px 14px;
+        border-radius: 16px;
+      }
+
+      .card-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+      }
+
+      h2 {
+        font-size: 19px;
+      }
+
+      h3 {
+        font-size: 17px;
+      }
+
       .app-icon-preview {
         flex-direction: column;
         text-align: center;
+        padding: 14px;
       }
-      .action-bar {
-        justify-content: space-between;
+
+      .download-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+
+      .step-item {
+        gap: 12px;
+      }
+
+      .step-num {
+        width: 32px;
+        height: 32px;
+        font-size: 15px;
+      }
+
+      .step-content strong {
+        font-size: 17px;
+      }
+
+      .step-content p {
+        font-size: 15.5px;
+      }
+
+      .sub-bullets li {
+        font-size: 15px;
+      }
+
+      .group-box {
+        padding: 16px 12px;
+      }
+
+      .ptt-widget {
+        padding: 14px 10px;
+      }
+
+      .info-callout {
+        padding: 12px 14px;
+        font-size: 15px;
       }
     }
 
-    /* Print styling: always forced to white background and sharp light contrast */
+    /* Print styling: Always light mode & strict A4 boundaries */
     @page {
       size: A4 portrait;
       margin: 8mm 10mm;
@@ -588,6 +696,8 @@
         border: 1px solid #cbd5e1 !important;
         border-radius: 10px !important;
         box-shadow: none !important;
+        flex-direction: row !important;
+        text-align: left !important;
       }
 
       .header-logos img {
@@ -615,6 +725,8 @@
       }
 
       .card-header {
+        flex-direction: row !important;
+        text-align: left !important;
         margin-bottom: 8px !important;
         padding-bottom: 6px !important;
         gap: 10px !important;
@@ -637,6 +749,8 @@
       }
 
       .app-icon-preview {
+        flex-direction: row !important;
+        text-align: left !important;
         padding: 6px 10px !important;
         margin-bottom: 8px !important;
         gap: 10px !important;
@@ -747,6 +861,7 @@
         padding: 0 4px !important;
         border-width: 1px !important;
         border-radius: 4px !important;
+        white-space: nowrap !important;
       }
 
       .group-box {
@@ -821,7 +936,7 @@
         <button class="lang-btn active" id="btn-en" onclick="setLanguage('en')">EN</button>
       </div>
 
-      <button class="btn-pdf" onclick="window.print()">
+      <button class="btn-pdf" onclick="handlePrint()">
         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor">
           <path stroke-linecap="round" stroke-linejoin="round" d="M3 16.5v2.25A2.25 2.25 0 005.25 21h13.5A2.25 2.25 0 0021 18.75V16.5M16.5 12L12 16.5m0 0L7.5 12m4.5 4.5V3" />
         </svg>
@@ -1065,18 +1180,23 @@
         : 'Anleitung: Zello & Google Maps Gruppe';
     }
 
+    function handlePrint() {
+      // Provides direct access to print / save-as-PDF sheet on iOS and Android browsers
+      window.focus();
+      setTimeout(() => {
+        window.print();
+      }, 50);
+    }
+
     function initAutoDetection() {
-      // 1. Language: Default English, switch to German if browser/system is German
       const browserLanguages = navigator.languages || [navigator.language || navigator.userLanguage || ''];
       const prefersGerman = Array.from(browserLanguages).some(lang => lang && lang.toLowerCase().startsWith('de'));
       setLanguage(prefersGerman ? 'de' : 'en');
 
-      // 2. Theme: Default dark (#0F0F0F), switch to light (#F0F0F0) if browser prefers light
       const lightQuery = window.matchMedia('(prefers-color-scheme: light)');
       const initialTheme = lightQuery.matches ? 'light' : 'dark';
       applyTheme(initialTheme);
 
-      // React dynamically to live changes in system light/dark mode if user hasn't overridden
       lightQuery.addEventListener('change', (e) => {
         if (!userThemePreference) {
           applyTheme(e.matches ? 'light' : 'dark');
