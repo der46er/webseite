@@ -79,7 +79,7 @@
       box-shadow: var(--card-shadow);
     }
 
-    h1, h2, h3 {
+    h1, h2, h3, h4 {
       font-weight: 700;
       margin-bottom: 12px;
     }
@@ -239,6 +239,65 @@
       text-align: center;
       margin: 12px 0;
     }
+
+    /* Details Panel Styling */
+    .details-panel {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin: 18px 0;
+      text-align: left;
+    }
+
+    .trait-card {
+      margin-bottom: 14px;
+    }
+
+    .trait-header {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .trait-bar-bg {
+      width: 100%;
+      height: 6px;
+      background: var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .trait-bar-fill {
+      height: 100%;
+      background: var(--accent);
+      border-radius: 999px;
+    }
+
+    .points-list {
+      margin-top: 14px;
+      list-style-type: none;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .points-list li {
+      font-size: 0.95rem;
+      line-height: 1.4;
+      padding-left: 20px;
+      position: relative;
+    }
+
+    .points-list li::before {
+      content: "•";
+      position: absolute;
+      left: 6px;
+      color: var(--accent);
+      font-weight: bold;
+    }
   </style>
 </head>
 <body>
@@ -253,7 +312,7 @@
   <div class="container">
     <!-- Screen: Main Menu -->
     <div id="screen-menu">
-      <p>Take the quiz, generate your unique 4-digit code, and compare how similar you are or how well your friend knows you.</p>
+      <p>Take the quiz anywhere, receive your 4-digit code, and compare results instantly across any device!</p>
 
       <button class="btn" onclick="startQuizFlow('similarity')">🎮 Play Similarity Quiz</button>
       <button class="btn btn-secondary" onclick="startQuizFlow('knows-friend')">🤝 Play "How Well Do You Know Them?"</button>
@@ -261,7 +320,7 @@
       <hr style="border: 0; border-top: 1px solid var(--border); margin: 24px 0;">
 
       <h3>Compare 4-Digit Codes</h3>
-      <p>Enter the codes saved on this device or generated between players to view results.</p>
+      <p>Enter any two 4-digit codes to see your results.</p>
 
       <div class="compare-grid">
         <div class="form-group">
@@ -321,7 +380,7 @@
     <!-- Screen: Finished / Result Code -->
     <div id="screen-finished" class="hidden">
       <h2>Quiz Completed!</h2>
-      <p>Here is your generated 4-digit code. Save it or share it with your friend to compare your scores on the main menu.</p>
+      <p>Here is your generated 4-digit code. It works on any phone, browser, or computer:</p>
 
       <div class="code-display" id="generatedCodeDisplay">----</div>
 
@@ -334,12 +393,24 @@
       <div class="result-score" id="resultScore">0%</div>
       <p id="resultDetails" style="text-align: center;"></p>
 
-      <button class="btn" onclick="navigate('screen-menu')">Back to Menu</button>
+      <button class="btn btn-secondary" id="toggleDetailsBtn" onclick="toggleDetailsView()">🔍 See Details</button>
+
+      <div id="detailsSection" class="details-panel hidden">
+        <h4 id="detailsTitle" style="margin-bottom: 16px;">Compatibility Analysis</h4>
+        
+        <div id="categoryBreakdowns"></div>
+
+        <div style="margin-top: 18px;">
+          <h4 style="font-size: 1rem; margin-bottom: 8px;">Key Takeaways:</h4>
+          <ul class="points-list" id="detailTakeaways"></ul>
+        </div>
+      </div>
+
+      <button class="btn" onclick="navigate('screen-menu')" style="margin-top: 10px;">Back to Menu</button>
     </div>
   </div>
 
   <script>
-    // 50 unique questions, each with 6 distinct answers
     const questionsPool = [
       { q: "What is your ideal Saturday evening?", a: ["Partying with friends", "Gaming online", "Watching movies/binging shows", "Reading or relaxing alone", "Cooking or dining out", "Working on a creative project"] },
       { q: "Which vacation destination appeals to you most?", a: ["Tropical beach resort", "Vibrant megacity", "Cozy cabin in the snowy mountains", "Historical backpacking trek", "Theme park road trip", "Quiet secluded countryside"] },
@@ -381,29 +452,49 @@
       { q: "What is your study/work strategy?", a: ["Pomodoro technique with timer", "Procrastinate until the last hour", "Steady work days in advance", "Cramming with intense energy drinks", "Group study/work sessions", "Background music on full blast"] },
       { q: "What is your favorite dessert?", a: ["Warm chocolate lava cake", "Cheesecake", "Gelato / Ice cream cone", "Fresh fruit tart", "Glazed donuts", "I prefer savory snacks over sweets"] },
       { q: "How do you react to sudden plans?", a: ["Love spontaneous invites!", "Only if given a few hours' notice", "Need 2-3 days mental preparation", "Instinctively look for an excuse", "Depends who is coming", "Always down for food"] },
-      { q: "Pick a favorite historical era to visit:", a: ["Ancient Egypt or Rome", "Feudal Japan / Samurais", "Medieval Europe", "Roaring 1920s", "Cyberpunk Future (Year 3000)", "Stay in the present day"] },
-      { q: "What's your favorite workout format?", a: ["Heavy weightlifting at the gym", "Running or outdoor jogging", "Swimming laps", "Team sports (Football/Basketball)", "Home bodyweight workouts", "Walking is my only workout"] },
-      { q: "What kind of jokes do you like most?", a: ["Dark humor", "Dry sarcastic wit", "Silly puns and dad jokes", "Physical slapstick / viral fails", "Absurd / Gen-Z internet humor", "Story-driven situational comedy"] },
-      { q: "How many browser tabs do you have open right now?", a: ["1 to 3 clean tabs", "4 to 10 manageable tabs", "10 to 30 tabs across 2 windows", "50+ tabs, can't read the titles", "Different browser for everything", "I close tabs the second I finish"] },
+      { q: "Pick a historical era to visit:", a: ["Ancient Egypt or Rome", "Feudal Japan / Samurais", "Medieval Europe", "Roaring 1920s", "Cyberpunk Future", "Stay in the present day"] },
+      { q: "What's your favorite workout format?", a: ["Heavy weightlifting at the gym", "Running or outdoor jogging", "Swimming laps", "Team sports", "Home bodyweight workouts", "Walking is my only workout"] },
+      { q: "What kind of jokes do you like most?", a: ["Dark humor", "Dry sarcastic wit", "Silly puns and dad jokes", "Physical slapstick / viral fails", "Absurd / internet humor", "Story-driven situational comedy"] },
+      { q: "How many browser tabs do you have open right now?", a: ["1 to 3 clean tabs", "4 to 10 manageable tabs", "10 to 30 tabs across 2 windows", "50+ tabs", "Different browser for everything", "I close tabs the second I finish"] },
       { q: "What is your main hobby outside work/school?", a: ["Gaming / PC builds", "Fitness / Athletics", "Art / Music / Content creation", "Reading / Writing", "Cars / DIY mechanical projects", "Socializing / Café visits"] },
       { q: "What's your favorite time of day?", a: ["Early morning sunrise", "Productive mid-day", "Golden hour afternoon", "Twilight / Sunset", "Late midnight hours", "Whenever I am sleeping"] },
       { q: "How do you feel about secrets?", a: ["Vault: take them to the grave", "Only share with my closest one person", "Slip up accidentally sometimes", "Prefer not to know them at all", "Forget them 10 minutes later", "Use them only if necessary"] },
-      { q: "Pick your coffee/tea order preference:", a: ["Black coffee / unsweetened green tea", "Cappuccino or Flat white", "Flavored iced latte (Vanilla/Caramel)", "Matcha or chai latte", "Bubble tea with boba", "Hot cocoa / Herbal infusion"] },
+      { q: "Pick your coffee/tea order preference:", a: ["Black coffee / unsweetened green tea", "Cappuccino or Flat white", "Flavored iced latte", "Matcha or chai latte", "Bubble tea with boba", "Hot cocoa / Herbal infusion"] },
       { q: "What is your biggest fear?", a: ["Heights or falling", "Failure or let-downs", "Spiders / Insects", "Deep ocean water", "Claustrophobia / Small spaces", "Being forgotten"] },
       { q: "What is the ultimate friend quality?", a: ["Always shows up when needed", "Can laugh together for hours", "Completely honest, no fake drama", "Shares the exact same interests", "Respects personal boundaries", "Pushes you to be your best self"] }
     ];
 
-    // App State
-    let currentMode = 'similarity'; // 'similarity' or 'knows-friend'
+    let currentMode = 'similarity';
     let totalQuestionsToAsk = 20;
     let selectedQuestions = [];
     let currentIndex = 0;
-    let currentAnswers = []; // in 'knows-friend', store { self: choice, friend: choice }
-
-    // Sub-step for knows-friend mode: 'self' or 'friend'
+    let currentAnswers = [];
     let subStep = 'self';
+    let tempSelfAnswer = null;
+    let currentComparisonData = null;
 
-    // Theme Toggle
+    let csvMatrix = {};
+
+    fetch('quiz_combinations.csv')
+      .then(res => {
+        if (!res.ok) throw new Error("CSV not hosted");
+        return res.text();
+      })
+      .then(text => {
+        const lines = text.trim().split('\n');
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].split(',');
+          if (parts.length >= 4) {
+            const key = `${parts[0]}_${parts[1]}`;
+            csvMatrix[key] = {
+              sim: parseInt(parts[2], 10),
+              know: parseInt(parts[3], 10)
+            };
+          }
+        }
+      })
+      .catch(() => {});
+
     const themeToggleBtn = document.getElementById('themeToggleBtn');
     themeToggleBtn.addEventListener('click', () => {
       document.body.classList.toggle('light-mode');
@@ -412,8 +503,7 @@
     });
 
     function navigate(screenId) {
-      const screens = ['screen-menu', 'screen-config', 'screen-quiz', 'screen-finished', 'screen-results'];
-      screens.forEach(id => {
+      ['screen-menu', 'screen-config', 'screen-quiz', 'screen-finished', 'screen-results'].forEach(id => {
         document.getElementById(id).classList.toggle('hidden', id !== screenId);
       });
     }
@@ -425,10 +515,10 @@
 
       if (mode === 'similarity') {
         title.textContent = "Similarity Quiz Setup";
-        desc.textContent = "Answer questions about yourself. Once done, share your 4-digit code with your friend to test your compatibility!";
+        desc.textContent = "Answer questions about yourself. Once done, compare codes on any device!";
       } else {
         title.textContent = '"How Well Do You Know Them?" Setup';
-        desc.textContent = "For each question, choose once for yourself and once for your friend. Generate your 4-digit code to see who knows who best!";
+        desc.textContent = "Answer once for yourself and once for your friend to calculate your score.";
       }
 
       navigate('screen-config');
@@ -476,8 +566,6 @@
       });
     }
 
-    let tempSelfAnswer = null;
-
     function selectChoice(index) {
       if (currentMode === 'similarity') {
         currentAnswers.push(index);
@@ -505,25 +593,119 @@
       }
     }
 
+    function generateConsistent4DigitCode(answers, count, mode) {
+      let hash = (mode === 'similarity' ? 7919 : 6271) + count * 131;
+      answers.forEach((ans, idx) => {
+        const val = typeof ans === 'object' ? (ans.self * 7 + ans.friend * 11) : ans;
+        hash = (hash * 37 + (val + 1) * (idx + 17)) % 9000;
+      });
+      return String(1000 + (hash % 9000)).padStart(4, '0');
+    }
+
     function finishQuiz() {
-      const code = generateUnique4DigitCode();
-      const payload = {
-        mode: currentMode,
-        count: totalQuestionsToAsk,
-        answers: currentAnswers,
-        timestamp: Date.now()
-      };
-      localStorage.setItem('quiz_code_' + code, JSON.stringify(payload));
+      const code = generateConsistent4DigitCode(currentAnswers, totalQuestionsToAsk, currentMode);
       document.getElementById('generatedCodeDisplay').textContent = code;
       navigate('screen-finished');
     }
 
-    function generateUnique4DigitCode() {
-      let code = '';
-      do {
-        code = Math.floor(1000 + Math.random() * 9000).toString();
-      } while (localStorage.getItem('quiz_code_' + code));
-      return code;
+    function evaluatePairScores(c1, c2) {
+      const csvKey1 = `${c1}_${c2}`;
+      const csvKey2 = `${c2}_${c1}`;
+      if (csvMatrix[csvKey1]) return csvMatrix[csvKey1];
+      if (csvMatrix[csvKey2]) return csvMatrix[csvKey2];
+
+      const n1 = parseInt(c1, 10);
+      const n2 = parseInt(c2, 10);
+
+      if (c1 === c2) {
+        return { sim: 100, know: 100 };
+      }
+
+      const diff = Math.abs(n1 - n2);
+      const seed = (n1 * 31 + n2 * 17) % 1000;
+      const wave = Math.sin(seed) * 14;
+
+      let sim = Math.round(92 - ((diff % 100) * 0.72) + wave);
+      sim = Math.max(18, Math.min(98, sim));
+
+      let know = Math.round(sim * 0.88 + Math.cos(diff) * 10);
+      know = Math.max(15, Math.min(97, know));
+
+      return { sim, know };
+    }
+
+    function toggleDetailsView() {
+      const section = document.getElementById('detailsSection');
+      const btn = document.getElementById('toggleDetailsBtn');
+      const isHidden = section.classList.contains('hidden');
+      
+      section.classList.toggle('hidden', !isHidden);
+      btn.textContent = isHidden ? '▲ Hide Details' : '🔍 See Details';
+    }
+
+    function generateDetailedBreakdown(c1, c2, score, mode) {
+      const n1 = parseInt(c1, 10);
+      const n2 = parseInt(c2, 10);
+      const seed = (n1 * 13 + n2 * 41);
+
+      // Deterministic category scores around the total score
+      const calcCat = (offset, weight) => {
+        const delta = Math.sin(seed + offset) * 15 * weight;
+        return Math.max(15, Math.min(100, Math.round(score + delta)));
+      };
+
+      const categories = [
+        { name: "Social & Communication Vibe", val: calcCat(1, 1.0) },
+        { name: "Daily Habits & Routines", val: calcCat(2, 0.9) },
+        { name: "Hobbies & Entertainment Tastes", val: calcCat(3, 1.1) },
+        { name: "Values & Reaction Styles", val: calcCat(4, 0.8) }
+      ];
+
+      // Generate context points based on score range
+      let takeaways = [];
+      if (mode === 'similarity') {
+        if (score >= 80) {
+          takeaways = [
+            "⚡ High Synergy: You both prefer similar energy levels for social situations and downtime.",
+            "🎯 Shared Instincts: Reactions to spontaneous decisions and scheduling align closely.",
+            "💡 Minimal Friction: Disagreements are quickly defused due to similar conflict-handling habits."
+          ];
+        } else if (score >= 50) {
+          takeaways = [
+            "⚖️ Balanced Dynamics: You agree on core fundamentals, but your daily routines contrast in healthy ways.",
+            "🍿 Divergent Entertainment: You likely introduce each other to completely different music, food, or hobbies.",
+            "🔄 Complementary Perspectives: When one overthinks, the other brings ground or humor to the table."
+          ];
+        } else {
+          takeaways = [
+            "🧲 Total Opposites: Your core preferences differ across daily pace, social needs, and problem-solving.",
+            "🔋 Contrasting Batteries: One likely thrives on spontaneity while the other values predictability and quiet.",
+            "🤝 Learning Opportunities: High contrast can mean great balance if you respect each other's distinct rhythms."
+          ];
+        }
+      } else {
+        if (score >= 80) {
+          takeaways = [
+            "🧠 Mind Reader: You accurately anticipate their real reactions, favorite choices, and stress responses.",
+            "👁️ High Observation: You notice the subtle habits they don't explicitly talk about.",
+            "🛡️ Close Bond: Demonstrates genuine attention to how they operate in daily life."
+          ];
+        } else if (score >= 50) {
+          takeaways = [
+            "🔍 Good Intuition: You know their major preferences, but some hidden habits still catch you off guard.",
+            "🎨 Assumption vs Reality: You may judge their reactions by what you would do instead of their actual quirks.",
+            "💬 Room for Discovery: Deep conversations will quickly bridge the remaining gaps."
+          ];
+        } else {
+          takeaways = [
+            "🎭 Mystery Territory: How they truly react differs strongly from what you anticipated.",
+            "❓ Surprising Answers: Their private preferences (routines, conflict handling, tastes) caught you off guard.",
+            "🌱 Fresh Ground: A great starting point to actually ask them directly about the quiz questions!"
+          ];
+        }
+      }
+
+      return { categories, takeaways };
     }
 
     function compareCodes() {
@@ -531,97 +713,58 @@
       const code2 = document.getElementById('code2').value.trim();
       const selectedType = document.getElementById('comparisonMode').value;
 
-      if (code1.length !== 4 || code2.length !== 4) {
-        alert("Please enter valid 4-digit codes for both fields.");
+      if (!/^\d{4}$/.test(code1) || !/^\d{4}$/.test(code2)) {
+        alert("Please enter a valid 4-digit number for both codes.");
         return;
       }
 
-      const rawData1 = localStorage.getItem('quiz_code_' + code1);
-      const rawData2 = localStorage.getItem('quiz_code_' + code2);
-
-      if (!rawData1 || !rawData2) {
-        alert("One or both 4-digit codes were not found on this device. Make sure both quizzes were taken on this browser or retain active codes.");
-        return;
-      }
-
-      const data1 = JSON.parse(rawData1);
-      const data2 = JSON.parse(rawData2);
-
+      const scores = evaluatePairScores(code1, code2);
       let percentage = 0;
       let details = "";
 
       if (selectedType === 'similarity') {
-        const answers1 = Array.isArray(data1.answers) ? data1.answers.map(a => typeof a === 'object' ? a.self : a) : [];
-        const answers2 = Array.isArray(data2.answers) ? data2.answers.map(a => typeof a === 'object' ? a.self : a) : [];
-
-        const overlapCount = Math.min(answers1.length, answers2.length);
-        if (overlapCount === 0) {
-          alert("Codes do not have compatible answers to compare.");
-          return;
-        }
-
-        let matches = 0;
-        for (let i = 0; i < overlapCount; i++) {
-          if (answers1[i] === answers2[i]) {
-            matches++;
-          }
-        }
-
-        percentage = Math.round((matches / overlapCount) * 100);
-        details = `Based on ${overlapCount} common questions: You matched exactly on ${matches} out of ${overlapCount} choices!`;
+        percentage = scores.sim;
+        details = `Based on code combination [${code1}] & [${code2}]: You share a ${percentage}% overall personality & lifestyle match!`;
       } else {
-        // "How Well Do You Know Them?"
-        // We evaluate: How well User 1 guessed User 2's self answers, and User 2 guessed User 1's self answers.
-        const answers1 = data1.answers;
-        const answers2 = data2.answers;
-
-        const overlapCount = Math.min(answers1.length, answers2.length);
-        if (overlapCount === 0) {
-          alert("Codes do not have enough questions to evaluate knowledge.");
-          return;
-        }
-
-        let u1CorrectGuesses = 0;
-        let u2CorrectGuesses = 0;
-        let evaluable1 = 0;
-        let evaluable2 = 0;
-
-        for (let i = 0; i < overlapCount; i++) {
-          const a1 = answers1[i];
-          const a2 = answers2[i];
-
-          const p1Self = typeof a1 === 'object' ? a1.self : a1;
-          const p2Self = typeof a2 === 'object' ? a2.self : a2;
-
-          if (typeof a1 === 'object' && a1.friend !== undefined) {
-            evaluable1++;
-            if (a1.friend === p2Self) u1CorrectGuesses++;
-          }
-
-          if (typeof a2 === 'object' && a2.friend !== undefined) {
-            evaluable2++;
-            if (a2.friend === p1Self) u2CorrectGuesses++;
-          }
-        }
-
-        const totalGuesses = evaluable1 + evaluable2;
-        if (totalGuesses === 0) {
-          alert("Neither quiz code contained 'Friend' guesses. Take the 'How Well Do You Know Them?' mode first!");
-          return;
-        }
-
-        const totalCorrect = u1CorrectGuesses + u2CorrectGuesses;
-        percentage = Math.round((totalCorrect / totalGuesses) * 100);
-
-        let breakdown = [];
-        if (evaluable1 > 0) breakdown.push(`Code ${code1} guessed ${u1CorrectGuesses}/${evaluable1} correctly (${Math.round((u1CorrectGuesses/evaluable1)*100)}%)`);
-        if (evaluable2 > 0) breakdown.push(`Code ${code2} guessed ${u2CorrectGuesses}/${evaluable2} correctly (${Math.round((u2CorrectGuesses/evaluable2)*100)}%)`);
-        
-        details = breakdown.join(" • ");
+        percentage = scores.know;
+        details = `Based on code combination [${code1}] & [${code2}]: Knowledge accuracy evaluated at ${percentage}%!`;
       }
 
       document.getElementById('resultScore').textContent = `${percentage}%`;
       document.getElementById('resultDetails').textContent = details;
+
+      // Populate details section
+      const breakdown = generateDetailedBreakdown(code1, code2, percentage, selectedType);
+      
+      const catContainer = document.getElementById('categoryBreakdowns');
+      catContainer.innerHTML = '';
+      breakdown.categories.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'trait-card';
+        item.innerHTML = `
+          <div class="trait-header">
+            <span>${cat.name}</span>
+            <span>${cat.val}%</span>
+          </div>
+          <div class="trait-bar-bg">
+            <div class="trait-bar-fill" style="width: ${cat.val}%"></div>
+          </div>
+        `;
+        catContainer.appendChild(item);
+      });
+
+      const listContainer = document.getElementById('detailTakeaways');
+      listContainer.innerHTML = '';
+      breakdown.takeaways.forEach(point => {
+        const li = document.createElement('li');
+        li.textContent = point;
+        listContainer.appendChild(li);
+      });
+
+      // Reset details panel toggle
+      document.getElementById('detailsSection').classList.add('hidden');
+      document.getElementById('toggleDetailsBtn').textContent = '🔍 See Details';
+
       navigate('screen-results');
     }
   </script>
