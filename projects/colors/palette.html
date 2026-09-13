@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Color Grid</title>
-  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/website/main/assets/favicon.png">
   <!-- jsPDF Library for robust client-side PDF generation -->
   <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
   <style>
@@ -14,7 +14,7 @@
       font-style: normal;
       font-weight: 400 700;
       font-display: swap;
-      src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
+      src: url('https://cdn.jsdelivr.net/gh/der46er/website@main/assets/fonts/inter-v12-latin-regular.woff2') format('woff2');
     }
 
     * {
@@ -285,7 +285,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      background: rgba(18, 18, 18, 0.88);
+      background: rgba(18, 18, 18, 0.94);
       backdrop-filter: blur(12px);
       padding: 12px;
       border-radius: 8px;
@@ -298,6 +298,8 @@
                   transform 0.5s cubic-bezier(0.16, 1, 0.3, 1),
                   visibility 0.5s;
       pointer-events: none;
+      max-height: 90vh;
+      overflow-y: auto;
     }
 
     .action-panel-wrapper.open .action-bar {
@@ -312,7 +314,7 @@
       pointer-events: none;
     }
 
-    .action-btn {
+    .action-btn, .action-select {
       background: rgba(255, 255, 255, 0.15);
       border: 1px solid rgba(255, 255, 255, 0.25);
       border-radius: 5px;
@@ -326,10 +328,36 @@
       white-space: nowrap;
       text-decoration: none;
       display: block;
+      width: 100%;
     }
 
-    .action-btn:hover {
-      background: rgba(255, 255, 255, 0.3);
+    .action-select {
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+      background-repeat: no-repeat;
+      background-position: right 10px center;
+      background-size: 14px;
+      padding-right: 28px;
+    }
+
+    .action-select option {
+      background-color: #1a1a1a;
+      color: #fff;
+    }
+
+    .action-btn-group {
+      display: flex;
+      gap: 6px;
+    }
+
+    .action-btn-group .action-btn {
+      flex: 1;
+    }
+
+    .action-btn:hover, .action-select:hover {
+      background-color: rgba(255, 255, 255, 0.3);
       color: #fff;
     }
 
@@ -376,8 +404,6 @@
   </style>
 </head>
 <body>
-    <!-- Back Arrow to Main Page --> <a href="https://thataustrianone.eu" class="fixed top-4 left-4 sm:top-6 sm:left-6 z-[100] p-2 text-zinc-500 hover:text-white transition-colors rounded-xl bg-black/20 backdrop-blur-md border border-white/10 shadow-lg group"> <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="group-hover:-translate-x-1 transition-transform"> <line x1="19" y1="12" x2="5" y2="12"></line> <polyline points="12 19 5 12 12 5"></polyline> </svg> </a>
-
   <div class="grid-container" id="grid"></div>
 
   <div class="action-panel-wrapper" id="panel-wrapper">
@@ -387,12 +413,25 @@
       </svg>
     </div>
     <div class="action-bar" id="action-bar">
+      <!-- Grid Collections Management -->
+      <select class="action-select" id="grid-selector" title="Select Grid"></select>
+      <div class="action-btn-group">
+        <button class="action-btn" id="btn-add-grid">＋ New Grid</button>
+        <button class="action-btn" id="btn-del-grid">✕ Delete</button>
+      </div>
+      <div class="action-btn-group">
+        <button class="action-btn" id="btn-export-json">Export JSON</button>
+        <button class="action-btn" id="btn-import-json">Import JSON</button>
+      </div>
+      <input type="file" id="json-file-input" accept=".json" style="display: none;">
+
       <button class="action-btn" id="btn-toggle-theme">Theme: Light</button>
       <button class="action-btn" id="btn-toggle-advanced">Advanced Mode: OFF</button>
       <button class="action-btn" id="btn-toggle-view">Switch to List</button>
       <button class="action-btn" id="btn-default">Reset Default</button>
       <button class="action-btn" id="btn-clear">Clear All</button>
       <button class="action-btn" id="btn-export">Export PDF</button>
+      <a class="action-btn" href="https://thataustrianone.eu/projects/colors">Back to Menu</a>
       <a class="action-btn" href="https://thataustrianone.eu/legal" target="_blank" rel="noopener noreferrer">© 2026 — der_46er</a>
     </div>
   </div>
@@ -400,20 +439,15 @@
   <script>
     const GRID_SIZE = 30;
     const STORAGE_KEY = 'grid_colors';
+    const MULTI_GRID_KEY = 'color_grids_collection';
+    const ACTIVE_GRID_KEY = 'color_grid_active_id';
     const VIEW_KEY = 'grid_view_mode';
     const ADVANCED_KEY = 'grid_advanced_mode';
-    
-    // Shared Theme Storage Key
     const THEME_KEY = 'color_tools_theme';
     
     const DARK_HEX = '#0F0F0F';
     const LIGHT_HEX = '#F0F0F0';
     const GRAY_HEX = '#808080';
-
-    const defaultColors = Array.from({ length: GRID_SIZE }, (_, i) => {
-      const hue = Math.floor((i / GRID_SIZE) * 360);
-      return hslToHex(hue, 60, 50);
-    });
 
     function hslToHex(h, s, l) {
       l /= 100;
@@ -426,60 +460,101 @@
       return `#${f(0)}${f(8)}${f(4)}`;
     }
 
-    function saveColors(colors) {
-      const data = JSON.stringify(colors);
-      try {
-        localStorage.setItem(STORAGE_KEY, data);
-      } catch (e) {
-        const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
-        document.cookie = `${STORAGE_KEY}=${encodeURIComponent(data)}; expires=${expires}; path=/; SameSite=Strict`;
-      }
-    }
+    const defaultColors = Array.from({ length: GRID_SIZE }, (_, i) => {
+      const hue = Math.floor((i / GRID_SIZE) * 360);
+      return hslToHex(hue, 60, 50);
+    });
 
-    function loadSavedColors() {
+    // Multi-Grid Collections Management
+    function loadSavedGridStore() {
+      let store = null;
       try {
-        const localData = localStorage.getItem(STORAGE_KEY);
-        if (localData) return JSON.parse(localData);
+        const localData = localStorage.getItem(MULTI_GRID_KEY);
+        if (localData) store = JSON.parse(localData);
       } catch (e) {}
 
-      const value = `; ${document.cookie}`;
-      const parts = value.split(`; ${STORAGE_KEY}=`);
-      if (parts.length === 2) {
-        try {
-          return JSON.parse(decodeURIComponent(parts.pop().split(';').shift()));
-        } catch (e) {}
+      if (!store) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${MULTI_GRID_KEY}=`);
+        if (parts.length === 2) {
+          try {
+            store = JSON.parse(decodeURIComponent(parts.pop().split(';').shift()));
+          } catch (e) {}
+        }
       }
 
-      return [...defaultColors];
+      // Legacy fallback / Initial Setup
+      if (!store || !Array.isArray(store.grids) || store.grids.length === 0) {
+        let legacy = null;
+        try {
+          const lData = localStorage.getItem(STORAGE_KEY);
+          if (lData) legacy = JSON.parse(lData);
+        } catch (e) {}
+
+        const initialColors = Array.isArray(legacy) && legacy.length ? legacy : [...defaultColors];
+        store = {
+          activeId: 'default',
+          grids: [
+            { id: 'default', name: 'Primary Grid', colors: initialColors }
+          ]
+        };
+        saveGridStore(store);
+      }
+      return store;
     }
 
-    // Save Theme both to LocalStorage and path Cookie
+    function saveGridStore(store) {
+      const data = JSON.stringify(store);
+      try {
+        localStorage.setItem(MULTI_GRID_KEY, data);
+        localStorage.setItem(ACTIVE_GRID_KEY, store.activeId);
+        const active = store.grids.find(g => g.id === store.activeId);
+        if (active) {
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(active.colors));
+        }
+      } catch (e) {
+        const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+        document.cookie = `${MULTI_GRID_KEY}=${encodeURIComponent(data)}; expires=${expires}; path=/; SameSite=Strict`;
+      }
+    }
+
+    let gridStore = loadSavedGridStore();
+
+    function getActiveGrid() {
+      let current = gridStore.grids.find(g => g.id === gridStore.activeId);
+      if (!current) {
+        current = gridStore.grids[0];
+        gridStore.activeId = current.id;
+      }
+      return current;
+    }
+
+    function saveActiveColors(colors) {
+      const active = getActiveGrid();
+      active.colors = colors;
+      saveGridStore(gridStore);
+    }
+
     function saveThemeMode(theme) {
       try {
         localStorage.setItem(THEME_KEY, theme);
       } catch (e) {}
-
       const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
       document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/color/; SameSite=Strict`;
     }
 
-    // Read Theme from LocalStorage or Fallback to Cookie / Old Key
     function getSavedThemeMode() {
       try {
         const localTheme = localStorage.getItem(THEME_KEY) || localStorage.getItem('grid_theme_mode');
         if (localTheme) return localTheme;
       } catch (e) {}
-
       const value = `; ${document.cookie}`;
       const parts = value.split(`; ${THEME_KEY}=`);
-      if (parts.length === 2) {
-        return parts.pop().split(';').shift();
-      }
-
+      if (parts.length === 2) return parts.pop().split(';').shift();
       return 'dark';
     }
 
-    let currentColors = loadSavedColors();
+    let currentColors = [...getActiveGrid().colors];
     let isListView = localStorage.getItem(VIEW_KEY) === 'list';
     let isAdvancedView = localStorage.getItem(ADVANCED_KEY) === 'true';
     let currentTheme = getSavedThemeMode();
@@ -488,6 +563,19 @@
     const toggleViewBtn = document.getElementById('btn-toggle-view');
     const toggleAdvancedBtn = document.getElementById('btn-toggle-advanced');
     const toggleThemeBtn = document.getElementById('btn-toggle-theme');
+    const gridSelector = document.getElementById('grid-selector');
+    const jsonFileInput = document.getElementById('json-file-input');
+
+    function syncGridDropdown() {
+      gridSelector.innerHTML = '';
+      gridStore.grids.forEach(g => {
+        const opt = document.createElement('option');
+        opt.value = g.id;
+        opt.textContent = g.name;
+        if (g.id === gridStore.activeId) opt.selected = true;
+        gridSelector.appendChild(opt);
+      });
+    }
 
     function updateUIState() {
       if (isListView) {
@@ -507,6 +595,8 @@
         document.body.classList.remove('light-theme');
         toggleThemeBtn.innerText = 'Theme: Dark';
       }
+
+      syncGridDropdown();
     }
 
     function renderGrid() {
@@ -537,7 +627,7 @@
           if (/^#[0-9A-Fa-f]{6}$/.test(hex)) {
             card.style.backgroundColor = hex;
             currentColors[index] = hex;
-            saveColors(currentColors);
+            saveActiveColors(currentColors);
           }
         };
 
@@ -564,7 +654,7 @@
           deleteBtn.addEventListener('click', () => {
             if (currentColors.length > 1) {
               currentColors.splice(index, 1);
-              saveColors(currentColors);
+              saveActiveColors(currentColors);
               renderGrid();
             }
           });
@@ -580,23 +670,104 @@
         addCard.className = 'color-card add-card';
         addCard.innerHTML = `<div class="add-card-btn"><span>＋</span> Add Box</div>`;
         addCard.addEventListener('click', () => {
-          const randomColor = '#' + Math.floor(Math.random()*16777215).toString(16).padStart(6, '0').toUpperCase();
+          const randomColor = '#' + Math.floor(Math.random() * 16777215).toString(16).padStart(6, '0').toUpperCase();
           currentColors.push(randomColor);
-          saveColors(currentColors);
+          saveActiveColors(currentColors);
           renderGrid();
         });
         gridEl.appendChild(addCard);
       }
     }
 
-    // Timer & Panel Interaction Logic
+    // Grid Switch, Add, and Delete Event Listeners
+    gridSelector.addEventListener('change', (e) => {
+      gridStore.activeId = e.target.value;
+      saveGridStore(gridStore);
+      currentColors = [...getActiveGrid().colors];
+      renderGrid();
+    });
+
+    document.getElementById('btn-add-grid').addEventListener('click', () => {
+      const name = prompt('Enter a name for the new Color Grid:', `Grid ${gridStore.grids.length + 1}`);
+      if (!name || !name.trim()) return;
+
+      const newId = 'grid_' + Date.now();
+      gridStore.grids.push({
+        id: newId,
+        name: name.trim(),
+        colors: [...defaultColors]
+      });
+      gridStore.activeId = newId;
+      saveGridStore(gridStore);
+      currentColors = [...getActiveGrid().colors];
+      renderGrid();
+    });
+
+    document.getElementById('btn-del-grid').addEventListener('click', () => {
+      if (gridStore.grids.length <= 1) {
+        alert('You must keep at least one grid.');
+        return;
+      }
+      const active = getActiveGrid();
+      if (!confirm(`Delete "${active.name}"?`)) return;
+
+      gridStore.grids = gridStore.grids.filter(g => g.id !== active.id);
+      gridStore.activeId = gridStore.grids[0].id;
+      saveGridStore(gridStore);
+      currentColors = [...getActiveGrid().colors];
+      renderGrid();
+    });
+
+    // JSON Export and Import
+    document.getElementById('btn-export-json').addEventListener('click', () => {
+      const dataStr = 'data:text/json;charset=utf-8,' + encodeURIComponent(JSON.stringify(gridStore, null, 2));
+      const downloadAnchor = document.createElement('a');
+      downloadAnchor.setAttribute('href', dataStr);
+      downloadAnchor.setAttribute('download', `color-grids-backup-${new Date().toISOString().slice(0,10)}.json`);
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      downloadAnchor.remove();
+    });
+
+    document.getElementById('btn-import-json').addEventListener('click', () => {
+      jsonFileInput.value = '';
+      jsonFileInput.click();
+    });
+
+    jsonFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const parsed = JSON.parse(event.target.result);
+          if (!parsed.grids || !Array.isArray(parsed.grids) || parsed.grids.length === 0) {
+            alert('Invalid color grid backup file.');
+            return;
+          }
+          gridStore = parsed;
+          if (!gridStore.activeId || !gridStore.grids.some(g => g.id === gridStore.activeId)) {
+            gridStore.activeId = gridStore.grids[0].id;
+          }
+          saveGridStore(gridStore);
+          currentColors = [...getActiveGrid().colors];
+          renderGrid();
+        } catch (err) {
+          alert('Could not parse the selected JSON file.');
+        }
+      };
+      reader.readAsText(file);
+    });
+
+    // Panel Drawer Timer & Interaction Logic (PC: 3s, Mobile/Touch: 5s)
     const wrapper = document.getElementById('panel-wrapper');
     const arrowTrigger = document.getElementById('arrow-trigger');
     let autoCloseTimer = null;
 
-    function openPanel() {
+    function openPanel(isTouch = false) {
       wrapper.classList.add('open');
-      resetAutoCloseTimer();
+      resetAutoCloseTimer(isTouch ? 5000 : 3000);
     }
 
     function closePanel() {
@@ -607,18 +778,29 @@
       }
     }
 
-    function resetAutoCloseTimer() {
+    function resetAutoCloseTimer(delay = 3000) {
       if (autoCloseTimer) clearTimeout(autoCloseTimer);
       autoCloseTimer = setTimeout(() => {
         closePanel();
-      }, 5000);
+      }, delay);
     }
 
-    arrowTrigger.addEventListener('mouseenter', openPanel);
-    arrowTrigger.addEventListener('click', openPanel);
-    wrapper.addEventListener('mouseenter', resetAutoCloseTimer);
-    wrapper.addEventListener('mousemove', resetAutoCloseTimer);
-    wrapper.addEventListener('mouseleave', resetAutoCloseTimer);
+    // Mouse / PC triggers (3s delay)
+    arrowTrigger.addEventListener('mouseenter', () => openPanel(false));
+    arrowTrigger.addEventListener('click', (e) => {
+      if (e.pointerType !== 'touch') openPanel(false);
+    });
+    wrapper.addEventListener('mouseenter', () => {
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    });
+    wrapper.addEventListener('mousemove', () => {
+      if (autoCloseTimer) clearTimeout(autoCloseTimer);
+    });
+    wrapper.addEventListener('mouseleave', () => resetAutoCloseTimer(3000));
+
+    // Touch / Mobile triggers (5s delay)
+    arrowTrigger.addEventListener('touchstart', () => openPanel(true), { passive: true });
+    wrapper.addEventListener('touchstart', () => resetAutoCloseTimer(5000), { passive: true });
 
     toggleViewBtn.addEventListener('click', () => {
       isListView = !isListView;
@@ -640,17 +822,17 @@
 
     document.getElementById('btn-default').addEventListener('click', () => {
       currentColors = [...defaultColors];
-      saveColors(currentColors);
+      saveActiveColors(currentColors);
       renderGrid();
     });
 
     document.getElementById('btn-clear').addEventListener('click', () => {
       currentColors = Array(currentColors.length).fill(GRAY_HEX);
-      saveColors(currentColors);
+      saveActiveColors(currentColors);
       renderGrid();
     });
 
-    // Integrated Multi-Format PDF Export Engine (Optimized 1440p)
+    // PDF Export
     document.getElementById('btn-export').addEventListener('click', () => {
       const exportBtn = document.getElementById('btn-export');
       exportBtn.innerText = 'Exporting...';
@@ -660,7 +842,6 @@
         const bgHex = currentTheme === 'light' ? LIGHT_HEX : DARK_HEX;
 
         if (isListView) {
-          // --- CANVAS-BASED VERTICAL A4 LIST EXPORT ---
           const pdf = new jsPDF({
             orientation: 'portrait',
             unit: 'mm',
@@ -674,7 +855,6 @@
             if (p > 0) pdf.addPage('a4', 'portrait');
 
             const pageColors = currentColors.slice(p * itemsPerPage, (p + 1) * itemsPerPage);
-
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
@@ -693,18 +873,15 @@
             pageColors.forEach((color, i) => {
               const y = paddingY + i * (barHeight + barGap);
 
-              // Color Bar Fill
               ctx.fillStyle = color;
               ctx.beginPath();
               ctx.roundRect(paddingX, y, barWidth, barHeight, 16);
               ctx.fill();
 
-              // Outer Glow Border
               ctx.strokeStyle = 'rgba(255, 255, 255, 0.2)';
               ctx.lineWidth = 3;
               ctx.stroke();
 
-              // Hex Tag Pill
               const pillWidth = 320;
               const pillHeight = 72;
               const pillX = paddingX + 24;
@@ -719,7 +896,6 @@
               ctx.lineWidth = 2;
               ctx.stroke();
 
-              // Monospace Text
               ctx.fillStyle = '#ffffff';
               ctx.font = 'bold 34px monospace';
               ctx.textAlign = 'center';
@@ -731,10 +907,9 @@
             pdf.addImage(imgData, 'JPEG', 0, 0, 210, 297);
           }
 
-          pdf.save('color-list.pdf');
+          pdf.save(`${getActiveGrid().name.toLowerCase().replace(/\s+/g, '-')}-list.pdf`);
 
         } else {
-          // --- CANVAS-BASED 16:9 GRID EXPORT (Max 30/Page) ---
           const pdf = new jsPDF({
             orientation: 'landscape',
             unit: 'mm',
@@ -748,7 +923,6 @@
             if (p > 0) pdf.addPage([400, 225], 'landscape');
 
             const pageColors = currentColors.slice(p * pageSize, (p + 1) * pageSize);
-
             const canvas = document.createElement('canvas');
             const ctx = canvas.getContext('2d');
 
@@ -810,7 +984,7 @@
             pdf.addImage(imgData, 'JPEG', 0, 0, 400, 225);
           }
 
-          pdf.save('color-grid.pdf');
+          pdf.save(`${getActiveGrid().name.toLowerCase().replace(/\s+/g, '-')}-grid.pdf`);
         }
 
         exportBtn.innerText = 'Export PDF';
