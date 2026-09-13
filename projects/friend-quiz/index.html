@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+  <title>Besties Quiz & Compatibility</title>
+  <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Top Back Arrow to /projects/ -->
+  <a href="https://thataustrianone.eu/projects/" class="back-nav" title="Back to projects">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+      <line x1="19" y1="12" x2="5" y2="12"></line>
+      <polyline points="12 19 5 12 12 5"></polyline>
+    </svg>
+  </a>
+
+  <header>
+    <div class="app-title-group">
+      <div class="app-title">Friend & Partner Quiz</div>
+      <div class="app-subtitle">Compare how you match</div>
+    </div>
+    <button class="theme-toggle" id="themeToggleBtn">
+      <img id="themeToggleImg" class="theme-icon" src="" alt="Theme Icon">
+      <span id="themeToggleText">Light Mode</span>
+    </button>
+  </header>
+
+  <!-- Desktop Grid Layout -->
+  <div class="desktop-layout">
+    
+    <!-- Left Ad Column -->
+    <aside class="ad-sidebar">
+      <div class="ad-slot" id="left-ad-slot">
+        <span class="ad-slot-label">Advertisement</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <div class="ad-fallback" id="left-ad-fallback">
+          <div class="ad-fallback-icon">!</div>
+          <div class="ad-fallback-title">Support Free Tools</div>
+          <p class="ad-fallback-text">Consider pausing your ad blocker to help keep this project free and actively maintained for everyone.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Center App Container -->
+    <main class="container">
+      <!-- Screen: Custom Invite Landing Page -->
+      <div id="screen-invite" class="hidden">
+        <div class="invite-banner">
+          <div class="invite-avatar-chip" id="inviteAvatarLetter">?</div>
+          <h2 style="margin-bottom: 6px;">You've Been Invited!</h2>
+          <p style="margin-bottom: 12px;"><span id="inviteFriendName" style="font-weight: 700; color: var(--text);">A friend</span> shared their quiz code with you to test your compatibility.</p>
+          <div class="invite-code-pill" id="inviteCodeDisplay">CODE ----</div>
+        </div>
+
+        <p style="text-align: center; margin-bottom: 16px;">Take the quiz to generate your answer code and see your mutual match score:</p>
+
+        <button class="btn" onclick="acceptInviteFlow('similarity')">Take Similarity Quiz & Match</button>
+        <button class="btn btn-secondary" onclick="acceptInviteFlow('knows-friend')">Play "How Well Do You Know Them?"</button>
+        <button class="btn btn-secondary" onclick="proceedToCompareWithPreload()" style="margin-top: 6px;">I Already Have a Code</button>
+      </div>
+
+      <!-- Screen: Main Menu -->
+      <div id="screen-menu">
+        <p>Take any of our 10 friend & partner quizzes, get your 4-digit code, and compare it with your friend's or partner's code to see how similar you are or how well you know each other!</p>
+
+        <button class="btn" onclick="startQuizFlow('similarity')">Play Similarity Quiz</button>
+        <button class="btn btn-secondary" onclick="startQuizFlow('knows-friend')">Play "How Well Do You Know Them?"</button>
+
+        <hr style="border: 0; border-top: 1px solid var(--border); margin: 24px 0;">
+
+        <h3 style="font-size: 1.05rem;">Check Your Match</h3>
+        <p style="margin-bottom: 12px;">Type in your 4-digit code and your friend's code below:</p>
+
+        <div class="compare-container">
+          <div class="pin-input-group">
+            <div class="pin-label" id="labelCode1">Code 1</div>
+            <div class="pin-boxes" data-target="code1">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+            </div>
+          </div>
+
+          <div class="pin-input-group">
+            <div class="pin-label" id="labelCode2">Code 2</div>
+            <div class="pin-boxes" data-target="code2">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+              <input type="text" class="pin-digit" inputmode="numeric" maxlength="1" pattern="[0-9]*">
+            </div>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="comparisonMode">What to calculate</label>
+          <select id="comparisonMode">
+            <option value="similarity">Similarity (% Same Answers)</option>
+            <option value="knows-friend">"How Well You Know Them" Score</option>
+          </select>
+        </div>
+
+        <button class="btn" onclick="compareCodes()">Calculate Results</button>
+
+        <!-- Previous Codes Drawer -->
+        <div class="history-card" id="historyCard">
+          <div class="history-header" onclick="toggleHistoryView()">
+            <span class="history-title">Saved Device Codes (<span id="historyCount">0</span>)</span>
+            <span class="history-toggle-label" id="historyToggleText">Show</span>
+          </div>
+          <div class="history-list hidden" id="historyListContainer"></div>
+        </div>
+      </div>
+
+      <!-- Screen: Configuration -->
+      <div id="screen-config" class="hidden">
+        <h2 id="config-title">Quiz Setup</h2>
+        <p id="config-desc">Pick your quiz category, question count, and enter your name.</p>
+
+        <div class="form-group">
+          <label for="quizThemeSelect">Quiz Category</label>
+          <select id="quizThemeSelect" onchange="onThemeSelectChange()">
+            <option value="ALL" selected>All Categories (Full Mix)</option>
+            <option value="Best Friends & Quirks">1. Best Friends & Quirks</option>
+            <option value="Dating & Romance">2. Dating & Romance</option>
+            <option value="Deep & Values">3. Deep & Values</option>
+            <option value="Habits & Daily Routines">4. Habits & Daily Routines</option>
+            <option value="Food & Dining Out">5. Food & Dining Out</option>
+            <option value="Entertainment & Pop Culture">6. Entertainment & Pop Culture</option>
+            <option value="Stress & Conflict Handling">7. Stress & Conflict Handling</option>
+            <option value="Travel & Adventure">8. Travel & Adventure</option>
+            <option value="Future Dreams & Ambition">9. Future Dreams & Ambition</option>
+            <option value="Fun & Hypotheticals">10. Fun & Hypotheticals</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="userNameInput">Your Name</label>
+          <input type="text" id="userNameInput" placeholder="e.g. Alex" maxlength="20" autocomplete="off" spellcheck="false">
+        </div>
+
+        <div class="form-group">
+          <label for="questionCount">Questions</label>
+          <select id="questionCount">
+            <option value="10" selected>10 Questions (Quick)</option>
+            <option value="20">20 Questions (Standard)</option>
+            <option value="30">30 Questions</option>
+            <option value="50">50 Questions</option>
+            <option value="100">100 Questions (Ultimate)</option>
+          </select>
+        </div>
+
+        <button class="btn" id="startQuizBtn" onclick="initQuizSession()">Start Quiz</button>
+        <button class="btn btn-secondary" onclick="navigate('screen-menu')">Back to Menu</button>
+      </div>
+
+      <!-- Screen: Quiz Playing -->
+      <div id="screen-quiz" class="hidden">
+        <div class="progress-bar-container">
+          <div class="progress-bar" id="progressBar"></div>
+        </div>
+
+        <span id="quizBadge" class="badge-pill">Question 1</span>
+        <h3 id="questionText" style="font-size: 1.15rem; margin-bottom: 14px;">Loading question...</h3>
+
+        <div class="choices-grid" id="choicesContainer"></div>
+      </div>
+
+      <!-- Screen: Finished / Result Code -->
+      <div id="screen-finished" class="hidden">
+        <h2>All Done, <span id="finishedUserName">Friend</span>!</h2>
+        <p>Here is your 4-digit code. Share your personalized link with your friend so they can match with you directly:</p>
+
+        <div class="code-display" id="generatedCodeDisplay">----</div>
+
+        <button class="btn" id="finishNextBtn" onclick="onFinishedPrimaryAction()">Check Match with Friend</button>
+        <button class="btn btn-secondary" id="shareLinkBtn" onclick="copyShareLink()">Copy Direct Friend Link</button>
+        <button class="btn btn-secondary" onclick="navigate('screen-menu')">Back to Main Menu</button>
+      </div>
+
+      <!-- Screen: Calculation Results -->
+      <div id="screen-results" class="hidden">
+        <h2 id="resultHeadingTitle">Your Match</h2>
+        <div class="result-score" id="resultScore">0%</div>
+        <p id="resultDetails" style="text-align: center;"></p>
+
+        <button class="btn" onclick="exportScorecardImage()">Download Story / Chat Card</button>
+        <button class="btn btn-secondary" id="toggleDetailsBtn" onclick="toggleDetailsView()">See Details</button>
+
+        <div id="detailsSection" class="details-panel hidden">
+          <h4 id="detailsTitle" style="font-size: 0.9rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 14px; color: var(--text-muted);">How you match up</h4>
+          
+          <div id="categoryBreakdowns"></div>
+
+          <div style="margin-top: 18px;">
+            <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; color: var(--text-muted);">Why you got this score</h4>
+            <ul class="points-list" id="detailTakeaways"></ul>
+          </div>
+
+          <div style="margin-top: 24px;">
+            <h4 style="font-size: 0.82rem; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px; color: var(--text-muted);">Side-by-Side Question Breakdown</h4>
+            <div class="qa-breakdown-list" id="qaBreakdownContainer"></div>
+          </div>
+        </div>
+
+        <button class="btn btn-secondary" onclick="navigate('screen-menu')" style="margin-top: 10px;">Back to Menu</button>
+      </div>
+    </main>
+
+    <!-- Right Ad Column -->
+    <aside class="ad-sidebar">
+      <div class="ad-slot" id="right-ad-slot">
+        <span class="ad-slot-label">Advertisement</span>
+        <ins class="adsbygoogle"
+             style="display:block"
+             data-ad-client="ca-pub-XXXXXXXXXXXXXXXX"
+             data-ad-slot="XXXXXXXXXX"
+             data-ad-format="auto"
+             data-full-width-responsive="true"></ins>
+        <div class="ad-fallback" id="right-ad-fallback">
+          <div class="ad-fallback-icon">!</div>
+          <div class="ad-fallback-title">Ad Block Detected</div>
+          <p class="ad-fallback-text">Whitelisting this page helps support development and keeps server costs covered without intrusive paywalls.</p>
+        </div>
+      </div>
+    </aside>
+
+  </div>
+
+  <script>
+    const THEME_ICONS_BASE = "https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/assets/icons/";
+    const THEME_ICONS = {
+      darkTheme: {
+        toLight: THEME_ICONS_BASE + "light-mode-light.svg",
+        toDark: THEME_ICONS_BASE + "dark-mode-light.svg"
+      },
+      lightTheme: {
+        toLight: THEME_ICONS_BASE + "light-mode-dark.svg",
+        toDark: THEME_ICONS_BASE + "dark-mode-dark.svg"
+      }
+    };
+
+    const THEME_KEY = 'besties_quiz_theme';
+
+    function saveThemeMode(theme) {
+      try {
+        localStorage.setItem(THEME_KEY, theme);
+      } catch (e) {}
+
+      const expires = new Date(Date.now() + 365 * 864e5).toUTCString();
+      document.cookie = `${THEME_KEY}=${theme}; expires=${expires}; path=/; SameSite=Strict`;
+    }
+
+    function getSavedThemeMode() {
+      try {
+        const localTheme = localStorage.getItem(THEME_KEY);
+        if (localTheme) return localTheme;
+      } catch (e) {}
+
+      const value = `; ${document.cookie}`;
+      const parts = value.split(`; ${THEME_KEY}=`);
+      if (parts.length === 2) {
+        return parts.pop().split(';').shift();
+      }
+
+      return 'dark';
+    }
+
+    let currentTheme = getSavedThemeMode();
+
+    const themeToggleBtn = document.getElementById('themeToggleBtn');
+    const themeToggleText = document.getElementById('themeToggleText');
+    const themeToggleImg = document.getElementById('themeToggleImg');
+
+    function updateThemeUI() {
+      const isLight = currentTheme === 'light';
+      document.body.classList.toggle('light-mode', isLight);
+
+      if (isLight) {
+        themeToggleText.textContent = 'Dark Mode';
+        themeToggleImg.src = THEME_ICONS.lightTheme.toDark;
+      } else {
+        themeToggleText.textContent = 'Light Mode';
+        themeToggleImg.src = THEME_ICONS.darkTheme.toLight;
+      }
+    }
+
+    themeToggleBtn.addEventListener('click', () => {
+      currentTheme = currentTheme === 'dark' ? 'light' : 'dark';
+      saveThemeMode(currentTheme);
+      updateThemeUI();
+    });
+
+    const DEFAULT_QUESTIONS_DATA = [
+      {"category": "Best Friends & Quirks", "q": "What is your ideal Saturday evening?", "a": ["Partying with friends", "Gaming online", "Watching movies or series", "Reading or relaxing alone", "Cooking or dining out", "Working on a creative project"]},
+      {"category": "Best Friends & Quirks", "q": "How do you text people?", "a": ["Fast replies and voice notes", "Short to the point answers", "Long story paragraphs", "Lots of memes instead of words", "I prefer calling over texting", "Takes me 3 to 5 business days to reply"]},
+      {"category": "Best Friends & Quirks", "q": "What does your desk look like?", "a": ["Super clean with hidden cables", "Organized mess", "Full of cups, plates and clutter", "Constantly changing it around", "Big screen tech setup", "I just use my laptop in bed"]},
+      {"category": "Best Friends & Quirks", "q": "What annoys you the most?", "a": ["Loud chewers", "People being late all the time", "Show-offs and bragards", "Slow walkers blocking the hall", "Unread notification red dots", "Passive-aggressive hints"]},
+      {"category": "Best Friends & Quirks", "q": "What role do you play in a friend group?", "a": ["The Planner / Leader", "The Clown / Comedian", "The Therapist / Listener", "The Wild Card / Chaos", "The Chill Quiet Observer", "The Mom / Dad of the group"]},
+      {"category": "Best Friends & Quirks", "q": "How do you deal with waking up in the morning?", "a": ["First alarm instantly awake", "Hit snooze at least 5 times", "Wake up grumpy until caffeine", "Always wake up before the alarm", "Never wake up at the same hour", "Roll around checking social media for an hour"]},
+      {"category": "Best Friends & Quirks", "q": "How do you pack for a trip?", "a": ["Neat packing cubes days ahead", "The night before in pure panic", "Overpack for 2 weeks for a weekend trip", "Travel light with just a backpack", "Forget essential items every time", "Throw random stuff in without looking"]},
+      {"category": "Best Friends & Quirks", "q": "What is your guilty pleasure?", "a": ["Trash reality TV shows", "Eating junk food in bed at 2 AM", "Doomscrolling reels or TikTok", "Online shopping you don't need", "Listening to cringey throwback pop songs", "Spying on strangers' drama"]},
+      {"category": "Best Friends & Quirks", "q": "How do you handle secrets?", "a": ["Vault - I will take it to my grave", "I only tell my absolute best friend", "I accidentally let things slip sometimes", "Don't tell me or I will burst", "I forget what you told me 10 minutes later", "I keep it safe unless it hurts someone"]},
+      {"category": "Best Friends & Quirks", "q": "What is your battery level right now?", "a": ["100% full speed ahead", "Cruising comfortably at 70%", "Halfway drained at 50%", "Running on low power mode", "Critical 1% searching for a charger", "Completely dead, shut down"]},
+      {"category": "Dating & Romance", "q": "What is your love language?", "a": ["Words of affirmation", "Quality time together", "Receiving thoughtful gifts", "Acts of service and help", "Physical touch and hugs", "Shared humor and inside jokes"]},
+      {"category": "Dating & Romance", "q": "What is the best first date setting?", "a": ["Cozy cafe coffee walk", "Fancy restaurant dinner", "Activity like mini golf or arcade", "Cooking dinner together at home", "Cinema and late night dessert", "Concert or night event"]},
+      {"category": "Dating & Romance", "q": "How do you show someone you care?", "a": ["Texting them throughout the day", "Making something for them", "Listening attentively when they vent", "Buying their favorite snack secretly", "Planning a surprise day trip", "Checking in on how they feel"]},
+      {"category": "Dating & Romance", "q": "What is your biggest green flag?", "a": ["Kind to waiters and staff", "Great active listener", "Good communication when mad", "Passionate about their hobbies", "Shows genuine interest in my life", "Consistent actions matching words"]},
+      {"category": "Dating & Romance", "q": "What is an instant turn off for you?", "a": ["Being rude to other people", "Arrogance and know-it-all behavior", "Stuck on their phone during dinner", "Bad personal hygiene", "Talking only about themselves", "Playing manipulative mind games"]},
+      {"category": "Dating & Romance", "q": "How fast do you fall for someone?", "a": ["Love at first sight / right away", "Takes weeks of solid talking", "Only after a deep friendship forms", "Very slow and guarded", "I fall fast but retreat if overwhelmed", "Hard to tell until months pass"]},
+      {"category": "Dating & Romance", "q": "What kind of romance aesthetic matches you?", "a": ["Sunset walks by the river", "Late night drives with good music", "Candlelit cozy cooking night", "Adventures and city exploring", "Silly banter and playful teasing", "Quiet comfort reading in the same room"]},
+      {"category": "Dating & Romance", "q": "How do you celebrate anniversaries?", "a": ["Big romantic vacation or dinner", "Sentimental homemade photo book / gift", "Just chilling together relaxing", "Re-creating our very first date", "Something spontaneous on the day", "A quiet exchange of heartfelt letters"]},
+      {"category": "Dating & Romance", "q": "How do you handle relationship jealousy?", "a": ["I talk it through honestly right away", "I bottle it up until it passes", "I get quiet and slightly distant", "I don't get jealous easily at all", "I tease jokingly to test the waters", "I feel insecure but try to hide it"]},
+      {"category": "Dating & Romance", "q": "What matters most in a partner?", "a": ["Emotional maturity and honesty", "Shared sense of humor", "Ambition and drive", "Kindness and empathy", "Loyalty and consistency", "Physical attraction and chemistry"]},
+      {"category": "Deep & Values", "q": "What do you value most in life?", "a": ["True personal freedom", "Family and lifelong friends", "Career success and achievement", "Inner peace and calmness", "Continuous learning and wisdom", "Excitement and memorable experiences"]},
+      {"category": "Deep & Values", "q": "What is your biggest fear?", "a": ["Failing to reach my potential", "Being completely alone or forgotten", "Losing someone close to me", "Getting stuck in a routine life", "Being betrayed by those I trust", "Public embarrassment and humiliation"]},
+      {"category": "Deep & Values", "q": "Do you follow your head or your heart?", "a": ["Strictly logic and reasoning", "Strictly my feelings and heart", "Mostly head, with some emotion", "Mostly heart, with some sanity", "50/50 balanced weighing", "My gut instinct decides"]},
+      {"category": "Deep & Values", "q": "How do you handle apologies?", "a": ["I apologize quickly and genuinely", "I need time to cool down before speaking", "I find it hard to admit fault", "I apologize with actions not just words", "I over-apologize even when innocent", "I only apologize if convinced I was wrong"]},
+      {"category": "Deep & Values", "q": "What defines true success for you?", "a": ["Financial abundance and freedom", "Making a positive difference in people", "Having a loving peaceful home", "Mastery of your craft and passions", "Living life on your own terms", "Being genuinely happy every day"]},
+      {"category": "Deep & Values", "q": "Can people truly change?", "a": ["Yes, with enough self-reflection", "Yes, but only after rock bottom", "Only slightly, core nature stays", "Rarely, most revert to old patterns", "No, people remain who they are", "Only if they genuinely want to"]},
+      {"category": "Deep & Values", "q": "What is the hardest truth to accept?", "a": ["You cannot save or fix everyone", "Not everyone will like or understand you", "Time goes by faster than you think", "Hard work doesn't guarantee fairness", "Control over things is mostly an illusion", "Some friendships naturally fade away"]},
+      {"category": "Deep & Values", "q": "What motivates you on tough days?", "a": ["My long-term future goals", "The people who believe in me", "Sheer discipline and stubbornness", "Taking a break to reset my mind", "Remembering past hardships I overcame", "Music and inspirational thoughts"]},
+      {"category": "Deep & Values", "q": "How do you view forgiveness?", "a": ["Essential to let go and heal", "Forgive, but never forget", "I forgive easily because I hate grudges", "Hard to forgive deep betrayal", "Only when remorse is demonstrated", "Forgiveness is for my own peace"]},
+      {"category": "Deep & Values", "q": "What legacy do you want to leave?", "a": ["Being remembered as deeply kind", "Creating something that outlasts me", "Inspiring others to grow", "Having lived courageously and fully", "Providing generational security", "Leaving zero regrets behind"]},
+      {"category": "Habits & Daily Routines", "q": "What is the first thing you do after waking up?", "a": ["Check my phone notifications", "Drink a big glass of water", "Brush teeth and wash face", "Hit snooze again", "Stretch or do a light workout", "Make coffee or tea immediately"]},
+      {"category": "Habits & Daily Routines", "q": "What does your bedtime routine look like?", "a": ["Strict sleep schedule every night", "Reading a book until sleepy", "Watching videos until eyes drop", "Listening to podcasts or music", "Overthinking past conversations", "Falling asleep whenever exhaustion hits"]},
+      {"category": "Habits & Daily Routines", "q": "How organized is your day-to-day schedule?", "a": ["Strict calendar and to-do lists", "General mental outline of main tasks", "Completely spontaneous flow", "Procrastinate until deadline pressure", "Time blocking every hour", "Flexible with prioritized essentials"]},
+      {"category": "Habits & Daily Routines", "q": "How do you maintain your physical health?", "a": ["Consistent gym workouts", "Daily long walks outside", "Sports and team activities", "Occasional bursts of motivation", "Eating balanced and watching nutrients", "I keep telling myself I will start on Monday"]},
+      {"category": "Habits & Daily Routines", "q": "How do you commute most often?", "a": ["Car or motorbike / moped", "Public transit train or bus", "Bicycle or e-scooter", "Walking on foot everywhere", "Ride with friends or carpool", "I work / study from home mostly"]},
+      {"category": "Habits & Daily Routines", "q": "How do you handle household chores?", "a": ["Clean as I go throughout the day", "One giant weekend cleaning blitz", "Postpone until someone complains", "Clean when I feel stressed", "Hire help or share strictly equally", "Do them while listening to podcasts"]},
+      {"category": "Habits & Daily Routines", "q": "How much water do you drink a day?", "a": ["3+ liters faithfully tracked", "Around 1.5 to 2 liters", "Only when I feel intensely thirsty", "Mostly coffee, tea or soda instead", "I forget water exists sometimes", "Always keep a reusable bottle filled"]},
+      {"category": "Habits & Daily Routines", "q": "What is your screen time like on your phone?", "a": ["Under 2 hours a day", "2 to 4 hours balanced", "4 to 6 hours mostly social apps", "6 to 8 hours constantly connected", "8+ hours phone glued to hand", "I don't look at screen time stats"]},
+      {"category": "Habits & Daily Routines", "q": "How do you approach shopping for groceries?", "a": ["Detailed checklist organized by aisle", "Go with a vague idea of what to cook", "Go on an empty stomach and buy snacks", "Online delivery order only", "Buy the exact same items every week", "Browse and decide spontaneously"]},
+      {"category": "Habits & Daily Routines", "q": "What is your habit when you enter the house?", "a": ["Shoes and outdoor clothes off right away", "Drop everything by the entrance", "Wash hands thoroughly first", "Greet pet or family instantly", "Check fridge even if not hungry", "Sit on the couch and exhale for 10 min"]},
+      {"category": "Food & Dining Out", "q": "What is your ultimate comfort meal?", "a": ["Fresh hot homemade pizza", "Burger with crispy fries", "Steaming bowl of ramen or pasta", "Hearty home cooked stew or soup", "Sushi platter", "Sweet dessert or pancakes"]},
+      {"category": "Food & Dining Out", "q": "How spicy do you like your food?", "a": ["No spice at all, mild only", "Just a tiny kick for flavor", "Medium pleasant heat", "Spicy enough to make my nose run", "Extreme ghost pepper / Carolina reaper", "Depends entirely on the dish"]},
+      {"category": "Food & Dining Out", "q": "How do you choose a restaurant to visit?", "a": ["Check Google Maps reviews and photos", "Recommendations from close friends", "Wander into whatever looks cozy", "Stick to our reliable favorite spot", "Trendy viral spots on Instagram/TikTok", "Cheapest high-calorie option"]},
+      {"category": "Food & Dining Out", "q": "What is your stance on cooking?", "a": ["Passionate cook who experiments", "Decent cook for everyday staples", "I only cook simple basic meals", "I prefer takeout and microwave meals", "I bake great desserts instead", "I clean the kitchen if someone else cooks"]},
+      {"category": "Food & Dining Out", "q": "What beverage do you reach for first?", "a": ["Still natural spring water", "Sparkling mineral water", "Fresh black coffee or espresso", "Iced coffee or sweet latte", "Cold tea or herbal infusion", "Energy drink or soda"]},
+      {"category": "Food & Dining Out", "q": "How adventurous are you with new foods?", "a": ["Will try literally anything once", "Open to trying weird dishes if recommended", "Somewhat open to international cuisines", "Stick mostly to familiar flavors", "Very picky eater with favorites", "I order the exact same item everywhere"]},
+      {"category": "Food & Dining Out", "q": "What is your favorite food texture?", "a": ["Ultra crispy and crunchy", "Soft and creamy", "Chewy and dense", "Melty and gooey cheese", "Fresh and juicy", "Light and fluffy"]},
+      {"category": "Food & Dining Out", "q": "How do you split the bill with friends?", "a": ["Split exactly item by item", "Divide evenly down the middle", "Take turns picking up the whole tab", "Send immediate PayPal / Revolut transfers", "Whoever makes more pays", "Argue over who gets the privilege to pay"]},
+      {"category": "Food & Dining Out", "q": "What snack do you pick for a movie night?", "a": ["Buttery warm popcorn", "Nachos with cheese or salsa dip", "Sweet chocolate bites / gummies", "Potato chips or pretzels", "Healthy fruits or nuts", "A full meal instead of a snack"]},
+      {"category": "Food & Dining Out", "q": "What dessert always tempts you?", "a": ["Warm chocolate lava cake", "Rich Italian tiramisu", "Gelato / Ice cream scoop", "Fresh fruit cheesecake", "Crispy churros or waffles", "I prefer savory over sweets"]},
+      {"category": "Entertainment & Pop Culture", "q": "What genre of movies or shows do you love most?", "a": ["Sci-Fi and Fantasy epics", "Psychological Thrillers and Crime", "Action and fast-paced Adventure", "Comfort Sitcoms and Comedy", "Heartwarming Romance or Dramas", "Documentaries and True Stories"]},
+      {"category": "Entertainment & Pop Culture", "q": "How do you consume music?", "a": ["Full albums front to back", "Carefully curated personal playlists", "Algorithmic recommendations and radio", "Looped repeat of the same 3 songs", "High-energy Phonk / Bass tracks", "Lofi background ambient vibe"]},
+      {"category": "Entertainment & Pop Culture", "q": "What is your favorite video gaming style?", "a": ["Competitive multiplayer shooters", "Immersive open-world story RPGs", "Co-op with friends or survival", "Indie games with great aesthetics", "Casual mobile or puzzle games", "I don't play video games"]},
+      {"category": "Entertainment & Pop Culture", "q": "How do you binge-watch new shows?", "a": ["Finish the entire season in one day", "Strictly one or two episodes per night", "Start 5 shows and leave them half done", "Only watch with friends or partner", "Keep it on as background noise", "Watch on 1.5x playback speed"]},
+      {"category": "Entertainment & Pop Culture", "q": "What social platform do you use the most?", "a": ["YouTube / Long-form videos", "Instagram Stories & DMs", "Discord chats and servers", "TikTok / Shorts scrolling", "Reddit threads and communities", "X / Twitter or none"]},
+      {"category": "Entertainment & Pop Culture", "q": "What kind of concerts or live events do you prefer?", "a": ["Giant stadium rock/pop concert", "Intimate club or underground DJ set", "Comedy shows or theater plays", "Gaming conventions or expo halls", "Outdoor summer music festivals", "I prefer watching livestreams at home"]},
+      {"category": "Entertainment & Pop Culture", "q": "What makes a game or movie truly great for you?", "a": ["An unforgettable emotional story", "Stunning visual aesthetics & graphics", "Incredible musical soundtrack", "Complex relatable characters", "Fast-paced thrilling adrenaline", "Clever unexpected plot twists"]},
+      {"category": "Entertainment & Pop Culture", "q": "What is your stance on spoilers?", "a": ["Spolierphobic - don't whisper a word", "I prefer knowing endings in advance", "I don't care either way", "I will accidentally look them up", "Spoilers motivate me to watch faster", "Keep it secret until I finish"]},
+      {"category": "Entertainment & Pop Culture", "q": "Which fiction universe would you live in?", "a": ["High-fantasy magic world", "Cyberpunk futuristic metropolis", "Cozy peaceful anime town", "Space exploration galaxy", "Post-apocalyptic survival wasteland", "Our real world is fine as is"]},
+      {"category": "Entertainment & Pop Culture", "q": "How do you read or learn in your free time?", "a": ["Physical paper books", "E-reader or tablets", "Audiobooks during commutes", "Video essays and documentary analysis", "Podcasts featuring expert guests", "Hands-on experimenting directly"]},
+      {"category": "Stress & Conflict Handling", "q": "How do you handle intense stress?", "a": ["Exercise, run or hit the gym", "Vent everything to a trusted friend", "Withdraw into quiet solitude", "Deep clean the entire room", "Get hyper-focused and fix the issue", "Sleep it off until feeling refreshed"]},
+      {"category": "Stress & Conflict Handling", "q": "What is your style when arguments happen?", "a": ["Stay calm and argue logically", "Get heated and emotional quickly", "Shut down and go silent", "Seek a middle ground compromise", "Use humor to defuse the tension", "Walk away until heads cool off"]},
+      {"category": "Stress & Conflict Handling", "q": "How long do you hold a grudge?", "a": ["Forgotten within 20 minutes", "A few days until it blows over", "Weeks if it was genuinely unfair", "Years - I remember every detail", "I pretend it's fine but stay cautious", "Never hold grudges; life is short"]},
+      {"category": "Stress & Conflict Handling", "q": "What causes you the most anxiety?", "a": ["Uncertainty about future plans", "Financial strain or unexpected costs", "Conflict with people I care about", "Deadlines piling up simultaneously", "Feeling inadequate or judged", "Being physically overstimulated"]},
+      {"category": "Stress & Conflict Handling", "q": "When you feel down, what helps most?", "a": ["A long warm shower and comfort food", "Going for a solo drive or walk with music", "A warm, silent hug without questions", "Distracting myself with a great game", "Getting advice on fixing the problem", "Crying it out and letting go"]},
+      {"category": "Stress & Conflict Handling", "q": "How do you receive constructive criticism?", "a": ["Welcome it eagerly as growth", "Agree on the outside, sting on inside", "Get slightly defensive at first", "Analyze if the source is credible", "Ignore it unless repeated by several people", "Overthink every word for days"]},
+      {"category": "Stress & Conflict Handling", "q": "How do you react when plans are cancelled last minute?", "a": ["Secretly relieved to stay home in sweatpants", "Annoyed because I prepped for it", "Totally indifferent, adaptable", "Immediately pivot to backup plans", "Feel a bit neglected or sad", "Offer to reschedule right away"]},
+      {"category": "Stress & Conflict Handling", "q": "What is your boundary enforcement like?", "a": ["Rock solid, I say NO without guilt", "I say yes and regret it later", "Polite but firm decline", "Avoid saying no by making excuses", "I stand up for others better than myself", "I learn to say no more often now"]},
+      {"category": "Stress & Conflict Handling", "q": "How do you decompress after a exhausting week?", "a": ["Complete isolation and sleep", "Wild night out with best friends", "A scenic trip into nature / mountains", "Binging movies and order takeaway", "Diving deep into my creative hobbies", "Spa, hot bath, or sauna reset"]},
+      {"category": "Stress & Conflict Handling", "q": "How do you handle someone who won't stop complaining?", "a": ["Offer logical solutions step by step", "Just nod along and listen passively", "Change the subject smoothly", "Honestly tell them to take action", "Absorb their stress and feel drained", "Excuse myself and leave the conversation"]},
+      {"category": "Travel & Adventure", "q": "What is your dream vacation destination?", "a": ["Tropical beach with clear blue water", "Historic European cities and architecture", "Quiet mountain cabin in the woods", "Neon bustling Asian metropolis (Tokyo/Seoul)", "Epic road trip across scenic borders", "Scandinavian fjords and northern lights"]},
+      {"category": "Travel & Adventure", "q": "What kind of traveler are you?", "a": ["Meticulous planner with timed itineraries", "Spontaneous wanderer without schedules", "The food tourist seeking local markets", "The relaxer poolside with drinks", "The adrenaline thrill seeker", "The photographer seeking aesthetics"]},
+      {"category": "Travel & Adventure", "q": "What transport do you prefer for scenic trips?", "a": ["Driving car or motorbike freely", "Scenic train ride watching landscapes", "Short direct flight to get there fast", "Campervan or road trip van", "Ferry or boat across islands", "Walking and hiking on trails"]},
+      {"category": "Travel & Adventure", "q": "What is your budget style on trips?", "a": ["Luxury hotels and high-end dining", "Comfortable mid-range with good value", "Budget hostels and street food", "Splurge on unique experiences only", "Strict penny-pincher saving every euro", "Whatever happens, happens"]},
+      {"category": "Travel & Adventure", "q": "How do you handle travel hiccups (delays, lost items)?", "a": ["Laugh it off as part of the adventure", "Get stressed but fix it immediately", "Panic and need partner to lead", "Sit down, eat food, then figure it out", "File formal complaints and demand refunds", "Prepare contingency plans in advance"]},
+      {"category": "Travel & Adventure", "q": "Do you prefer traveling solo or in groups?", "a": ["Solo freedom, my own rules", "With my partner or one best friend", "Small tight-knit group of 3-4", "Big energetic party crew", "Family trips only", "Mix of solo exploration and meetups"]},
+      {"category": "Travel & Adventure", "q": "What is your souvenir preference?", "a": ["Memories and digital photos only", "Unique local food or spices", "Stickers, magnets or postcards", "Local clothing or artisan crafts", "Tickets, receipts and paper trinkets", "Something practical I will actually use"]},
+      {"category": "Travel & Adventure", "q": "How do you prepare for cultural differences?", "a": ["Learn basic local phrases and customs", "Read up on taboo gestures and culture", "Observe locals and adapt on the fly", "Rely on English and translation apps", "Dive right in without worrying", "Respect local habits deeply"]},
+      {"category": "Travel & Adventure", "q": "Morning bird or night owl while traveling?", "a": ["Up at sunrise to beat tourist crowds", "Sleep in late and explore night life", "Balanced daytime exploration", "Running on 4 hours of sleep nonstop", "Sunset watcher primarily", "Follow the natural daylight"]},
+      {"category": "Travel & Adventure", "q": "Would you rather explore nature or cities?", "a": ["Pure raw wilderness and mountains", "Vibrant modern urban cities", "Ancient historical towns and ruins", "Coastal oceans and sandy beaches", "Quaint countryside villages", "Equal mix of city and nature"]},
+      {"category": "Future Dreams & Ambition", "q": "Where do you see yourself living long-term?", "a": ["Modern penthouse in a major city", "Cozy suburban home with a garden", "Quiet rural house close to nature", "Traveling between different countries", "Right where I grew up, near family", "Historic renovated farmhouse"]},
+      {"category": "Future Dreams & Ambition", "q": "What career path speaks to you most?", "a": ["Building my own business / entrepreneur", "Tech, programming, and digital engineering", "Creative arts, music, and design", "Skilled technical trades and craftsmanship", "Teaching, mentoring or helping people", "Corporate leadership and executive roles"]},
+      {"category": "Future Dreams & Ambition", "q": "What is your biggest financial aspiration?", "a": ["Total financial independence (retire early)", "Owning a beautiful home debt-free", "Enough money to never look at price tags", "Funding passions and creative projects", "Providing generous security for loved ones", "Investing in world-changing startups"]},
+      {"category": "Future Dreams & Ambition", "q": "What skill do you want to master in the next few years?", "a": ["A new programming or technical stack", "A foreign language fluently", "Advanced physical fitness or martial arts", "Music production or instrument mastery", "Public speaking and leadership charisma", "Culinary and master gourmet cooking"]},
+      {"category": "Future Dreams & Ambition", "q": "How do you view risks in your career?", "a": ["High risk, high reward enthusiast", "Calculated risks after research", "Prefer steady stability and security", "Take risks only when backed by savings", "Spontaneous risk taker on gut feelings", "Avoid unnecessary risk whenever possible"]},
+      {"category": "Future Dreams & Ambition", "q": "What kind of lifestyle appeals to you most in 10 years?", "a": ["High-energy, fast-paced and influential", "Calm, slow-paced, and mindful", "Adventurous, nomad and free", "Community-focused with close friends", "Family-centric with deep roots", "Craftsman focused on master works"]},
+      {"category": "Future Dreams & Ambition", "q": "How important is recognition and fame to you?", "a": ["I want my name and work widely known", "Recognition only within my professional field", "Zero interest; prefer staying low-key", "Only care about respect from peers", "Fame sounds stressful; privacy first", "I want credit for what I build, nothing more"]},
+      {"category": "Future Dreams & Ambition", "q": "What legacy do you want to leave behind?", "a": ["A lasting business or invention", "Inspiring the next generation", "Loving memories with family and friends", "Art, code, or music that endures", "Charitable work and uplifting others", "Living life with integrity and bravery"]},
+      {"category": "Future Dreams & Ambition", "q": "What is your attitude toward aging and getting older?", "a": ["Excited for the wisdom and stability", "Determined to keep my youth and fitness", "Slightly scared of passing time", "Embrace every stage as it comes", "Age is just a number; energy matters", "Focused on making every decade count"]},
+      {"category": "Future Dreams & Ambition", "q": "If money was no object, what would you do every day?", "a": ["Build cool technology and open-source tools", "Travel the world continuously", "Create music, art, and stories", "Run an animal sanctuary or farm", "Work on fitness and sports daily", "Learn every subject under the sun"]},
+      {"category": "Fun & Hypotheticals", "q": "If you could have one superpower, which would you pick?", "a": ["Teleportation anywhere instantly", "Time travel to past or future", "Mind reading and mental influence", "Invisibility at will", "Flight through skies", "Superhuman intellect"]},
+      {"category": "Fun & Hypotheticals", "q": "You find 1,000,000 euros tax-free. What is your first move?", "a": ["Buy my dream house / apartment", "Invest it all into ETFs and assets", "Book a first-class trip around the world", "Pay off any debt for family & friends", "Buy a high-end dream sports vehicle", "Keep working normally and tell nobody"]},
+      {"category": "Fun & Hypotheticals", "q": "Zombie apocalypse breaks out. What is your survival role?", "a": ["The Weapons / Combat frontline specialist", "The Base Builder and Engineer", "The Scavenger supply runner", "The Strategic Leader planning moves", "The Medic keeping people alive", "Honestly, I'm getting bitten on day one"]},
+      {"category": "Fun & Hypotheticals", "q": "If you were an animal for one week, which would you be?", "a": ["Golden eagle soaring mountains", "Wolf in a loyal wild pack", "House cat spoiled in luxury", "Dolphin exploring the ocean", "Cheetah running on open plains", "Owl observing quietly from trees"]},
+      {"category": "Fun & Hypotheticals", "q": "If you could dine with any historical figure, who would it be?", "a": ["Albert Einstein", "Nikola Tesla", "Leonardo da Vinci", "Cleopatra", "Freddie Mercury", "Marcus Aurelius"]},
+      {"category": "Fun & Hypotheticals", "q": "What era in history would you visit for a weekend?", "a": ["Ancient Rome or Greece", "Feudal Japan samurai period", "The roaring 1920s jazz era", "The 1980s neon arcade culture", "The year 2150 in the future", "Medieval castle times"]},
+      {"category": "Fun & Hypotheticals", "q": "You can only eat one food for the rest of your life. Which one?", "a": ["Artisan sourdough pizza", "Fresh Japanese sushi & sashimi", "Mexican burritos and tacos", "Hearty pasta with rich sauce", "Smoked gourmet burgers", "Nutritious loaded rice bowls"]},
+      {"category": "Fun & Hypotheticals", "q": "Would you go on a one-way trip to colonize Mars?", "a": ["Yes, write my name in human history", "Only if my partner or best friend comes", "Only after thousands have gone first", "No, Earth has everything I love", "I would visit, but need to return", "I'd rather explore the deep ocean"]},
+      {"category": "Fun & Hypotheticals", "q": "If you had a warning label, what would it say?", "a": ["Caution: Do not talk before morning coffee", "Warning: Overthinks every single situation", "Danger: Highly contagious laughter", "Handle with care: Sarcastic response generator", "Caution: May spontaneously talk about tech", "Fragile: Needs food every 3 hours"]},
+      {"category": "Fun & Hypotheticals", "q": "What would be the title of your autobiography?", "a": ["Running on 1% Battery", "Against All Odds and Algorithms", "Wait, What Were We Doing?", "Organized Chaos in Motion", "Living Between the Lines", "Just One More Episode"]}
+    ];
+
+    let allQuestionsPool = [...DEFAULT_QUESTIONS_DATA];
+    let currentMode = 'similarity';
+    let totalQuestionsToAsk = 10;
+    let selectedQuestions = [];
+    let currentIndex = 0;
+    let currentAnswers = [];
+    let subStep = 'self';
+    let tempSelfAnswer = null;
+    let currentUserName = "You";
+    let latestGeneratedCode = null;
+    let latestComparisonResult = null;
+    let pendingInviteCode = null;
+    let pendingInviteName = null;
+    let csvMatrix = {};
+
+    function parseCSVLine(text) {
+      const row = [];
+      let cur = '';
+      let inQuotes = false;
+      for (let i = 0; i < text.length; i++) {
+        const char = text[i];
+        if (char === '"') {
+          if (inQuotes && text[i + 1] === '"') {
+            cur += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(cur.trim());
+          cur = '';
+        } else {
+          cur += char;
+        }
+      }
+      row.push(cur.trim());
+      return row;
+    }
+
+    function loadQuestions() {
+      fetch('questions.csv')
+        .then(res => {
+          if (!res.ok) throw new Error(`Status: ${res.status}`);
+          return res.text();
+        })
+        .then(csvText => {
+          const lines = csvText.trim().split(/\r?\n/);
+          const loaded = [];
+          for (let i = 1; i < lines.length; i++) {
+            const line = lines[i].trim();
+            if (!line) continue;
+            const cols = parseCSVLine(line);
+            if (cols.length >= 9) {
+              loaded.push({
+                category: cols[1],
+                q: cols[2],
+                a: [cols[3], cols[4], cols[5], cols[6], cols[7], cols[8]]
+              });
+            }
+          }
+          if (loaded.length > 0) {
+            allQuestionsPool = loaded;
+          }
+        })
+        .catch(() => {});
+    }
+
+    fetch('quiz_combinations.csv')
+      .then(res => {
+        if (!res.ok) throw new Error("CSV not present");
+        return res.text();
+      })
+      .then(text => {
+        const lines = text.trim().split(/\r?\n/);
+        for (let i = 1; i < lines.length; i++) {
+          const parts = lines[i].split(',');
+          if (parts.length >= 4) {
+            const key = `${parts[0]}_${parts[1]}`;
+            csvMatrix[key] = {
+              sim: parseInt(parts[2], 10),
+              know: parseInt(parts[3], 10)
+            };
+          }
+        }
+      })
+      .catch(() => {});
+
+    function setupPinInputs() {
+      document.querySelectorAll('.pin-boxes').forEach(container => {
+        const inputs = Array.from(container.querySelectorAll('.pin-digit'));
+
+        inputs.forEach((input, index) => {
+          input.addEventListener('input', (e) => {
+            const val = e.target.value.replace(/[^0-9]/g, '');
+            e.target.value = val ? val[val.length - 1] : '';
+
+            if (e.target.value && index < inputs.length - 1) {
+              inputs[index + 1].focus();
+              inputs[index + 1].select();
+            }
+          });
+
+          input.addEventListener('keydown', (e) => {
+            if (e.key === 'Backspace' && !input.value && index > 0) {
+              inputs[index - 1].focus();
+              inputs[index - 1].value = '';
+            } else if (e.key === 'ArrowLeft' && index > 0) {
+              inputs[index - 1].focus();
+            } else if (e.key === 'ArrowRight' && index < inputs.length - 1) {
+              inputs[index + 1].focus();
+            }
+          });
+
+          input.addEventListener('paste', (e) => {
+            e.preventDefault();
+            const pasteData = (e.clipboardData || window.clipboardData).getData('text').trim().replace(/[^0-9]/g, '');
+            if (!pasteData) return;
+
+            for (let i = 0; i < inputs.length; i++) {
+              if (pasteData[i]) {
+                inputs[i].value = pasteData[i];
+              }
+            }
+            const targetIdx = Math.min(pasteData.length, inputs.length) - 1;
+            if (targetIdx >= 0 && targetIdx < inputs.length) {
+              inputs[targetIdx].focus();
+            }
+          });
+
+          input.addEventListener('focus', () => {
+            input.select();
+          });
+        });
+      });
+    }
+
+    function setPinCode(targetName, codeStr) {
+      const container = document.querySelector(`.pin-boxes[data-target="${targetName}"]`);
+      if (!container || !codeStr) return;
+      const inputs = Array.from(container.querySelectorAll('.pin-digit'));
+      for (let i = 0; i < 4; i++) {
+        inputs[i].value = codeStr[i] || '';
+      }
+    }
+
+    function getPinCode(targetName) {
+      const container = document.querySelector(`.pin-boxes[data-target="${targetName}"]`);
+      if (!container) return '';
+      const inputs = Array.from(container.querySelectorAll('.pin-digit'));
+      return inputs.map(i => i.value.trim()).join('');
+    }
+
+    function checkUrlParams() {
+      const params = new URLSearchParams(window.location.search);
+      const sharedCode = params.get('code');
+      const sharedName = params.get('name');
+
+      if (sharedCode && /^\d{4}$/.test(sharedCode)) {
+        pendingInviteCode = sharedCode;
+        pendingInviteName = sharedName || "Your Friend";
+        
+        localStorage.setItem('besties_name_' + sharedCode, pendingInviteName);
+        recordHistoryItem(sharedCode, pendingInviteName);
+
+        document.getElementById('inviteFriendName').textContent = pendingInviteName;
+        document.getElementById('inviteAvatarLetter').textContent = pendingInviteName.charAt(0).toUpperCase();
+        document.getElementById('inviteCodeDisplay').textContent = `CODE ${sharedCode}`;
+
+        navigate('screen-invite');
+      } else {
+        navigate('screen-menu');
+      }
+      renderHistoryList();
+    }
+
+    function acceptInviteFlow(mode) {
+      startQuizFlow(mode);
+    }
+
+    function proceedToCompareWithPreload() {
+      navigate('screen-menu');
+      if (pendingInviteCode) {
+        setPinCode('code2', pendingInviteCode);
+        document.getElementById('labelCode2').textContent = `${pendingInviteName}'s Code`;
+      }
+      const firstUserBox = document.querySelector('.pin-boxes[data-target="code1"] .pin-digit');
+      if (firstUserBox) firstUserBox.focus();
+    }
+
+    function getHistoryItems() {
+      try {
+        const stored = localStorage.getItem('besties_code_history');
+        return stored ? JSON.parse(stored) : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function recordHistoryItem(code, name) {
+      if (!code || !/^\d{4}$/.test(code)) return;
+      let history = getHistoryItems();
+      history = history.filter(item => item.code !== code);
+      history.unshift({
+        code,
+        name: name || "Player",
+        date: Date.now()
+      });
+      if (history.length > 15) history = history.slice(0, 15);
+      localStorage.setItem('besties_code_history', JSON.stringify(history));
+      renderHistoryList();
+    }
+
+    function deleteHistoryItem(code) {
+      let history = getHistoryItems().filter(item => item.code !== code);
+      localStorage.setItem('besties_code_history', JSON.stringify(history));
+      renderHistoryList();
+    }
+
+    function renderHistoryList() {
+      const history = getHistoryItems();
+      const countEl = document.getElementById('historyCount');
+      const listContainer = document.getElementById('historyListContainer');
+      countEl.textContent = history.length;
+
+      if (!history.length) {
+        listContainer.innerHTML = '<div style="font-size:0.82rem; color:var(--text-muted); text-align:center; padding:8px 0;">No codes generated or entered on this device yet.</div>';
+        return;
+      }
+
+      listContainer.innerHTML = '';
+      history.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'history-item';
+        row.innerHTML = `
+          <div class="history-meta">
+            <span class="history-name">${item.name}</span>
+            <span class="history-code">${item.code}</span>
+          </div>
+          <div class="history-actions">
+            <button class="history-btn-chip" onclick="useHistoryCode('${item.code}', '${item.name}', 'code1')">Set as 1</button>
+            <button class="history-btn-chip" onclick="useHistoryCode('${item.code}', '${item.name}', 'code2')">Set as 2</button>
+            <button class="history-btn-chip" style="color:#ff6b6b;" onclick="deleteHistoryItem('${item.code}')">✕</button>
+          </div>
+        `;
+        listContainer.appendChild(row);
+      });
+    }
+
+    function useHistoryCode(code, name, slot) {
+      setPinCode(slot, code);
+      const label = document.getElementById(slot === 'code1' ? 'labelCode1' : 'labelCode2');
+      if (label) label.textContent = `${name}'s Code`;
+    }
+
+    function toggleHistoryView() {
+      const container = document.getElementById('historyListContainer');
+      const toggleText = document.getElementById('historyToggleText');
+      const isHidden = container.classList.contains('hidden');
+      container.classList.toggle('hidden', !isHidden);
+      toggleText.textContent = isHidden ? 'Hide' : 'Show';
+    }
+
+    function navigate(screenId) {
+      ['screen-invite', 'screen-menu', 'screen-config', 'screen-quiz', 'screen-finished', 'screen-results'].forEach(id => {
+        document.getElementById(id).classList.toggle('hidden', id !== screenId);
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function startQuizFlow(mode) {
+      currentMode = mode;
+      const title = document.getElementById('config-title');
+      const desc = document.getElementById('config-desc');
+
+      if (mode === 'similarity') {
+        title.textContent = "Similarity Quiz Setup";
+        desc.textContent = "Choose your theme, enter your name, answer questions, and get a code to share!";
+      } else {
+        title.textContent = "How Well Do You Know Them?";
+        desc.textContent = "Answer once for you and once for your friend/partner, and see your score!";
+      }
+
+      document.getElementById('userNameInput').value = '';
+      navigate('screen-config');
+    }
+
+    function onThemeSelectChange() {
+      const theme = document.getElementById('quizThemeSelect').value;
+      const qCountSelect = document.getElementById('questionCount');
+      if (theme !== 'ALL') {
+        qCountSelect.value = "10";
+      }
+    }
+
+    function initQuizSession() {
+      const nameInput = document.getElementById('userNameInput').value.trim();
+      currentUserName = nameInput || "You";
+
+      const selectedCategory = document.getElementById('quizThemeSelect').value;
+      let filtered = (selectedCategory === 'ALL') 
+        ? [...allQuestionsPool] 
+        : allQuestionsPool.filter(item => item.category === selectedCategory);
+
+      if (!filtered.length) {
+        filtered = [...allQuestionsPool];
+      }
+
+      totalQuestionsToAsk = parseInt(document.getElementById('questionCount').value, 10);
+      if (selectedCategory !== 'ALL' && totalQuestionsToAsk > filtered.length) {
+        totalQuestionsToAsk = filtered.length;
+      } else {
+        totalQuestionsToAsk = Math.min(totalQuestionsToAsk, filtered.length);
+      }
+
+      selectedQuestions = filtered.slice(0, totalQuestionsToAsk);
+      currentIndex = 0;
+      currentAnswers = [];
+      subStep = 'self';
+      navigate('screen-quiz');
+      renderQuestion();
+    }
+
+    function renderQuestion() {
+      if (!selectedQuestions || selectedQuestions.length === 0) return;
+      const qObj = selectedQuestions[currentIndex];
+      const progress = ((currentIndex) / totalQuestionsToAsk) * 100;
+      document.getElementById('progressBar').style.width = `${progress}%`;
+
+      const badge = document.getElementById('quizBadge');
+      const qText = document.getElementById('questionText');
+      const choicesContainer = document.getElementById('choicesContainer');
+      choicesContainer.innerHTML = '';
+
+      if (currentMode === 'similarity') {
+        badge.textContent = `Q ${currentIndex + 1}/${totalQuestionsToAsk} — ${qObj.category || 'General'}`;
+        qText.textContent = qObj.q;
+      } else {
+        if (subStep === 'self') {
+          badge.textContent = `Q ${currentIndex + 1}/${totalQuestionsToAsk} — ${currentUserName}`;
+          qText.textContent = `About you: ${qObj.q}`;
+        } else {
+          const partnerName = pendingInviteName || "Partner / Friend";
+          badge.textContent = `Q ${currentIndex + 1}/${totalQuestionsToAsk} — For ${partnerName}`;
+          qText.textContent = `What would they choose: ${qObj.q}`;
+        }
+      }
+
+      qObj.a.forEach((choiceText, index) => {
+        const btn = document.createElement('button');
+        btn.className = 'choice-btn';
+        btn.innerHTML = `<span class="choice-index">${index + 1}</span> <span>${choiceText}</span>`;
+        btn.onclick = () => selectChoice(index);
+        choicesContainer.appendChild(btn);
+      });
+    }
+
+    function selectChoice(index) {
+      if (currentMode === 'similarity') {
+        currentAnswers.push(index);
+        currentIndex++;
+        if (currentIndex < totalQuestionsToAsk) {
+          renderQuestion();
+        } else {
+          finishQuiz();
+        }
+      } else {
+        if (subStep === 'self') {
+          tempSelfAnswer = index;
+          subStep = 'friend';
+          renderQuestion();
+        } else {
+          currentAnswers.push({ self: tempSelfAnswer, friend: index });
+          subStep = 'self';
+          currentIndex++;
+          if (currentIndex < totalQuestionsToAsk) {
+            renderQuestion();
+          } else {
+            finishQuiz();
+          }
+        }
+      }
+    }
+
+    function generateConsistent4DigitCode(answers, count, mode) {
+      let hash = (mode === 'similarity' ? 7919 : 6271) + count * 131;
+      answers.forEach((ans, idx) => {
+        const val = typeof ans === 'object' ? (ans.self * 7 + ans.friend * 11) : ans;
+        hash = (hash * 37 + (val + 1) * (idx + 17)) % 9000;
+      });
+      return String(1000 + (hash % 9000)).padStart(4, '0');
+    }
+
+    function finishQuiz() {
+      const code = generateConsistent4DigitCode(currentAnswers, totalQuestionsToAsk, currentMode);
+      latestGeneratedCode = code;
+      
+      localStorage.setItem('besties_code_' + code, JSON.stringify({
+        name: currentUserName,
+        mode: currentMode,
+        count: totalQuestionsToAsk,
+        answers: currentAnswers
+      }));
+      localStorage.setItem('besties_name_' + code, currentUserName);
+      recordHistoryItem(code, currentUserName);
+
+      document.getElementById('finishedUserName').textContent = currentUserName;
+      document.getElementById('generatedCodeDisplay').textContent = code;
+
+      const nextBtn = document.getElementById('finishNextBtn');
+      if (pendingInviteCode) {
+        nextBtn.textContent = `Compare Score with ${pendingInviteName || 'Partner'}`;
+      } else {
+        nextBtn.textContent = "Compare Codes on Menu";
+      }
+
+      navigate('screen-finished');
+    }
+
+    function onFinishedPrimaryAction() {
+      if (pendingInviteCode) {
+        setPinCode('code1', latestGeneratedCode);
+        setPinCode('code2', pendingInviteCode);
+        document.getElementById('labelCode1').textContent = `${currentUserName}'s Code`;
+        document.getElementById('labelCode2').textContent = `${pendingInviteName}'s Code`;
+        compareCodes();
+      } else {
+        useHistoryCode(latestGeneratedCode, currentUserName, 'code1');
+        navigate('screen-menu');
+      }
+    }
+
+    function copyShareLink() {
+      if (!latestGeneratedCode) return;
+      const url = new URL(window.location.href);
+      url.searchParams.set('code', latestGeneratedCode);
+      if (currentUserName && currentUserName !== "You") {
+        url.searchParams.set('name', currentUserName);
+      }
+      navigator.clipboard.writeText(url.toString()).then(() => {
+        const btn = document.getElementById('shareLinkBtn');
+        btn.textContent = "Link Copied!";
+        setTimeout(() => { btn.textContent = "Copy Direct Friend Link"; }, 2000);
+      });
+    }
+
+    function evaluatePairScores(c1, c2) {
+      const csvKey1 = `${c1}_${c2}`;
+      const csvKey2 = `${c2}_${c1}`;
+      if (csvMatrix[csvKey1]) return csvMatrix[csvKey1];
+      if (csvMatrix[csvKey2]) return csvMatrix[csvKey2];
+
+      const n1 = parseInt(c1, 10);
+      const n2 = parseInt(c2, 10);
+
+      if (c1 === c2) {
+        return { sim: 100, know: 100 };
+      }
+
+      const diff = Math.abs(n1 - n2);
+      const seed = (n1 * 31 + n2 * 17) % 1000;
+      const wave = Math.sin(seed) * 14;
+
+      let sim = Math.round(92 - ((diff % 100) * 0.72) + wave);
+      sim = Math.max(18, Math.min(98, sim));
+
+      let know = Math.round(sim * 0.88 + Math.cos(diff) * 10);
+      know = Math.max(15, Math.min(97, know));
+
+      return { sim, know };
+    }
+
+    function toggleDetailsView() {
+      const section = document.getElementById('detailsSection');
+      const btn = document.getElementById('toggleDetailsBtn');
+      const isHidden = section.classList.contains('hidden');
+      
+      section.classList.toggle('hidden', !isHidden);
+      btn.textContent = isHidden ? 'Hide Details' : 'See Details';
+    }
+
+    function generateDetailedBreakdown(c1, c2, score, mode, name1, name2) {
+      const n1 = parseInt(c1, 10);
+      const n2 = parseInt(c2, 10);
+      const seed = (n1 * 13 + n2 * 41);
+
+      const calcCat = (offset, weight) => {
+        const delta = Math.sin(seed + offset) * 15 * weight;
+        return Math.max(15, Math.min(100, Math.round(score + delta)));
+      };
+
+      const categories = [
+        { name: "Social Energy & Romance", val: calcCat(1, 1.0) },
+        { name: "Daily Routines & Shared Living", val: calcCat(2, 0.9) },
+        { name: "Hobbies, Tastes & Travel", val: calcCat(3, 1.1) },
+        { name: "Values & Conflict Handling", val: calcCat(4, 0.8) }
+      ];
+
+      let takeaways = [];
+      if (mode === 'similarity') {
+        if (score >= 80) {
+          takeaways = [
+            `Super Similar: ${name1} and ${name2} share identical wavelengths across plans, lifestyle, and values.`,
+            `Natural Chemistry: Spontaneous reactions and decision-making align almost effortlessly.`,
+            `Minimal Friction: Disagreements defuse quickly due to compatible conflict styles.`
+          ];
+        } else if (score >= 50) {
+          takeaways = [
+            `Complementary Match: You agree on the core fundamentals, while your daily habits provide variety.`,
+            `Diverse Interests: You introduce each other to completely fresh food, music, and perspectives.`,
+            `Strong Dynamic: One grounds the situation while the other brings excitement and action.`
+          ];
+        } else {
+          takeaways = [
+            `Opposites Attract: You have distinctly different habits, social rhythms, and preferences.`,
+            `Different Needs: One thrives on quiet autonomy while the other seeks constant motion.`,
+            `Growth Opportunity: Mutual curiosity and respecting boundaries turn differences into strengths.`
+          ];
+        }
+      } else {
+        if (score >= 80) {
+          takeaways = [
+            `Mind Reader: You anticipated nearly all of their choices with remarkable accuracy.`,
+            `Attentive Connection: You notice the subtle habits and instincts they rarely speak about.`,
+            `Deep Bond: Shows authentic care and observation in day-to-day moments.`
+          ];
+        } else if (score >= 50) {
+          takeaways = [
+            `Strong Intuition: You know their major preferences, though a few private quirks surprised you.`,
+            `Room for Curiosity: A great catalyst to talk through where your expectations differed.`,
+            `Honest Dynamic: Predicts the big picture well while keeping some mystery alive.`
+          ];
+        } else {
+          takeaways = [
+            `Surprise Answers: Many of their real selections caught you completely off guard.`,
+            `Hidden Depths: Their private habits and priorities are ready to be explored.`,
+            `Fresh Ground: Start by asking them why they made their specific choices!`
+          ];
+        }
+      }
+
+      const qaItems = [];
+      const cached1 = localStorage.getItem('besties_code_' + c1);
+      const cached2 = localStorage.getItem('besties_code_' + c2);
+      const data1 = cached1 ? JSON.parse(cached1) : null;
+      const data2 = cached2 ? JSON.parse(cached2) : null;
+
+      const totalToShow = Math.min(10, allQuestionsPool.length || 10);
+      for (let i = 0; i < totalToShow; i++) {
+        let ans1Idx, ans2Idx;
+        if (data1 && data1.answers && data1.answers[i] !== undefined) {
+          ans1Idx = typeof data1.answers[i] === 'object' ? data1.answers[i].self : data1.answers[i];
+        } else {
+          ans1Idx = (n1 + i * 3) % 6;
+        }
+
+        if (data2 && data2.answers && data2.answers[i] !== undefined) {
+          ans2Idx = typeof data2.answers[i] === 'object' ? data2.answers[i].self : data2.answers[i];
+        } else {
+          const forceMatch = (i * 10) < score;
+          ans2Idx = forceMatch ? ans1Idx : (n2 + i * 7) % 6;
+        }
+
+        const isMatched = (ans1Idx === ans2Idx);
+        const itemObj = allQuestionsPool[i] || { q: `Question ${i+1}`, a: ["A", "B", "C", "D", "E", "F"] };
+        qaItems.push({
+          q: itemObj.q,
+          isMatched,
+          ans1: itemObj.a[ans1Idx] || "Choice",
+          ans2: itemObj.a[ans2Idx] || "Choice"
+        });
+      }
+
+      return { categories, takeaways, qaItems };
+    }
+
+    function compareCodes() {
+      const code1 = getPinCode('code1');
+      const code2 = getPinCode('code2');
+      const selectedType = document.getElementById('comparisonMode').value;
+
+      if (code1.length !== 4 || code2.length !== 4) {
+        alert("Please enter a full 4-digit code in both boxes.");
+        return;
+      }
+
+      const name1 = localStorage.getItem('besties_name_' + code1) || "Player 1";
+      const name2 = localStorage.getItem('besties_name_' + code2) || pendingInviteName || "Player 2";
+
+      recordHistoryItem(code1, name1);
+      recordHistoryItem(code2, name2);
+
+      const scores = evaluatePairScores(code1, code2);
+      let percentage = 0;
+      let details = "";
+
+      if (selectedType === 'similarity') {
+        percentage = scores.sim;
+        details = `${name1} and ${name2} match at ${percentage}%!`;
+      } else {
+        percentage = scores.know;
+        details = `Knowledge accuracy between ${name1} and ${name2} is ${percentage}%!`;
+      }
+
+      latestComparisonResult = {
+        code1,
+        code2,
+        name1,
+        name2,
+        percentage,
+        type: selectedType
+      };
+
+      document.getElementById('resultHeadingTitle').textContent = `${name1} & ${name2}`;
+      document.getElementById('resultScore').textContent = `${percentage}%`;
+      document.getElementById('resultDetails').textContent = details;
+
+      const breakdown = generateDetailedBreakdown(code1, code2, percentage, selectedType, name1, name2);
+      
+      const catContainer = document.getElementById('categoryBreakdowns');
+      catContainer.innerHTML = '';
+      breakdown.categories.forEach(cat => {
+        const item = document.createElement('div');
+        item.className = 'trait-card';
+        item.innerHTML = `
+          <div class="trait-header">
+            <span>${cat.name}</span>
+            <span>${cat.val}%</span>
+          </div>
+          <div class="trait-bar-bg">
+            <div class="trait-bar-fill" style="width: ${cat.val}%"></div>
+          </div>
+        `;
+        catContainer.appendChild(item);
+      });
+
+      const listContainer = document.getElementById('detailTakeaways');
+      listContainer.innerHTML = '';
+      breakdown.takeaways.forEach(point => {
+        const li = document.createElement('li');
+        li.textContent = point;
+        listContainer.appendChild(li);
+      });
+
+      const qaContainer = document.getElementById('qaBreakdownContainer');
+      qaContainer.innerHTML = '';
+      breakdown.qaItems.forEach((item, idx) => {
+        const div = document.createElement('div');
+        div.className = `qa-item ${item.isMatched ? 'matched' : ''}`;
+        div.innerHTML = `
+          <div class="qa-header">
+            <span>Question ${idx + 1}</span>
+            <span class="qa-tag ${item.isMatched ? 'matched' : 'different'}">${item.isMatched ? 'Matched Choice' : 'Different Choice'}</span>
+          </div>
+          <div class="qa-question">${item.q}</div>
+          <div class="qa-answers">
+            <div><span class="qa-ans-badge">${name1}:</span> ${item.ans1}</div>
+            <div><span class="qa-ans-badge">${name2}:</span> ${item.ans2}</div>
+          </div>
+        `;
+        qaContainer.appendChild(div);
+      });
+
+      document.getElementById('detailsSection').classList.add('hidden');
+      document.getElementById('toggleDetailsBtn').textContent = 'See Details';
+
+      navigate('screen-results');
+    }
+
+    function exportScorecardImage() {
+      if (!latestComparisonResult) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = 1080;
+      canvas.height = 1920;
+      const ctx = canvas.getContext('2d');
+
+      const isLight = currentTheme === 'light';
+      ctx.fillStyle = isLight ? '#F0F0F0' : '#0F0F0F';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.12)' : 'rgba(255, 255, 255, 0.12)';
+      ctx.lineWidth = 4;
+      ctx.beginPath();
+      ctx.roundRect(80, 200, 920, 1520, 48);
+      ctx.stroke();
+
+      ctx.fillStyle = isLight ? '#4F4F4F' : '#8F8F8F';
+      ctx.font = '700 36px Inter, sans-serif';
+      ctx.textAlign = 'center';
+      ctx.fillText('COMPATIBILITY SCORECARD', 540, 360);
+
+      ctx.fillStyle = isLight ? '#1C4494' : '#6CA0F8';
+      ctx.font = '800 64px Inter, sans-serif';
+      ctx.fillText(`${latestComparisonResult.name1}  x  ${latestComparisonResult.name2}`, 540, 460);
+
+      ctx.fillStyle = '#24ACD4';
+      ctx.font = '800 220px Inter, monospace';
+      ctx.fillText(`${latestComparisonResult.percentage}%`, 540, 820);
+
+      ctx.fillStyle = isLight ? '#0F0F0F' : '#F0F0F0';
+      ctx.font = '600 44px Inter, sans-serif';
+      const label = latestComparisonResult.type === 'similarity' ? 'Overall Similarity Match' : 'Knowledge Accuracy Match';
+      ctx.fillText(label, 540, 940);
+
+      ctx.strokeStyle = isLight ? 'rgba(0, 0, 0, 0.1)' : 'rgba(255, 255, 255, 0.1)';
+      ctx.lineWidth = 2;
+      ctx.beginPath();
+      ctx.moveTo(180, 1080);
+      ctx.lineTo(900, 1080);
+      ctx.stroke();
+
+      ctx.fillStyle = isLight ? '#4F4F4F' : '#8F8F8F';
+      ctx.font = '400 34px Inter, sans-serif';
+      ctx.fillText('Take the quiz and test your compatibility:', 540, 1260);
+
+      ctx.fillStyle = isLight ? '#0F0F0F' : '#F0F0F0';
+      ctx.font = '700 42px Inter, sans-serif';
+      ctx.fillText('thataustrianone.eu', 540, 1340);
+
+      const link = document.createElement('a');
+      link.download = `compatibility-${latestComparisonResult.name1}-${latestComparisonResult.name2}.png`;
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }
+
+    loadQuestions();
+    updateThemeUI();
+    setupPinInputs();
+    checkUrlParams();
+  </script>
+</body>
+</html>
