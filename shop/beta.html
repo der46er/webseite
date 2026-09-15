@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Shop | thataustrianone</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/website/main/assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -26,13 +26,13 @@
         /* Updated to match the v20 filenames in your repository to fix 404s */
         @font-face { 
             font-family: 'Inter'; 
-            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2'); 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/website@main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-regular.woff2') format('woff2');
             font-weight: 400; 
             font-display: swap; 
         }
         @font-face { 
             font-family: 'Inter'; 
-            src: url('https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2'); 
+            src: url('https://cdn.jsdelivr.net/gh/der46er/website@main/assets/fonts/inter-v20-cyrillic_cyrillic-ext_greek_greek-ext_latin_latin-ext_vietnamese-900.woff2') format('woff2');
             font-weight: 900; 
             font-display: swap; 
         }
@@ -57,7 +57,7 @@
             height: 100vh;
             height: 100lvh;
             /* Updated background to waves-orange.webp */
-            background-image: url("https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/backgounds/waves-orange.webp");
+            background-image: url("https://cdn.jsdelivr.net/gh/der46er/website@main/assets/backgounds/waves-orange.webp");
             background-size: cover;
             background-position: center;
             background-repeat: no-repeat;
@@ -116,7 +116,7 @@
 
         const translations = {
             de: {
-                name: "Deutsch", flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/austria-flag.webp", alt: "Austria Flag",
+                name: "Deutsch", flag: "https://cdn.jsdelivr.net/gh/der46er/website@main/assets/flags/austria-flag.webp", alt: "Austria Flag",
                 back: "Zurück", offer: "Angebot", title: "Shop",
                 description: "Hier findest du Hardware und Ersatzteile aus meinem Bestand. Die Abwicklung erfolgt sicher über die verlinkten Plattformen.",
                 viewOn: "Auf {platform} ansehen", comingSoon: "Bald neue Artikel...", legal: "Impressum & Rechtliches",
@@ -129,7 +129,7 @@
                 sold: "Verkauft", unavailable: "Nicht mehr verfügbar"
             },
             en: {
-                name: "English", flag: "https://cdn.jsdelivr.net/gh/der46er/webseite@main/assets/flags/united-kingdom-flag.webp", alt: "UK Flag",
+                name: "English", flag: "https://cdn.jsdelivr.net/gh/der46er/website@main/assets/flags/united-kingdom-flag.webp", alt: "UK Flag",
                 back: "Back", offer: "Offer", title: "Shop",
                 description: "Explore hardware and spare parts from my personal inventory. Secure checkout via the linked platforms.",
                 viewOn: "View on {platform}", comingSoon: "More items coming soon...", legal: "Legal Notice",
@@ -251,7 +251,7 @@
                     return 'Shop';
                 };
 
-                fetch('https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/shop/products.json')
+                fetch('https://raw.githubusercontent.com/der46er/website/refs/heads/main/shop/products.json')
                     .then(res => res.json())
                     .then(data => {
                         const parsedProducts = data.map(item => ({

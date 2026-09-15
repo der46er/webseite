@@ -10,7 +10,7 @@
         const img = new Image();
         // Required to manipulate images from an external URL safely
         img.crossOrigin = "anonymous"; 
-        img.src = "https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png";
+        img.src = "https://raw.githubusercontent.com/der46er/website/main/assets/favicon.png";
         
         img.onload = function() {
             const canvas = document.createElement("canvas");
@@ -211,7 +211,7 @@
 
             // Dynamic fetch for Legal text using the exact path and logic requested
             useEffect(() => {
-                fetch("https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/assets/legal.txt", { cache: 'no-cache' })
+                fetch("https://raw.githubusercontent.com/der46er/website/refs/heads/main/assets/legal.txt", { cache: 'no-cache' })
                     .then(res => res.text())
                     .then(text => setLegalText(text))
                     .catch(() => setLegalText("Error loading legal information."));
@@ -232,7 +232,7 @@
                             <div className="w-32 h-32 sm:w-36 sm:h-36 relative profile-ring rounded-full">
                                 <div className="absolute inset-0 rounded-full border-[4px] border-white shadow-xl overflow-hidden bg-white z-10">
                                     <img 
-                                        src="https://raw.githubusercontent.com/der46er/webseite/main/socials/corrina/pfp_corrina.webp" 
+                                        src="https://raw.githubusercontent.com/der46er/website/main/socials/corrina/pfp_corrina.webp"
                                         alt="Corrina Außerwöger" 
                                         className="w-full h-full object-cover hover:scale-105 transition-transform duration-500"
                                     />
