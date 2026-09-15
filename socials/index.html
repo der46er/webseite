@@ -241,7 +241,7 @@
         if (closeModalBtn && modal) closeModalBtn.onclick = () => modal.classList.add('hidden');
         
         if (legalText) {
-            fetch('https://raw.githubusercontent.com/der46er/webseite/main/assets/legal.txt', { cache: 'no-cache' })
+            fetch('https://raw.githubusercontent.com/der46er/website/main/assets/legal.txt', { cache: 'no-cache' })
                 .then(r => r.text()).then(t => legalText.innerText = t)
                 .catch(() => legalText.innerText = "Error loading legal information.");
         }

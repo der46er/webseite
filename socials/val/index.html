@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Social Links | Valerie</title>
     
-    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/webseite/main/assets/favicon.png">
+    <link rel="icon" type="image/png" href="https://raw.githubusercontent.com/der46er/website/main/assets/favicon.png">
 
     <script src="https://cdn.tailwindcss.com"></script>
     <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
@@ -130,7 +130,7 @@
             }, []);
 
             useEffect(() => {
-                fetch("https://raw.githubusercontent.com/der46er/webseite/refs/heads/main/assets/legal.txt", { cache: 'no-cache' })
+                fetch("https://raw.githubusercontent.com/der46er/website/refs/heads/main/assets/legal.txt", { cache: 'no-cache' })
                     .then(res => res.text())
                     .then(setLegalText)
                     .catch(() => setLegalText("Error loading legal information."));
@@ -163,7 +163,7 @@
                                     <div className="absolute -inset-2 rounded-full border-[2px] border-pink-400/60 shadow-[0_0_15px_#f472b6] animate-ring-2"></div>
                                     <div className="relative w-full h-full rounded-full border-[3px] border-[#0b080a] shadow-2xl overflow-hidden bg-[#161920] z-10">
                                         <img 
-                                            src="https://raw.githubusercontent.com/der46er/webseite/main/socials/val/valerie_pfp.webp" 
+                                            src="https://raw.githubusercontent.com/der46er/website/main/socials/val/valerie_pfp.webp"
                                             alt="Valerie" 
                                             className="w-full h-full object-cover object-center scale-105" 
                                         />
